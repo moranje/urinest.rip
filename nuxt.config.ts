@@ -1,10 +1,9 @@
 // import legacy from '@vitejs/plugin-legacy';
 import { defineNuxtConfig } from 'nuxt/config';
+const SITE_URL = process.env.SITE_URL || 'https://www.urinest.rip/';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
-  // target: 'static',
-
   typescript: {
     shim: false,
   },
@@ -17,7 +16,6 @@ export default defineNuxtConfig({
       charset: 'utf-16',
       title: 'urinest.rip - Interpretatie van urineonderzoek',
       meta: [
-        // <meta name="description" content="My amazing site">
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
@@ -25,20 +23,10 @@ export default defineNuxtConfig({
             'Makkelijk uitslagen van urine onderzoek interpreteren aan de hand van oa. de NHG-standaard urineweginfecties. Gemaakt door een huisarts voor zorgverleners die met de interpretatie urineonderzoek te maken hebben.',
         },
       ],
-      link: [
-        {
-          rel: 'manifest',
-          href: '/manifest.json',
-        },
-      ],
       script: [
         {
           type: 'module',
           src: 'https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js',
-        },
-        {
-          src: 'register-service-worker.js',
-          body: true,
         },
       ],
       noscript: [
@@ -53,6 +41,30 @@ export default defineNuxtConfig({
     '@/assets/main.scss',
   ],
 
+  pwa: {
+    manifest: {
+      name: 'Urinest.rip',
+      short_name: 'Urinest.rip',
+      description:
+        'Makkelijk uitslagen van urine onderzoek interpreteren aan de hand van oa. de NHG-standaard urineweginfecties. Gemaakt door een huisarts voor zorgverleners die met de interpretatie urineonderzoek te maken hebben.',
+      theme_color: '#22c55e',
+      start_url: '/?ref=pwa',
+      background_color: '#f9f6fb',
+      display: 'standalone',
+    },
+
+    icon: {
+      source: './public/icon.png',
+    },
+
+    meta: {
+      name: 'Urinest.rip - Martien Oranje',
+      author: 'Martien Oranje',
+      mobileAppIOS: true,
+      ogHost: SITE_URL,
+    },
+  },
+
   tailwindcss: {
     configPath: 'tailwind.config.js',
   },
@@ -63,14 +75,6 @@ export default defineNuxtConfig({
       Inter: true,
     },
   },
-
-  // vite: {
-  //   plugins: [
-  //     legacy({
-  //       targets: ['defaults', 'not IE 11']
-  //     })
-  //   ]
-  // },
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -84,6 +88,7 @@ export default defineNuxtConfig({
       },
     ],
     '@pinia-plugin-persistedstate/nuxt',
+    '@kevinmarrec/nuxt-pwa',
   ],
 
   buildModules: ['@nuxtjs/google-fonts'],
