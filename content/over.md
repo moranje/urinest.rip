@@ -61,5 +61,5 @@ Voor vragen of opmerkingen maak ik gebruik van het issues systeem van github.
 
 ## Mede dankzij
 
+- [De anonieme adviseur]()
 - [Denise ten Westend]()
-- [Johanna Finnema]()
