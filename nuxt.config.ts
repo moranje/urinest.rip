@@ -65,19 +65,15 @@ export default defineNuxtConfig({
     },
   },
 
-  tailwindcss: {
-    configPath: 'tailwind.config.js',
-  },
-
   googleFonts: {
     download: true,
     families: {
-      Inter: true,
+      Inter: [100, 300, 500, 700, 900],
+      Lobster: true,
     },
   },
 
   modules: [
-    '@nuxtjs/tailwindcss',
     [
       '@pinia/nuxt',
       {
@@ -89,9 +85,9 @@ export default defineNuxtConfig({
     ],
     '@pinia-plugin-persistedstate/nuxt',
     '@kevinmarrec/nuxt-pwa',
+    '@nuxt/content',
+    '@nuxtjs/google-fonts',
   ],
-
-  buildModules: ['@nuxtjs/google-fonts'],
 
   vue: {
     compilerOptions: {

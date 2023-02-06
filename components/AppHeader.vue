@@ -6,10 +6,10 @@
       <logo v-if="$route.name === 'index'" @click="$router.go(0)" />
       <logo v-else @click="$router.push('/')" />
       <img
-        @click="navigateTo('/about')"
+        @click="navigateTo('/over')"
         src="../assets/user-image.jpeg"
         alt="Martien Oranje"
-        class="navbar-item w-12 h-12 rounded-full"
+        class="navbar-item about"
       />
     </div>
   </header>
@@ -24,9 +24,24 @@
     z-index: 1;
   }
 
+  .f-container {
+    justify-content: space-between;
+    display: flex;
+  }
+
   header.navbar .navbar-item:hover {
     // border: 2px solid var(--vff-main-accent-color);
     cursor: pointer;
+  }
+
+  .navbar-item.about {
+    border-radius: 9999px;
+    width: 3rem;
+    height: 3rem;
+
+    &:hover {
+      filter: brightness(0.75);
+    }
   }
 
   @media screen and (min-width: 1366px) {
