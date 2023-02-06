@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "uti.local.healthy": {
     "treatment": [
       {
@@ -35,11 +35,11 @@
     "explainer": "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking vrouw",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       }
     ]
@@ -73,12 +73,28 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking",
         "url": "https://www.thuisarts.nl/blaasontsteking"
+      }
+    ]
+  },
+  "uti.local.elderly": {
+    "treatment": [
+      {
+        "description": "Behandeling wordt (nog) niet geadviseerd.",
+        "contraIndications": [""],
+        "documentation": "Urinekweek is nodig om een UWI aan te tonen. Bij koorts, flankpijn of verwardheid contact."
+      }
+    ],
+    "explainer": "Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. GKweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen, bij falen van ingezette therapie en bij recidiverende infecties. Bij ouderen is de nitriet vaak fals positief.",
+    "sources": [
+      {
+        "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
+        "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-aanvullend-onderzoek-bij-patienten-zonder-katheter"
       }
     ]
   },
@@ -101,11 +117,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Vraag zwangeren contact op te nemen over de uitslag van de kweek vanwege de mogelijke consequenties van de uitslag voor de bevalling.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking vrouw",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       }
     ]
@@ -121,7 +137,7 @@
     "explainer": "Behandeling van asymptomatische bacteriurie wordt in alle patiëntgroepen, met uitzondering van zwangeren, afgeraden",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
@@ -148,11 +164,11 @@
     "explainer": "Mannen lopen een groter risico op complicaties. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking man",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
       }
     ]
@@ -168,7 +184,7 @@
     "explainer": "Behandeling van asymptomatische bacteriurie wordt in alle patiëntgroepen, met uitzondering van zwangeren, afgeraden",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
@@ -191,11 +207,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Geef ouders van kinderen met een urineweginfectie die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking kind",
         "url": "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
       }
     ]
@@ -237,11 +253,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking vrouw",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       }
     ]
@@ -283,12 +299,28 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Overweeg indien uit de kweek blijkt dat de verwekker gevoelig is voor amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol het eerder gestarte ciprofloxacine te stoppen. LET OP: bij mannen geniet dan cotrimoxazol de voorkeur, bij vrouwen liever amoxiciline.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking",
         "url": "https://www.thuisarts.nl/blaasontsteking"
+      }
+    ]
+  },
+  "uti.tissueInvasion.elderly": {
+    "treatment": [
+      {
+        "description": "Placeholder to fix code` types",
+        "contraIndications": [""],
+        "documentation": "Placeholder"
+      }
+    ],
+    "explainer": "Placeholder",
+    "sources": [
+      {
+        "name": "Placeholder",
+        "url": "Placeholder"
       }
     ]
   },
@@ -303,11 +335,11 @@
     "explainer": "Een pyelonefritis in de zwangerschap gaat gepaard met een verhoogd risico op ernstige morbiditeit of mortaliteit. Het advies om zwangeren met een pyelonefritis voor behandeling te verwijzen naar de 2e lijn sluit aan bij de aanbeveling uit de richtlijn Urineweginfecties in de Zwangerschap van de NVOG.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking en zwanger",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
       }
     ]
@@ -349,11 +381,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking vrouw",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       }
     ]
@@ -394,11 +426,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Als uit de kweek blijkt dat de verwekker gevoelig is voor cotrimoxazol, te starten met cotrimoxazol 2 dd 960 mg voor de resterende dagen van de originele kuur. Cotrimoxazol is gecontra-indiceerd bij gebruik van cumarine of methotrexaat en bij ernstige lever- en nierfunctiestoornissen, ernstige afwijkingen in het bloedbeeld of acute porfyrie.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking man",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
       }
     ]
@@ -440,11 +472,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Als uit de kweek blijkt dat de verwekker gevoelig is voor cotrimoxazol, te starten met cotrimoxazol 2 dd 960 mg voor de resterende dagen van de originele kuur. Cotrimoxazol is gecontra-indiceerd bij gebruik van cumarine of methotrexaat en bij ernstige lever- en nierfunctiestoornissen, ernstige afwijkingen in het bloedbeeld of acute porfyrie.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking vrouw",
         "url": "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       }
     ]
@@ -473,11 +505,11 @@
     "explainer": "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Leg uit aan ouders met een kind van > 1 maand en < 2 jaar dat het maken van een echo van de urinewegen nodig is om uit te sluiten dat er sprake is van een onderliggende oorzaak van de infectie. Geef ouders van kinderen die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Thuisarts",
+        "name": "Thuisarts: blaasontsteking kind",
         "url": "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
       }
     ]
@@ -490,10 +522,10 @@
         "documentation": "Vooralsnog geen urineweginfectie aan kunnen tonen, omdat er wel witte bloedcellen werden gevonden wordt aanvullend nog een dipslide gedaan. Mocht hierbij een bacterie gevonden worden dan kan behandeling nodig zijn."
       }
     ],
-    "explainer": "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (iets meer dan 20%) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd.",
+    "explainer": "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (ongeveer 25% is fals negatief) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
@@ -509,7 +541,7 @@
     "explainer": "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (iets meer dan 20%) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
@@ -525,7 +557,7 @@
     "explainer": "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (iets meer dan 20%) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
@@ -541,7 +573,7 @@
     "explainer": "Plan een afspraak op het spreekuur in. Macroscopische hematurie die niet wordt verklaard door menstruatie, myoglobinurie na extreme inspanning, een urineweginfectie of nierstenen is een alarmsymptoom en verdiend aanvullend onderzoek naar onderliggende oorzaak.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
@@ -569,7 +601,7 @@
     "explainer": "Urinescreening met urinestrip is veelal positief vanaf een eiwit(albumine)concentratie van ongeveer 100-300 mg/l. Een positieve urinestrip voor eiwit samen met hematurie rechtvaardigt dan ook een nefrologische analyse. Instrueer de patiënt dat een urinemonster zo snel mogelijk na verzamelen bij het laboratorium moet worden ingeleverd (liefst ter plaatse). Gebruik de tweede, midstraal, ochtendurine (een verzameling van twee tot vier uur na lozing van de eerste ochtendurine) voor onderzoek. Omdat dit monster geconcentreerd en zuur is, zijn de erytrocyten beter te behouden. Maar het langdurige overnachtverblijf in de blaas vergroot de kans op afbraak.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
@@ -609,7 +641,7 @@
     "explainer": "Het vinden van erytrocyten in de urine is niet altijd een teken van een onderliggend lijden (de sensitiviteit van de urinesticktest voor erytrocyten is 91,6%, de specificiteit is 56,9%. De lage specificiteit maakt dat een positieve urinesticktest geen garantie biedt op erytrocyten in de urine). Als de urinesticktest positief is bij een patiënt zonder klachten of met klachten zonder duidelijke oorzaak, luidt het advies om de test na 1 week te herhalen en dan nogmaals als de tweede test negatief is. Als 2 urinesticktests binnen enkele weken een positieve uitslag geven, mag men spreken van ‘persisterend erytrocytenverlies in de urine’. Foutpositieve testuitslagen ontstaan door myoglobinurie, forse bacteriurie, oxiderende schoonmaakmiddelen bij het reinigen van verzamelpotjes en contaminatie met bijvoorbeeld menstruatiebloed of bloed uit rectum of colon. Foutnegatieve resultaten ontstaan door hoge concentraties eiwit (> 5 g/l), vitamine C of nitriet (> 2,5 mmol/l), en conserveermiddelen (formaline).",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
@@ -626,6 +658,22 @@
       }
     ]
   },
+  "other.ruleNotApplicable": {
+    "treatment": [
+      {
+        "description": "Verdere diagnostiek nodig.",
+        "contraIndications": null,
+        "documentation": "Op basis van de anamnese alleen is geen waarschijnlijkheidsdiagnose urineweginfectie te stellen."
+      }
+    ],
+    "explainer": "Stel de waarschijnlijkheidsdiagnose alleen als aan alle criteria voldaan wordt.",
+    "sources": [
+      {
+        "name": "NHG-Standaard Urineweginfecties: evaluatie",
+        "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-evaluatie'"
+      }
+    ]
+  },
   "other.clinicalSuspicion": {
     "treatment": [
       {
@@ -637,8 +685,56 @@
     "explainer": "Omdat er nog steeds een kans op vals negatieve testuitslag bestaat bij nitriettest, dipslide en urinesediment wordt bij aanhoudend klinisch vermoeden toch een kweek (gouden standaard) geadviseerd.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      }
+    ]
+  },
+  "other.negativeDipslide": {
+    "treatment": [
+      {
+        "description": "Geen behandeling nodig.",
+        "contraIndications": null,
+        "documentation": "Geen urineweginfectie aan kunnen tonen."
+      }
+    ],
+    "explainer": "Een urineweg infectie is zeer onwaarschijnlijk. Mocht er twijfel bestaan over het aantal kolonie-vormende eenheden, dan kan een dag later (het aantal bacterieen in de blaas zou dan ook toegenomen meten zijn) en dipslide van een nieuw urine sample gemaakt kunnen worden",
+    "sources": [
+      {
+        "name": "NHG-Standaard Urineweginfecties: beleid",
+        "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      }
+    ]
+  },
+  "other.elderlyDipslide": {
+    "treatment": [
+      {
+        "description": "Doe geen dipslide bij kwetsbare ouderen.",
+        "contraIndications": null,
+        "documentation": "Adviseer een urinekweek."
+      }
+    ],
+    "explainer": "Doe geen urinesediment of dipslide voor het stellen van de diagnose urineweginfectie bij kwetsbare ouderen.",
+    "sources": [
+      {
+        "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
+        "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-aanvullend-onderzoek-bij-patienten-zonder-katheter"
+      }
+    ]
+  },
+  "other.ambiguousCulture": {
+    "treatment": [
+      {
+        "description": "Overweeg behandeling eventueel in overleg met de medisch microbioloog.",
+        "contraIndications": null,
+        "documentation": "Uitslag ambigu."
+      }
+    ],
+    "explainer": "Overweeg bij een kweekuitslag met een lage hoeveelheid bacteriën (bijvoorbeeld 10^3 KVE/ml) en een aanhoudend vermoeden van een urineweginfectie te overleggen met de arts-microbioloog, om na te gaan of een urineweginfectie met voldoende zekerheid is uitgesloten.",
+    "sources": [
+      {
+        "name": "NHG-Standaard Urineweginfecties: aanvullend onderzoek",
+        "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"
       }
     ]
   },
@@ -653,13 +749,23 @@
     "explainer": "Geen met zekerheid pathologische afwijkingen gevonden. Afwijkende waarden kunnen in bepaalde gevallen weldegelijk van betekenis zijn (glucosurie bij een niet-diabeet) maar moeten op individuele basis afgewogen worden.",
     "sources": [
       {
-        "name": "NHG-Standaard Urineweginfecties",
+        "name": "NHG-Standaard Urineweginfecties: beleid",
         "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       },
       {
-        "name": "Verenso Richtlijn Urineweginfecties",
+        "name": "Verenso Richtlijn Urineweginfecties: klinische verschijnselen bij kwetsbare ouderen",
         "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-klinische-verschijnselen-van-urineweginfecties-bij-kwetsbare-ouderen"
       }
     ]
+  },
+  "other.noUrineTractInfection": {
+    "treatment": [
+      {
+        "description": "Geen behandeling nodig.",
+        "contraIndications": null,
+        "documentation": "Geen bacterie in de urinekweek. Urineweginfectie met voldoende zekerheid uitgesloten."
+      }
+    ],
+    "explainer": "De urinekweek is de gouden standaard voor het bepalen van een urineweginfectie."
   }
 }

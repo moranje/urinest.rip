@@ -58,80 +58,103 @@
 </script>
 
 <template>
-  <li v-if="edit">
-    <button
-      type="button"
-      @click="toggle"
-      class="button float-right"
-      tabindex="1"
-    >
-      <ion-icon name="close-outline"></ion-icon>
-    </button>
-    <input
-      @blur="addItem"
-      type="text"
-      @keyup.enter.prevent="addItem"
-      class="input"
-      placeholder="Nieuwe contra-indicatie"
-      autofocus
-      tabindex="0"
-    />
-  </li>
-  <li v-if="edit" v-for="(item, index) in items">
-    <button
-      type="button"
-      @click="removeItem(index)"
-      class="button float-right"
-      :tabindex="index + 3"
-    >
-      <ion-icon name="trash-outline"></ion-icon>
-    </button>
-    <input
-      :value="item"
-      @keyup.enter.prevent="updateItem($event, index)"
-      @blur.prevent="updateItem($event, index)"
-      type="text"
-      class="input"
-      :tabindex="index + 2"
-    />
-  </li>
+  <div class="root">
+    <ul>
+      <li v-if="edit">
+        <button type="button" @click="toggle" class="button" tabindex="1">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        <input
+          @blur="addItem"
+          type="text"
+          @keyup.enter.prevent="addItem"
+          class="input"
+          placeholder="Nieuwe contra-indicatie"
+          autofocus
+          tabindex="0"
+        />
+      </li>
+      <li v-if="edit" v-for="(item, index) in items">
+        <button
+          type="button"
+          @click="removeItem(index)"
+          class="button"
+          :tabindex="index + 3"
+        >
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+        <input
+          :value="item"
+          @keyup.enter.prevent="updateItem($event, index)"
+          @blur.prevent="updateItem($event, index)"
+          type="text"
+          class="input"
+          :tabindex="index + 2"
+        />
+      </li>
 
-  <li v-else v-for="(item, index) in items" class="text-red-500 !text-lg">
-    <button
-      v-if="index === 0 && props.editable"
-      type="button"
-      @click="toggle"
-      class="button float-right"
-    >
-      <ion-icon name="pencil-outline"></ion-icon>
-    </button>
-    <dev-only>
-      <button
-        v-if="index === 0 && !props.editable"
-        type="button"
-        @click="toggle"
-        class="button float-right"
-      >
+      <li v-else v-for="(item, index) in items">
+        <input type="checkbox" />
+        {{ item.charAt(0).toUpperCase() + item.slice(1) }}
+      </li>
+    </ul>
+
+    <div v-if="!edit && props.editable">
+      <button type="button" @click="toggle" class="button">
         <ion-icon name="pencil-outline"></ion-icon>
       </button>
-    </dev-only>
-    {{ item.charAt(0).toUpperCase() + item.slice(1) }}
-  </li>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+  div.root {
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+
+    ul {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: auto;
+      align-self: auto;
+      padding-left: 0;
+
+      li {
+        list-style-type: none;
+        font-size: 1em;
+
+        input {
+          -webkit-appearance: checkbox;
+        }
+      }
+    }
+  }
+
   .button {
-    border: var(--vff-border-width) solid transparent;
-    padding: 0.1em 0.6em;
+    background-color: var(--vff-main-form-bg-color);
+    border: var(--vff-border-width) solid var(--vff-secondary-form-bg-color);
+    border-radius: var(--vff-border-radius);
+    padding: 0 11px;
+    float: right;
+    line-height: 0;
+
+    color: var(--vff-main-text-color);
+
+    ion-icon {
+      font-size: large;
+    }
   }
 
   .button:hover {
-    border: var(--vff-border-width) solid var(--vff-secondary-form-bg-color);
-    border-radius: var(--vff-border-radius);
+    color: var(--vff-main-accent-color);
   }
 
-  .button:focus {
-    color: var(--vff-main-accent-color);
+  .button:active {
+    border-color: var(--vff-secondary-form-bg-color);
+    background-color: var(--vff-secondary-form-bg-color);
+    color: var(--vff-tertiary-text-color);
   }
 
   input.input {

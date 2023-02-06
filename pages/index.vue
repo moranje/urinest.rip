@@ -1,123 +1,76 @@
 <script lang="ts" setup>
-  import { onMounted, onBeforeUnmount } from 'vue';
-  import { FlowForm, LanguageModel, Question } from '@ditdot-dev/vue-flow-form';
-  import { ref, Ref } from '@vue/reactivity';
-  import { useStore } from '@/store/store';
-  import AdvicePage from '@/components/FormAdvice.vue';
-  const store = useStore();
-
-  useHead({
-    titleTemplate: 'urinest.rip',
-  });
-
-  const language = new LanguageModel({
-    enterKey: 'Enter',
-    shiftKey: 'Shift',
-    ok: 'OK',
-    continue: 'Verder',
-    skip: 'Overslaan',
-    pressEnter: 'Druk :enterKey',
-    multipleChoiceHelpText: 'Kies er 1 of meer opties',
-    multipleChoiceHelpTextSingle: 'Kies 1 optie',
-    otherPrompt: 'Other',
-    placeholder: 'Vul hier je antwoord in...',
-    submitText: 'Versturen',
-    longTextHelpText: ':shiftKey + :enterKey om een nieuwe regel in te voeren.',
-    prev: 'Vorige',
-    next: 'Volgde',
-    percentCompleted: ':percent% voltooid',
-    invalidPrompt: 'Vul het wel even goed in, hè',
-    thankYouText: 'Bedankt hè!',
-    successText: 'Je antwoorden zijn opgeslagen.',
-    ariaOk: 'Druk om verder te gaan',
-    ariaRequired: 'Deze stap is verplicht',
-    ariaPrev: 'Vorige stap',
-    ariaNext: 'Volgende stap',
-    ariaSubmitText: 'Druk om te versturen',
-    ariaMultipleChoice: 'Druk :letter om te selecteren',
-    ariaTypeAnswer: 'Vul in',
-    errorAllowedFileTypes:
-      'Ongeldig bestandstype. Toestane bestanden: :fileTypes.',
-    errorMaxFileSize: 'Bestand is te groot. Toegestane grootte: :size.',
-    errorMinFiles:
-      'Te weinig bestanden toegevoegd. Minimaal aantal bestanden: :min.',
-    errorMaxFiles:
-      'Te veel bestanden toegevoegd. Maximale aantal bestanden: :max.',
-  });
-  let copied: Ref<boolean> = ref(false);
-  let completed: Ref<boolean> = ref(false);
-  store.loadQuestions();
-  let questions = store.getQuestions;
-
-  function onComplete(complete: boolean) {
-    completed.value = complete;
-  }
-
-  function copy() {
-    navigator.clipboard.writeText(store.getTreatmentOption.documentation).then(
-      () => (copied.value = true),
-      () => console.error('Copy failed')
-    );
-  }
-
-  function onKeyListener($event: KeyboardEvent) {
-    if ($event.key === 'Enter' && completed.value && !copied.value) {
-      copy();
-    }
-  }
-
-  onMounted(() => {
-    document.addEventListener('keydown', onKeyListener);
-  });
-
-  onBeforeUnmount(() => {
-    document.removeEventListener('keydown', onKeyListener);
-  });
+  import MenuItem from '@/components/MenuItem.vue';
 </script>
 
 <template>
-  <flow-form
-    ref="flowform"
-    :language="language"
-    v-on:complete="onComplete"
-    :standalone="false"
-    :progressbar="false"
-    :navigation="false"
-  >
-    <template v-slot:complete>
-      <advice-page />
-    </template>
-
-    <template v-slot:completeButton>
-      <div class="f-submit" v-if="!copied">
-        <button
-          class="o-btn-action"
-          ref="button"
-          type="submit"
-          href="#"
-          v-on:click.prevent="copy"
-          aria-label="Kopieer documentatie"
-        >
-          <span>Kopieer</span>
-        </button>
-        <a
-          class="f-enter-desc"
-          href="#"
-          v-on:click.prevent="copy()"
-          v-html="language.formatString(language.pressEnter)"
-        >
-        </a>
+  <div class="vff vff-not-standalone">
+    <div class="f-container">
+      <div class="grid">
+        <MenuItem
+          v-slot="{ hover, touch }"
+          to="/gezonde-vrouwen"
+          name="Gezonde ♀"
+          ><Healthy :hover="hover" :touch="touch"
+        /></MenuItem>
+        <MenuItem v-slot="{ hover, touch }" to="/strip" name="Urinestrip">
+          <Strip :hover="hover" :touch="touch" />
+        </MenuItem>
+        <MenuItem v-slot="{ hover, touch }" to="/dipslide" name="Dipslide">
+          <Dipslide :hover="hover" :touch="touch" />
+        </MenuItem>
+        <MenuItem v-slot="{ hover, touch }" to="/sediment" name="Sediment">
+          <Sediment :hover="hover" :touch="touch" />
+        </MenuItem>
+        <MenuItem v-slot="{ hover, touch }" to="/kweek" name="Kweek">
+          <Culture :hover="hover" :touch="touch"
+        /></MenuItem>
       </div>
-
-      <p class="text-success" v-if="copied">Documentatie gekopieerd.</p>
-    </template>
-
-    <question
-      v-for="(question, index) in questions"
-      v-bind="question"
-      v-bind:key="'m' + index"
-      v-model="question.model"
-    >
-    </question>
-  </flow-form>
+    </div>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 16em);
+    grid-template-rows: repeat(2, 20em);
+    grid-auto-flow: row;
+    gap: 1em;
+    justify-content: space-between;
+    align-content: space-evenly;
+  }
+
+  .grid-item,
+  .menu-item {
+    /* border: thin gray solid; */
+    /* padding: 10px; */
+    height: 16em;
+    overflow: hidden;
+  }
+
+  @media only screen and (max-width: 767px) {
+    header.vff-header + .vff {
+      margin-top: 4vh;
+    }
+
+    .grid {
+      grid-template-columns: repeat(2, 14em);
+      grid-template-rows: repeat(3, 20em);
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    header.vff-header + .vff {
+      margin-top: 0;
+    }
+
+    .vff.vff-not-standalone {
+      padding-top: 1em;
+    }
+
+    .grid {
+      grid-template-columns: repeat(2, 12em);
+      grid-template-rows: repeat(3, 16em);
+    }
+  }
+</style>

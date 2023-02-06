@@ -49,6 +49,10 @@
   font-family: 'Inter', 'Poppins', sans-serif;
 }
 
+html {
+  scroll-padding-top: 76px; /* height of sticky header */
+}
+
 body {
   /* override if needed when using not-standalone option */
   margin: 0;
@@ -57,16 +61,70 @@ body {
 
 .vff {
   color: var(--vff-main-text-color);
+  margin: 10vh 0 0;
 }
 
 .vff.vff-not-standalone {
   background-color: var(--vff-bg-color);
   color: var(--vff-main-text-color);
+
   padding-bottom: 0;
+}
+
+vff .fh1,
+.vff h1 {
+    font-size: 3em;
+    font-weight: 900;
+    margin: .67em 0;
+    font-family: 'Lobster', 'Inter', 'Poppins', sans-serif;
+}
+
+.vff .fh2,
+.vff h2 {
+    font-size: 2.4em;
+    font-weight: 700;
+    line-height: 1.34;
+    margin-bottom: 21px;
+    padding-right: 1.8em
+}
+
+.vff .fh3,
+.vff h3 {
+    font-size: 1.5em;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0
+}
+
+.vff .fh1,
+.vff .fh2,
+.vff .fh3 {
+    display: block
+}
+
+.vff .fh1 a,
+.vff h1 a,
+.vff .fh2 a,
+.vff h2 a,
+.vff .fh3 a,
+.vff h3 a {
+  color: var(--vff-main-text-color);
+
+  &:hover {
+    color: var(--vff-secondary-text-color);
+  }
+
+  &:active {
+    color: var(--vff-main-text-color);
+  }
 }
 
 .vff .vff-footer {
   display: none !important;
+}
+
+header.vff-header+.vff.vff-not-standalone {
+  margin: 10vh 0 0;
 }
 
 header.vff-header {
@@ -77,6 +135,14 @@ header.vff-header {
 
 header.vff-header svg.f-logo {
   fill: var(--vff-main-text-color);
+}
+
+.float-right {
+  float: right;
+}
+
+.upper {
+  text-transform: uppercase;
 }
 
 .vff input[type="text"],
@@ -97,10 +163,18 @@ header.vff-header svg.f-logo {
   color: var(--vff-main-text-color);
 }
 
-.vff a,
-.vff a:active {
-  color: var(--vff-main-text-color);
+.vff a {
+  color: var(--vff-main-accent-color);
+
+  &:hover {
+    color: var(--vff-button-hover-color);
+  }
+
+  &:active {
+    color: var(--vff-yellow);
+  }
 }
+
 
 /* placeholder */
 .vff ::-webkit-input-placeholder { /* Chrome/Opera/Safari */

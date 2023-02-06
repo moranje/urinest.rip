@@ -7,6 +7,10 @@
       type: Boolean,
       default: false,
     },
+    editing: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   const emit = defineEmits(['change', 'blur']);
@@ -20,10 +24,12 @@
 
     if (edit.value === true) {
       await nextTick();
-      // @ts-ignore
-      textarea.value.parentNode.dataset.replicatedValue = text.value;
-      // @ts-ignore
-      textarea.value.focus();
+      if (textarea.value) {
+        // @ts-ignore
+        textarea.value.parentNode.dataset.replicatedValue = text.value;
+        // @ts-ignore
+        textarea.value.focus();
+      }
     } else {
       emit('blur', name.value, text.value);
     }
@@ -44,38 +50,45 @@
 
 <template>
   <section>
-    <button
-      v-if="props.editable"
-      type="button"
-      @click="toggle"
-      class="button float-right"
-    >
-      <ion-icon :name="edit ? 'close-outline' : 'pencil-outline'"></ion-icon>
-    </button>
-    <dev-only>
-      <button
-        v-if="!props.editable"
-        type="button"
-        @click="toggle"
-        class="button float-right"
-      >
-        <ion-icon
-          :name="edit ? 'close-outline' : 'pencil-outline'"
-        ></ion-icon></button
-    ></dev-only>
     <div class="grow-wrap" v-if="edit">
       <textarea
         :value="text"
         @input="input"
-        @blur="toggle($event)"
+        @blur="toggle"
         ref="textarea"
       ></textarea>
     </div>
-    <span v-else="!edit">{{ text }}</span>
+    <div v-if="!edit" class="text">{{ text }}</div>
+    <div v-if="props.editable">
+      <button type="button" @click="toggle" class="button float-right">
+        <ion-icon :name="edit ? 'close-outline' : 'pencil-outline'"></ion-icon>
+      </button>
+    </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
+  section {
+    display: flex;
+    flex-direction: row;
+
+    .grow-wrap,
+    .text {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: auto;
+      // align-self: auto;
+    }
+  }
+
+  .text {
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    border-bottom: var(--vff-border-width) solid transparent;
+    border-radius: var(--vff-border-radius);
+    min-height: 3.8em;
+  }
+
   .grow-wrap {
     /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
     display: grid;
@@ -100,10 +113,13 @@
   .grow-wrap > textarea,
   .grow-wrap::after {
     /* Identical styling required!! */
-    border: var(--vff-border-width) solid var(--vff-secondary-form-bg-color);
+    background-color: var(--vff-main-form-bg-color);
+    border-bottom: var(--vff-border-width) solid
+      var(--vff-secondary-form-bg-color);
     border-radius: var(--vff-border-radius);
     margin-right: 0.5rem;
     padding: 0.5rem;
+    min-height: 3.8em;
 
     font: inherit;
 
@@ -112,22 +128,31 @@
   }
 
   .grow-wrap > textarea {
-    &:focus {
+    &:focus:not(:read-only) {
       border-color: var(--vff-main-accent-color);
     }
   }
 
   .button {
-    border: var(--vff-border-width) solid transparent;
-    padding: 0.1em 0.6em;
+    background-color: var(--vff-main-form-bg-color);
+    border: var(--vff-border-width) solid var(--vff-secondary-form-bg-color);
+    border-radius: var(--vff-border-radius);
+    padding: 0 11px;
+    line-height: 0;
+    color: var(--vff-main-text-color);
+
+    ion-icon {
+      font-size: large;
+    }
   }
 
   .button:hover {
-    border: var(--vff-border-width) solid var(--vff-secondary-form-bg-color);
-    border-radius: var(--vff-border-radius);
+    color: var(--vff-main-accent-color);
   }
 
-  .button:focus {
-    color: var(--vff-main-accent-color);
+  .button:active {
+    border-color: var(--vff-secondary-form-bg-color);
+    background-color: var(--vff-secondary-form-bg-color);
+    color: var(--vff-tertiary-text-color);
   }
 </style>
