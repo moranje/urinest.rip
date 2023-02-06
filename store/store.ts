@@ -43,6 +43,9 @@ function getData(state: StoreState, treatmentOnly: boolean = false) {
   const index = +(state.selectedPath.split('.').pop() || -1);
   const namespace = state.selectedPath.replace(/\.\d/, '') as Namespace; // remove last dot and digit
 
+  // TODO: this may delete user changes
+  if (state.data[namespace] == null) state.data = data;
+
   if (treatmentOnly === true) {
     return state.data[namespace].treatment[index] as TreatmentOption;
   }
@@ -58,6 +61,7 @@ export const useStore = defineStore(STORE_NAME, {
   }),
 
   hydrate(state) {
+    // TODO: this may delete user changes
     if (localStorage.getItem(STORE_NAME) == null) {
       state.data = data;
     } else if (state.data.version === data.version) {
