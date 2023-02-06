@@ -46,3 +46,7 @@ Locally preview production build:
 ```bash
 npm run preview
 ```
+
+## License
+
+The project is licensed under the [GNU General Public License v3.0](https://github.com/moranje/urinestrip/blob/master/LICENSE.md)
