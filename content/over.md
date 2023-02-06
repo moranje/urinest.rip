@@ -4,7 +4,7 @@ Ik heb deze website gemaakt omdat de afwegingen bij urineonderzoek, hoewel ze pr
 
 ## Gebruik
 
-Gebruik is gratis. Ik vind het leuk om iets terug te horen. Dat kan via [Github](https://github.com/moranje/urinestrip) of via [Siilo](https://web.siilo.com/#/signin).
+Gebruik is gratis. Ik vind het leuk om iets terug te horen. Dat kan via [Github](https://github.com/moranje/urinest.rip) of via [Siilo](https://web.siilo.com/#/signin).
 
 ### Belangrijkste features
 
@@ -13,7 +13,7 @@ Gebruik is gratis. Ik vind het leuk om iets terug te horen. Dat kan via [Github]
 - Statusvoering die na doorlopen van het formulier in het dossier geplakt kan worden
 - Werkt offline (als je de website tenminste 1 keer bezocht hebt)
 - Transparante bronvermeldingen, gebaseerd op meerdere richtlijnen
-- [Open source](https://github.com/moranje/urinestrip)
+- [Open source](https://github.com/moranje/urinest.rip)
 - Met ❤️ gemaakt
 
 ## Dataopslag
@@ -24,15 +24,15 @@ Alle informatie op de website wordt na het eerste bezoek in de browser opgeslage
 
 ### Vrouwen
 
-[Enkelzijdig](https://github.com/moranje/urinestrip/releases/download/v1/Urineonderzoek.vrouwen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinestrip/releases/download/v1/Urineonderzoek.vrouwen.dubbelzijdig.pdf)
+[Enkelzijdig](https://github.com/moranje/urinest.rip/releases/download/v1/Urineonderzoek.vrouwen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinest.rip/releases/download/v1/Urineonderzoek.vrouwen.dubbelzijdig.pdf)
 
 ### Mannen
 
-[Enkelzijdig](https://github.com/moranje/urinestrip/releases/download/v1/Urineonderzoek.mannen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinestrip/releases/download/v1/Urineonderzoek.mannen.dubbelzijdig.pdf)
+[Enkelzijdig](https://github.com/moranje/urinest.rip/releases/download/v1/Urineonderzoek.mannen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinest.rip/releases/download/v1/Urineonderzoek.mannen.dubbelzijdig.pdf)
 
 ### Kinderen
 
-[Enkelzijdig](Urineonderzoek.kinderen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinestrip/releases/download/v1/Urineonderzoek.kinderen.dubbelzijdig.pdf)
+[Enkelzijdig](Urineonderzoek.kinderen.enkelzijdig.pdf) of [dubbelzijdig](https://github.com/moranje/urinest.rip/releases/download/v1/Urineonderzoek.kinderen.dubbelzijdig.pdf)
 
 ## Garanties voor implementatie
 
@@ -47,13 +47,13 @@ Het is gemaakt met de huisartsenpraktijk in gedachte maar net zo goed te gebruik
 
 ### Open source
 
-De broncode is te vinden op [Github](https://github.com/moranje/urinestrip).
+De broncode is te vinden op [Github](https://github.com/moranje/urinest.rip).
 
 ## Verbeterpunten of opmerkingen
 
 Voor vragen of opmerkingen maak ik gebruik van het issues systeem van github.
 
-[Ga naar issues](https://github.com/moranje/urinestrip/issues)
+[Ga naar issues](https://github.com/moranje/urinest.rip/issues)
 
 ## Auteur
 
