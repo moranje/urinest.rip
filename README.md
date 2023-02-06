@@ -4,7 +4,7 @@
 URINEST.RIP
 </h1>
 
-Descision support for the interpretation of urine test results for medical professionals. Mostly intended for GP practices. But it's for anyone interested. No judgement if you like looking at pee.
+Decision support for the interpretation of urine test results for medical professionals. Mostly intended for GP practices. But it's for anyone interested. No judgement if you just like looking at pee.
 
 ## Website
 
