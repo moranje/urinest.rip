@@ -45,13 +45,13 @@
           <ClientOnly>
             <div class="grid">
               <h3
-                v-if="store.getTreatmentOption.additionalTest"
+                v-if="store.getTreatmentOption?.additionalTest"
                 class="grid-item item-name"
               >
                 Onderzoek
               </h3>
               <Text
-                v-if="store.getTreatmentOption.additionalTest"
+                v-if="store.getTreatmentOption?.additionalTest"
                 :text="store.getTreatmentOption.additionalTest"
                 @blur="store.setTreatmentOption"
                 @change="store.setTreatmentOption"
@@ -61,13 +61,13 @@
               />
 
               <h3
-                v-if="store.getTreatmentOption.description"
+                v-if="store.getTreatmentOption?.description"
                 class="grid-item item-name"
               >
                 Behandel
               </h3>
               <Text
-                :text="store.getTreatmentOption.description"
+                :text="store.getTreatmentOption?.description"
                 @blur="store.setTreatmentOption"
                 @change="store.setTreatmentOption"
                 :editable="devModeEdit"
@@ -76,14 +76,20 @@
               />
 
               <h3
-                v-if="store.getTreatmentOption.contraIndications != null"
+                v-if="
+                  store.getTreatmentOption?.contraIndications != null &&
+                  store.getTreatmentOption?.contraIndications.length > 0
+                "
                 class="grid-item item-name"
               >
                 Contra-indicaties
               </h3>
               <Items
-                v-if="store.getTreatmentOption.contraIndications != null"
-                :items="store.getTreatmentOption.contraIndications ?? []"
+                v-if="
+                  store.getTreatmentOption?.contraIndications != null &&
+                  store.getTreatmentOption?.contraIndications.length > 0
+                "
+                :items="store.getTreatmentOption.contraIndications"
                 @blur="store.setTreatmentOption"
                 @change="store.setTreatmentOption"
                 :editable="devModeEdit"
@@ -92,13 +98,13 @@
               />
 
               <h3
-                v-if="store.getTreatmentOption.info"
+                v-if="store.getTreatmentOption?.info"
                 class="grid-item item-name"
               >
                 Waarschuwingen
               </h3>
               <Text
-                v-if="store.getTreatmentOption.info"
+                v-if="store.getTreatmentOption?.info"
                 :text="store.getTreatmentOption.info"
                 @blur="store.setTreatmentOption"
                 @change="store.setTreatmentOption"
@@ -108,13 +114,13 @@
               />
 
               <h3
-                v-if="store.getTreatmentOption.testAfterTreatment"
+                v-if="store.getTreatmentOption?.testAfterTreatment"
                 class="grid-item item-name"
               >
                 Vervolg onderzoek
               </h3>
               <Text
-                v-if="store.getTreatmentOption.testAfterTreatment"
+                v-if="store.getTreatmentOption?.testAfterTreatment"
                 :editable="devModeEdit"
                 :text="store.getTreatmentOption.testAfterTreatment"
                 @blur="store.setTreatmentOption"
@@ -124,12 +130,13 @@
               />
 
               <h3
-                v-if="store.getTreatment.explainer"
+                v-if="store.getTreatment?.explainer"
                 class="grid-item item-name"
               >
                 Leg uit
               </h3>
               <Text
+                v-if="store.getTreatment?.explainer"
                 :editable="edit"
                 :text="store.getTreatment.explainer"
                 @blur="store.setTreatment"
@@ -139,12 +146,13 @@
               />
 
               <h3
-                v-if="store.getTreatmentOption.documentation"
+                v-if="store.getTreatmentOption?.documentation"
                 class="grid-item item-name"
               >
                 Documenteer
               </h3>
               <Text
+                v-if="store.getTreatmentOption?.documentation"
                 :editable="edit"
                 :text="store.getTreatmentOption.documentation"
                 @blur="store.setTreatmentOption"
@@ -154,12 +162,12 @@
               />
 
               <h3
-                v-if="store.getTreatment.sources != null"
+                v-if="store.getTreatment?.sources != null"
                 class="grid-item item-name"
               >
                 Bronnen
               </h3>
-              <div v-if="store.getTreatment.sources != null" class="grid-item">
+              <div v-if="store.getTreatment?.sources != null" class="grid-item">
                 <ol>
                   <li
                     v-for="link in store.getTreatment.sources"

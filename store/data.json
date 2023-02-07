@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "uti.local.healthy": {
     "treatment": [
       {
@@ -86,11 +86,11 @@
     "treatment": [
       {
         "description": "Behandeling wordt (nog) niet geadviseerd.",
-        "contraIndications": [""],
+        "contraIndications": [],
         "documentation": "Urinekweek is nodig om een UWI aan te tonen. Bij koorts, flankpijn of verwardheid contact."
       }
     ],
-    "explainer": "Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. GKweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen, bij falen van ingezette therapie en bij recidiverende infecties. Bij ouderen is de nitriet vaak fals positief.",
+    "explainer": "Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen, bij falen van ingezette therapie en bij recidiverende infecties. Bij ouderen is de nitriet vaak fals positief.",
     "sources": [
       {
         "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
@@ -130,7 +130,7 @@
     "treatment": [
       {
         "description": "Behandeling is niet nodig.",
-        "contraIndications": [""],
+        "contraIndications": [],
         "documentation": "Behandeling is niet nodig in afwezigheid van tekenen van weefselinvasie (koorts, algehele malaise, (koude) rillingen, flank- of perineumpijn, een delier)"
       }
     ],
@@ -177,7 +177,7 @@
     "treatment": [
       {
         "description": "Behandeling is niet nodig.",
-        "contraIndications": [""],
+        "contraIndications": [],
         "documentation": "Behandeling is niet nodig in afwezigheid van tekenen van weefselinvasie (koorts, algehele malaise, (koude) rillingen, flank- of perineumpijn, een delier)"
       }
     ],
@@ -312,7 +312,7 @@
     "treatment": [
       {
         "description": "Placeholder to fix code` types",
-        "contraIndications": [""],
+        "contraIndications": [],
         "documentation": "Placeholder"
       }
     ],
@@ -719,6 +719,22 @@
       {
         "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
         "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-aanvullend-onderzoek-bij-patienten-zonder-katheter"
+      }
+    ]
+  },
+  "other.contaminatedSediment": {
+    "treatment": [
+      {
+        "description": "Herhaal test.",
+        "contraIndications": null,
+        "documentation": "Het urine sediment was niet te betrouwbaar te interpreteren en moet herhaald worden."
+      }
+    ],
+    "explainer": "De aanwezigheid van plaveiselcelepitheelcellen duidt op contaminatie en maakt de beoordeling onbetrouwbaar.",
+    "sources": [
+      {
+        "name": "NHG-Standaard Urineweginfecties: aanvullend onderzoek",
+        "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"
       }
     ]
   },

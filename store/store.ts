@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import jsonData from '@/store/data.json';
 import { migrate } from '@/components/migrate';
-import { QuestionModel, Namespace, Path } from '@/components/form-shared';
+import { Namespace, Path } from '@/components/form-shared';
 
 export type Link = {
   name: string;
@@ -43,6 +43,8 @@ function getData(state: StoreState, treatmentOnly: boolean = false) {
   const index = +(state.selectedPath.split('.').pop() || -1);
   const namespace = state.selectedPath.replace(/\.\d/, '') as Namespace; // remove last dot and digit
 
+  if (!namespace) return null;
+
   // TODO: this may delete user changes
   if (state.data[namespace] == null) state.data = data;
 
@@ -57,7 +59,6 @@ export const useStore = defineStore(STORE_NAME, {
   state: () => ({
     data: {} as Store,
     selectedPath: '' as Path,
-    test: '' as 'nitrite' | 'dipslide' | 'sediment' | 'culture',
   }),
 
   hydrate(state) {
