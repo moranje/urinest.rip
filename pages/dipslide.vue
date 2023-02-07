@@ -12,11 +12,11 @@
       options: [
         {
           label: 'Groei',
-          value: 'positief',
+          value: 'positive',
         },
         {
           label: 'Geen groei',
-          value: 'negatief',
+          value: 'negative',
         },
       ],
       jump: {
@@ -34,11 +34,11 @@
       options: [
         {
           label: '10^4 KVE/ml of meer',
-          value: 'positief',
+          value: 'positive',
         },
         {
           label: '10^3 KVE/ml of minder',
-          value: 'negatief',
+          value: 'negative',
         },
       ],
       descriptionLink: [
