@@ -57,14 +57,9 @@
   function navigate(answeredQuestions: QuestionModel[], loading: boolean) {
     loading = true;
     const store = useStore();
-    const [elderly, macConkey, cled] = answeredQuestions;
+    const [macConkey, cled] = answeredQuestions;
 
-    if (elderly.answer === 'yes') {
-      store.setPath(`other.elderlyDipslide.0`);
-      router.push({ path: '/advies' }).then(() => {
-        loading = false;
-      });
-    } else if (macConkey.answer === 'positive') {
+    if (macConkey.answer === 'positive') {
       router.push({ path: '/uwi' }).then(() => {
         loading = false;
       });
