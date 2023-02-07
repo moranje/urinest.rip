@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { FlowForm, Question } from '@ditdot-dev/vue-flow-form';
+  import { FlowForm, Question } from './vue-flow-form.esm';
   import { language, QuestionModel } from './form-shared';
 
   const emit = defineEmits(['complete']);

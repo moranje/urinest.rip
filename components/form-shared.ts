@@ -1,4 +1,4 @@
-import { LanguageModel } from '@ditdot-dev/vue-flow-form';
+import { LanguageModel } from './vue-flow-form.esm';
 
 export type Type = 'local' | 'tissueInvasion';
 export type Group =
@@ -142,7 +142,7 @@ export const language = new LanguageModel({
   submitText: 'Versturen',
   longTextHelpText: ':shiftKey + :enterKey om een nieuwe regel in te voeren.',
   prev: 'Vorige',
-  next: 'Volgde',
+  next: 'Volgende',
   percentCompleted: ':percent% voltooid',
   invalidPrompt: 'Vul het wel even goed in, hè',
   thankYouText: 'Bedankt hè!',
