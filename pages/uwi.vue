@@ -192,15 +192,17 @@
       options: [],
       jump: () => {
         const store = useStore();
-        const [tissueInvasion, riskAssessment, _, __, antibiotics] = questions;
+        const [tissueInvasion, riskAssessment, sex, __, antibiotics] =
+          questions;
 
         const ti = tissueInvasion.model as Type;
-        const ra = riskAssessment.model as Group;
+        let ra = riskAssessment.model as Group;
         const ab = antibiotics.model as Choice;
 
-        store.setPath(`uti.${ti}.${ra}.${ab}`);
+        if (sex.model === 'male') ra = 'men';
+        if (sex.model === 'female') ra = 'vulnerable';
 
-        return '_submit';
+        store.setPath(`uti.${ti}.${ra}.${ab}`);
       },
       required: true,
       multiple: false,
