@@ -67,6 +67,7 @@
                 Behandel
               </h3>
               <Text
+                v-if="store.getTreatmentOption?.description"
                 :text="store.getTreatmentOption?.description"
                 @blur="store.setTreatmentOption"
                 @change="store.setTreatmentOption"
@@ -180,7 +181,7 @@
             </div>
           </ClientOnly>
 
-          <Spinner v-if="!store.getTreatmentOption" class="spinner"></Spinner>
+          <Spinner v-show="!store.getTreatmentOption" class="spinner"></Spinner>
         </div>
       </div>
     </div>
