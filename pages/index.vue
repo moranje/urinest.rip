@@ -32,8 +32,8 @@
 <style lang="scss" scoped>
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 16em);
-    grid-template-rows: repeat(2, 20em);
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     grid-auto-flow: row;
     gap: 1em;
     justify-content: space-between;
@@ -54,8 +54,8 @@
     }
 
     .grid {
-      grid-template-columns: repeat(2, 14em);
-      grid-template-rows: repeat(3, 20em);
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
     }
   }
 
@@ -66,11 +66,6 @@
 
     .vff.vff-not-standalone {
       padding-top: 1em;
-    }
-
-    .grid {
-      grid-template-columns: repeat(2, 12em);
-      grid-template-rows: repeat(3, 16em);
     }
   }
 </style>
