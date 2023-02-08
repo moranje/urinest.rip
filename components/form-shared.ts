@@ -1,4 +1,4 @@
-import { LanguageModel } from './vue-flow-form.esm';
+import { LanguageModel } from '@ditdot-dev/vue-flow-form';
 
 export type Type = 'local' | 'tissueInvasion';
 export type Group =

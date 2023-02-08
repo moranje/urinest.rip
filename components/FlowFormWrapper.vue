@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { FlowForm, Question } from './vue-flow-form.esm';
+  import { FlowForm, Question } from '@ditdot-dev/vue-flow-form';
   import { language, QuestionModel } from './form-shared';
 
   const emit = defineEmits(['complete']);
@@ -40,6 +40,14 @@
       v-model="question.model"
     >
     </question>
+
+    <template v-slot:complete>
+      <span></span>
+    </template>
+
+    <template v-slot:completeButton>
+      <Spinner class="spinner"></Spinner>
+    </template>
   </flow-form>
 
   <Spinner v-else class="spinner"></Spinner>
