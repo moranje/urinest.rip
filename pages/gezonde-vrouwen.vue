@@ -1,48 +1,44 @@
 <script lang="ts" setup>
   import { useStore } from '@/store/store';
-  import { QuestionModel, Result } from '@/components/form-shared';
+  import { Choice, QuestionModel, Result } from '@/components/form-shared';
 
   const router = useRouter();
   const questions = reactive<QuestionModel[]>([
     {
       type: 'multiplechoice',
       id: 'healthyWoman',
-      title: 'Is één van de volgende criteria NIET waar',
+      title: 'Wordt aan ALLE criteria voldaan',
       nextStepOnAnswer: true,
       options: [
         {
           label:
             'Patiënte heeft eerder een aangetoonde urineweginfecties gehad',
-          value: 'negative',
+          value: '1',
         },
         {
           label: 'Pijn bij het plassen is de op de voorgrond staande klacht',
-          value: 'negative',
+          value: '2',
         },
         {
           label:
             'Is zijn geen tekenen van weefselinvasie (koorts, koude rillingen, flankpijn, pijn bilnaad, verwardheid)',
-          value: 'negative',
+          value: '3',
         },
         {
           label: 'De klachten bestaan korter dan een week',
-          value: 'negative',
+          value: '4',
         },
         {
           label: 'Er is geen verhoogd risico op een soa',
-          value: 'negative',
+          value: '5',
         },
         {
           label: 'Er is geen vaginale irritatie/er zijn geen fluorklachten',
-          value: 'negative',
+          value: '6',
         },
         {
-          label: 'patiënte zelf denkt dat er sprake is van een cystitis',
-          value: 'negative',
-        },
-        {
-          label: 'Bovenstaande vragen zijn allen WEL waar',
-          value: 'positive',
+          label: 'Patiënte zelf denkt dat er sprake is van een cystitis',
+          value: '7',
         },
       ],
       descriptionLink: [
@@ -52,6 +48,49 @@
           target: '_blank',
         },
       ],
+      jump: () => {
+        const store = useStore();
+        const [patient] = questions;
+
+        if (patient.model?.length !== 7) {
+          store.setPath(`other.ruleNotApplicable.0`);
+
+          router.push({ path: '/advies' });
+        }
+      },
+      required: true,
+      multiple: true,
+      model: '',
+    },
+    {
+      type: 'multiplechoice',
+      id: 'antibiotics',
+      title: 'Welke behandeling kan patiënt krijgen',
+      nextStepOnAnswer: true,
+      options: [
+        {
+          label: 'Afwachtend beleid (eventueel met pijnstilling)',
+          value: '0',
+        },
+        {
+          label: 'Nitrofurantoïne',
+          value: '1',
+        },
+        {
+          label: 'Fosfomycine',
+          value: '2',
+        },
+        {
+          label: 'Trimethoprim',
+          value: '3',
+        },
+      ],
+      jump: () => {
+        const store = useStore();
+        const [_, antibiotics] = questions;
+
+        store.setPath(`uti.local.healthy.${antibiotics.model as Choice}`);
+      },
       required: true,
       multiple: false,
       model: '',
@@ -60,14 +99,6 @@
 
   function navigate(answeredQuestions: QuestionModel[], loading: boolean) {
     loading = true;
-    const store = useStore();
-    const [patient] = answeredQuestions;
-
-    if (patient.answer === 'positive') {
-      store.setPath(`uti.local.healthy.0`);
-    } else {
-      store.setPath(`other.ruleNotApplicable.0`);
-    }
 
     router.push({ path: '/advies' }).then(() => {
       loading = false;
