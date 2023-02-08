@@ -178,11 +178,9 @@
                 </ol>
               </div>
             </div>
-
-            <template #fallback>
-              <Spinner class="spinner"></Spinner>
-            </template>
           </ClientOnly>
+
+          <Spinner v-if="!store.getTreatmentOption" class="spinner"></Spinner>
         </div>
       </div>
     </div>
@@ -191,7 +189,7 @@
 
 <style lang="scss" scoped>
   .spinner {
-    height: 400px;
+    height: 200px;
   }
 
   button {
@@ -233,6 +231,12 @@
     .source-link {
       padding-top: 0.5rem;
       padding-left: 0.5rem;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .grid {
+      grid-template-columns: 100%;
     }
   }
 </style>
