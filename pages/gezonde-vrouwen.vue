@@ -7,12 +7,12 @@
     {
       type: 'multiplechoice',
       id: 'healthyWoman',
-      title: 'Wordt aan ALLE criteria voldaan',
+      title: 'Wat is klopt er?',
       nextStepOnAnswer: true,
       options: [
         {
           label:
-            'Patiënte heeft eerder een aangetoonde urineweginfecties gehad',
+            'Patiënte heeft eerder een test bewezen urineweginfecties gehad',
           value: '1',
         },
         {
@@ -21,7 +21,7 @@
         },
         {
           label:
-            'Is zijn geen tekenen van weefselinvasie (koorts, koude rillingen, flankpijn, pijn bilnaad, verwardheid)',
+            'Er zijn geen tekenen van weefselinvasie (koorts, koude rillingen, flankpijn, pijn bilnaad, verwardheid)',
           value: '3',
         },
         {
