@@ -7,7 +7,7 @@
     {
       type: 'multiplechoice',
       id: 'healthyWoman',
-      title: 'Wat is klopt er?',
+      title: 'Welke uitspraken zijn waar?',
       nextStepOnAnswer: true,
       options: [
         {
