@@ -15,7 +15,7 @@
     <div class="error">
       <span class="head">404</span>
 
-      <div class="title">"Dat bestaat niet."</div>
+      <div class="title">Dat. Bestaat. Niet.</div>
 
       <button type="button" @click="router.push({ path: '/' })" class="button">
         Naar huis
