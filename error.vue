@@ -19,12 +19,11 @@
 
       <button type="button" @click="router.push({ path: '/' })" class="button">
         Naar huis
-        <!-- <ion-icon name="copy-outline"></ion-icon> -->
       </button>
 
-      <span class="log">
+      <!-- <span class="log">
         {{ JSON.stringify(props.error) }}
-      </span>
+      </span> -->
     </div>
   </div>
 </template>
@@ -39,7 +38,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    font-family: sans-serif;
     font-weight: 100 !important;
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
