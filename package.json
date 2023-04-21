@@ -15,7 +15,7 @@
     "@nuxt/content": "^2.5.2",
     "@nuxtjs/google-fonts": "^3.0.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
-    "@pinia/nuxt": "^0.4.8",
+    "@pinia/nuxt": "^0.4.9",
     "fs-extra": "^11.1.0",
     "nuxt": "^3.4.1",
     "nuxt-purgecss": "^2.0.0",
