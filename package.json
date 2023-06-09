@@ -19,7 +19,7 @@
     "fs-extra": "^11.1.0",
     "nuxt": "^3.5.1",
     "nuxt-purgecss": "^2.0.0",
-    "sass": "^1.62.1"
+    "sass": "^1.63.3"
   },
   "dependencies": {
     "@ditdot-dev/vue-flow-form": "^2.3.1",
