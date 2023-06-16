@@ -22,7 +22,7 @@
     "sass": "^1.62.1"
   },
   "dependencies": {
-    "@ditdot-dev/vue-flow-form": "^2.3.1",
+    "@ditdot-dev/vue-flow-form": "^2.3.2",
     "pinia": "^2.1.3"
   }
 }
