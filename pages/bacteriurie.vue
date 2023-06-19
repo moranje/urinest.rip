@@ -224,7 +224,7 @@
       options: [],
       jump: () => {
         const store = useStore();
-        const [tissueInvasion, riskAssessment, sex, __, antibiotics] =
+        const [tissueInvasion, riskAssessment, _, sex, __, antibiotics] =
           questions;
 
         const ti = tissueInvasion.model as Type;
