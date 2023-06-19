@@ -43,7 +43,7 @@
     const [culture] = answeredQuestions;
 
     if (culture.answer === 'positive') {
-      router.push({ path: '/uwi' }).then(() => {
+      router.push({ path: '/bacteriurie' }).then(() => {
         loading = false;
       });
     } else if (culture.answer === 'ambiguousCulture') {
@@ -64,6 +64,5 @@
   <FlowFormWrapper
     name="Urinekweek"
     :questions="questions"
-    @complete="navigate"
-  />
+    @complete="navigate" />
 </template>

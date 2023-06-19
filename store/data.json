@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "uti.local.healthy": {
     "treatment": [
       {
@@ -85,16 +85,20 @@
   "uti.local.elderly": {
     "treatment": [
       {
-        "description": "Behandeling wordt (nog) niet geadviseerd.",
+        "description": "Behandeling wordt niet geadviseerd, niet verdacht voor UWI.",
         "contraIndications": [],
-        "documentation": "Urinekweek is nodig om een UWI aan te tonen. Bij koorts, flankpijn of verwardheid contact."
+        "documentation": "Geen behandeling bij asymptomatische bacteriurie met voor urineweginfectie asecifieke symptomen."
       }
     ],
-    "explainer": "Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen, bij falen van ingezette therapie en bij recidiverende infecties. Bij ouderen is de nitriet vaak fals positief.",
+    "explainer": "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte ( positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties.",
     "sources": [
       {
         "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
         "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-aanvullend-onderzoek-bij-patienten-zonder-katheter"
+      },
+      {
+        "name": "Verenso Richtlijn Urineweginfecties: Stroomschema",
+        "url": "https://www.verenso.nl/_asset/_public/Richtlijnen_kwaliteit/richtlijnen/database/Urineweginfecties/Bijlage-Algoritme-verdenking-UWI-zonder-katheter-aangepast-21-10.pdf"
       }
     ]
   },

@@ -60,11 +60,11 @@
     const [macConkey, cled] = answeredQuestions;
 
     if (macConkey.answer === 'positive') {
-      router.push({ path: '/uwi' }).then(() => {
+      router.push({ path: '/bacteriurie' }).then(() => {
         loading = false;
       });
     } else if (cled.answer === 'positive') {
-      router.push({ path: '/uwi' }).then(() => {
+      router.push({ path: '/bacteriurie' }).then(() => {
         loading = false;
       });
     } else {
@@ -80,6 +80,5 @@
   <FlowFormWrapper
     name="Dipslide"
     :questions="questions"
-    @complete="navigate"
-  />
+    @complete="navigate" />
 </template>

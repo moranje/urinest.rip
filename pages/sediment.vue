@@ -35,7 +35,7 @@
     const [bacteruria] = answeredQuestions;
 
     if (bacteruria.answer === 'positive') {
-      router.push({ path: '/uwi' }).then(() => {
+      router.push({ path: '/bacteriurie' }).then(() => {
         loading = false;
       });
     } else if (bacteruria.answer === 'contaminatedSediment') {
@@ -56,6 +56,5 @@
   <FlowFormWrapper
     name="Urine sediment"
     :questions="questions"
-    @complete="navigate"
-  />
+    @complete="navigate" />
 </template>

@@ -109,7 +109,7 @@
     const store = useStore();
 
     if (nitrite.answer === 'positive') {
-      router.push({ path: '/uwi' }).then(() => {
+      router.push({ path: '/bacteriurie' }).then(() => {
         loading = false;
       });
     } else if (leucocyte.answer === 'positive') {
@@ -133,6 +133,5 @@
   <FlowFormWrapper
     name="Urinestrip"
     :questions="questions"
-    @complete="navigate"
-  />
+    @complete="navigate" />
 </template>

@@ -87,21 +87,52 @@
         }
 
         if (riskAssessment.model === 'elderly') {
-          if (tissueInvasion.model === 'local') {
-            store.setPath('uti.local.elderly.0');
+          if (tissueInvasion.model === 'tissueInvasion') return 'sex';
 
-            return '_submit';
-          } else {
-            // Next question
-          }
-        } else if (riskAssessment.model === 'vulnerable') {
-          // Next question
-        } else {
-          // Everything but the 'elderly' category skips ahead
-          return 'urinaryCatheter';
+          return 'elderly';
         }
 
         // Next question
+        return 'urinaryCatheter';
+      },
+      required: true,
+      multiple: false,
+      model: '',
+    },
+    {
+      type: 'multiplechoice',
+      id: 'elderly',
+      title: 'Is er sprake van',
+      nextStepOnAnswer: true,
+      options: [
+        {
+          label: 'Twee of meer van urineweggerelateerde symptomen',
+          value: 'two',
+        },
+        {
+          label:
+            'Één zeer hinderlijk urineweggerelateerd symptoom waarvoor geen andere verklaring kan worden gevonden',
+          value: 'one',
+        },
+        {
+          label: 'Andere symptomen',
+          value: 'none',
+        },
+      ],
+      description:
+        'Urineweggerelateerde symptomen: dysurie (pijn bij het plassen), (loze) mictiedrang, frequente mictie, urine-incontinentie, (zichtbare) urethrale pusafscheiding',
+      jump: () => {
+        const store = useStore();
+        const [tissueInvasion, _, elederly] = questions;
+
+        if (tissueInvasion.model === 'local' && elederly.model === 'none') {
+          store.setPath('uti.local.elderly.0');
+
+          return '_submit';
+        }
+
+        // Next question
+        return 'sex';
       },
       required: true,
       multiple: false,
@@ -146,6 +177,7 @@
         const [
           tissueInvasion,
           riskAssessment,
+          _,
           sex,
           urinaryCatheter,
           antibiotics,
@@ -223,6 +255,5 @@
   <FlowFormWrapper
     name="Urineweginfectie"
     :questions="questions"
-    @complete="navigate"
-  />
+    @complete="navigate" />
 </template>

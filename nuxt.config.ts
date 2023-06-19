@@ -47,6 +47,7 @@ export default defineNuxtConfig({
       short_name: 'Urinest.rip',
       description:
         'Makkelijk uitslagen van urine onderzoek interpreteren aan de hand van oa. de NHG-standaard urineweginfecties. Gemaakt door een huisarts voor zorgverleners die met de interpretatie urineonderzoek te maken hebben.',
+      lang: 'nl',
       theme_color: '#22c55e',
       start_url: '/?ref=pwa',
       background_color: '#f9f6fb',
