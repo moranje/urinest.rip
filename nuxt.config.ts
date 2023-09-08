@@ -58,6 +58,10 @@ export default defineNuxtConfig({
       source: './public/icon.png',
     },
 
+    workbox: {
+      globPatterns: ['**/*.{js,css,png,jpeg,woff2,html}'],
+    },
+
     meta: {
       name: 'Urinest.rip - Martien Oranje',
       author: 'Martien Oranje',
