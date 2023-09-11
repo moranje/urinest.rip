@@ -120,7 +120,7 @@
         },
       ],
       description:
-        'Urineweggerelateerde symptomen: dysurie (pijn bij het plassen), (loze) mictiedrang, frequente mictie, urine-incontinentie, (zichtbare) urethrale pusafscheiding',
+        'Één zeer hinderlijk danwel twee of meer urineweggerelateerde symptomen: dysurie (pijn bij het plassen), (loze) mictiedrang, frequente mictie, urine-incontinentie, (zichtbare) urethrale pusafscheiding',
       jump: () => {
         const store = useStore();
         const [tissueInvasion, _, elederly] = questions;

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "uti.local.healthy": {
     "treatment": [
       {
@@ -85,12 +85,12 @@
   "uti.local.elderly": {
     "treatment": [
       {
-        "description": "Behandeling wordt niet geadviseerd, niet verdacht voor UWI.",
+        "description": "Geen antibiotica voor urineweginfectie. Overweeg andere oorzaak voor de klachten. Blijf patiënt actief monitoren. Heroverweeg als nieuwe klachten ontstaan of als bestaande klachten niet verdwijnen.",
         "contraIndications": [],
-        "documentation": "Geen behandeling bij asymptomatische bacteriurie met voor urineweginfectie asecifieke symptomen."
+        "documentation": "Actief vervolgen van de klachten. Opnieuw contact bijverergering van de klachten of bij aanhoudende klachten na 1 week (arbitrair)."
       }
     ],
-    "explainer": "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte ( positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties.",
+    "explainer": "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties.",
     "sources": [
       {
         "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
@@ -515,6 +515,42 @@
       {
         "name": "Thuisarts: blaasontsteking kind",
         "url": "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
+      }
+    ]
+  },
+  "leukocytes.none": {
+    "treatment": [
+      {
+        "description": "Geen antibiotica voor urineweginfectie. Overweeg andere oorzaak voor de klachten. Blijf patiënt actief monitoren. Heroverweeg als nieuwe klachten ontstaan of als bestaande klachten niet verdwijnen.",
+        "contraIndications": null,
+        "documentation": "Actief vervolgen van de klachten. Opnieuw contact bijverergering van de klachten of bij aanhoudende klachten na 1 week (arbitrair)."
+      }
+    ],
+    "explainer": "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties.",
+    "sources": [
+      {
+        "name": "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek",
+        "url": "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties/diagnostiek-aanvullend-onderzoek-bij-patienten-zonder-katheter"
+      },
+      {
+        "name": "Verenso Richtlijn Urineweginfecties: Stroomschema",
+        "url": "https://www.verenso.nl/_asset/_public/Richtlijnen_kwaliteit/richtlijnen/database/Urineweginfecties/Bijlage-Algoritme-verdenking-UWI-zonder-katheter-aangepast-21-10.pdf"
+      }
+    ]
+  },
+  "leukocytes.cad": {
+    "treatment": [
+      {
+        "description": "Behandeling is niet nodig.",
+        "contraIndications": [],
+        "documentation": "Behandeling is niet nodig in afwezigheid van tekenen van weefselinvasie (koorts, algehele malaise, (koude) rillingen, flank- of perineumpijn, een delier)"
+      }
+    ],
+    "explainer": "Behandeling van asymptomatische bacteriurie wordt in alle patiëntgroepen, met uitzondering van zwangeren, afgeraden",
+    "sources": [
+      {
+        "name": "NHG-Standaard Urineweginfecties: beleid",
+        "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
       }
     ]
   },
