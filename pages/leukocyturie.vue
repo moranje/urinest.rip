@@ -26,7 +26,7 @@
         {
           label:
             'Een kwetsbare oudere (zonder urineweggerelateerde klachten en zonder tekenen weefselinvasie)',
-          value: 'none',
+          value: 'noCulture',
         },
         {
           label: 'Geen van deze',
@@ -46,7 +46,7 @@
         const [population, followUpTest] = questions;
 
         // Skip next question, only options is none
-        if (population.model === 'none') return '_submit';
+        if (population.model === 'noCulture') return '_submit';
 
         // Skip next question, only options is cad
         if (population.model === 'cad') return '_submit';
@@ -109,7 +109,7 @@
     const store = useStore();
     const [population, followUpTest] = answeredQuestions;
 
-    if (population.answer === 'none' || 'cad' || 'urineCulture') {
+    if (population.answer === 'noCulture' || 'cad' || 'urineCulture') {
       store.setPath(`leukocytes.${population.answer as Test}.0`);
     } else {
       store.setPath(`leukocytes.${followUpTest.answer as Test}.0`);
