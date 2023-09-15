@@ -518,7 +518,7 @@
       }
     ]
   },
-  "leukocytes.none": {
+  "leukocytes.noCulture": {
     "treatment": [
       {
         "description": "Geen antibiotica voor urineweginfectie. Overweeg andere oorzaak voor de klachten. Blijf patiënt actief monitoren. Heroverweeg als nieuwe klachten ontstaan of als bestaande klachten niet verdwijnen.",
