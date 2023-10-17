@@ -1,11 +1,12 @@
 {
-  "version": 6,
+  "version": 7,
   "uti.local.healthy": {
     "treatment": [
       {
         "description": "Afwachtend beleid (eventueel met pijnstilling)",
         "contraIndications": null,
         "testAfterTreatment": "Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antiobiotica",
+        "additionalTest": "Kweek als behandeling 2 keer gefaald heeft.",
         "documentation": "Afwachtend beleid (eventueel met pijnstilling) afgesproken. Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antiobiotica. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       },
       {
@@ -14,6 +15,7 @@
           "eGFR < 30 ml/min",
           "G6PD-deficiëntie"
         ],
+        "additionalTest": "Kweek als behandeling 2 keer gefaald heeft.",
         "documentation": "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw."
       },
       {
@@ -21,6 +23,7 @@
         "contraIndications": [
           "Geef vrouwen die borstvoeding geven bij voorkeur geen fosfomycine"
         ],
+        "additionalTest": "Kweek als behandeling 2 keer gefaald heeft.",
         "documentation": "Fosfomycine, eenmalig, 3 g, bij voorkeur voor de nacht. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       },
       {
@@ -35,7 +38,7 @@
         "info": "Bij een eGFR 10-30 ml/min: eerste 3 dagen normale dosering. Daarna 50% van de normale dosering. Bij combinatie met spirinolacton kan hyperkaliëmie optreden, de kaliumconcentratie moet worden gecontroleerd na 2-4 dagen gebruik"
       }
     ],
-    "explainer": "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie. Kweek wordt pas gedaan als behandeling 2 keer gefaald heeft.",
+    "explainer": "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie.",
     "sources": [
       {
         "name": "NHG-Standaard Urineweginfecties: beleid",
@@ -55,7 +58,7 @@
           "eGFR < 30 ml/min",
           "G6PD-deficiëntie"
         ],
-        "additionalTest": "Urine op kweek.",
+        "additionalTest": "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek.",
         "documentation": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (behalve bij gezonde vrouwem met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
       },
       {
@@ -63,7 +66,7 @@
         "contraIndications": [
           "Geef vrouwen die borstvoeding geven bij voorkeur geen fosfomycine"
         ],
-        "additionalTest": "Urine op kweek.",
+        "additionalTest": "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek.",
         "documentation": "Fosfomycine, eenmalig, 3 g, bij voorkeur voor de nacht. Urine op kweek (behalve bij gezonde vrouwem met DM2). Indien rine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
       },
       {
@@ -74,7 +77,7 @@
           "acute porfyrie",
           "methotrexaatgebruik"
         ],
-        "additionalTest": "Urine op kweek.",
+        "additionalTest": "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek.",
         "documentation": "Trimethoprim, 7 dagen, 1 dd 300 mg voor de nacht. Urine op kweek (behalve bij gezonde vrouwem met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking",
         "info": "Bij een eGFR 10-30 ml/min: eerste 3 dagen normale dosering. Daarna 50% van de normale dosering. Bij combinatie met spirinolacton kan hyperkaliëmie optreden, de kaliumconcentratie moet worden gecontroleerd na 2-4 dagen gebruik"
       }
