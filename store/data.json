@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "uti.local.healthy": {
     "treatment": [
       {
@@ -11,10 +11,7 @@
       },
       {
         "description": "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Kweek als behandeling 2 keer gefaald heeft.",
         "documentation": "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw."
       },
@@ -54,10 +51,7 @@
     "treatment": [
       {
         "description": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek.",
         "documentation": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (behalve bij gezonde vrouwem met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
       },
@@ -118,19 +112,13 @@
     "treatment": [
       {
         "description": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Urine op kweek.",
         "documentation": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (ook om groep-B-streptokokken (GBS) uit te sluiten), graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 5 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 5 dagen, 3 dd 500/125 mg. Urine op kweek (ook om groep-B-streptokokken (GBS) uit te sluiten), graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
@@ -168,10 +156,7 @@
     "treatment": [
       {
         "description": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg (off-label)",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Urine op kweek.",
         "documentation": "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven op https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
       },
@@ -219,19 +204,13 @@
     "treatment": [
       {
         "description": "Nitrofurantoïne, 5 dagen, 5 tot 6 mg/kg lichaamsgewicht in 4 giften, maximaal 200 mg/dag",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Urine op kweek, indien < 12 jaar",
         "documentation": "Nitrofurantoïne, 5 dagen, 5 tot 6 mg/kg lichaamsgewicht in 4 giften, maximaal 200 mg/dag. Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 3 dagen, 50/12,5 mg/kg lichaamsgewicht in 3 giften, maximaal 1500/375 mg/dag in 3 doses",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Urine op kweek, indien < 12 jaar",
         "documentation": "Amoxicilline/clavulaanzuur, 3 dagen, 50/12,5 mg/kg lichaamsgewicht in 3 giften, maximaal 1500/375 mg/dag in 3 doses. Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
       }
@@ -258,16 +237,13 @@
           "neuropathie",
           "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen (de groep van antibiotica waartoe ciprofloxacine behoort)"
         ],
-        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij een eGFR 10-30 ml/min: geef de normale keerdosis met een interval van 24 uur tussen 2 doses. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
+        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
         "additionalTest": "Urine op kweek.",
         "documentation": "Ciprofloxacine, 7 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
@@ -307,16 +283,13 @@
           "neuropathie",
           "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen (de groep van antibiotica waartoe ciprofloxacine behoort)"
         ],
-        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij een eGFR 10-30 ml/min: geef de normale keerdosis met een interval van 24 uur tussen 2 doses. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
+        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
         "additionalTest": "Urine op kweek.",
         "documentation": "Ciprofloxacine, 7 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
@@ -366,9 +339,7 @@
     "treatment": [
       {
         "description": "Verwijs naar gynaecoloog",
-        "contraIndications": [
-          ""
-        ],
+        "contraIndications": [""],
         "documentation": "Verwezen naar gynaecoloog"
       }
     ],
@@ -394,16 +365,13 @@
           "neuropathie",
           "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen (de groep van antibiotica waartoe ciprofloxacine behoort)"
         ],
-        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij een eGFR 10-30 ml/min: geef de normale keerdosis met een interval van 24 uur tussen 2 doses. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
+        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
         "additionalTest": "Urine op kweek.",
         "documentation": "Ciprofloxacine, 7 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
@@ -442,16 +410,13 @@
           "neuropathie",
           "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen (de groep van antibiotica waartoe ciprofloxacine behoort)"
         ],
-        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij een eGFR 10-30 ml/min: geef de normale keerdosis met een interval van 24 uur tussen 2 doses. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
+        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
         "additionalTest": "Urine op kweek.",
         "documentation": "Ciprofloxacine, 14 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (voorkeur cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
@@ -491,16 +456,13 @@
           "neuropathie",
           "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen (de groep van antibiotica waartoe ciprofloxacine behoort)"
         ],
-        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij een eGFR 10-30 ml/min: geef de normale keerdosis met een interval van 24 uur tussen 2 doses. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
+        "info": "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten.",
         "additionalTest": "Urine op kweek.",
         "documentation": "Ciprofloxacine, 14 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (voorkeur cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
       },
       {
         "description": "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "info": "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd",
         "additionalTest": "Urine op kweek.",
         "documentation": "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
@@ -534,10 +496,7 @@
     "treatment": [
       {
         "description": "Amoxicilline/clavulaanzuur, 10 dagen, < 40 kg: 50/12,5 mg/kg lichaamsgewicht in 3 giften; > 40 kg: 1500/375 mg/dag in 3 doses",
-        "contraIndications": [
-          "eGFR < 30 ml/min",
-          "G6PD-deficiëntie"
-        ],
+        "contraIndications": ["eGFR < 30 ml/min", "G6PD-deficiëntie"],
         "additionalTest": "Urine op kweek. Bij kind van > 1 maand en < 2 jaar echo van de urinewegen.",
         "documentation": "Amoxicilline/clavulaanzuur, 10 dagen, < 40 kg: 50/12,5 mg/kg lichaamsgewicht in 3 giften; > 40 kg: 1500/375 mg/dag in 3 doses. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
       },
