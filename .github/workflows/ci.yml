@@ -89,11 +89,13 @@ jobs:
             exit 0
           fi
 
-          BUMP=$(npx --yes conventional-recommended-bump -p angular)
+          npm install --no-save conventional-recommended-bump conventional-changelog-cli conventional-changelog-angular
+
+          BUMP=$(npx conventional-recommended-bump -p angular)
           NEW_VERSION=$(npm version "$BUMP" --no-git-tag-version)
 
-          npx --yes conventional-changelog -p angular -r 1 > /tmp/changelog.md
-          npx --yes conventional-changelog -p angular -i CHANGELOG.md -s
+          npx conventional-changelog -p angular -r 1 > /tmp/changelog.md
+          npx conventional-changelog -p angular -i CHANGELOG.md -s
 
           git config user.name "GitHub CI"
           git config user.email "ci@users.noreply.github.com"
