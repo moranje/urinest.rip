@@ -1,0 +1,1225 @@
+id: bacteriurie
+version: '1'
+title: Urineweginfectie
+description: Diagnose en behandeling van urineweginfecties.
+
+questions:
+  tissueInvasion:
+    id: q_bac_tissue
+    text: Is er sprake van weefselinvasie?
+    type: select
+    description: "[Zie NHG-Standaard Urineweginfecties](https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-begrippen)"
+    options:
+      - id: o_bac_ti_local
+        text: Geen
+        value: local
+      - id: o_bac_ti_invasion
+        text: Ja, tekenen van weefselinvasie
+        description: "Koorts en/of algehele malaise en/of (koude) rillingen en/of flank- of perineumpijn (pyelonefritis/prostatitis) en/of een delier"
+        value: tissueInvasion
+
+  riskAssessment:
+    id: q_bac_risk
+    text: Behoort patiënt tot een risicogroep?
+    type: select
+    description: "[Zie definities en begrippen.](https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1)"
+    options:
+      - id: o_bac_risk_healthy
+        text: Nee
+        value: healthy
+      - id: o_bac_risk_dm
+        text: Diabetes mellitus of een verminderde weerstand
+        value: vulnerable
+      - id: o_bac_risk_renal
+        text: Afwijkingen aan nieren of urinewegen
+        description: "Ernstige nierfunctiestoornissen (eGFR < 30 ml/min/1,73 m²), cystenieren, nierstenen, neurogene blaas, bemoeilijkte mictie of bekend blaasresidu"
+        value: vulnerable
+      - id: o_bac_risk_neuro
+        text: Patiënten met neurologische blaasfunctiestoornissen
+        value: vulnerable
+      - id: o_bac_risk_elderly
+        text: Kwetsbare ouderen
+        value: elderly
+      - id: o_bac_risk_pregnant
+        text: Zwangeren
+        value: pregnant
+      - id: o_bac_risk_men
+        text: Mannen
+        value: men
+      - id: o_bac_risk_children
+        text: Kinderen
+        value: children
+
+  elderly:
+    id: q_bac_elderly
+    text: Is er sprake van urineweggerelateerde klachten?
+    type: select
+    description: "Één zeer hinderlijk danwel twee of meer urineweggerelateerde symptomen: dysurie (pijn bij het plassen), (loze) mictiedrang, frequente mictie, urine-incontinentie, (zichtbare) urethrale pusafscheiding"
+    conditions:
+      - if: "riskAssessment == elderly"
+    options:
+      - id: o_bac_eld_two
+        text: Twee of meer van urineweggerelateerde symptomen
+        value: symptomatic
+      - id: o_bac_eld_one
+        text: Één zeer hinderlijk urineweggerelateerd symptoom waarvoor geen andere verklaring kan worden gevonden
+        value: symptomatic
+      - id: o_bac_eld_none
+        text: Andere symptomen
+        value: asymptomatic
+
+  sex:
+    id: q_bac_sex
+    text: Gaat het om een man of een vrouw?
+    type: select
+    conditions:
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == elderly"
+      - if: "elderly == symptomatic"
+    options:
+      - id: o_bac_sex_male
+        text: Man
+        value: male
+      - id: o_bac_sex_female
+        text: Vrouw
+        value: female
+
+  sexTissueInvasion:
+    id: q_bac_sex_ti
+    text: Gaat het om een man of een vrouw?
+    type: select
+    conditions:
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == elderly"
+    options:
+      - id: o_bac_sex_ti_male
+        text: Man
+        value: male
+      - id: o_bac_sex_ti_female
+        text: Vrouw
+        value: female
+
+  urinaryCatheter:
+    id: q_bac_catheter
+    text: Heeft patiënt een urine katheter?
+    type: select
+    conditions:
+      - if: "riskAssessment != elderly"
+      - if: "riskAssessment != pregnant"
+    options:
+      - id: o_bac_cath_yes
+        text: Ja
+        value: "yes"
+      - id: o_bac_cath_no
+        text: Nee
+        value: "no"
+
+  # Treatment selection questions — one per namespace with multiple options
+
+  treatmentLocalHealthy:
+    id: q_bac_tx_local_healthy
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == healthy"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_lh_0
+        text: Afwachtend beleid (eventueel met pijnstilling)
+        value: "0"
+      - id: o_tx_lh_1
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_lh_2
+        text: Fosfomycine (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "2"
+      - id: o_tx_lh_3
+        text: Trimethoprim (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "3"
+
+  treatmentLocalVulnerable:
+    id: q_bac_tx_local_vulnerable
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == vulnerable"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_lv_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_lv_1
+        text: Fosfomycine (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_lv_2
+        text: Trimethoprim (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentLocalPregnant:
+    id: q_bac_tx_local_pregnant
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == pregnant"
+    options:
+      - id: o_tx_lp_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_lp_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+
+  treatmentLocalMen:
+    id: q_bac_tx_local_men
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == men"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_lm_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_lm_1
+        text: Trimethoprim (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+
+  treatmentLocalChildren:
+    id: q_bac_tx_local_children
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == children"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_lc_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_lc_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+
+  treatmentLocalElderlyVulnerable:
+    id: q_bac_tx_local_elderly_vuln
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == elderly"
+      - if: "elderly == symptomatic"
+      - if: "sex == female"
+    options:
+      - id: o_tx_lev_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. NHG: 7 dagen, Verenso (kwetsbare ouderen): 5 dagen"
+        value: "0"
+      - id: o_tx_lev_1
+        text: Fosfomycine (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_lev_2
+        text: Trimethoprim (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën. Niet in Verenso-richtlijn kwetsbare ouderen"
+        value: "2"
+
+  treatmentLocalElderlyMen:
+    id: q_bac_tx_local_elderly_men
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == local"
+      - if: "riskAssessment == elderly"
+      - if: "elderly == symptomatic"
+      - if: "sex == male"
+    options:
+      - id: o_tx_lem_0
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. NHG: 7 dagen, Verenso (kwetsbare ouderen): 5 dagen"
+        value: "0"
+      - id: o_tx_lem_1
+        text: Trimethoprim (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+
+  # Tissue invasion treatment questions
+
+  treatmentTiHealthy:
+    id: q_bac_tx_ti_healthy
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == healthy"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_tih_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_tih_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tih_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiVulnerable:
+    id: q_bac_tx_ti_vulnerable
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == vulnerable"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_tiv_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_tiv_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tiv_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiMen:
+    id: q_bac_tx_ti_men
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == men"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_tim_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_tim_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tim_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiChildren:
+    id: q_bac_tx_ti_children
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == children"
+      - if: "urinaryCatheter == no"
+    options:
+      - id: o_tx_tic_0
+        text: Amoxicilline/clavulaanzuur (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_tic_1
+        text: Cotrimoxazol (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+
+  treatmentTiCadWoman:
+    id: q_bac_tx_ti_cad_woman
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == healthy"
+      - if: "urinaryCatheter == yes"
+    options:
+      - id: o_tx_ticw_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons"
+        value: "0"
+      - id: o_tx_ticw_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_ticw_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiCadMen:
+    id: q_bac_tx_ti_cad_men
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == men"
+      - if: "urinaryCatheter == yes"
+    options:
+      - id: o_tx_ticm_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons"
+        value: "0"
+      - id: o_tx_ticm_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_ticm_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiElderlyWoman:
+    id: q_bac_tx_ti_elderly_woman
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == elderly"
+      - if: "sexTissueInvasion == female"
+    options:
+      - id: o_tx_tiew_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. NHG: 7 dagen, Verenso: 10 dagen (vrouwen)"
+        value: "0"
+      - id: o_tx_tiew_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tiew_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiElderlyMen:
+    id: q_bac_tx_ti_elderly_men
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == elderly"
+      - if: "sexTissueInvasion == male"
+    options:
+      - id: o_tx_tiem_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "0"
+      - id: o_tx_tiem_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tiem_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+  treatmentTiVulnerableCatheter:
+    id: q_bac_tx_ti_vuln_cath
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "_role != triagist"
+      - if: "tissueInvasion == tissueInvasion"
+      - if: "riskAssessment == vulnerable"
+      - if: "urinaryCatheter == yes"
+    options:
+      - id: o_tx_tivc_0
+        text: Ciprofloxacine (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën. Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons"
+        value: "0"
+      - id: o_tx_tivc_1
+        text: Amoxicilline/clavulaanzuur (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_tx_tivc_2
+        text: Cotrimoxazol (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "2"
+
+steps:
+  - id: s_bac_1
+    title: Weefselinvasie
+    questions: [tissueInvasion]
+  - id: s_bac_2
+    title: Risicogroep
+    questions: [riskAssessment]
+  - id: s_bac_3
+    title: Ouderen
+    questions: [elderly]
+  - id: s_bac_4
+    title: Geslacht
+    questions: [sex, sexTissueInvasion]
+  - id: s_bac_5
+    title: Katheter
+    questions: [urinaryCatheter]
+  - id: s_bac_6
+    title: Behandeling
+    questions: [treatmentLocalHealthy, treatmentLocalVulnerable, treatmentLocalPregnant, treatmentLocalMen, treatmentLocalChildren, treatmentLocalElderlyVulnerable, treatmentLocalElderlyMen, treatmentTiHealthy, treatmentTiVulnerable, treatmentTiMen, treatmentTiChildren, treatmentTiCadWoman, treatmentTiCadMen, treatmentTiElderlyWoman, treatmentTiElderlyMen, treatmentTiVulnerableCatheter]
+
+results:
+  # === Triage results (triagist referral) ===
+
+  triage.u2:
+    title: "Verwijs naar spreekuur"
+    description: "Verdenking weefselinvasieve urineweginfectie. Plan spoedafspraak voor beoordeling door arts of verpleegkundige."
+    urgency: "U2"
+    documentation: "Triagist: verdenking UWI met weefselinvasie, spoedafspraak ingepland voor beoordeling door arts of verpleegkundige."
+    sources:
+      - name: "NHG-TriageWijzer: Urinewegklachten"
+        url: "https://richtlijnen.nhg.org/nhg-triagewijzer/urinewegklachten"
+
+  triage.u3:
+    title: "Verwijs naar spreekuur"
+    description: "Verdenking urineweginfectie bij kwetsbare patiënt. Plan afspraak dezelfde dag voor beoordeling door arts of verpleegkundige."
+    urgency: "U3"
+    documentation: "Triagist: verdenking UWI bij kwetsbare/complexe patiënt, afspraak dezelfde dag ingepland voor beoordeling door arts of verpleegkundige."
+    sources:
+      - name: "NHG-TriageWijzer: Urinewegklachten"
+        url: "https://richtlijnen.nhg.org/nhg-triagewijzer/urinewegklachten"
+
+  # === Direct results (no treatment selection needed) ===
+
+  uti.tissueInvasion.pregnant:
+    title: "Pyelonefritis bij zwangere"
+    description: "Verwijs naar gynaecoloog."
+    documentation: "Verwezen naar gynaecoloog"
+    explainer: "Een pyelonefritis in de zwangerschap gaat gepaard met een verhoogd risico op ernstige morbiditeit of mortaliteit. Het advies om zwangeren met een pyelonefritis voor behandeling te verwijzen naar de 2e lijn sluit aan bij de aanbeveling uit de richtlijn Urineweginfecties in de Zwangerschap van de NVOG."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking en zwanger"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
+
+  uti.local.elderly:
+    title: "Cystitis: Kwetsbare oudere zonder indicatie"
+    description: "Geen antibiotica voor urineweginfectie. Overweeg andere oorzaak voor de klachten. Blijf patiënt actief monitoren. Heroverweeg als nieuwe klachten ontstaan of als bestaande klachten niet verdwijnen."
+    documentation: "Actief vervolgen van de klachten. Opnieuw contact bij verergering van de klachten of bij aanhoudende klachten na 1 week (arbitrair)."
+    explainer: "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties."
+    sources:
+      - name: "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Verenso Richtlijn Urineweginfecties: Stroomschema"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+
+  uti.local.cadMen:
+    title: "Katheter: Geen behandeling nodig"
+    description: "Behandeling is niet nodig."
+    documentation: "Behandeling is niet nodig in afwezigheid van tekenen van weefselinvasie (koorts, algehele malaise, (koude) rillingen, flank- of perineumpijn, een delier)"
+    explainer: "Behandeling van asymptomatische bacteriurie wordt in alle patiëntgroepen, met uitzondering van zwangeren, afgeraden."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+  # === uti.local.healthy (4 options) ===
+
+  uti.local.healthy.0:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Afwachtend beleid (eventueel met pijnstilling)"
+    testAfterTreatment: "Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antibiotica"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Afwachtend beleid (eventueel met pijnstilling) afgesproken. Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antibiotica. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.1:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    warnings: "Bij eGFR 30-50 ml/min: dosisaanpassing, raadpleeg Farmacotherapeutisch Kompas."
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw."
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.2:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Fosfomycine, eenmalig, 3 g (bij < 50 kg: 2 g), bij voorkeur voor de nacht"
+    contraindications:
+      - text: "Geef vrouwen die borstvoeding geven bij voorkeur geen fosfomycine"
+    warnings: "Innemen 2–3 uur na de maaltijd met volle blaas (legen vóór inname). Werking pas na 2–3 dagen merkbaar."
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Fosfomycine, eenmalig, 3 g (bij < 50 kg: 2 g), bij voorkeur voor de nacht. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.3:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Trimethoprim, 3 dagen, 1 dd 300 mg voor de nacht"
+    contraindications:
+      - text: "ernstige leverfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+      - text: "methotrexaatgebruik"
+    warnings: "Bij een eGFR 10-30 ml/min: eerste 3 dagen normale dosering. Daarna 50% van de normale dosering. Bij combinatie met ACE-remmers, ARB's, spironolacton of andere kaliumsparende diuretica kan hyperkaliëmie optreden; controleer de kaliumconcentratie na 2–4 dagen gebruik"
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    documentation: "Trimethoprim, 3 dagen, 1 dd 300 mg voor de nacht. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  # === uti.local.vulnerable (3 options) ===
+
+  uti.local.vulnerable.0:
+    title: "Cystitis: Kwetsbare patiënt"
+    treatment: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    additionalTests: "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek."
+    documentation: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (behalve bij gezonde vrouwen met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  uti.local.vulnerable.1:
+    title: "Cystitis: Kwetsbare patiënt"
+    treatment: "Fosfomycine, eenmalig, 3 g (bij < 50 kg: 2 g), bij voorkeur voor de nacht"
+    contraindications:
+      - text: "Geef vrouwen die borstvoeding geven bij voorkeur geen fosfomycine"
+    warnings: "Innemen 2–3 uur na de maaltijd met volle blaas (legen vóór inname). Werking pas na 2–3 dagen merkbaar."
+    additionalTests: "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek."
+    documentation: "Fosfomycine, eenmalig, 3 g (bij < 50 kg: 2 g), bij voorkeur voor de nacht. Urine op kweek (behalve bij gezonde vrouwen met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  uti.local.vulnerable.2:
+    title: "Cystitis: Kwetsbare patiënt"
+    treatment: "Trimethoprim, 7 dagen, 1 dd 300 mg voor de nacht"
+    contraindications:
+      - text: "ernstige leverfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+      - text: "methotrexaatgebruik"
+    warnings: "Bij een eGFR 10-30 ml/min: eerste 3 dagen normale dosering. Daarna 50% van de normale dosering. Bij combinatie met ACE-remmers, ARB's, spironolacton of andere kaliumsparende diuretica kan hyperkaliëmie optreden; controleer de kaliumconcentratie na 2–4 dagen gebruik"
+    additionalTests: "Bij iedereen behalve gezonde vrouwen met DM2: urine op kweek."
+    documentation: "Trimethoprim, 7 dagen, 1 dd 300 mg voor de nacht. Urine op kweek (behalve bij gezonde vrouwen met DM2). Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  # === uti.local.pregnant (2 options) ===
+
+  uti.local.pregnant.0:
+    title: "Cystitis: Zwangere"
+    treatment: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    additionalTests: "Urine op kweek."
+    documentation: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (ook om groep-B-streptokokken (GBS) uit te sluiten), graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Vraag zwangeren contact op te nemen over de uitslag van de kweek vanwege de mogelijke consequenties van de uitslag voor de bevalling."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.pregnant.1:
+    title: "Cystitis: Zwangere"
+    treatment: "Amoxicilline/clavulaanzuur, 5 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek."
+    documentation: "Amoxicilline/clavulaanzuur, 5 dagen, 3 dd 500/125 mg. Urine op kweek (ook om groep-B-streptokokken (GBS) uit te sluiten), graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Vraag zwangeren contact op te nemen over de uitslag van de kweek vanwege de mogelijke consequenties van de uitslag voor de bevalling."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  # === uti.local.men (2 options) ===
+
+  uti.local.men.0:
+    title: "Cystitis: Man"
+    treatment: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg (off-label)"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    warnings: "Bij therapiefalen na nitrofurantoïne: heroverweeg de diagnose (prostatitis?)."
+    additionalTests: "Urine op kweek."
+    documentation: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven op https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Mannen lopen een groter risico op complicaties. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Let op: bij therapiefalen na nitrofurantoïne bij mannen moet prostatitis worden overwogen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.local.men.1:
+    title: "Cystitis: Man"
+    treatment: "Trimethoprim, 7 dagen, 1 dd 300 mg voor de nacht (off-label)"
+    contraindications:
+      - text: "ernstige leverfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+      - text: "methotrexaatgebruik"
+    warnings: "Bij een eGFR 10-30 ml/min: eerste 3 dagen normale dosering. Daarna 50% van de normale dosering. Bij combinatie met ACE-remmers, ARB's, spironolacton of andere kaliumsparende diuretica kan hyperkaliëmie optreden; controleer de kaliumconcentratie na 2–4 dagen gebruik"
+    additionalTests: "Urine op kweek."
+    documentation: "Trimethoprim, 7 dagen, 1 dd 300 mg voor de nacht. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Mannen lopen een groter risico op complicaties. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  # === uti.local.children (2 options) ===
+
+  uti.local.children.0:
+    title: "Cystitis: Kind"
+    treatment: "Nitrofurantoïne, 5 dagen, 5 tot 6 mg/kg lichaamsgewicht in 4 giften, maximaal 200 mg/dag"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    additionalTests: "Urine op kweek, indien < 12 jaar"
+    documentation: "Nitrofurantoïne, 5 dagen, 5 tot 6 mg/kg lichaamsgewicht in 4 giften, maximaal 200 mg/dag. Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Geef ouders van kinderen met een urineweginfectie die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking kind"
+        url: "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
+
+  uti.local.children.1:
+    title: "Cystitis: Kind"
+    treatment: "Amoxicilline/clavulaanzuur, 3 dagen, 50/12,5 mg/kg lichaamsgewicht in 3 giften, maximaal 1500/375 mg/dag in 3 doses"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    additionalTests: "Urine op kweek, indien < 12 jaar"
+    documentation: "Amoxicilline/clavulaanzuur, 3 dagen, 50/12,5 mg/kg lichaamsgewicht in 3 giften, maximaal 1500/375 mg/dag in 3 doses. Indien urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Geef ouders van kinderen met een urineweginfectie die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking kind"
+        url: "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
+
+  # === Tissue invasion results ===
+
+  uti.tissueInvasion.healthy.0:
+    title: "Pyelonefritis: Gezonde vrouw"
+    treatment: "Ciprofloxacine, 7 dagen, 2 dd 500 mg"
+    contraindications:
+      - text: "het geven van borstvoeding"
+      - text: "gecombineerde lever- en nierfunctiestoornissen"
+      - text: "neuropathie"
+      - text: "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen"
+    warnings: "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten."
+    additionalTests: "Urine op kweek."
+    documentation: "Ciprofloxacine, 7 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.healthy.1:
+    title: "Pyelonefritis: Gezonde vrouw"
+    treatment: "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek."
+    documentation: "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.healthy.2:
+    title: "Pyelonefritis: Gezonde vrouw"
+    treatment: "Cotrimoxazol, 10 dagen, 2 dd 960 mg (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek."
+    documentation: "Cotrimoxazol, 10 dagen, 2 dd 960 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.vulnerable.0:
+    title: "Pyelonefritis: Kwetsbare patiënt"
+    treatment: "Ciprofloxacine, 7 dagen, 2 dd 500 mg"
+    contraindications:
+      - text: "het geven van borstvoeding"
+      - text: "gecombineerde lever- en nierfunctiestoornissen"
+      - text: "neuropathie"
+      - text: "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen"
+    warnings: "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten."
+    additionalTests: "Urine op kweek."
+    documentation: "Ciprofloxacine, 7 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Overweeg indien uit de kweek blijkt dat de verwekker gevoelig is voor amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol het eerder gestarte ciprofloxacine te stoppen. LET OP: bij mannen geniet dan cotrimoxazol de voorkeur, bij vrouwen liever amoxiciline. NB: de NHG adviseert 7 dagen ciprofloxacine (vrouwen), de Verenso-richtlijn adviseert 10 dagen voor alle middelen bij vrouwen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandelbeleid"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  uti.tissueInvasion.vulnerable.1:
+    title: "Pyelonefritis: Kwetsbare patiënt"
+    treatment: "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek."
+    documentation: "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  uti.tissueInvasion.vulnerable.2:
+    title: "Pyelonefritis: Kwetsbare patiënt"
+    treatment: "Cotrimoxazol, 10 dagen, 2 dd 960 mg (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek."
+    documentation: "Cotrimoxazol, 10 dagen, 2 dd 960 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking"
+        url: "https://www.thuisarts.nl/blaasontsteking"
+
+  uti.tissueInvasion.men.0:
+    title: "Prostatitis/Pyelonefritis: Man"
+    treatment: "Ciprofloxacine, 14 dagen, 2 dd 500 mg"
+    contraindications:
+      - text: "gecombineerde lever- en nierfunctiestoornissen"
+      - text: "neuropathie"
+      - text: "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen"
+    warnings: "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten."
+    additionalTests: "Urine op kweek."
+    documentation: "Ciprofloxacine, 14 dagen, 2 dd 500 mg. Urine op kweek, graag contact over uitslag. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (voorkeur cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Als uit de kweek blijkt dat de verwekker gevoelig is voor cotrimoxazol, te starten met cotrimoxazol 2 dd 960 mg voor de resterende dagen van de originele kuur. Cotrimoxazol is gecontra-indiceerd bij gebruik van cumarine of methotrexaat en bij ernstige lever- en nierfunctiestoornissen, ernstige afwijkingen in het bloedbeeld of acute porfyrie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.tissueInvasion.men.1:
+    title: "Prostatitis/Pyelonefritis: Man"
+    treatment: "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek."
+    documentation: "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.tissueInvasion.men.2:
+    title: "Prostatitis/Pyelonefritis: Man"
+    treatment: "Cotrimoxazol, 14 dagen, 2 dd 960 mg (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek."
+    documentation: "Cotrimoxazol, 14 dagen, 2 dd 960 mg. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.tissueInvasion.children.0:
+    title: "Pyelonefritis: Kind"
+    treatment: "Amoxicilline/clavulaanzuur, 10 dagen, < 40 kg: 50/12,5 mg/kg lichaamsgewicht in 3 giften; > 40 kg: 1500/375 mg/dag in 3 doses"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    additionalTests: "Urine op kweek. Bij kind van > 1 maand en < 2 jaar echo van de urinewegen."
+    documentation: "Amoxicilline/clavulaanzuur, 10 dagen, < 40 kg: 50/12,5 mg/kg lichaamsgewicht in 3 giften; > 40 kg: 1500/375 mg/dag in 3 doses. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Leg uit aan ouders met een kind van > 1 maand en < 2 jaar dat het maken van een echo van de urinewegen nodig is om uit te sluiten dat er sprake is van een onderliggende oorzaak van de infectie. Geef ouders van kinderen die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking kind"
+        url: "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
+
+  uti.tissueInvasion.children.1:
+    title: "Pyelonefritis: Kind"
+    treatment: "Cotrimoxazol, 10 dagen, 30/6 mg/kg/dag in 2 giften, max 1600/320 mg/dag (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek. Bij kind van > 1 maand en < 2 jaar echo van de urinewegen."
+    documentation: "Cotrimoxazol, 10 dagen, 30/6 mg/kg/dag in 2 giften, max 1600/320 mg/dag. Urine op kweek, graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking. Indien binnen 48 uur geen verbetering overweeg verwijzing naar kinderarts."
+    explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Leg uit aan ouders met een kind van > 1 maand en < 2 jaar dat het maken van een echo van de urinewegen nodig is om uit te sluiten dat er sprake is van een onderliggende oorzaak van de infectie. Geef ouders van kinderen die zindelijk zijn of > 5 jaar uitleg over de werking van de bekkenbodem en vertel dat ontspanning nodig is voor volledige lediging van blaas en darmen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking kind"
+        url: "https://www.thuisarts.nl/blaasontsteking/mijn-kind-heeft-blaasontsteking"
+
+  # cadWoman and cadMen share the same treatment options as healthy/men for tissue invasion
+  uti.tissueInvasion.cadWoman.0:
+    title: "Pyelonefritis: Katheter (vrouw)"
+    treatment: "Ciprofloxacine, 7 dagen, 2 dd 500 mg"
+    contraindications:
+      - text: "het geven van borstvoeding"
+      - text: "gecombineerde lever- en nierfunctiestoornissen"
+      - text: "neuropathie"
+      - text: "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen"
+    warnings: "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten."
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Ciprofloxacine, 7 dagen, 2 dd 500 mg. Graag contact over uitslag kweek. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (op volgorde amoxicilline, amoxicilline/clavulaanzuur of cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.cadWoman.1:
+    title: "Pyelonefritis: Katheter (vrouw)"
+    treatment: "Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Amoxicilline/clavulaanzuur, 10 dagen, 3 dd 500/125 mg. Graag contact over uitslag kweek. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.cadWoman.2:
+    title: "Pyelonefritis: Katheter (vrouw)"
+    treatment: "Cotrimoxazol, 10 dagen, 2 dd 960 mg (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Cotrimoxazol, 10 dagen, 2 dd 960 mg. Graag contact over uitslag kweek. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.tissueInvasion.cadMen.0:
+    title: "Prostatitis/Pyelonefritis: Katheter (man)"
+    treatment: "Ciprofloxacine, 14 dagen, 2 dd 500 mg"
+    contraindications:
+      - text: "gecombineerde lever- en nierfunctiestoornissen"
+      - text: "neuropathie"
+      - text: "peesaandoeningen gerelateerd aan het eerdere gebruik van fluorochinolonen"
+    warnings: "Overweeg een alternatief bij patiënten met een verhoogd risico op een aorta-aneurysma of -dissectie. Bij eGFR 30–60: 500mg iedere 12 uur, bij eGFR < 30: 500 mg iedere 24 uur. Neem niet gelijktijdig in met metaalverbindingen, zoals calcium, magnesium- en ijzerpreparaten."
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Ciprofloxacine, 14 dagen, 2 dd 500 mg. Graag contact over uitslag kweek. Als uit de kweek blijkt dat de verwekker gevoelig is voor een ander antibioticum (en de kuur nog niet voltooid is), maak dan de kuur af met een ander antibioticum (voorkeur cotrimoxazol). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. Als uit de kweek blijkt dat de verwekker gevoelig is voor cotrimoxazol, te starten met cotrimoxazol 2 dd 960 mg voor de resterende dagen van de originele kuur. Cotrimoxazol is gecontra-indiceerd bij gebruik van cumarine of methotrexaat en bij ernstige lever- en nierfunctiestoornissen, ernstige afwijkingen in het bloedbeeld of acute porfyrie. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.tissueInvasion.cadMen.1:
+    title: "Prostatitis/Pyelonefritis: Katheter (man)"
+    treatment: "Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg"
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+    warnings: "Bij een eGFR < 30 ml/min: pas de dosering aan naar amoxicilline/clavulaanzuur 875/125 mg 2 dd"
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Amoxicilline/clavulaanzuur, 14 dagen, 3 dd 500/125 mg. Graag contact over uitslag kweek. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+  uti.tissueInvasion.cadMen.2:
+    title: "Prostatitis/Pyelonefritis: Katheter (man)"
+    treatment: "Cotrimoxazol, 14 dagen, 2 dd 960 mg (off-label)"
+    contraindications:
+      - text: "gebruik van cumarine of methotrexaat"
+      - text: "ernstige lever- en nierfunctiestoornissen"
+      - text: "ernstige afwijkingen in het bloedbeeld"
+      - text: "acute porfyrie"
+    warnings: "Bij een eGFR 10-30 ml/min: geef 50% van de normale keerdosis OF verdubbel het doseerinterval"
+    additionalTests: "Urine op kweek (afnemen van nieuwe katheter)."
+    documentation: "Verblijfskatheter gewisseld. Urinekweek afgenomen van nieuwe katheter. Cotrimoxazol, 14 dagen, 2 dd 960 mg. Graag contact over uitslag kweek. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+    explainer: "Wissel de verblijfskatheter vóór start van de antibiotica. Neem het urinemonster voor de kweek af van de nieuwe katheter. Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Instrueer de patiënt contact op te nemen indien < 48 uur geen verbetering optreedt, of eerder bij verergering van het ziektebeeld of zich ontwikkelende verwardheid. NB Verenso: 7 dagen bij snelle respons, 10–14 dagen bij vertraagde respons."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: behandeling katheter"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Thuisarts: blaasontsteking man"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-man"
+
+logic:
+  # === Triage rules (triagist referral — must be before treatment rules) ===
+
+  # Triagist + tissue invasion → U2 urgent referral
+  - when: ["_role == triagist", "tissueInvasion == tissueInvasion"]
+    show: triage.u2
+
+  # Triagist + local + vulnerable → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == vulnerable"]
+    show: triage.u3
+
+  # Triagist + local + elderly → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == elderly"]
+    show: triage.u3
+
+  # Triagist + local + pregnant → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == pregnant"]
+    show: triage.u3
+
+  # Triagist + local + men → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == men"]
+    show: triage.u3
+
+  # Triagist + local + children → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == children"]
+    show: triage.u3
+
+  # Triagist + local + healthy + catheter → U3 same-day referral
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == yes"]
+    show: triage.u3
+
+  # === Direct results (no treatment selection) ===
+
+  # Tissue invasion + pregnant → gynaecologist referral
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == pregnant"]
+    show: uti.tissueInvasion.pregnant
+
+  # Local + elderly + asymptomatic → no treatment
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == asymptomatic"]
+    show: uti.local.elderly
+
+  # Local + catheter → no treatment (cadMen result used for both)
+  - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == yes"]
+    show: uti.local.cadMen
+  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == yes"]
+    show: uti.local.cadMen
+  - when: ["tissueInvasion == local", "riskAssessment == men", "urinaryCatheter == yes"]
+    show: uti.local.cadMen
+  - when: ["tissueInvasion == local", "riskAssessment == children", "urinaryCatheter == yes"]
+    show: uti.local.cadMen
+
+  # === Local treatment selections ===
+
+  - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentLocalHealthy == 0"]
+    show: uti.local.healthy.0
+  - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentLocalHealthy == 1"]
+    show: uti.local.healthy.1
+  - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentLocalHealthy == 2"]
+    show: uti.local.healthy.2
+  - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentLocalHealthy == 3"]
+    show: uti.local.healthy.3
+
+  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 0"]
+    show: uti.local.vulnerable.0
+  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 1"]
+    show: uti.local.vulnerable.1
+  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 2"]
+    show: uti.local.vulnerable.2
+
+  - when: ["tissueInvasion == local", "riskAssessment == pregnant", "treatmentLocalPregnant == 0"]
+    show: uti.local.pregnant.0
+  - when: ["tissueInvasion == local", "riskAssessment == pregnant", "treatmentLocalPregnant == 1"]
+    show: uti.local.pregnant.1
+
+  - when: ["tissueInvasion == local", "riskAssessment == men", "urinaryCatheter == no", "treatmentLocalMen == 0"]
+    show: uti.local.men.0
+  - when: ["tissueInvasion == local", "riskAssessment == men", "urinaryCatheter == no", "treatmentLocalMen == 1"]
+    show: uti.local.men.1
+
+  - when: ["tissueInvasion == local", "riskAssessment == children", "urinaryCatheter == no", "treatmentLocalChildren == 0"]
+    show: uti.local.children.0
+  - when: ["tissueInvasion == local", "riskAssessment == children", "urinaryCatheter == no", "treatmentLocalChildren == 1"]
+    show: uti.local.children.1
+
+  # Local + elderly + symptomatic + female → uses vulnerable treatment
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 0"]
+    show: uti.local.vulnerable.0
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 1"]
+    show: uti.local.vulnerable.1
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 2"]
+    show: uti.local.vulnerable.2
+
+  # Local + elderly + symptomatic + male → uses men treatment
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == male", "treatmentLocalElderlyMen == 0"]
+    show: uti.local.men.0
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == male", "treatmentLocalElderlyMen == 1"]
+    show: uti.local.men.1
+
+  # === Tissue invasion treatment selections ===
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentTiHealthy == 0"]
+    show: uti.tissueInvasion.healthy.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentTiHealthy == 1"]
+    show: uti.tissueInvasion.healthy.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentTiHealthy == 2"]
+    show: uti.tissueInvasion.healthy.2
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 0"]
+    show: uti.tissueInvasion.vulnerable.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 1"]
+    show: uti.tissueInvasion.vulnerable.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 2"]
+    show: uti.tissueInvasion.vulnerable.2
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == no", "treatmentTiMen == 0"]
+    show: uti.tissueInvasion.men.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == no", "treatmentTiMen == 1"]
+    show: uti.tissueInvasion.men.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == no", "treatmentTiMen == 2"]
+    show: uti.tissueInvasion.men.2
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "urinaryCatheter == no", "treatmentTiChildren == 0"]
+    show: uti.tissueInvasion.children.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "urinaryCatheter == no", "treatmentTiChildren == 1"]
+    show: uti.tissueInvasion.children.1
+
+  # TI + catheter (healthy = woman with catheter)
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == yes", "treatmentTiCadWoman == 0"]
+    show: uti.tissueInvasion.cadWoman.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == yes", "treatmentTiCadWoman == 1"]
+    show: uti.tissueInvasion.cadWoman.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == yes", "treatmentTiCadWoman == 2"]
+    show: uti.tissueInvasion.cadWoman.2
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == yes", "treatmentTiCadMen == 0"]
+    show: uti.tissueInvasion.cadMen.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == yes", "treatmentTiCadMen == 1"]
+    show: uti.tissueInvasion.cadMen.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == yes", "treatmentTiCadMen == 2"]
+    show: uti.tissueInvasion.cadMen.2
+
+  # TI + elderly → sex question → uses vulnerable/men treatment
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == female", "treatmentTiElderlyWoman == 0"]
+    show: uti.tissueInvasion.vulnerable.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == female", "treatmentTiElderlyWoman == 1"]
+    show: uti.tissueInvasion.vulnerable.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == female", "treatmentTiElderlyWoman == 2"]
+    show: uti.tissueInvasion.vulnerable.2
+
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == male", "treatmentTiElderlyMen == 0"]
+    show: uti.tissueInvasion.men.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == male", "treatmentTiElderlyMen == 1"]
+    show: uti.tissueInvasion.men.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == elderly", "sexTissueInvasion == male", "treatmentTiElderlyMen == 2"]
+    show: uti.tissueInvasion.men.2
+
+  # TI + vulnerable + catheter
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 0"]
+    show: uti.tissueInvasion.vulnerable.0
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 1"]
+    show: uti.tissueInvasion.vulnerable.1
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 2"]
+    show: uti.tissueInvasion.vulnerable.2

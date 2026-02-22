@@ -1,0 +1,59 @@
+id: dipslide
+version: '1'
+title: Dipslide
+description: Beoordeling van de dipslide.
+
+questions:
+  macConkey:
+    id: q_ds_macconkey
+    text: MacConkey-agar (rood)
+    type: select
+    description: "MacConkey-agar selecteert op gramnegatieve bacteriën (o.a. E. coli, de meest voorkomende verwekker van urineweginfecties)."
+    options:
+      - id: o_ds_mac_positive
+        text: Groei
+        value: positive
+      - id: o_ds_mac_negative
+        text: Geen groei
+        value: negative
+
+  cled:
+    id: q_ds_cled
+    text: CLED-agar (groen)
+    type: select
+    description: "[Schat het aantal kolonievormende eenheden](https://richtlijnen.nhg.org/download/1512)"
+    conditions:
+      - if: "macConkey == negative"
+    options:
+      - id: o_ds_cled_positive
+        text: "10^4 KVE/ml of meer"
+        value: positive
+      - id: o_ds_cled_negative
+        text: "10^3 KVE/ml of minder"
+        value: negative
+
+steps:
+  - id: s_ds_1
+    title: MacConkey
+    questions: [macConkey]
+  - id: s_ds_2
+    title: CLED
+    questions: [cled]
+
+results:
+  other.negativeDipslide:
+    title: "Dipslide: Negatief"
+    description: "Geen behandeling nodig."
+    documentation: "Dipslide negatief: geen significante bacteriegroei. Urineweginfectie niet aangetoond."
+    explainer: "Een urineweginfectie is zeer onwaarschijnlijk. Mocht er twijfel bestaan over het aantal kolonievormende eenheden, dan kan een dag later (het aantal bacteriën in de blaas zou dan ook toegenomen moeten zijn) een dipslide van een nieuw urinemonster gemaakt worden."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+logic:
+  - when: ["macConkey == positive"]
+    redirect: bacteriurie
+  - when: ["macConkey == negative", "cled == positive"]
+    redirect: bacteriurie
+  - when: ["macConkey == negative", "cled == negative"]
+    show: other.negativeDipslide

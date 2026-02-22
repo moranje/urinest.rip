@@ -1,0 +1,55 @@
+id: sediment
+version: '1'
+title: Urine sediment
+description: Beoordeling van het urine sediment.
+
+questions:
+  bacteruria:
+    id: q_sed_bacteruria
+    text: Bacteriurie?
+    type: select
+    description: "Beoordeel het aantal bacteriën per gezichtsveld bij 400x vergroting."
+    options:
+      - id: o_sed_positive
+        text: Meer dan 20 bacteriën per gezichtveld
+        value: positive
+      - id: o_sed_contaminated
+        text: Veel plaveiselepitheel
+        value: contaminated
+      - id: o_sed_negative
+        text: Minder dan 20 bacteriën per gezichtveld
+        value: negative
+
+steps:
+  - id: s_sed_1
+    title: Sediment beoordeling
+    questions: [bacteruria]
+
+results:
+  other.contaminatedSediment:
+    title: "Sediment: Vervuild monster"
+    description: "Herhaal test."
+    documentation: "Het urine sediment was niet te betrouwbaar te interpreteren en moet herhaald worden."
+    explainer: "De aanwezigheid van plaveiselepitheel duidt op contaminatie en maakt de beoordeling onbetrouwbaar."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: aanvullend onderzoek"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"
+
+  other.noConclusiveAbnormality:
+    title: "Geen afwijkingen gevonden"
+    description: "Geen urineweginfectie gevonden."
+    documentation: "Het urine sediment toonde minder dan 20 bacteriën per gezichtsveld. De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen."
+    explainer: "Het sediment toont geen aanwijzingen voor een bacteriële urineweginfectie. Bij aanhoudende klachten moeten andere oorzaken worden overwogen."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: klinische verschijnselen bij kwetsbare ouderen"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+
+logic:
+  - when: ["bacteruria == positive"]
+    redirect: bacteriurie
+  - when: ["bacteruria == contaminated"]
+    show: other.contaminatedSediment
+  - when: ["bacteruria == negative"]
+    show: other.noConclusiveAbnormality

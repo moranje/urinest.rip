@@ -1,0 +1,54 @@
+id: kweek
+version: '1'
+title: Urinekweek
+description: Beoordeling van de urinekweek.
+
+questions:
+  cultureResult:
+    id: q_kweek_result
+    text: Kweekuitslag
+    type: select
+    description: "[Afkapwaarde van 10^5 KVE](https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-begrippen)"
+    options:
+      - id: o_kweek_positive
+        text: "Groei met 10^5 KVE/ml of meer"
+        value: positive
+      - id: o_kweek_ambiguous
+        text: Lage groei met aanhoudend vermoeden UWI
+        description: "Groei met minder dan 10^5 KVE/ml, maar aanhoudend klinisch vermoeden van een urineweginfectie"
+        value: ambiguous
+      - id: o_kweek_negative
+        text: "Minder dan 10^5 KVE/ml of geen bacteriën"
+        value: negative
+
+steps:
+  - id: s_kweek_1
+    title: Kweekuitslag
+    questions: [cultureResult]
+
+results:
+  other.ambiguousCulture:
+    title: "Kweek: Ambigu resultaat"
+    description: "Overweeg behandeling eventueel in overleg met de medisch microbioloog."
+    documentation: "Kweekuitslag ambigu: groei < 10^5 KVE/ml met aanhoudend vermoeden UWI. Overleg met arts-microbioloog overwogen."
+    explainer: "Overweeg bij een kweekuitslag met een lage hoeveelheid bacteriën (bijvoorbeeld 10^3 KVE/ml) en een aanhoudend vermoeden van een urineweginfectie te overleggen met de arts-microbioloog, om na te gaan of een urineweginfectie met voldoende zekerheid is uitgesloten."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: aanvullend onderzoek"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"
+
+  other.noUrineTractInfection:
+    title: "Geen urineweginfectie"
+    description: "Geen behandeling nodig."
+    documentation: "Geen bacterie in de urinekweek. Urineweginfectie met voldoende zekerheid uitgesloten."
+    explainer: "De urinekweek is de gouden standaard voor het bepalen van een urineweginfectie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: aanvullend onderzoek"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"
+
+logic:
+  - when: ["cultureResult == positive"]
+    redirect: bacteriurie
+  - when: ["cultureResult == ambiguous"]
+    show: other.ambiguousCulture
+  - when: ["cultureResult == negative"]
+    show: other.noUrineTractInfection

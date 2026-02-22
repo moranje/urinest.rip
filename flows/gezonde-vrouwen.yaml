@@ -1,0 +1,166 @@
+id: gezonde-vrouwen
+version: '1'
+title: Gezonde vrouwen
+description: Stel de diagnose urineweginfectie bij gezonde vrouwen zonder urineonderzoek, mits aan alle criteria wordt voldaan.
+
+questions:
+  healthyWoman:
+    id: q_gv_checklist
+    text: Welke uitspraken zijn waar?
+    type: multi_select
+    description: "[Risico op onterechte cystitis diagnose 20%](https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-evaluatie)"
+    options:
+      - id: o_gv_1
+        text: Patiënte heeft eerder een test bewezen urineweginfecties gehad
+        value: "1"
+      - id: o_gv_2
+        text: Pijn bij het plassen is de op de voorgrond staande klacht
+        value: "2"
+      - id: o_gv_3
+        text: "Er zijn geen tekenen van weefselinvasie (koorts, koude rillingen, flankpijn, pijn bilnaad, verwardheid)"
+        value: "3"
+      - id: o_gv_4
+        text: De klachten bestaan korter dan een week
+        value: "4"
+      - id: o_gv_5
+        text: Er is geen verhoogd risico op een soa
+        value: "5"
+      - id: o_gv_6
+        text: "Er is geen vaginale irritatie/er zijn geen fluorklachten"
+        value: "6"
+      - id: o_gv_7
+        text: Patiënte zelf denkt dat er sprake is van een cystitis
+        value: "7"
+
+  treatment:
+    id: q_gv_treatment
+    text: Welke behandeling kan patiënt krijgen?
+    type: select
+    conditions:
+      - if: "healthyWoman includes 1"
+      - if: "healthyWoman includes 2"
+      - if: "healthyWoman includes 3"
+      - if: "healthyWoman includes 4"
+      - if: "healthyWoman includes 5"
+      - if: "healthyWoman includes 6"
+      - if: "healthyWoman includes 7"
+    options:
+      - id: o_gv_tx_0
+        text: Afwachtend beleid (eventueel met pijnstilling)
+        value: "0"
+      - id: o_gv_tx_1
+        text: Nitrofurantoïne (1e keuze)
+        description: "1e keuze — controleer eerst op allergieën"
+        value: "1"
+      - id: o_gv_tx_2
+        text: Fosfomycine (2e keuze)
+        description: "2e keuze — controleer eerst op allergieën"
+        value: "2"
+      - id: o_gv_tx_3
+        text: Trimethoprim (3e keuze)
+        description: "3e keuze — controleer eerst op allergieën"
+        value: "3"
+
+steps:
+  - id: s_gv_1
+    title: Criteria check
+    questions: [healthyWoman]
+  - id: s_gv_2
+    title: Behandeling
+    questions: [treatment]
+
+results:
+  other.ruleNotApplicable:
+    title: "Diagnose niet mogelijk op anamnese alleen"
+    description: "Verdere diagnostiek nodig."
+    documentation: "Op basis van de anamnese alleen is geen waarschijnlijkheidsdiagnose urineweginfectie te stellen."
+    explainer: "Stel de waarschijnlijkheidsdiagnose alleen als aan alle criteria voldaan wordt."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: evaluatie"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-evaluatie"
+
+  uti.local.healthy.0:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Afwachtend beleid (eventueel met pijnstilling)"
+    testAfterTreatment: "Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antibiotica"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Afwachtend beleid (eventueel met pijnstilling) afgesproken. Indien na 1 week geen verbetering urineonderzoek herhalen en bij positieve test behandelen met antibiotica. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.1:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg"
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    contraindications:
+      - text: "eGFR < 30 ml/min"
+      - text: "G6PD-deficiëntie"
+    warnings: "Bij eGFR 30-50 ml/min: dosisaanpassing, raadpleeg Farmacotherapeutisch Kompas."
+    documentation: "Nitrofurantoïne, 5 dagen, 2 dd 100 mg mga of 4 dd 50 mg voorgeschreven. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.2:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Fosfomycine, eenmalig 3 gram (bij < 50 kg: 2 gram), bij voorkeur voor de nacht"
+    contraindications:
+      - text: "Geef vrouwen die borstvoeding geven bij voorkeur geen fosfomycine"
+    warnings: "Innemen 2–3 uur na de maaltijd met volle blaas (legen vóór inname). Werking pas na 2–3 dagen merkbaar."
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Fosfomycine, eenmalig 3 gram (bij < 50 kg: 2 gram) voorgeschreven, bij voorkeur voor de nacht. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+  uti.local.healthy.3:
+    title: "Cystitis: Gezonde vrouw"
+    treatment: "Trimethoprim, 3 dagen, 1 dd 300 mg voor de nacht"
+    testAfterTreatment: "Indien na behandeling of na 1 week nog klachten: urineonderzoek"
+    additionalTests: "Kweek als behandeling 2 keer gefaald heeft."
+    documentation: "Trimethoprim, 3 dagen, 1 dd 300 mg voor de nacht voorgeschreven. Indien na behandeling nog klachten: urineonderzoek (kweek als behandeling 2 keer gefaald heeft). Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+    explainer: "Leg uit dat een cystitis veel voorkomt, niet besmettelijk is, maar kan terugkomen. Het betreft een hinderlijke, in principe onschuldige aandoening, die spontaan binnen 1 week kan genezen (bij 55% van gezonde vrouwen). Met antibiotische behandeling zijn de klachten doorgaans eerder verdwenen. Klachten kunnen tot enkele dagen na afloop van de behandeling blijven bestaan. Antibioticagebruik kan echter leiden tot bijwerkingen en antibioticaresistentie."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Thuisarts: blaasontsteking vrouw"
+        url: "https://www.thuisarts.nl/blaasontsteking/ik-heb-blaasontsteking-vrouw"
+
+logic:
+  # Not all 7 criteria met → rule not applicable
+  - when: ["healthyWoman not_includes 1"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 2"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 3"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 4"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 5"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 6"]
+    show: other.ruleNotApplicable
+  - when: ["healthyWoman not_includes 7"]
+    show: other.ruleNotApplicable
+
+  # All criteria met + treatment selection
+  - when: ["healthyWoman includes 1", "healthyWoman includes 2", "healthyWoman includes 3", "healthyWoman includes 4", "healthyWoman includes 5", "healthyWoman includes 6", "healthyWoman includes 7", "treatment == 0"]
+    show: uti.local.healthy.0
+  - when: ["healthyWoman includes 1", "healthyWoman includes 2", "healthyWoman includes 3", "healthyWoman includes 4", "healthyWoman includes 5", "healthyWoman includes 6", "healthyWoman includes 7", "treatment == 1"]
+    show: uti.local.healthy.1
+  - when: ["healthyWoman includes 1", "healthyWoman includes 2", "healthyWoman includes 3", "healthyWoman includes 4", "healthyWoman includes 5", "healthyWoman includes 6", "healthyWoman includes 7", "treatment == 2"]
+    show: uti.local.healthy.2
+  - when: ["healthyWoman includes 1", "healthyWoman includes 2", "healthyWoman includes 3", "healthyWoman includes 4", "healthyWoman includes 5", "healthyWoman includes 6", "healthyWoman includes 7", "treatment == 3"]
+    show: uti.local.healthy.3
