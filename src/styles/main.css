@@ -1,0 +1,120 @@
+@import './tokens.css';
+@import './themes.css';
+@import './components.css';
+
+/* Loading indicator */
+.app-loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-background);
+  z-index: 1000;
+}
+
+.app-loading .loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--md-sys-color-surface-variant);
+  border-radius: 50%;
+  border-top-color: var(--md-sys-color-primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeleton-shimmer {
+  from { opacity: 1; }
+  to { opacity: 0.4; }
+}
+
+/* Base styles */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  color: var(--md-sys-color-on-background);
+  background-color: var(--md-sys-color-background);
+  font: var(--md-sys-typescale-body-large);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: contain;
+}
+
+a {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+}
+
+/* Touch interaction */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus — single source of truth */
+:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Typography */
+h1 { font: var(--md-sys-typescale-display-small); color: var(--md-sys-color-on-surface); }
+h2 { font: var(--md-sys-typescale-headline-medium); color: var(--md-sys-color-on-surface); }
+h3 { font: var(--md-sys-typescale-headline-small); color: var(--md-sys-color-on-surface); }
+h4 { font: var(--md-sys-typescale-title-large); color: var(--md-sys-color-on-surface); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Mobile safe area — using design system tokens */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .app-content {
+    padding-bottom: var(--safe-bottom);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

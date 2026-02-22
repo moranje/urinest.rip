@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+# ── Quality gates ──
+npm run check
+npm run test

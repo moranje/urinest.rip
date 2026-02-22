@@ -1,0 +1,138 @@
+/* Tile Component */
+.md-tile {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: var(--spacing-lg);
+  transition:
+    transform var(--motion-duration-short) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-short) var(--motion-easing-standard);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.md-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-2);
+  background: var(--md-sys-color-surface-container);
+}
+
+.md-subtitle {
+  color: var(--md-sys-color-primary);
+  margin-bottom: var(--spacing-xs);
+  font: var(--md-sys-typescale-title-small);
+}
+
+.md-description {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-medium);
+}
+
+/* Button Base */
+.md-button {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: var(--md-sys-shape-corner-full);
+  font: var(--md-sys-typescale-label-large);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition:
+    background-color var(--motion-duration-short) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-short) var(--motion-easing-standard);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.md-button:active:not(:disabled) {
+  transform: scale(0.97);
+  transition-duration: var(--motion-duration-press);
+}
+
+.md-button--primary {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.md-button--primary:hover {
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+.md-button--primary:disabled {
+  background-color: rgba(28, 27, 31, 0.12);
+  color: rgba(28, 27, 31, 0.38);
+  cursor: not-allowed;
+}
+
+.md-button--outlined {
+  background-color: transparent;
+  color: var(--md-sys-color-primary);
+  border: 1px solid var(--md-sys-color-outline);
+}
+
+.md-button--outlined:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+}
+
+.md-button--text {
+  background-color: transparent;
+  color: var(--md-sys-color-primary);
+  padding: 0 12px;
+}
+
+.md-button--text:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+}
+
+/* Card */
+.md-card {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-medium);
+  box-shadow: var(--md-sys-elevation-1);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface);
+  overflow: hidden;
+}
+
+/* List */
+.md-list {
+  list-style: none;
+  padding: var(--spacing-sm) 0;
+  margin: 0;
+}
+
+.md-list-item {
+  min-height: 56px;
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-large);
+}
+
+/* Global interaction feedback — every clickable element gets press response */
+a:active,
+button:active:not(:disabled),
+[role="button"]:active,
+[role="radio"]:active {
+  transform: scale(0.97);
+  transition-duration: var(--motion-duration-press);
+}
+
+/* Staggered Animations — fadeInUp keyframe defined in main.css */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp var(--motion-duration-medium) var(--motion-easing-emphasized) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 20ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 60ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 140ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 160ms; }

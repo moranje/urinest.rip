@@ -1,0 +1,139 @@
+id: leukocyturie
+version: '1'
+title: Leukocyturie
+description: Beoordeling bij geïsoleerde leukocyturie (nitriet negatief, leukocyten positief).
+
+questions:
+  population:
+    id: q_leuk_population
+    text: Behoort patiënt tot een van deze groepen?
+    type: select
+    description: "Één zeer hinderlijk danwel twee of meer urineweggerelateerde symptomen: dysurie (pijn bij het plassen), (loze) mictiedrang, frequente mictie, urine-incontinentie, (zichtbare) urethrale pusafscheiding. [Zie definities en begrippen.](https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1)"
+    options:
+      - id: o_leuk_cad
+        text: Patiënt heeft CAD (ongeacht groep)
+        value: cad
+      - id: o_leuk_child
+        text: Een kind jonger dan 12 jaar
+        value: child
+      - id: o_leuk_elderly_symptoms
+        text: Een kwetsbare oudere (met urineweggerelateerde klachten of tekenen van weefselinvasie)
+        value: elderlySymptomatic
+      - id: o_leuk_elderly_no_symptoms
+        text: Een kwetsbare oudere (zonder urineweggerelateerde klachten en zonder tekenen weefselinvasie)
+        value: elderlyAsymptomatic
+      - id: o_leuk_none
+        text: Geen van deze
+        value: none
+
+  followUpGeneral:
+    id: q_leuk_followup_general
+    text: Welk vervolgonderzoek wordt geboden?
+    type: select
+    description: "[Testeigenschappen](https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek#volledige-tekst-urineweginfecties)"
+    conditions:
+      - if: "population == none"
+    options:
+      - id: o_leuk_fu_dipslide
+        text: Dipslide
+        value: dipslide
+      - id: o_leuk_fu_sediment
+        text: Urine sediment
+        value: urineSediment
+      - id: o_leuk_fu_culture
+        text: Urinekweek
+        value: urineCulture
+
+  followUpChild:
+    id: q_leuk_followup_child
+    text: Welk vervolgonderzoek wordt geboden?
+    type: select
+    description: "[Testeigenschappen](https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek#volledige-tekst-urineweginfecties)"
+    conditions:
+      - if: "population == child"
+    options:
+      - id: o_leuk_fc_dipslide
+        text: Dipslide
+        value: dipslide
+      - id: o_leuk_fc_culture
+        text: Urinekweek
+        value: urineCulture
+
+steps:
+  - id: s_leuk_1
+    title: Patiëntgroep
+    questions: [population]
+  - id: s_leuk_2
+    title: Vervolgonderzoek
+    questions: [followUpGeneral, followUpChild]
+
+results:
+  leukocytes.cad:
+    title: "Leukocyturie: CAD patiënt"
+    description: "Behandeling is niet nodig."
+    documentation: "Behandeling is niet nodig in afwezigheid van tekenen van weefselinvasie (koorts, algehele malaise, (koude) rillingen, flank- of perineumpijn, een delier)"
+    explainer: "Behandeling van asymptomatische bacteriurie wordt in alle patiëntgroepen, met uitzondering van zwangeren, afgeraden."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+  leukocytes.noCulture:
+    title: "Leukocyturie: Kwetsbare oudere zonder klachten"
+    description: "Geen antibiotica voor urineweginfectie. Overweeg andere oorzaak voor de klachten. Blijf patiënt actief monitoren. Heroverweeg als nieuwe klachten ontstaan of als bestaande klachten niet verdwijnen."
+    documentation: "Actief vervolgen van de klachten. Opnieuw contact bij verergering van de klachten of bij aanhoudende klachten na 1 week (arbitrair)."
+    explainer: "De diagnose UWI bij kwetsbare ouderen is klinisch, aanvullend onderzoek is vaak ten onrechte positief. Gebruik bij ouderen de nitriet test alleen op een urineweginfectie uit te sluiten. Kweek urine altijd bij patiënten met tekenen van weefselinvasie, bij mannen en bij falen van ingezette therapie en bij recidiverende infecties."
+    sources:
+      - name: "Verenso Richtlijn Urineweginfecties: diagnostiek en aanvullend onderzoek"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+      - name: "Verenso Richtlijn Urineweginfecties: Stroomschema"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+
+  leukocytes.urineCulture:
+    title: "Leukocyturie: Urinekweek geïndiceerd"
+    description: "Verdere diagnostiek noodzakelijk."
+    documentation: "Vooralsnog geen urineweginfectie aan kunnen tonen, omdat er wel witte bloedcellen werden gevonden wordt aanvullend nog een urine kweek gedaan. Mocht hierbij een bacterie gevonden worden dan kan behandeling nodig zijn."
+    explainer: "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (iets meer dan 20%) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+  leukocytes.dipslide:
+    title: "Leukocyturie: Dipslide geïndiceerd"
+    description: "Verdere diagnostiek noodzakelijk."
+    documentation: "Vooralsnog geen urineweginfectie aan kunnen tonen, omdat er wel witte bloedcellen werden gevonden wordt aanvullend nog een dipslide gedaan. Mocht hierbij een bacterie gevonden worden dan kan behandeling nodig zijn."
+    explainer: "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (circa 20% is fals negatief) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+  leukocytes.urineSediment:
+    title: "Leukocyturie: Urine sediment geïndiceerd"
+    description: "Verdere diagnostiek noodzakelijk."
+    documentation: "Vooralsnog geen urineweginfectie aan kunnen tonen, omdat er wel witte bloedcellen werden gevonden wordt aanvullend nog een urine sediment gedaan. Mocht hierbij een bacterie gevonden worden dan kan behandeling nodig zijn."
+    explainer: "Omdat een deel van urineweginfecties gemist wordt met alleen de nitriet test (iets meer dan 20%) wordt bij een positieve leukocytentest aanvullende diagnostiek geadviseerd."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+
+logic:
+  # Direct results for specific populations
+  - when: ["population == cad"]
+    show: leukocytes.cad
+  - when: ["population == elderlyAsymptomatic"]
+    show: leukocytes.noCulture
+  - when: ["population == elderlySymptomatic"]
+    show: leukocytes.urineCulture
+
+  # Follow-up for general population (none)
+  - when: ["population == none", "followUpGeneral == dipslide"]
+    show: leukocytes.dipslide
+  - when: ["population == none", "followUpGeneral == urineSediment"]
+    show: leukocytes.urineSediment
+  - when: ["population == none", "followUpGeneral == urineCulture"]
+    show: leukocytes.urineCulture
+
+  # Follow-up for children
+  - when: ["population == child", "followUpChild == dipslide"]
+    show: leukocytes.dipslide
+  - when: ["population == child", "followUpChild == urineCulture"]
+    show: leukocytes.urineCulture

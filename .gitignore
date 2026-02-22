@@ -1,9 +1,14 @@
 node_modules
-*.log*
-.nuxt
-.nitro
-.cache
-.output
-.env
 dist
-sw.*
+.nuxt
+.env
+*.local
+stats.html
+*.br
+*.gz
+
+# Generated flow data (built from flows/*.yaml)
+public/main.json
+
+# Local Netlify folder
+.netlify

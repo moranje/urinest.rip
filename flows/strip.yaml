@@ -1,0 +1,97 @@
+id: strip
+version: '1'
+title: Urinestrip
+description: Beoordeling van de urinestrip.
+
+questions:
+  nitrite:
+    id: q_strip_nitrite
+    text: Nitriet test
+    type: select
+    description: "Nitriet wordt gevormd door bacteriën die nitraat omzetten. Een positieve test wijst op bacteriurie. [Testeigenschappen](https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek#volledige-tekst-urineweginfecties)"
+    options:
+      - id: o_strip_nit_pos
+        text: Positief
+        value: positive
+      - id: o_strip_nit_neg
+        text: Negatief
+        value: negative
+
+  leukocytes:
+    id: q_strip_leuko
+    text: Leukocyten test
+    type: select
+    description: "De leukocytenesterase-test detecteert witte bloedcellen in de urine. [Testeigenschappen](https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek#volledige-tekst-urineweginfecties)"
+    conditions:
+      - if: "nitrite == negative"
+    options:
+      - id: o_strip_leuko_1
+        text: "+"
+        value: positive
+      - id: o_strip_leuko_2
+        text: "++"
+        value: positive
+      - id: o_strip_leuko_3
+        text: "+++"
+        value: positive
+      - id: o_strip_leuko_neg
+        text: Negatief
+        value: negative
+
+  erythrocytes:
+    id: q_strip_ery
+    text: Erytrocyten test
+    type: select
+    description: "Detecteert hemoglobine (bloed) in de urine. [Testeigenschappen](https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek#volledige-tekst-urineweginfecties)"
+    conditions:
+      - if: "nitrite == negative"
+      - if: "leukocytes == negative"
+    options:
+      - id: o_strip_ery_1
+        text: "+"
+        value: positive
+      - id: o_strip_ery_2
+        text: "++"
+        value: positive
+      - id: o_strip_ery_3
+        text: "+++"
+        value: positive
+      - id: o_strip_ery_4
+        text: "++++"
+        value: positive
+      - id: o_strip_ery_neg
+        text: Negatief
+        value: negative
+
+steps:
+  - id: s_strip_1
+    title: Nitriet
+    questions: [nitrite]
+  - id: s_strip_2
+    title: Leukocyten
+    questions: [leukocytes]
+  - id: s_strip_3
+    title: Erytrocyten
+    questions: [erythrocytes]
+
+results:
+  other.noConclusiveAbnormality:
+    title: "Geen afwijkingen gevonden"
+    description: "Geen urineweginfectie gevonden."
+    documentation: "De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen. Bij kwetsbare ouderen wordt een negatieve nitriet in combinatie met leukocytentest gebruikt om een urineweginfectie uit te sluiten."
+    explainer: "Geen met zekerheid pathologische afwijkingen gevonden. Afwijkende waarden kunnen in bepaalde gevallen weldegelijk van betekenis zijn (glucosurie bij een niet-diabeet) maar moeten op individuele basis afgewogen worden."
+    sources:
+      - name: "NHG-Standaard Urineweginfecties: beleid"
+        url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"
+      - name: "Verenso Richtlijn Urineweginfecties: klinische verschijnselen bij kwetsbare ouderen"
+        url: "https://www.verenso.nl/kwaliteit/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties-1"
+
+logic:
+  - when: ["nitrite == positive"]
+    redirect: bacteriurie
+  - when: ["nitrite == negative", "leukocytes == positive"]
+    redirect: leukocyturie
+  - when: ["nitrite == negative", "leukocytes == negative", "erythrocytes == positive"]
+    redirect: hematurie
+  - when: ["nitrite == negative", "leukocytes == negative", "erythrocytes == negative"]
+    show: other.noConclusiveAbnormality
