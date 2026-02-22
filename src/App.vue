@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <app-header :hidden="headerHidden" :droplet-animate="dropletAnimate" />
-    <main class="app-content" ref="scrollContainer">
+    <app-header :droplet-animate="dropletAnimate" />
+    <main class="app-content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import ToastContainer from './components/ToastContainer.vue'
@@ -29,31 +29,10 @@ const questionnaireStore = useQuestionnaireStore()
 const dropletAnimate = ref(false)
 watch(() => route.path, () => {
   dropletAnimate.value = false
-  // Use nextTick-like delay to re-trigger animation
   requestAnimationFrame(() => {
     dropletAnimate.value = true
   })
 })
-
-// Header scroll-hide (mobile only)
-const headerHidden = ref(false)
-const scrollContainer = ref<HTMLElement | null>(null)
-let lastScrollY = 0
-let isMobile = false
-
-function handleScroll() {
-  if (!scrollContainer.value || !isMobile) {
-    headerHidden.value = false
-    return
-  }
-  const y = scrollContainer.value.scrollTop
-  if (y > 60) {
-    headerHidden.value = y > lastScrollY
-  } else {
-    headerHidden.value = false
-  }
-  lastScrollY = y
-}
 
 onMounted(async () => {
   try {
@@ -67,22 +46,6 @@ onMounted(async () => {
   themeMql.addEventListener('change', (e) => {
     document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light')
   })
-
-  const mql = window.matchMedia('(max-width: 599px)')
-  isMobile = mql.matches
-  mql.addEventListener('change', (e) => {
-    isMobile = e.matches
-    if (!e.matches) headerHidden.value = false
-  })
-  if (scrollContainer.value) {
-    scrollContainer.value.addEventListener('scroll', handleScroll, { passive: true })
-  }
-})
-
-onBeforeUnmount(() => {
-  if (scrollContainer.value) {
-    scrollContainer.value.removeEventListener('scroll', handleScroll)
-  }
 })
 </script>
 

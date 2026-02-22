@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header" :class="{ 'header-hidden': hidden }">
+  <header class="app-header">
     <div class="header-content">
       <router-link to="/" class="app-title-link">
         <LogoSvg :size="28" :animate="dropletAnimate" />
@@ -15,7 +15,7 @@
             />
           </svg>
         </router-link>
-        <router-link v-if="isAuthenticated" to="/admin/logs" class="header-icon-link" title="Admin">
+        <router-link :to="isAuthenticated ? '/admin/logs' : '/admin/login'" class="header-icon-link" title="Admin">
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="currentColor"
@@ -35,7 +35,6 @@ import LogoSvg from './LogoSvg.vue'
 import { useAuthStore } from '../store/authStore'
 
 defineProps<{
-  hidden?: boolean
   dropletAnimate?: boolean
 }>()
 
@@ -113,10 +112,6 @@ const { isAuthenticated } = storeToRefs(useAuthStore())
 @media (max-width: 599px) {
   .app-header {
     padding: 0 var(--spacing-sm);
-    transition: transform var(--motion-duration-medium) var(--motion-easing-out);
-  }
-  .app-header.header-hidden {
-    transform: translateY(-100%);
   }
 }
 </style>
