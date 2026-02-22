@@ -1,0 +1,138 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  ci:
+    name: Lint, Type-check & Test
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint + Type-check + Tests (parallel)
+        run: |
+          npx oxlint src/ --deny-warnings &
+          PID_LINT=$!
+          npm run check &
+          PID_CHECK=$!
+          npm run test &
+          PID_TEST=$!
+
+          FAIL=0
+          wait $PID_LINT  || FAIL=1
+          wait $PID_CHECK || FAIL=1
+          wait $PID_TEST  || FAIL=1
+          exit $FAIL
+
+      - name: Security — npm audit
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+      - name: Security — no secrets in code
+        run: |
+          if grep -rn --include="*.ts" --include="*.vue" --include="*.js" -P '(?<![a-zA-Z_])eyJ[A-Za-z0-9_-]{10,}' src/; then
+            echo "::error::Possible hardcoded JWT/key found in source code"
+            exit 1
+          fi
+
+      - name: Security — .env not tracked
+        run: |
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "::error::.env file is tracked by git!"
+            exit 1
+          fi
+
+  deploy:
+    name: Release & Deploy
+    needs: ci
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Version bump & changelog
+        id: release
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            MEANINGFUL=$(git log "${LAST_TAG}..HEAD" --format="%s" --no-merges | grep -cvE "^chore\(release\)" || true)
+          else
+            MEANINGFUL=$(git log --format="%s" --no-merges | grep -cvE "^chore\(release\)" || true)
+          fi
+
+          if [ "$MEANINGFUL" -eq 0 ] 2>/dev/null; then
+            echo "No meaningful commits — skipping version bump"
+            echo "released=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          BUMP=$(npx --yes conventional-recommended-bump -p angular)
+          NEW_VERSION=$(npm version "$BUMP" --no-git-tag-version)
+
+          npx --yes conventional-changelog -p angular -r 1 > /tmp/changelog.md
+          npx --yes conventional-changelog -p angular -i CHANGELOG.md -s
+
+          git config user.name "GitHub CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore(release): ${NEW_VERSION}"
+          git tag -a "${NEW_VERSION}" -m "Release ${NEW_VERSION}"
+
+          echo "released=true" >> $GITHUB_OUTPUT
+          echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: './dist'
+          production-branch: master
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy ${{ steps.release.outputs.version || github.sha }}'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 2
+
+      - name: Push release
+        if: steps.release.outputs.released == 'true'
+        run: |
+          echo "Pushing ${{ steps.release.outputs.version }}..."
+          git push origin HEAD --follow-tags
+
+      - name: Create GitHub Release
+        if: steps.release.outputs.released == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.version }}
+          name: ${{ steps.release.outputs.version }}
+          body_path: /tmp/changelog.md
