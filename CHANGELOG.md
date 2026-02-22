@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/moranje/urinest.rip/compare/v3.0.2...v3.1.0) (2026-02-22)
+
+
+### Features
+
+* add build date, guideline review dates and project docs ([268f1d1](https://github.com/moranje/urinest.rip/commit/268f1d101c1d81d75e06c82c55dbf3788a0b8364))
+
+
+
 ## [3.0.2](https://github.com/moranje/urinest.rip/compare/v3.0.1...v3.0.2) (2026-02-22)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "urinest-rip",
   "type": "module",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "dev": "vite",
