@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/moranje/urinest.rip/compare/v3.0.0...v3.0.1) (2026-02-22)
+
+
+### Bug Fixes
+
+* **ci:** disable Netlify auto-build and add workflow_dispatch ([9bfd1a5](https://github.com/moranje/urinest.rip/commit/9bfd1a5c227b927bcf7ca385e69348d79ec9e04c))
+
+
+
 # 3.0.0 (2026-02-22)
 
 
