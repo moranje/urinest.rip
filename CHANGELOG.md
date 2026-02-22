@@ -1,3 +1,12 @@
+## [3.1.1](https://github.com/moranje/urinest.rip/compare/v3.1.0...v3.1.1) (2026-02-22)
+
+
+### Bug Fixes
+
+* format build date as dd-mm-yyyy ([695abb7](https://github.com/moranje/urinest.rip/commit/695abb7fa92b474b8298b2cdd5ea553bcd210c72))
+
+
+
 # [3.1.0](https://github.com/moranje/urinest.rip/compare/v3.0.2...v3.1.0) (2026-02-22)
 
 
