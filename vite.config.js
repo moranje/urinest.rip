@@ -8,6 +8,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
 export default defineConfig({
+  build: {
+    sourcemap: true
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __BUILD_DATE__: JSON.stringify((() => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`; })())
