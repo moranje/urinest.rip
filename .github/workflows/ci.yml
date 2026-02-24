@@ -115,6 +115,30 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Upload source maps
+        run: |
+          echo "Uploading source maps to Supabase Storage..."
+          UPLOADED=0
+          for f in $(find dist -name '*.map' 2>/dev/null); do
+            NAME=$(basename "$f")
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+              "${SUPABASE_URL}/storage/v1/object/sourcemaps/urinest.rip/${NAME}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" \
+              -H "Content-Type: application/json" \
+              -H "x-upsert: true" \
+              --data-binary @"$f")
+            if [ "$STATUS" = "200" ]; then
+              echo "  ✓ urinest.rip/${NAME}"
+              UPLOADED=$((UPLOADED + 1))
+            else
+              echo "  ✗ urinest.rip/${NAME} (HTTP $STATUS)"
+            fi
+          done
+          echo "Done: ${UPLOADED} source map(s) uploaded"
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
         with:
