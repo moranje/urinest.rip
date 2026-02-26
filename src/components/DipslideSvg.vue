@@ -1,87 +1,155 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  hover?: boolean
-  touch?: boolean
-}>(), {
-  hover: false,
-  touch: false
-})
+const props = withDefaults(
+  defineProps<{
+    hover?: boolean;
+    touch?: boolean;
+  }>(),
+  {
+    hover: false,
+    touch: false,
+  },
+);
 </script>
 
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    viewBox="0 0 192 459"
+    viewBox="0 0 100 240"
     :class="{ dipslide: true, hover: props.hover, touch: props.touch }"
   >
-    <path fill="#FFFCB6" d="m12.5 434.5-6-68.5 32 10.5 46 6 54-1.5 49-15-4 68.5-16 9-29 7.5-54 3-46-6.5-26-13Z" class="test-color" />
-    <path fill="#E9E9E9" d="m12 348-6.5 9.5L12 369l36 10 49 4 50.5-4 33-10 7.5-11.5-7.5-9.5-21-7H28l-16 7Z" />
-    <ellipse cx="96" cy="358" stroke="#D3D3D3" stroke-linejoin="round" stroke-width="10" rx="91" ry="25" />
-    <mask id="lid-mask" width="187" height="30" x="4" y="429" maskUnits="userSpaceOnUse" style="mask-type: alpha">
-      <path fill="#fff" d="M4 429h187v30H4z" />
-    </mask>
-    <g mask="url(#lid-mask)">
-      <ellipse cx="97.5" cy="429" stroke="#D3D3D3" stroke-width="10" rx="86.5" ry="25" />
+    <!-- Background Vial Outline -->
+    <g
+      class="vial"
+      stroke="currentColor"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M 20 20 L 20 200 A 30 30 0 0 0 80 200 L 80 20" />
+      <path d="M 15 20 L 85 20" />
+      <path d="M 10 10 L 90 10" />
+      <path d="M 20 180 C 40 190, 60 190, 80 180" stroke-opacity="0.3" stroke-width="2" />
+      <!-- liquid level -->
     </g>
-    <path stroke="#D3D3D3" stroke-width="10" d="m4.982 357.579 6.063 71.744M186.995 358.184l-3.081 72.002" />
-    <path fill="#E9E9E9" d="M40 275h112v80H40z" />
-    <path fill="#AAA" d="M41 350h110v5H41v-5Z" style="mix-blend-mode: soft-light" />
-    <path fill="#000" d="M41 309h110v5H41v-5ZM40 282h112v7H40v-7Z" style="mix-blend-mode: soft-light" />
-    <rect width="122" height="56" x="35" y="304" stroke="#D3D3D3" stroke-linejoin="round" stroke-width="10" rx="16" />
-    <path fill="#B43D3D" d="M40 10h112v265H40z" class="test-color" />
-    <path fill="#000" d="M41 275a5 5 0 0 1 5-5h100a5 5 0 0 1 5 5H41Z" style="mix-blend-mode: soft-light" />
-    <path fill="#AAA" d="M147 16a5 5 0 0 1 5-5v263a5 5 0 0 1-5-5V16ZM40 11a5 5 0 0 1 5 5v253a5 5 0 0 1-5 5V11Z" style="mix-blend-mode: soft-light" />
-    <path fill="#E9E9E9" d="M41 10h110a5 5 0 0 1-5 5H46a5 5 0 0 1-5-5Z" style="mix-blend-mode: soft-light" />
-    <rect width="122" height="275" x="35" y="5" stroke="#D3D3D3" stroke-width="10" rx="16" />
-    <circle cx="115" cy="264" r="5" fill="#FFFCB6" class="test-positive culture-1" />
-    <circle cx="66" cy="250" r="5" fill="#FFFCB6" class="test-positive culture-2" />
-    <circle cx="88" cy="230" r="5" fill="#FFFCB6" class="test-positive culture-3" />
-    <circle cx="140" cy="213" r="5" fill="#FFFCB6" class="test-positive culture-4" />
-    <circle cx="64" cy="190" r="5" fill="#FFFCB6" class="test-positive culture-5" />
-    <circle cx="123" cy="180" r="5" fill="#FFFCB6" class="test-positive culture-6" />
-    <circle cx="98" cy="152" r="5" fill="#FFFCB6" class="test-positive culture-7" />
-    <circle cx="54" cy="135" r="5" fill="#FFFCB6" class="test-positive culture-8" />
-    <circle cx="135" cy="110" r="5" fill="#FFFCB6" class="test-positive culture-9" />
-    <circle cx="101" cy="86" r="5" fill="#FFFCB6" class="test-positive culture-10" />
-    <circle cx="69" cy="68" r="5" fill="#FFFCB6" class="test-positive culture-11" />
-    <circle cx="123" cy="52" r="5" fill="#FFFCB6" class="test-positive culture-12" />
-    <circle cx="59" cy="30" r="5" fill="#FFFCB6" class="test-positive culture-13" />
+
+    <!-- Dipslide Insert -->
+    <g
+      class="slide"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <rect
+        x="35"
+        y="40"
+        width="30"
+        height="140"
+        rx="4"
+        fill="var(--md-sys-color-surface-container-lowest)"
+      />
+      <!-- Grid lines -->
+      <line x1="35" y1="75" x2="65" y2="75" stroke-opacity="0.3" />
+      <line x1="35" y1="110" x2="65" y2="110" stroke-opacity="0.3" />
+      <line x1="35" y1="145" x2="65" y2="145" stroke-opacity="0.3" />
+    </g>
+
+    <!-- Colonies -->
+    <g
+      class="colonies"
+      fill="var(--md-sys-color-primary)"
+      stroke="var(--md-sys-color-surface)"
+      stroke-width="1"
+    >
+      <circle cx="45" cy="55" r="3" class="colony c-1" />
+      <circle cx="55" cy="85" r="4" class="colony c-2" />
+      <circle cx="42" cy="120" r="3" class="colony c-3 tertiary" />
+      <circle cx="58" cy="155" r="5" class="colony c-4" />
+      <circle cx="48" cy="170" r="4" class="colony c-5" />
+      <circle cx="52" cy="65" r="2.5" class="colony c-6 tertiary" />
+      <circle cx="40" cy="95" r="3.5" class="colony c-7" />
+      <circle cx="55" cy="135" r="4.5" class="colony c-8 tertiary" />
+    </g>
   </svg>
 </template>
 
 <style scoped>
-@keyframes show {
-  0% { opacity: 1; }
-  100% { opacity: 1; }
+.dipslide {
+  height: 10em;
+  color: var(--md-sys-color-outline);
 }
-.dipslide { height: 10em; }
-.dipslide.hover .test-positive {
+
+.tertiary {
+  fill: var(--md-sys-color-tertiary);
+}
+
+.colony {
   opacity: 0;
-  animation-name: show;
-  animation-duration: 2s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: 1;
+  transform: translateY(5px) scale(0.5);
+  transform-box: fill-box;
+  transform-origin: center;
 }
-.dipslide.hover .test-positive.culture-1 { animation-delay: 0s; }
-.dipslide.hover .test-positive.culture-2 { animation-delay: 0.1s; }
-.dipslide.hover .test-positive.culture-3 { animation-delay: 0.2s; }
-.dipslide.hover .test-positive.culture-4 { animation-delay: 0.3s; }
-.dipslide.hover .test-positive.culture-5 { animation-delay: 0.4s; }
-.dipslide.hover .test-positive.culture-6 { animation-delay: 0.5s; }
-.dipslide.hover .test-positive.culture-7 { animation-delay: 0.6s; }
-.dipslide.hover .test-positive.culture-8 { animation-delay: 0.7s; }
-.dipslide.hover .test-positive.culture-9 { animation-delay: 0.8s; }
-.dipslide.hover .test-positive.culture-10 { animation-delay: 0.9s; }
-.dipslide.hover .test-positive.culture-11 { animation-delay: 1s; }
-.dipslide.hover .test-positive.culture-12 { animation-delay: 1.1s; }
-.dipslide.hover .test-positive.culture-13 { animation-delay: 1.2s; }
+
+/* Animations */
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dipslide.hover .colony,
+.dipslide.touch .colony {
+  animation: pop-in 0.6s var(--motion-easing-emphasized) forwards;
+}
+
+.c-1 {
+  animation-delay: 0.1s;
+}
+.c-2 {
+  animation-delay: 0.2s;
+}
+.c-3 {
+  animation-delay: 0.3s;
+}
+.c-4 {
+  animation-delay: 0.25s;
+}
+.c-5 {
+  animation-delay: 0.15s;
+}
+.c-6 {
+  animation-delay: 0.4s;
+}
+.c-7 {
+  animation-delay: 0.35s;
+}
+.c-8 {
+  animation-delay: 0.45s;
+}
+
+/* Base colors for empty/inactive state */
 @media screen and (hover: none) {
-  .dipslide:not(.touch) .test-color,
-  .dipslide:not(.touch) .test-positive { fill: #d3d3d3; }
+  .dipslide:not(.touch) .colony {
+    opacity: 0.3;
+    transform: scale(0.8);
+    fill: var(--md-sys-color-outline-variant);
+  }
 }
 @media screen and (hover: hover) {
-  .dipslide:not(.hover) .test-color,
-  .dipslide:not(.hover) .test-positive { fill: #d3d3d3; }
+  .dipslide:not(.hover) .colony {
+    opacity: 0.3;
+    transform: scale(0.8);
+    fill: var(--md-sys-color-outline-variant);
+  }
 }
 </style>
