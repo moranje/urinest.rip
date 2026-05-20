@@ -1,6 +1,7 @@
 <template>
   <div class="landing-page">
     <div class="landing-content">
+      <h1 class="sr-only">Beslishulp urineonderzoek — kies een test</h1>
       <div class="grid stagger-children">
         <MenuItem
           v-slot="{ hover, touch }"
@@ -9,32 +10,16 @@
         >
           <HealthySvg :hover="hover" :touch="touch" />
         </MenuItem>
-        <MenuItem
-          v-slot="{ hover, touch }"
-          to="/questionnaire/strip"
-          name="Urinestrip"
-        >
+        <MenuItem v-slot="{ hover, touch }" to="/questionnaire/strip" name="Urinestrip">
           <StripSvg :hover="hover" :touch="touch" />
         </MenuItem>
-        <MenuItem
-          v-slot="{ hover, touch }"
-          to="/questionnaire/dipslide"
-          name="Dipslide"
-        >
+        <MenuItem v-slot="{ hover, touch }" to="/questionnaire/dipslide" name="Dipslide">
           <DipslideSvg :hover="hover" :touch="touch" />
         </MenuItem>
-        <MenuItem
-          v-slot="{ hover, touch }"
-          to="/questionnaire/sediment"
-          name="Sediment"
-        >
+        <MenuItem v-slot="{ hover, touch }" to="/questionnaire/sediment" name="Sediment">
           <SedimentSvg :hover="hover" :touch="touch" />
         </MenuItem>
-        <MenuItem
-          v-slot="{ hover, touch }"
-          to="/questionnaire/kweek"
-          name="Kweek"
-        >
+        <MenuItem v-slot="{ hover, touch }" to="/questionnaire/kweek" name="Kweek">
           <CultureSvg :hover="hover" :touch="touch" />
         </MenuItem>
       </div>
@@ -61,12 +46,12 @@
 </template>
 
 <script setup lang="ts">
-import MenuItem from '../components/MenuItem.vue'
-import HealthySvg from '../components/HealthySvg.vue'
-import StripSvg from '../components/StripSvg.vue'
-import DipslideSvg from '../components/DipslideSvg.vue'
-import SedimentSvg from '../components/SedimentSvg.vue'
-import CultureSvg from '../components/CultureSvg.vue'
+import MenuItem from "../components/MenuItem.vue";
+import HealthySvg from "../components/HealthySvg.vue";
+import StripSvg from "../components/StripSvg.vue";
+import DipslideSvg from "../components/DipslideSvg.vue";
+import SedimentSvg from "../components/SedimentSvg.vue";
+import CultureSvg from "../components/CultureSvg.vue";
 </script>
 
 <style scoped>
@@ -90,14 +75,25 @@ import CultureSvg from '../components/CultureSvg.vue'
 }
 
 .grid > * {
-  height: 16em;
+  aspect-ratio: 1 / 1;
+  min-height: clamp(10em, 28vw, 16em);
   overflow: hidden;
 }
 
-@media only screen and (max-width: 767px) {
+/* bp-lg: 900px — below this we drop to 2 columns */
+@media only screen and (max-width: 899.98px) {
   .grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
+  }
+}
+
+/* bp-sm: 480px — below this we go single-column */
+@media only screen and (max-width: 479.98px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: clamp(10em, 50vw, 14em);
+    grid-template-rows: none;
   }
 }
 
@@ -149,13 +145,18 @@ import CultureSvg from '../components/CultureSvg.vue'
   color: var(--md-sys-color-on-surface-variant);
 }
 
-@media only screen and (max-width: 479px) {
+/* bp-md: tablets show 2 columns */
+@media only screen and (max-width: 599.98px) {
   .uti-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-@media screen and (max-width: 479px) {
+/* bp-sm: single column on small phones */
+@media only screen and (max-width: 479.98px) {
+  .uti-grid {
+    grid-template-columns: 1fr;
+  }
   .landing-page {
     padding: var(--spacing-sm);
   }

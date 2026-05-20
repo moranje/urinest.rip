@@ -1,17 +1,17 @@
 <template>
   <div class="error-page">
     <div class="error-content">
-      <h2>Er is iets misgegaan</h2>
-      <p>{{ message || 'Een onverwachte fout is opgetreden.' }}</p>
+      <h1>Er is iets misgegaan</h1>
+      <p>{{ message || "Een onverwachte fout is opgetreden." }}</p>
       <router-link to="/" class="md-button md-button--primary">Terug naar home</router-link>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-const route = useRoute()
-const message = route.query.message as string | undefined
+import { useRoute } from "vue-router";
+const route = useRoute();
+const message = route.query.message as string | undefined;
 </script>
 
 <style scoped>

@@ -1,72 +1,161 @@
 <template>
   <div class="questionnaire-page">
-    <main class="page-content">
-      <div v-if="isLoading" class="md-card question-card" aria-busy="true" aria-label="Vragenlijst laden">
+    <section class="page-content" aria-label="Vragenlijst">
+      <div
+        v-if="isLoading"
+        class="md-card question-card"
+        aria-busy="true"
+        aria-label="Vragenlijst laden"
+      >
         <div class="question-header">
-          <div class="skeleton-line skeleton-line--title"></div>
-          <div class="skeleton-line skeleton-line--short"></div>
+          <Skeleton variant="title" />
+          <Skeleton variant="short" />
         </div>
         <div class="question-options">
-          <div class="skeleton-option"></div>
-          <div class="skeleton-option"></div>
-          <div class="skeleton-option"></div>
+          <Skeleton variant="option" />
+          <Skeleton variant="option" />
+          <Skeleton variant="option" />
         </div>
       </div>
       <Transition v-else name="question-fade" mode="out-in">
-        <div
-          v-if="currentQuestion"
-          :key="currentQuestion.id"
-          class="md-card question-card"
-        >
-          <button
-            v-if="questionHistory.length > 0"
-            class="back-button"
-            @click="goToPreviousQuestion"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M19 12H5" /><polyline points="12 19 5 12 12 5" />
-            </svg>
-            Terug
-          </button>
+        <div v-if="currentQuestion" :key="currentQuestion.id" class="md-card question-card">
+          <div class="question-toolbar">
+            <button
+              v-if="questionHistory.length > 0"
+              class="back-button"
+              type="button"
+              aria-label="Vorige vraag (Esc of Backspace)"
+              @click="goToPreviousQuestion"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M19 12H5" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              Terug
+            </button>
+            <span class="question-toolbar-spacer" />
+            <button
+              v-if="questionHistory.length > 0"
+              class="restart-button"
+              type="button"
+              aria-label="Opnieuw beginnen"
+              @click="restartQuestionnaire"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+            </button>
+          </div>
+          <ProgressBar
+            :value="progressValue"
+            :max="progressMax"
+            :label="`Vraag ${progressValue} van ongeveer ${progressMax}`"
+          />
           <div class="question-header">
-            <h2 class="question-title">
+            <h1
+              :id="`q-title-${currentQuestion.id}`"
+              class="question-title"
+              style="view-transition-name: question-title"
+            >
               {{ currentQuestion.text }}
-            </h2>
-            <p v-if="currentStep?.description" class="question-step">
+            </h1>
+            <p
+              v-if="currentStep?.description"
+              :id="`q-step-${currentQuestion.id}`"
+              class="question-step"
+            >
               {{ currentStep.description }}
             </p>
           </div>
 
-          <div class="question-options">
+          <div
+            class="question-options"
+            :role="isMultiSelect ? 'group' : 'radiogroup'"
+            :aria-labelledby="`q-title-${currentQuestion.id}`"
+            :aria-describedby="
+              currentStep?.description ? `q-step-${currentQuestion.id}` : undefined
+            "
+          >
+            <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <div
               v-for="(option, index) in currentQuestion.options"
+              :ref="(el) => setOptionRef(option.id, el)"
               :key="option.id"
               class="option-item"
               :class="{ 'option-selected': isOptionSelected(option) }"
-              role="button"
-              tabindex="0"
+              :role="isMultiSelect ? 'checkbox' : 'radio'"
+              :aria-checked="isOptionSelected(option)"
+              :tabindex="getOptionTabIndex(option, index)"
               @click="isMultiSelect ? toggleOption(option) : selectOption(option)"
-              @keydown.enter="isMultiSelect ? toggleOption(option) : selectOption(option)"
+              @keydown.enter.prevent="isMultiSelect ? toggleOption(option) : selectOption(option)"
+              @keydown.space.prevent="isMultiSelect ? toggleOption(option) : selectOption(option)"
+              @keydown.up.prevent="!isMultiSelect && focusSiblingOption(index, -1)"
+              @keydown.down.prevent="!isMultiSelect && focusSiblingOption(index, 1)"
+              @keydown.left.prevent="!isMultiSelect && focusSiblingOption(index, -1)"
+              @keydown.right.prevent="!isMultiSelect && focusSiblingOption(index, 1)"
             >
               <div class="option-content">
-                <span v-if="isNonTouchDevice" class="option-prefix">{{ String.fromCharCode(65 + index) }}.</span>
+                <span v-if="isNonTouchDevice" class="option-prefix" aria-hidden="true"
+                  >{{ String.fromCharCode(65 + index) }}.</span
+                >
                 <span class="option-text">{{ option.text }}</span>
               </div>
-              <div v-if="option.description" class="option-info-wrapper" @click.stop>
+              <!-- The wrapper exists to stop the click bubbling into the option-item.
+                   `role="presentation"` declares it as purely structural so AT skips it. -->
+              <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
+              <div
+                v-if="option.description"
+                class="option-info-wrapper"
+                role="presentation"
+                @click.stop
+              >
                 <button
                   class="info-icon"
+                  type="button"
+                  :aria-expanded="activePopoverOptionId === option.id"
                   aria-label="Meer informatie"
+                  @click.stop="togglePopover(option, $event)"
+                  @keydown.escape.stop="closePopover"
                   @mouseenter.stop="showPopover(option, $event)"
-                  @mouseleave.stop="hidePopover"
+                  @mouseleave.stop="schedulePopoverClose"
                   @focus.stop="showPopover(option, $event)"
-                  @blur.stop="hidePopover"
+                  @blur.stop="schedulePopoverClose"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+                    <path
+                      fill="currentColor"
+                      d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                    />
                   </svg>
                 </button>
               </div>
             </div>
+
+            <p v-if="isMultiSelect" class="multi-counter" :aria-live="'polite'">
+              <span v-if="selectedCount === 0">Geen geselecteerd</span>
+              <span v-else>{{ selectedCount }} geselecteerd</span>
+            </p>
 
             <button
               v-if="isMultiSelect"
@@ -74,7 +163,7 @@
               :disabled="!hasSelectedOptions"
               @click="confirmMultipleChoice"
             >
-              Bevestigen
+              Bevestigen<span v-if="selectedCount > 0"> ({{ selectedCount }})</span>
             </button>
           </div>
 
@@ -91,7 +180,7 @@
           </div>
         </div>
       </Transition>
-    </main>
+    </section>
 
     <teleport to="body">
       <div
@@ -107,312 +196,477 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { marked } from 'marked'
-import { useRouter } from 'vue-router'
-import { useQuestionnaireStore } from '../store/questionnaireStore'
-import type { QuestionOption, Question, Step, AnswerValue, PopoverStyle } from '../types'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { marked } from "marked";
+import { useRouter } from "vue-router";
+import { useQuestionnaireStore } from "../store/questionnaireStore";
+import ProgressBar from "../components/primitives/ProgressBar.vue";
+import Skeleton from "../components/primitives/Skeleton.vue";
+import type { QuestionOption, Question, Step, AnswerValue, PopoverStyle } from "../types";
 
-const router = useRouter()
-const questionnaireStore = useQuestionnaireStore()
+const router = useRouter();
+const questionnaireStore = useQuestionnaireStore();
 
 const props = defineProps<{
-  id: string
-}>()
+  id: string;
+}>();
 
-const isLoading = ref(true)
-const currentQuestionId = ref<string | null>(null)
-const isNonTouchDevice = ref(false)
-const isNavigating = ref(false)
-const questionHistory = ref<string[]>([])
+const isLoading = ref(true);
+const currentQuestionId = ref<string | null>(null);
+const isNonTouchDevice = ref(false);
+const isNavigating = ref(false);
+const questionHistory = ref<string[]>([]);
+
+// Option refs (for keyboard focus navigation in single-select radiogroup)
+const optionRefs = ref<Record<string, HTMLElement | null>>({});
+const setOptionRef = (optionId: string, el: Element | unknown): void => {
+  optionRefs.value[optionId] = (el as HTMLElement) ?? null;
+};
 
 // Popover State
-const activePopoverOptionId = ref<string | null>(null)
-const popoverDescription = ref('')
-const popoverStyle = ref<PopoverStyle>({ top: '0px', left: '0px', visibility: 'hidden' })
-let hidePopoverTimeout: ReturnType<typeof setTimeout> | null = null
+const activePopoverOptionId = ref<string | null>(null);
+const popoverDescription = ref("");
+const popoverStyle = ref<PopoverStyle>({ top: "0px", left: "0px", visibility: "hidden" });
+let hidePopoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
 // --- Computed Properties ---
 
 const isMultiSelect = computed(() => {
-  const t = currentQuestion.value?.type
-  return t === 'multiple' || t === 'multi_select'
-})
+  const t = currentQuestion.value?.type;
+  return t === "multiple" || t === "multi_select";
+});
 
-const questionnaire = computed(() => questionnaireStore.getQuestionnaireById(props.id))
+const questionnaire = computed(() => questionnaireStore.getQuestionnaireById(props.id));
 
 const currentQuestion = computed((): Question | null | undefined => {
-  if (!currentQuestionId.value) return null
-  return questionnaireStore.getQuestionById(currentQuestionId.value) ?? null
-})
+  if (!currentQuestionId.value) return null;
+  return questionnaireStore.getQuestionById(currentQuestionId.value) ?? null;
+});
 
 const currentStep = computed((): Step | null | undefined => {
-  if (!currentQuestionId.value || !questionnaire.value) return null
+  if (!currentQuestionId.value || !questionnaire.value) return null;
   const stepId = questionnaire.value.stepIds.find((sid: string) => {
-    const step = questionnaireStore.getStepById(sid)
-    return step?.questionIds.includes(currentQuestionId.value!)
-  })
-  return stepId ? questionnaireStore.getStepById(stepId) ?? null : null
-})
+    const step = questionnaireStore.getStepById(sid);
+    return step?.questionIds.includes(currentQuestionId.value!);
+  });
+  return stepId ? (questionnaireStore.getStepById(stepId) ?? null) : null;
+});
 
 const hasSelectedOptions = computed(() => {
-  if (!currentQuestion.value) return false
-  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id)
-  if (answer === undefined || answer === null) return false
+  if (!currentQuestion.value) return false;
+  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
+  if (answer === undefined || answer === null) return false;
   if (isMultiSelect.value) {
-    return Array.isArray(answer) && answer.length > 0
+    return Array.isArray(answer) && answer.length > 0;
   }
-  return true
-})
+  return true;
+});
+
+const selectedCount = computed((): number => {
+  if (!currentQuestion.value || !isMultiSelect.value) return 0;
+  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
+  if (Array.isArray(answer)) return answer.length;
+  return 0;
+});
+
+// Progress tracking — questionHistory.length is the count of completed questions
+// progressMax is the estimated remaining + completed; we count answered questions + 1 for the current
+const progressValue = computed((): number => questionHistory.value.length + 1);
+const progressMax = computed((): number => {
+  const qData = questionnaire.value;
+  if (!qData) return progressValue.value;
+  // Estimate as total number of questions in the flow (upper bound)
+  return Math.max(progressValue.value, qData.questionIds?.length ?? progressValue.value);
+});
+
+const getOptionTabIndex = (option: QuestionOption, index: number): number => {
+  if (isMultiSelect.value) return 0;
+  // For radiogroup: only the selected option (or the first if none selected) is in the tab order
+  if (isOptionSelected(option)) return 0;
+  const anySelected = currentQuestion.value?.options?.some((o) => isOptionSelected(o));
+  if (!anySelected && index === 0) return 0;
+  return -1;
+};
+
+const focusSiblingOption = (currentIndex: number, delta: number): void => {
+  if (!currentQuestion.value?.options?.length) return;
+  const len = currentQuestion.value.options.length;
+  const nextIndex = (currentIndex + delta + len) % len;
+  const nextOption = currentQuestion.value.options[nextIndex];
+  if (!nextOption) return;
+  const el = optionRefs.value[nextOption.id];
+  if (el && typeof el.focus === "function") el.focus();
+};
 
 // --- Lifecycle Hooks ---
 
 onMounted(async () => {
   if (!questionnaireStore.dataReady) {
     try {
-      await questionnaireStore.loadInitialData()
+      await questionnaireStore.loadInitialData();
     } catch (err) {
-      console.error('Error loading questionnaire data', err)
-      isLoading.value = false
-      router.replace('/error')
-      return
+      console.error("Error loading questionnaire data", err);
+      isLoading.value = false;
+      router.replace("/error");
+      return;
     }
   }
-  await loadStateAndDetermineStart()
-  checkNonTouch()
-  window.addEventListener('keydown', handleKeyDown)
-})
+  await loadStateAndDetermineStart();
+  checkNonTouch();
+  window.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("click", handleDocClick, true);
+});
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeyDown)
-})
+  window.removeEventListener("keydown", handleKeyDown);
+  document.removeEventListener("click", handleDocClick, true);
+});
 
 // --- Core Logic ---
 
-const loadStateAndDetermineStart = async (): Promise<void> => {
-  isLoading.value = true
+const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Promise<void> => {
+  isLoading.value = true;
   if (!questionnaire.value) {
-    router.replace('/')
-    return
+    router.replace("/");
+    return;
   }
 
-  questionnaireStore.clearAnswers(props.id)
-  questionHistory.value = []
-  currentQuestionId.value = findNextQuestionId(null)
+  // Only wipe answers on explicit reset (e.g. user pressed "Opnieuw beginnen"
+  // or navigated to a different flow). Mounting/remounting on the same
+  // flow-id preserves progress (DSN-C02).
+  if (options.reset) {
+    questionnaireStore.clearAnswers(props.id);
+    questionHistory.value = [];
+  }
+  currentQuestionId.value = findNextQuestionId(null);
 
-  isLoading.value = false
-}
-
-const findNextQuestionId = (startQuestionId: string | null = null): string | null => {
-  const qData = questionnaire.value
-  if (!qData || !qData.stepIds) return null
-
-  let searching = !startQuestionId
-
-  for (const stepId of qData.stepIds) {
-    const step = questionnaireStore.getStepById(stepId)
-    if (!step || !step.questionIds) continue
-
-    for (const questionId of step.questionIds) {
-      if (searching) {
-        const questionDef = questionnaireStore.getQuestionById(questionId)
-        if (questionDef) {
-          const { isValid } = questionnaireStore.validateConditions(
-            props.id,
-            questionDef.conditions || []
-          )
-          if (isValid) {
-            return questionId
-          }
-        }
-      } else if (questionId === startQuestionId) {
-        searching = true
+  // If there are existing answers, fast-forward to the first unanswered valid question
+  if (!options.reset) {
+    const answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
+    const answered = Object.keys(answers);
+    if (answered.length > 0) {
+      // walk through stepIds and rebuild history of answered question ids
+      const newHistory: string[] = [];
+      let next: string | null = currentQuestionId.value;
+      while (next && answered.includes(next)) {
+        newHistory.push(next);
+        next = findNextQuestionId(next);
+      }
+      if (newHistory.length > 0) {
+        questionHistory.value = newHistory;
+        currentQuestionId.value = next;
       }
     }
   }
-  return null
-}
+
+  isLoading.value = false;
+};
+
+const restartQuestionnaire = (): void => {
+  void loadStateAndDetermineStart({ reset: true });
+};
+
+const findNextQuestionId = (startQuestionId: string | null = null): string | null => {
+  const qData = questionnaire.value;
+  if (!qData || !qData.stepIds) return null;
+
+  let searching = !startQuestionId;
+
+  for (const stepId of qData.stepIds) {
+    const step = questionnaireStore.getStepById(stepId);
+    if (!step || !step.questionIds) continue;
+
+    for (const questionId of step.questionIds) {
+      if (searching) {
+        const questionDef = questionnaireStore.getQuestionById(questionId);
+        if (questionDef) {
+          const { isValid } = questionnaireStore.validateConditions(
+            props.id,
+            questionDef.conditions || [],
+          );
+          if (isValid) {
+            return questionId;
+          }
+        }
+      } else if (questionId === startQuestionId) {
+        searching = true;
+      }
+    }
+  }
+  return null;
+};
+
+const advanceQuestionState = (): void => {
+  if (currentQuestionId.value) {
+    questionHistory.value.push(currentQuestionId.value);
+  }
+  const nextId = findNextQuestionId(currentQuestionId.value);
+  if (nextId) {
+    currentQuestionId.value = nextId;
+  } else {
+    currentQuestionId.value = null;
+    determineResult();
+  }
+};
+
+const previousQuestionState = (): void => {
+  if (questionHistory.value.length === 0) return;
+  currentQuestionId.value = questionHistory.value.pop() ?? null;
+};
+
+// View Transitions API helper — feature-detect + reduced-motion fallback
+type DocumentWithViewTransitions = Document & {
+  startViewTransition?: (cb: () => void | Promise<void>) => { finished: Promise<void> };
+};
+const withViewTransition = (mutate: () => void): void => {
+  const doc = document as DocumentWithViewTransitions;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof doc.startViewTransition === "function" && !reduced) {
+    doc.startViewTransition(() => {
+      mutate();
+    });
+  } else {
+    mutate();
+  }
+};
 
 const goToNextQuestion = (): void => {
-  if (currentQuestionId.value) {
-    questionHistory.value.push(currentQuestionId.value)
-  }
-  const nextId = findNextQuestionId(currentQuestionId.value)
-  if (nextId) {
-    currentQuestionId.value = nextId
-  } else {
-    currentQuestionId.value = null
-    determineResult()
-  }
-}
+  withViewTransition(advanceQuestionState);
+};
 
 const goToPreviousQuestion = (): void => {
-  if (questionHistory.value.length === 0) return
-  currentQuestionId.value = questionHistory.value.pop() ?? null
-}
+  withViewTransition(previousQuestionState);
+};
 
 const determineResult = (): void => {
-  if (isNavigating.value) return
-  isNavigating.value = true
+  if (isNavigating.value) return;
+  isNavigating.value = true;
 
-  const fullQuestionnaire = questionnaireStore.getFullQuestionnaire(props.id)
+  const fullQuestionnaire = questionnaireStore.getFullQuestionnaire(props.id);
   if (!fullQuestionnaire) {
-    router.replace('/error')
-    return
+    router.replace("/error");
+    return;
   }
 
-  const answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id)
+  const answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
   const { outcome } = questionnaireStore.determineOutcomeForPath(
     props.id,
     answers,
-    fullQuestionnaire.resultsLogic
-  )
+    fullQuestionnaire.resultsLogic,
+  );
 
   if (outcome) {
-    const [type, value] = outcome.split(':')
-    if (type === 'redirect') {
-      questionnaireStore.clearAnswers(props.id)
-      router.replace(`/questionnaire/${value}`)
+    const [type, value] = outcome.split(":");
+    if (type === "redirect") {
+      questionnaireStore.clearAnswers(props.id);
+      router.replace(`/questionnaire/${value}`);
     } else {
-      router.push(`/info/${value}`)
+      router.push(`/info/${value}`);
     }
   } else {
-    router.push('/error')
+    router.push("/error");
   }
-}
+};
 
 // --- Answer & Interaction Handlers ---
 
 const selectOption = (option: QuestionOption): void => {
-  if (!currentQuestion.value) return
+  if (!currentQuestion.value) return;
   questionnaireStore.setAnswer(props.id, currentQuestion.value.id, {
     value: option.value,
-    text: option.text
-  })
-  goToNextQuestion()
-}
+    text: option.text,
+  });
+  goToNextQuestion();
+};
 
 const toggleOption = (option: QuestionOption): void => {
-  if (!currentQuestion.value) return
-  const currentAnswer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id)
-  const answerArray = (Array.isArray(currentAnswer) ? currentAnswer : []) as AnswerValue[]
-  const newAnswer = [...answerArray]
-  const existingIndex = newAnswer.findIndex((a) => a.value === option.value)
+  if (!currentQuestion.value) return;
+  const currentAnswer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
+  const answerArray = (Array.isArray(currentAnswer) ? currentAnswer : []) as AnswerValue[];
+  const newAnswer = [...answerArray];
+  const existingIndex = newAnswer.findIndex((a) => a.value === option.value);
 
   if (existingIndex >= 0) {
-    newAnswer.splice(existingIndex, 1)
+    newAnswer.splice(existingIndex, 1);
   } else {
-    newAnswer.push({ value: option.value, text: option.text })
+    newAnswer.push({ value: option.value, text: option.text });
   }
-  questionnaireStore.setAnswer(props.id, currentQuestion.value.id, newAnswer)
-}
+  questionnaireStore.setAnswer(props.id, currentQuestion.value.id, newAnswer);
+};
 
 const confirmMultipleChoice = (): void => {
-  goToNextQuestion()
-}
+  goToNextQuestion();
+};
 
 const isOptionSelected = (option: QuestionOption): boolean => {
-  if (!currentQuestion.value) return false
-  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id)
-  if (answer === undefined) return false
+  if (!currentQuestion.value) return false;
+  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
+  if (answer === undefined) return false;
   if (Array.isArray(answer)) {
-    return answer.some((a) => a.value === option.value)
+    return answer.some((a) => a.value === option.value);
   }
-  return (answer as AnswerValue).value === option.value
-}
+  return (answer as AnswerValue).value === option.value;
+};
 
 // --- Utilities & UI ---
 
 const handleKeyDown = (e: KeyboardEvent): void => {
-  if (!currentQuestion.value?.options || isLoading.value) return
-  const key = e.key.toUpperCase()
-  if (key.length === 1 && key >= 'A' && key <= 'Z') {
-    const index = key.charCodeAt(0) - 65
+  if (isLoading.value) return;
+
+  // Global Escape / Backspace → goToPreviousQuestion (if not focused on input)
+  const target = e.target as HTMLElement | null;
+  const isFormField = !!target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
+
+  if (e.key === "Escape") {
+    if (activePopoverOptionId.value) {
+      closePopover();
+      e.preventDefault();
+      return;
+    }
+    if (questionHistory.value.length > 0) {
+      goToPreviousQuestion();
+      e.preventDefault();
+      return;
+    }
+  }
+  if (e.key === "Backspace" && !isFormField && questionHistory.value.length > 0) {
+    goToPreviousQuestion();
+    e.preventDefault();
+    return;
+  }
+
+  if (!currentQuestion.value?.options) return;
+  const key = e.key.toUpperCase();
+  if (key.length === 1 && key >= "A" && key <= "Z") {
+    const index = key.charCodeAt(0) - 65;
     if (index < currentQuestion.value.options.length) {
-      const option = currentQuestion.value.options[index]
+      const option = currentQuestion.value.options[index];
       if (isMultiSelect.value) {
-        toggleOption(option)
+        toggleOption(option);
       } else {
-        selectOption(option)
+        selectOption(option);
       }
     }
   }
-}
+};
 
 const checkNonTouch = (): void => {
   isNonTouchDevice.value =
-    window.matchMedia('(pointer: fine)').matches || navigator.maxTouchPoints === 0
-}
+    window.matchMedia("(pointer: fine)").matches || navigator.maxTouchPoints === 0;
+};
 
-const compiledMarkdown = (text: string | undefined): string => (text ? marked.parse(text) as string : '')
+const compiledMarkdown = (text: string | undefined): string =>
+  text ? (marked.parse(text) as string) : "";
 
 const showPopover = (option: QuestionOption, event: MouseEvent | FocusEvent): void => {
-  if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout)
-  const target = event.currentTarget as HTMLElement
-  const rect = target.getBoundingClientRect()
-  activePopoverOptionId.value = option.id
-  popoverDescription.value = option.description || ''
+  if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  activePopoverOptionId.value = option.id;
+  popoverDescription.value = option.description || "";
 
-  const windowWidth = window.innerWidth
-  const windowHeight = window.innerHeight
-  const margin = 16
-  const availableWidth = windowWidth - margin * 2
-  const popoverWidth = Math.min(300, availableWidth)
-  const popoverMaxHeight = 300
-  const gap = 5
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const margin = 16;
+  const availableWidth = windowWidth - margin * 2;
+  const popoverWidth = Math.min(300, availableWidth);
+  const popoverMaxHeight = 300;
+  const gap = 5;
 
-  const spaceBelow = windowHeight - rect.bottom - gap
-  const spaceAbove = rect.top - gap
-  const fitsBelow = spaceBelow >= Math.min(popoverMaxHeight, 120)
+  const spaceBelow = windowHeight - rect.bottom - gap;
+  const spaceAbove = rect.top - gap;
+  const fitsBelow = spaceBelow >= Math.min(popoverMaxHeight, 120);
 
   const style: PopoverStyle = {
-    position: 'fixed',
-    visibility: 'visible',
+    position: "fixed",
+    visibility: "visible",
     opacity: 1,
-    maxWidth: `${popoverWidth}px`
-  }
+    maxWidth: `${popoverWidth}px`,
+  };
 
   if (fitsBelow) {
-    style.top = `${rect.bottom + gap}px`
+    style.top = `${rect.bottom + gap}px`;
   } else {
-    style.top = `${Math.max(margin, rect.top - gap - Math.min(popoverMaxHeight, spaceAbove))}px`
+    style.top = `${Math.max(margin, rect.top - gap - Math.min(popoverMaxHeight, spaceAbove))}px`;
   }
 
   // Center on icon, then clamp to viewport
-  const iconCenter = rect.left + rect.width / 2
-  let left = iconCenter - popoverWidth / 2
+  const iconCenter = rect.left + rect.width / 2;
+  let left = iconCenter - popoverWidth / 2;
   if (left + popoverWidth > windowWidth - margin) {
-    left = windowWidth - margin - popoverWidth
+    left = windowWidth - margin - popoverWidth;
   }
   if (left < margin) {
-    left = margin
+    left = margin;
   }
-  style.left = `${left}px`
+  style.left = `${left}px`;
 
-  popoverStyle.value = style
-}
+  popoverStyle.value = style;
+};
 
-const hidePopover = (): void => {
+const closePopover = (): void => {
+  if (hidePopoverTimeout) {
+    clearTimeout(hidePopoverTimeout);
+    hidePopoverTimeout = null;
+  }
+  activePopoverOptionId.value = null;
+  popoverStyle.value.visibility = "hidden";
+  popoverStyle.value.opacity = 0;
+};
+
+const schedulePopoverClose = (): void => {
+  if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
   hidePopoverTimeout = setTimeout(() => {
-    activePopoverOptionId.value = null
-    popoverStyle.value.visibility = 'hidden'
-    popoverStyle.value.opacity = 0
-  }, 100)
-}
+    closePopover();
+  }, 300);
+};
 
-// When questionnaire id changes (redirect between flows), reinitialize
-watch(() => props.id, async () => {
-  isNavigating.value = false
-  questionHistory.value = []
-  await loadStateAndDetermineStart()
-})
+const togglePopover = (option: QuestionOption, event: MouseEvent | FocusEvent): void => {
+  if (activePopoverOptionId.value === option.id) {
+    closePopover();
+  } else {
+    showPopover(option, event);
+  }
+};
+
+const handleDocClick = (e: MouseEvent): void => {
+  if (!activePopoverOptionId.value) return;
+  const target = e.target as Node | null;
+  if (!target) return;
+  // If click is outside any info-icon or popover, close
+  const popover = document.querySelector(".info-popover");
+  const infoIcons = document.querySelectorAll(".info-icon");
+  if (popover && popover.contains(target)) return;
+  for (const icon of infoIcons) {
+    if (icon.contains(target)) return;
+  }
+  closePopover();
+};
+
+// When questionnaire id changes (redirect between flows), reinitialize from scratch.
+watch(
+  () => props.id,
+  async () => {
+    isNavigating.value = false;
+    questionHistory.value = [];
+    await loadStateAndDetermineStart({ reset: true });
+  },
+);
 
 // Watch for the question becoming null (due to condition changes) and advance
 watch(currentQuestion, (newQ, oldQ) => {
   if (newQ === null && oldQ !== null && !isLoading.value && !isNavigating.value) {
-    nextTick(goToNextQuestion)
+    nextTick(goToNextQuestion);
   }
-})
+});
+
+// determineResult — when redirecting between flows, drop into fresh state
+watch(
+  () => isNavigating.value,
+  () => {
+    // no-op placeholder for future analytics
+  },
+);
 </script>
 
 <style scoped>
@@ -444,12 +698,22 @@ watch(currentQuestion, (newQ, oldQ) => {
   box-sizing: border-box;
 }
 
+.question-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.question-toolbar-spacer {
+  flex: 1;
+}
+
 .back-button {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
   padding: var(--spacing-xs) var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
   border: none;
   background: transparent;
   color: var(--md-sys-color-primary);
@@ -466,6 +730,31 @@ watch(currentQuestion, (newQ, oldQ) => {
   background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
 }
 
+.restart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  border-radius: var(--md-sys-shape-corner-full);
+  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
+}
+.restart-button:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+  color: var(--md-sys-color-on-surface);
+}
+
+.multi-counter {
+  font: var(--md-sys-typescale-label-medium);
+  color: var(--md-sys-color-on-surface-variant);
+  margin: var(--spacing-sm) 0 0;
+  text-align: right;
+}
+
 .question-header {
   margin-bottom: var(--spacing-xl);
 }
@@ -474,7 +763,12 @@ watch(currentQuestion, (newQ, oldQ) => {
   font: var(--md-sys-typescale-headline-small);
   color: var(--md-sys-color-on-surface);
   margin: 0 0 var(--spacing-sm) 0;
+  text-wrap: balance;
 }
+
+/* View Transitions API — question title morphs across question changes.
+   Animation is declared in main.css (must be on root, not scoped).
+   Reduced-motion is respected by the wrapper in script (withViewTransition). */
 
 .question-step {
   font: var(--md-sys-typescale-body-small);
@@ -514,7 +808,7 @@ watch(currentQuestion, (newQ, oldQ) => {
 }
 
 .option-item::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-color: var(--md-sys-color-primary);
@@ -525,7 +819,11 @@ watch(currentQuestion, (newQ, oldQ) => {
 
 .option-item:hover {
   box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 4%, var(--md-sys-color-surface-container-lowest));
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 4%,
+    var(--md-sys-color-surface-container-lowest)
+  );
 }
 .option-item:active::before {
   opacity: var(--md-sys-state-pressed-state-layer-opacity);
@@ -535,7 +833,11 @@ watch(currentQuestion, (newQ, oldQ) => {
 .option-selected {
   border-color: var(--md-sys-color-primary);
   box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-lowest));
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 8%,
+    var(--md-sys-color-surface-container-lowest)
+  );
   color: var(--md-sys-color-primary);
 }
 .option-selected .option-prefix {
@@ -672,11 +974,15 @@ watch(currentQuestion, (newQ, oldQ) => {
   border-radius: var(--md-sys-shape-corner-small);
   animation: skeleton-shimmer var(--motion-duration-long) ease-in-out infinite alternate;
 }
-.skeleton-option:nth-child(2) { animation-delay: 100ms; }
-.skeleton-option:nth-child(3) { animation-delay: 200ms; }
+.skeleton-option:nth-child(2) {
+  animation-delay: 100ms;
+}
+.skeleton-option:nth-child(3) {
+  animation-delay: 200ms;
+}
 
-/* Mobile Adjustments */
-@media (max-width: 599px) {
+/* Mobile Adjustments — bp-md: 600px */
+@media (max-width: 599.98px) {
   .page-content {
     padding: var(--spacing-sm);
   }
@@ -701,7 +1007,7 @@ watch(currentQuestion, (newQ, oldQ) => {
   }
 }
 
-/* Tablet and Desktop */
+/* Tablet and Desktop — bp-md: 600px */
 @media (min-width: 600px) {
   .page-content {
     padding: var(--spacing-md) 0;
@@ -715,6 +1021,7 @@ watch(currentQuestion, (newQ, oldQ) => {
   }
 }
 
+/* bp-lg: 900px */
 @media (min-width: 900px) {
   .page-content {
     padding: var(--spacing-md);

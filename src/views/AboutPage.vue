@@ -1,7 +1,7 @@
 <template>
   <div class="about-page">
     <div class="about-content">
-      <h2>Over dit project</h2>
+      <h1>Over dit project</h1>
       <p>
         Deze website is gemaakt als beslishulp bij urineonderzoek in de huisartsenpraktijk. De
         website is gebaseerd op de
