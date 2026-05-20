@@ -1,3 +1,12 @@
+# [3.2.0](https://github.com/moranje/urinest.rip/compare/v3.1.3...v3.2.0) (2026-02-26)
+
+
+### Features
+
+* redesign SVG illustrations with simplified viewboxes and animations ([02e6a56](https://github.com/moranje/urinest.rip/commit/02e6a56b30884c263c3b13b74cffe7e856a84e42))
+
+
+
 ## [3.1.3](https://github.com/moranje/urinest.rip/compare/v3.1.2...v3.1.3) (2026-02-24)
 
 
