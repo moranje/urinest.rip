@@ -12,3 +12,6 @@ public/main.json
 
 # Local Netlify folder
 .netlify
+
+# Storybook
+storybook-static

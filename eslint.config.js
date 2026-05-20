@@ -78,5 +78,15 @@ export default [
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'off'
     }
+  },
+
+  // Storybook stories — inline showcase-components zijn opzettelijk;
+  // single-word import-namen voor primitives idem
+  {
+    files: ['src/stories/**/*.{ts,vue}'],
+    rules: {
+      'vue/one-component-per-file': 'off',
+      'vue/multi-word-component-names': 'off'
+    }
   }
 ]
