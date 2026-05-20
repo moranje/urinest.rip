@@ -3,16 +3,8 @@
     <a href="#main-content" class="skip-link">Naar inhoud springen</a>
     <app-header :droplet-animate="dropletAnimate" />
     <main id="main-content" class="app-content" tabindex="-1">
-      <router-view v-slot="{ Component }">
-        <transition
-          :name="routeTransitionName"
-          mode="out-in"
-          @before-enter="onBeforeEnter"
-          @enter="onEnter"
-          @leave="onLeave"
-        >
-          <component :is="Component" />
-        </transition>
+      <router-view v-slot="{ Component, route: r }">
+        <component :is="Component" :key="r.fullPath" />
       </router-view>
     </main>
     <OfflineBanner />
@@ -34,7 +26,6 @@ import { handleError } from "./lib/errors";
 const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
 
-// Droplet animation on route change
 const dropletAnimate = ref(false);
 watch(
   () => route.path,
@@ -46,40 +37,6 @@ watch(
   },
 );
 
-// Route transition — use View Transitions API when available (with reduced-motion fallback)
-const routeTransitionName = ref("fade");
-
-const supportsViewTransitions = (): boolean => {
-  return (
-    typeof document !== "undefined" &&
-    typeof (document as Document & { startViewTransition?: unknown }).startViewTransition ===
-      "function"
-  );
-};
-
-const prefersReducedMotion = (): boolean => {
-  return (
-    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-};
-
-// When View Transitions API is supported and motion is allowed,
-// the browser handles the cross-route animation via @view-transition.
-// In that case we skip the Vue <transition> fade to avoid double animation.
-const useNativeViewTransitions = supportsViewTransitions() && !prefersReducedMotion();
-if (useNativeViewTransitions) {
-  routeTransitionName.value = "no-anim";
-}
-
-// Vue transition hooks (no-op; we just expose hooks for future spring physics)
-const onBeforeEnter = (_el: Element): void => {};
-const onEnter = (_el: Element, done: () => void): void => {
-  done();
-};
-const onLeave = (_el: Element, done: () => void): void => {
-  done();
-};
-
 onMounted(async () => {
   try {
     await questionnaireStore.loadInitialData();
@@ -87,7 +44,6 @@ onMounted(async () => {
     handleError(error, "app:load-data");
   }
 
-  // Dark mode: follow system preference
   const themeMql = window.matchMedia("(prefers-color-scheme: dark)");
   themeMql.addEventListener("change", (e) => {
     document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
@@ -116,30 +72,6 @@ onMounted(async () => {
   contain: layout style paint;
 }
 
-.fade-enter-active {
-  transition:
-    opacity var(--motion-duration-enter) var(--motion-easing-out),
-    transform var(--motion-duration-enter) var(--motion-easing-out);
-  will-change: opacity, transform;
-}
-
-.fade-leave-active {
-  transition:
-    opacity var(--motion-duration-exit) var(--motion-easing-standard),
-    transform var(--motion-duration-exit) var(--motion-easing-standard);
-  will-change: opacity, transform;
-}
-
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
 body {
   overflow: hidden;
 }
@@ -166,11 +98,5 @@ body {
 
 #main-content:focus {
   outline: none;
-}
-
-/* No-anim transition: used when View Transitions API takes over */
-.no-anim-enter-active,
-.no-anim-leave-active {
-  transition: none;
 }
 </style>
