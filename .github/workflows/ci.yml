@@ -59,6 +59,9 @@ jobs:
             exit 1
           fi
 
+      - name: Storybook build (geen deploy)
+        run: npm run build-storybook
+
   deploy:
     name: Release & Deploy
     needs: ci
