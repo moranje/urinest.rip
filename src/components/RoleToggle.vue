@@ -20,12 +20,12 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useRoleStore } from '../store/roleStore'
+import { storeToRefs } from "pinia";
+import { useRoleStore } from "../store/roleStore";
 
-const roleStore = useRoleStore()
-const { role } = storeToRefs(roleStore)
-const { setRole } = roleStore
+const roleStore = useRoleStore();
+const { role } = storeToRefs(roleStore);
+const { setRole } = roleStore;
 </script>
 
 <style scoped>

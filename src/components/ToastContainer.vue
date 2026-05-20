@@ -8,10 +8,26 @@
         :class="'toast--' + toast.level"
         role="alert"
       >
-        <svg class="toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          class="toast-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <path v-if="toast.level === 'success'" d="M20 6L9 17l-5-5" />
-          <path v-else-if="toast.level === 'error'" d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          <path v-else-if="toast.level === 'warning'" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+          <path
+            v-else-if="toast.level === 'error'"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+          <path
+            v-else-if="toast.level === 'warning'"
+            d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
+          />
           <path v-else d="M12 16v-4m0-4h.01M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z" />
         </svg>
         <span class="toast-message">{{ toast.message }}</span>
@@ -21,7 +37,15 @@
           @click="dismiss(toast.id)"
           aria-label="Sluiten"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -32,14 +56,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useToastStore } from '../store/toastStore'
+import { computed } from "vue";
+import { useToastStore } from "../store/toastStore";
 
-const toastStore = useToastStore()
-const toasts = computed(() => toastStore.toasts)
+const toastStore = useToastStore();
+const toasts = computed(() => toastStore.toasts);
 
 function dismiss(id: number): void {
-  toastStore.dismissToast(id)
+  toastStore.dismissToast(id);
 }
 </script>
 

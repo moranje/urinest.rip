@@ -1,26 +1,49 @@
 <template>
   <Teleport to="body">
     <Transition name="scrim-fade">
-      <div v-if="needRefresh" class="update-scrim" @click="handleDismiss" />
+      <div v-if="needRefresh" class="update-scrim" aria-hidden="true" />
     </Transition>
     <Transition name="sheet-fly">
       <div v-if="needRefresh" class="update-sheet">
         <div class="drag-indicator" />
         <div class="update-icon">
-          <svg v-if="!updating" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            v-if="!updating"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          <svg v-else class="spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            v-else
+            class="spin"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M21 12a9 9 0 1 1-6.22-8.56" />
           </svg>
         </div>
-        <h3 class="update-title">{{ updating ? 'Bijwerken...' : 'Update beschikbaar' }}</h3>
-        <p class="update-text">{{ updating ? 'Even geduld...' : 'Er is een nieuwe versie beschikbaar.' }}</p>
+        <h3 class="update-title">{{ updating ? "Bijwerken..." : "Update beschikbaar" }}</h3>
+        <p class="update-text">
+          {{ updating ? "Even geduld..." : "Er is een nieuwe versie beschikbaar." }}
+        </p>
         <div class="update-actions">
           <button class="md-button md-button--primary" @click="handleUpdate" :disabled="updating">
-            {{ updating ? 'Bijwerken...' : 'Nu bijwerken' }}
+            {{ updating ? "Bijwerken..." : "Nu bijwerken" }}
           </button>
           <button v-if="!updating" class="md-button md-button--text" @click="handleDismiss">
             Later
@@ -32,42 +55,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRegisterSW } from 'virtual:pwa-register/vue'
+import { ref, onMounted } from "vue";
+import { useRegisterSW } from "virtual:pwa-register/vue";
 
-const UPDATE_CHECK_INTERVAL = 60 * 60 * 1000
+const UPDATE_CHECK_INTERVAL = 60 * 60 * 1000;
 
 const { needRefresh, updateServiceWorker } = useRegisterSW({
   onRegisteredSW(_swUrl: string, registration: ServiceWorkerRegistration | undefined) {
-    if (!registration) return
+    if (!registration) return;
     setInterval(async () => {
-      if (registration.installing || !navigator.onLine) return
-      await registration.update()
-    }, UPDATE_CHECK_INTERVAL)
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && !registration.installing) {
-        registration.update()
+      if (registration.installing || !navigator.onLine) return;
+      await registration.update();
+    }, UPDATE_CHECK_INTERVAL);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && !registration.installing) {
+        registration.update();
       }
-    })
-  }
-})
+    });
+  },
+});
 
 onMounted(() => {
-  if (!('serviceWorker' in navigator)) return
+  if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker.ready.then((reg) => {
-    if (reg.waiting) needRefresh.value = true
-  })
-})
+    if (reg.waiting) needRefresh.value = true;
+  });
+});
 
-const updating = ref(false)
+const updating = ref(false);
 
 function handleUpdate() {
-  updating.value = true
-  updateServiceWorker(true)
+  updating.value = true;
+  updateServiceWorker(true);
 }
 
 function handleDismiss() {
-  needRefresh.value = false
+  needRefresh.value = false;
 }
 </script>
 

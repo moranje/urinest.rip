@@ -79,7 +79,7 @@ const props = withDefaults(
     fill: var(--md-sys-color-surface);
   }
   100% {
-    fill: #a855f7;
+    fill: var(--md-sys-color-indicator-positive);
   }
 }
 

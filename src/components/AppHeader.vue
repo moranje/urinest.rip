@@ -1,13 +1,24 @@
 <template>
   <header class="app-header">
     <div class="header-content">
-      <router-link to="/" class="app-title-link">
+      <router-link
+        to="/"
+        class="app-title-link"
+        :aria-current="isLandingActive ? 'page' : undefined"
+        aria-label="Home"
+      >
         <LogoSvg :size="28" :animate="dropletAnimate" />
       </router-link>
 
-      <div class="header-actions">
+      <nav class="header-actions" aria-label="Hoofdnavigatie">
         <role-toggle />
-        <router-link to="/over" class="header-icon-link" title="Over">
+        <router-link
+          to="/over"
+          class="header-icon-link"
+          :aria-current="isAboutActive ? 'page' : undefined"
+          title="Over"
+          aria-label="Over deze beslishulp"
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="currentColor"
@@ -15,7 +26,13 @@
             />
           </svg>
         </router-link>
-        <router-link :to="isAuthenticated ? '/admin/logs' : '/admin/login'" class="header-icon-link" title="Admin">
+        <router-link
+          :to="isAuthenticated ? '/admin/logs' : '/admin/login'"
+          class="header-icon-link"
+          :aria-current="isAdminActive ? 'page' : undefined"
+          title="Admin"
+          aria-label="Admin"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="currentColor"
@@ -23,22 +40,29 @@
             />
           </svg>
         </router-link>
-      </div>
+      </nav>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import RoleToggle from './RoleToggle.vue'
-import LogoSvg from './LogoSvg.vue'
-import { useAuthStore } from '../store/authStore'
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
+import RoleToggle from "./RoleToggle.vue";
+import LogoSvg from "./LogoSvg.vue";
+import { useAuthStore } from "../store/authStore";
 
 defineProps<{
-  dropletAnimate?: boolean
-}>()
+  dropletAnimate?: boolean;
+}>();
 
-const { isAuthenticated } = storeToRefs(useAuthStore())
+const { isAuthenticated } = storeToRefs(useAuthStore());
+const route = useRoute();
+
+const isLandingActive = computed(() => route.path === "/");
+const isAboutActive = computed(() => route.path === "/over");
+const isAdminActive = computed(() => route.path.startsWith("/admin"));
 </script>
 
 <style scoped>
@@ -109,7 +133,13 @@ const { isAuthenticated } = storeToRefs(useAuthStore())
   transition-duration: var(--motion-duration-press);
 }
 
-@media (max-width: 599px) {
+.header-icon-link[aria-current="page"] {
+  color: var(--md-sys-color-primary);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+}
+
+/* bp-md: 600px */
+@media (max-width: 599.98px) {
   .app-header {
     padding: 0 var(--spacing-sm);
   }

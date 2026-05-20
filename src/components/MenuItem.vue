@@ -1,27 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
-  name?: string
-  to?: string
-}>()
+  name?: string;
+  to?: string;
+}>();
 
-const router = useRouter()
-const hover = ref(false)
-const touch = ref(false)
+const router = useRouter();
+const hover = ref(false);
+const touch = ref(false);
 
 function tap(): void {
-  touch.value = true
+  touch.value = true;
 }
 </script>
 
 <template>
-  <div
+  <button
+    type="button"
     :class="{ 'menu-item': true, hover, touch }"
+    :aria-label="name"
     @click="to ? router.push(to) : undefined"
+    @keydown.enter.prevent="to ? router.push(to) : undefined"
+    @keydown.space.prevent="to ? router.push(to) : undefined"
     @mouseover="hover = true"
     @mouseleave="hover = false"
+    @focus="hover = true"
+    @blur="hover = false"
     @touchstart="tap"
     @touchend="touch = false"
   >
@@ -31,7 +37,7 @@ function tap(): void {
     <div :class="{ 'menu-text': true, hover, touch }">
       {{ name }}
     </div>
-  </div>
+  </button>
 </template>
 
 <style scoped>
@@ -40,7 +46,13 @@ function tap(): void {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  border: none;
   border-bottom: 2px solid transparent;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  padding: 0;
   cursor: pointer;
   border-radius: var(--md-sys-shape-corner-medium);
   touch-action: manipulation;
