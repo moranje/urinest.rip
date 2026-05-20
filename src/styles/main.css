@@ -1,6 +1,6 @@
-@import './tokens.css';
-@import './themes.css';
-@import './components.css';
+@import "./tokens.css";
+@import "./themes.css";
+@import "./components.css";
 
 /* Loading indicator */
 .app-loading {
@@ -24,17 +24,29 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes skeleton-shimmer {
-  from { opacity: 1; }
-  to { opacity: 0.4; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
 }
 
 /* Base styles */
@@ -42,11 +54,14 @@ html {
   box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -85,10 +100,28 @@ a,
 }
 
 /* Typography */
-h1 { font: var(--md-sys-typescale-display-small); color: var(--md-sys-color-on-surface); }
-h2 { font: var(--md-sys-typescale-headline-medium); color: var(--md-sys-color-on-surface); }
-h3 { font: var(--md-sys-typescale-headline-small); color: var(--md-sys-color-on-surface); }
-h4 { font: var(--md-sys-typescale-title-large); color: var(--md-sys-color-on-surface); }
+h1 {
+  font: var(--md-sys-typescale-headline-medium);
+  color: var(--md-sys-color-on-surface);
+  text-wrap: balance;
+}
+h2 {
+  font: var(--md-sys-typescale-headline-small);
+  color: var(--md-sys-color-on-surface);
+  text-wrap: balance;
+}
+h3 {
+  font: var(--md-sys-typescale-title-large);
+  color: var(--md-sys-color-on-surface);
+}
+h4 {
+  font: var(--md-sys-typescale-title-medium);
+  color: var(--md-sys-color-on-surface);
+}
+
+p {
+  text-wrap: pretty;
+}
 
 .sr-only {
   position: absolute;
@@ -111,10 +144,30 @@ h4 { font: var(--md-sys-typescale-title-large); color: var(--md-sys-color-on-sur
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* View Transitions API — cross-document fade-in/out for the question-title.
+ * The wrapper in QuestionnairePage.withViewTransition gates calls on
+ * matchMedia('(prefers-reduced-motion: reduce)') so this animation only
+ * runs when motion is allowed. */
+@supports (view-transition-name: x) {
+  ::view-transition-old(question-title),
+  ::view-transition-new(question-title) {
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Default cross-fade for the root */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 180ms;
   }
 }

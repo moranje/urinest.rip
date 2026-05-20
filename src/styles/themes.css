@@ -1,4 +1,4 @@
-[data-theme='dark'] {
+[data-theme="dark"] {
   /* Primary (Medical green - dark) */
   --md-sys-color-primary: #86efac;
   --md-sys-color-on-primary: #003d1a;
@@ -52,4 +52,7 @@
   --md-sys-color-inverse-surface: #e2e2e6;
   --md-sys-color-inverse-on-surface: #2f3033;
   --md-sys-color-inverse-primary: #16a34a;
+
+  /* Indicator (urinestrip positive — slightly lifted for dark theme) */
+  --md-sys-color-indicator-positive: #c084fc;
 }
