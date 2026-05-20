@@ -483,7 +483,7 @@ Geen primitives — class-only conventie. Skeleton + back-button gedupliceerd. G
 **Acceptatiecriteria**
 - [x] `src/components/primitives/` bevat: `Button.vue` (variants: primary/outlined/text + size sm/md/lg + loading-state + leading/trailing slots), `Card.vue`, `Skeleton.vue` (variants: line/option/title/short/badge), `BackButton.vue`, `Badge.vue` (variants: u1/u2/u3/info/success), `ProgressBar.vue`.
 - [x] Variants via TS prop-types + class-binding (geen externe lib nodig; CVA optioneel).
-- [ ] Storybook of vergelijkbare component-doc tool toegevoegd (`@storybook/vue3` of `histoire`); CI buildt static stories. _(geblokkeerd: Storybook/Histoire setup is heavyweight; geen netwerk-tijdens-audit voor volledige init. Vitest a11y + unit-tests dekken kwaliteit voorlopig. Plan: introduceren in volgende sprint zodra netwerkomgeving stabiel is.)_
+- [x] Storybook of vergelijkbare component-doc tool toegevoegd (`@storybook/vue3` of `histoire`); CI buildt static stories. _(Storybook 9 met `@storybook/vue3-vite` geïnstalleerd — Storybook 8 ondersteunt Vite 7 niet, dus de eerstvolgende major die wél met de project-Vite werkt is gekozen. 7 stories-files: 1 per primitive + DesignTokens (Colors/Typography/Shape/Spacing). PWA / decision-engine / compression plugins worden in `viteFinal` uit de geërfde root-vite-config gestript. CI draait `npm run build-storybook` zonder deploy.)_
 - [x] Bestaande call-sites gerefactored om primitives te gebruiken. _(AdminLogin gebruikt nu `<Button>`; ResultPage gebruikt `<BackButton>` + `<Skeleton>`; QuestionnairePage gebruikt `<ProgressBar>` + `<Skeleton>`.)_
 - [x] Vitest unit-tests per primitive (props rendering, slot rendering, click event). _(32 tests + 5 axe a11y-tests = 37 passing.)_
 
