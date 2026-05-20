@@ -27,15 +27,18 @@ jobs:
         run: |
           npx oxlint src/ --deny-warnings &
           PID_LINT=$!
+          npm run lint:eslint &
+          PID_ESLINT=$!
           npm run check &
           PID_CHECK=$!
           npm run test &
           PID_TEST=$!
 
           FAIL=0
-          wait $PID_LINT  || FAIL=1
-          wait $PID_CHECK || FAIL=1
-          wait $PID_TEST  || FAIL=1
+          wait $PID_LINT   || FAIL=1
+          wait $PID_ESLINT || FAIL=1
+          wait $PID_CHECK  || FAIL=1
+          wait $PID_TEST   || FAIL=1
           exit $FAIL
 
       - name: Security — npm audit
