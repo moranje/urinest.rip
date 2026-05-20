@@ -1,3 +1,24 @@
+# [3.3.0](https://github.com/moranje/urinest.rip/compare/v3.2.0...v3.3.0) (2026-05-20)
+
+
+### Bug Fixes
+
+* **admin:** extract eventDetail helper voor oxfmt-compat in LogDetail ([16bdda0](https://github.com/moranje/urinest.rip/commit/16bdda011fb2b2cf3cb9f967557ba8706a813bac))
+* **landing:** square mobile tiles without row overlap, responsive SVGs ([5a33a2e](https://github.com/moranje/urinest.rip/commit/5a33a2ebfc6a9ef584201b342c3dee33d9dc5bf8))
+* **log-sink:** classify permanent errors, beacon on unload, drop double-write ([d9e6dbe](https://github.com/moranje/urinest.rip/commit/d9e6dbe449956078054ed2bbe564458c9aa3997c))
+* **transitions:** remove Vue out-in transition conflict with View Transitions API ([4ad3cba](https://github.com/moranje/urinest.rip/commit/4ad3cba4cd5844a4a7c0cce805f2a835db760b13))
+
+
+### Features
+
+* **a11y:** a11y- en view-transition-hardening in app shell en views ([bbe8a6f](https://github.com/moranje/urinest.rip/commit/bbe8a6f315238dbf35390746fe7130cc0c7251c2))
+* **a11y:** a11y-hardening in admin-componenten ([44e8f85](https://github.com/moranje/urinest.rip/commit/44e8f85e8a3d3fcdd7ad84747807a8ecdc7fe285))
+* **a11y:** a11y-hardening in root-componenten ([951ec60](https://github.com/moranje/urinest.rip/commit/951ec60c21e1b3b3251536e117cd41be424f7d96))
+* **feedback:** offline-banner-component voor offline-status melding ([b68d9cf](https://github.com/moranje/urinest.rip/commit/b68d9cf0908a448e2ab99f1d8fcdbf26378c461e))
+* **primitives:** herbruikbare UI-primitives met a11y-tests ([c5256a8](https://github.com/moranje/urinest.rip/commit/c5256a8a42ce7204f97649a18e0568bd2fd6444f))
+* **storybook:** design tokens showcase voor kleuren typografie shape spacing ([4e535d0](https://github.com/moranje/urinest.rip/commit/4e535d02e783d4bce2f6720901e26a3abf6bfd64))
+* **storybook:** stories voor zes primitives met variants ([61bef13](https://github.com/moranje/urinest.rip/commit/61bef13b69735e0eec43d0bfe9e1ee9e778da018))
+* **styles:** design tokens, breakpoint system en motion-utility uitbreiding ([747e7c6](https://github.com/moranje/urinest.rip/commit/747e7c66b3fd1ccf32da498e3b9af4a12ce9963d))
 # [3.2.0](https://github.com/moranje/urinest.rip/compare/v3.1.3...v3.2.0) (2026-02-26)
 
 
