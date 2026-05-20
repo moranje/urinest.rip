@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import type { LogFilters } from '../../store/logStore'
+import type { LogFilters } from "../../store/logStore";
 
 defineProps<{
-  filters: LogFilters
-}>()
+  filters: LogFilters;
+}>();
 
 const emit = defineEmits<{
-  change: [filters: Partial<LogFilters>]
-}>()
+  change: [filters: Partial<LogFilters>];
+}>();
 </script>
 
 <template>
   <div class="log-filters">
     <div class="filter-group">
       <label for="filter-hours">Periode</label>
-      <select id="filter-hours" :value="filters.hours" @change="emit('change', { hours: Number(($event.target as HTMLSelectElement).value) })">
+      <select
+        id="filter-hours"
+        :value="filters.hours"
+        @change="emit('change', { hours: Number(($event.target as HTMLSelectElement).value) })"
+      >
         <option :value="1">1 uur</option>
         <option :value="24">24 uur</option>
         <option :value="168">7 dagen</option>
@@ -23,14 +27,22 @@ const emit = defineEmits<{
     </div>
     <div class="filter-group">
       <label for="filter-level">Level</label>
-      <select id="filter-level" :value="filters.level ?? 'warn'" @change="emit('change', { level: ($event.target as HTMLSelectElement).value })">
+      <select
+        id="filter-level"
+        :value="filters.level ?? 'warn'"
+        @change="emit('change', { level: ($event.target as HTMLSelectElement).value })"
+      >
         <option value="warn">Alle (warn+)</option>
         <option value="error">Error+</option>
       </select>
     </div>
     <div class="filter-group">
       <label for="filter-status">Status</label>
-      <select id="filter-status" :value="filters.status" @change="emit('change', { status: ($event.target as HTMLSelectElement).value })">
+      <select
+        id="filter-status"
+        :value="filters.status"
+        @change="emit('change', { status: ($event.target as HTMLSelectElement).value })"
+      >
         <option value="open">Open</option>
         <option value="resolved">Opgelost</option>
         <option value="suppressed">Onderdrukt</option>

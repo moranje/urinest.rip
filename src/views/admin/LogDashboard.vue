@@ -1,56 +1,60 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
-import { useLogStore } from '../../store/logStore'
-import { useAuthStore } from '../../store/authStore'
-import { useRouter } from 'vue-router'
-import LogGroupList from '../../components/admin/LogGroupList.vue'
-import LogDetail from '../../components/admin/LogDetail.vue'
-import LogFilters from '../../components/admin/LogFilters.vue'
-import type { LogFilters as LogFiltersType } from '../../store/logStore'
+import { onMounted, onUnmounted, watch } from "vue";
+import { useLogStore } from "../../store/logStore";
+import { useAuthStore } from "../../store/authStore";
+import { useRouter } from "vue-router";
+import LogGroupList from "../../components/admin/LogGroupList.vue";
+import LogDetail from "../../components/admin/LogDetail.vue";
+import LogFilters from "../../components/admin/LogFilters.vue";
+import type { LogFilters as LogFiltersType } from "../../store/logStore";
 
-const logStore = useLogStore()
-const authStore = useAuthStore()
-const router = useRouter()
+const logStore = useLogStore();
+const authStore = useAuthStore();
+const router = useRouter();
 
 function handleSelectGroup(fingerprint: string) {
-  logStore.loadEvents(fingerprint)
+  logStore.loadEvents(fingerprint);
 }
 
 function handleBack() {
-  logStore.selectGroup(null)
+  logStore.selectGroup(null);
 }
 
 function handleFiltersChange(f: Partial<LogFiltersType>) {
-  logStore.setFilters(f)
-  logStore.loadGroups()
+  logStore.setFilters(f);
+  logStore.loadGroups();
 }
 
 function handleResolved() {
-  logStore.selectGroup(null)
-  logStore.loadGroups()
+  logStore.selectGroup(null);
+  logStore.loadGroups();
 }
 
 function handleSignOut() {
-  authStore.signOut()
-  router.push('/admin/login')
+  authStore.signOut();
+  router.push("/admin/login");
 }
 
 const selectedGroup = () => {
-  return logStore.groups.find((g) => g.fingerprint === logStore.selectedFingerprint) ?? null
-}
+  return logStore.groups.find((g) => g.fingerprint === logStore.selectedFingerprint) ?? null;
+};
 
 onMounted(() => {
-  logStore.loadGroups()
-  logStore.startAutoRefresh()
-})
+  logStore.loadGroups();
+  logStore.startAutoRefresh();
+});
 
 onUnmounted(() => {
-  logStore.stopAutoRefresh()
-})
+  logStore.stopAutoRefresh();
+});
 
-watch(() => logStore.filters, () => {
-  logStore.loadGroups()
-}, { deep: true })
+watch(
+  () => logStore.filters,
+  () => {
+    logStore.loadGroups();
+  },
+  { deep: true },
+);
 </script>
 
 <template>

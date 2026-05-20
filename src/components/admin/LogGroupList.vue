@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import type { LogGroup } from '../../store/logStore'
+import type { LogGroup } from "../../store/logStore";
 
 defineProps<{
-  groups: LogGroup[]
-  loading: boolean
-}>()
+  groups: LogGroup[];
+  loading: boolean;
+}>();
 
 const emit = defineEmits<{
-  select: [fingerprint: string]
-}>()
+  select: [fingerprint: string];
+}>();
 
 function levelBadgeClass(level: string): string {
-  if (level === 'error') return 'badge-error'
-  return 'badge-warn'
+  if (level === "error") return "badge-error";
+  return "badge-warn";
 }
 
 function timeAgo(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMin = Math.floor(diffMs / 60_000)
-  if (diffMin < 1) return 'zojuist'
-  if (diffMin < 60) return `${diffMin} min geleden`
-  const diffH = Math.floor(diffMin / 60)
-  if (diffH < 24) return `${diffH} uur geleden`
-  const diffD = Math.floor(diffH / 24)
-  if (diffD === 1) return 'gisteren'
-  return `${diffD} dagen geleden`
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60_000);
+  if (diffMin < 1) return "zojuist";
+  if (diffMin < 60) return `${diffMin} min geleden`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `${diffH} uur geleden`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD === 1) return "gisteren";
+  return `${diffD} dagen geleden`;
 }
 </script>
 
@@ -37,18 +37,42 @@ function timeAgo(dateStr: string): string {
   </div>
 
   <div v-else-if="groups.length === 0" class="empty-state">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
     </svg>
     <p>Geen errors gevonden in deze periode</p>
   </div>
 
   <div v-else class="group-list">
-    <button v-for="group in groups" :key="group.fingerprint" class="group-row" @click="emit('select', group.fingerprint)">
+    <button
+      v-for="group in groups"
+      :key="group.fingerprint"
+      class="group-row"
+      @click="emit('select', group.fingerprint)"
+    >
       <div class="group-header">
-        <span :class="['level-badge', levelBadgeClass(group.level)]">{{ group.level.toUpperCase() }}</span>
-        <span v-if="group.status === 'resolved'" class="status-badge status-resolved" :title="`Opgelost in ${group.resolved_in_version ?? '?'}`">Opgelost</span>
-        <span v-else-if="group.status === 'suppressed'" class="status-badge status-suppressed">Onderdrukt</span>
+        <span :class="['level-badge', levelBadgeClass(group.level)]">{{
+          group.level.toUpperCase()
+        }}</span>
+        <span
+          v-if="group.status === 'resolved'"
+          class="status-badge status-resolved"
+          :title="`Opgelost in ${group.resolved_in_version ?? '?'}`"
+          >Opgelost</span
+        >
+        <span v-else-if="group.status === 'suppressed'" class="status-badge status-suppressed"
+          >Onderdrukt</span
+        >
         <span class="group-module">{{ group.module }}</span>
         <span class="group-message">{{ group.message }}</span>
         <span class="group-count" :title="`${group.count} events`">&times;{{ group.count }}</span>
@@ -63,7 +87,8 @@ function timeAgo(dateStr: string): string {
 </template>
 
 <style scoped>
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,7 +112,9 @@ function timeAgo(dateStr: string): string {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .group-list {
@@ -204,7 +231,8 @@ function timeAgo(dateStr: string): string {
   margin: 0 var(--spacing-xs);
 }
 
-@media (max-width: 640px) {
+/* bp-md: 600px */
+@media (max-width: 599.98px) {
   .group-row {
     padding: var(--spacing-sm) var(--spacing-md);
   }

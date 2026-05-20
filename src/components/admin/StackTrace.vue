@@ -1,25 +1,25 @@
 <script setup lang="ts">
-const props = defineProps<{ stack: string }>()
+const props = defineProps<{ stack: string }>();
 
 interface StackFrame {
-  raw: string
-  isApp: boolean
-  func: string | null
-  file: string | null
-  line: string | null
-  col: string | null
+  raw: string;
+  isApp: boolean;
+  func: string | null;
+  file: string | null;
+  line: string | null;
+  col: string | null;
 }
 
 function parseStack(raw: string): StackFrame[] {
   return raw
-    .split('\n')
+    .split("\n")
     .filter((l) => l.trim())
     .map((line) => {
-      const trimmed = line.trim()
-      const isFramework = /node_modules|vue\/runtime|@vue\//.test(trimmed)
+      const trimmed = line.trim();
+      const isFramework = /node_modules|vue\/runtime|@vue\//.test(trimmed);
 
       // V8: "at functionName (file:line:col)" or "at file:line:col"
-      const v8 = trimmed.match(/^at\s+(?:(.+?)\s+\()?(.+?):(\d+):(\d+)\)?$/)
+      const v8 = trimmed.match(/^at\s+(?:(.+?)\s+\()?(.+?):(\d+):(\d+)\)?$/);
       if (v8) {
         return {
           raw: trimmed,
@@ -27,12 +27,12 @@ function parseStack(raw: string): StackFrame[] {
           func: v8[1] ?? null,
           file: extractFile(v8[2]!),
           line: v8[3]!,
-          col: v8[4]!
-        }
+          col: v8[4]!,
+        };
       }
 
       // Safari: "functionName@file:line:col"
-      const safari = trimmed.match(/^(.+?)@(.+?):(\d+):(\d+)$/)
+      const safari = trimmed.match(/^(.+?)@(.+?):(\d+):(\d+)$/);
       if (safari) {
         return {
           raw: trimmed,
@@ -40,25 +40,29 @@ function parseStack(raw: string): StackFrame[] {
           func: safari[1] ?? null,
           file: extractFile(safari[2]!),
           line: safari[3]!,
-          col: safari[4]!
-        }
+          col: safari[4]!,
+        };
       }
 
-      return { raw: trimmed, isApp: !isFramework, func: null, file: null, line: null, col: null }
-    })
+      return { raw: trimmed, isApp: !isFramework, func: null, file: null, line: null, col: null };
+    });
 }
 
 function extractFile(path: string): string {
-  const segments = path.split('/')
-  return segments[segments.length - 1] ?? path
+  const segments = path.split("/");
+  return segments[segments.length - 1] ?? path;
 }
 
-const frames = parseStack(props.stack)
+const frames = parseStack(props.stack);
 </script>
 
 <template>
   <div class="stack-trace">
-    <div v-for="(frame, i) in frames" :key="i" :class="['frame', frame.isApp ? 'app-frame' : 'lib-frame']">
+    <div
+      v-for="(frame, i) in frames"
+      :key="i"
+      :class="['frame', frame.isApp ? 'app-frame' : 'lib-frame']"
+    >
       <template v-if="frame.file">
         <span class="frame-at">at </span>
         <span v-if="frame.func" class="frame-func">{{ frame.func }} </span>
@@ -74,7 +78,7 @@ const frames = parseStack(props.stack)
 
 <style scoped>
 .stack-trace {
-  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+  font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
   font-size: 0.75rem;
   line-height: 1.6;
   background: var(--md-sys-color-surface-container);
