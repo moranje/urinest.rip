@@ -61,7 +61,10 @@ const props = withDefaults(
 
 <style scoped>
 .culture {
-  height: 10em;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   color: var(--md-sys-color-outline);
 }
 

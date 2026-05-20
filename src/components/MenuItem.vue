@@ -72,11 +72,18 @@ function tap(): void {
   transition-duration: var(--motion-duration-press);
 }
 .menu-image {
-  flex-grow: 4;
-  height: 100%;
+  flex: 4 1 0;
+  min-height: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+.menu-image > :deep(svg) {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 .menu-text {
   flex-grow: 1;

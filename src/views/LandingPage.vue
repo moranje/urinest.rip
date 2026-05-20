@@ -88,12 +88,15 @@ import CultureSvg from "../components/CultureSvg.vue";
   }
 }
 
-/* bp-sm: 480px — below this we go single-column */
+/* bp-sm: 480px — single column.
+ * Drop grid-auto-rows so row height comes from each tile's aspect-ratio: 1/1
+ * (otherwise a fixed row height conflicts with the square tile size and
+ * the tiles overflow into the next row). */
 @media only screen and (max-width: 479.98px) {
   .grid {
     grid-template-columns: 1fr;
-    grid-auto-rows: clamp(10em, 50vw, 14em);
     grid-template-rows: none;
+    gap: 0.75em;
   }
 }
 
