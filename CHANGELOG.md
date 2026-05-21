@@ -1,3 +1,4 @@
+## [3.3.1](https://github.com/moranje/urinest.rip/compare/v3.3.0...v3.3.1) (2026-05-21)
 # [3.3.0](https://github.com/moranje/urinest.rip/compare/v3.2.0...v3.3.0) (2026-05-20)
 
 
