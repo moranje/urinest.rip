@@ -95,7 +95,7 @@ Vue runtime en UI.
 
 - [x] `createBeslismodelStore({ loadManifest, storage, contextProvider, telemetry, onError })`
 - [ ] `useQuestionnaireRunner`
-- [ ] `useResultResolver`
+- [x] `useResultResolver`
 - [ ] Route helpers
 - [ ] `QuestionnaireRunner`
 - [ ] `ResultRenderer`
@@ -264,6 +264,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `build:flows` vóór tests in CI.
 - [x] Flow tests gebruiken verse compiled output.
 - [x] Package unit tests per package.
+- [x] Result resolver package tests.
 - [ ] Consumer fixture app.
 - [ ] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.
 - [ ] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
@@ -323,6 +324,7 @@ Exit criteria:
 - [x] Store factory.
 - [ ] Runner composable.
 - [ ] Questionnaire organism.
+- [x] Result resolver composable.
 - [ ] Result renderer organism.
 - [ ] Landing generated from manifest.
 

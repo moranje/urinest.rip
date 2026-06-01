@@ -12,5 +12,11 @@ export type {
   CreateBeslismodelStoreOptions,
 } from "./store";
 export { createBeslismodelStore } from "./store";
+export type {
+  BeslismodelResolvedResult,
+  BeslismodelResultResolverStore,
+  ResolveBeslismodelResultOptions,
+} from "./result-resolver";
+export { useResultResolver } from "./result-resolver";
 export type { BeslismodelTelemetryAdapter, BeslismodelTelemetryEvent } from "./telemetry";
 export { noopTelemetryAdapter } from "./telemetry";
