@@ -154,7 +154,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Manifest `name/title/hiddenFromLandingPage` types alignen.
 - [x] Schema controleert unknown condition operators.
 - [x] Schema controleert orphan questions.
-- [ ] Schema controleert unreachable results.
+- [x] Schema controleert unreachable results.
 - [x] Schema controleert duplicate option values.
 - [ ] Schema controleert missing guideline/source metadata waar verplicht.
 

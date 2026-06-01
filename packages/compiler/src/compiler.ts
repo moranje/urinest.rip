@@ -218,9 +218,23 @@ function assertNoOrphanQuestions(flow: RawFlow): void {
   }
 }
 
+function assertNoUnreachableResults(flow: RawFlow): void {
+  const referencedResultAliases = new Set(
+    flow.logic.map((rule) => rule.show).filter((resultAlias) => typeof resultAlias === "string"),
+  );
+  for (const resultAlias of Object.keys(flow.results)) {
+    if (!referencedResultAliases.has(resultAlias)) {
+      throw new Error(
+        `Unreachable result alias "${resultAlias}": defined but not referenced by any show rule.`,
+      );
+    }
+  }
+}
+
 function compileFlow(flow: RawFlow): CompiledQuestionnaire {
   assertUniqueOptionValues(flow);
   assertNoOrphanQuestions(flow);
+  assertNoUnreachableResults(flow);
 
   const questionAliasMap: Record<string, string> = {};
   const resultAliasMap = new Set(Object.keys(flow.results));

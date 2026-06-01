@@ -100,6 +100,19 @@ function assertNoOrphanQuestions(flow) {
   }
 }
 
+function assertNoUnreachableResults(flow) {
+  const referencedResultAliases = new Set(
+    flow.logic.map((rule) => rule.show).filter((resultAlias) => typeof resultAlias === "string"),
+  );
+  for (const resultAlias of Object.keys(flow.results)) {
+    if (!referencedResultAliases.has(resultAlias)) {
+      throw new Error(
+        `Unreachable result alias "${resultAlias}": defined but not referenced by any show rule.`,
+      );
+    }
+  }
+}
+
 export async function buildFlows(inputDir = "flows", outputFile = "public/main.json") {
   console.log(pc.cyan("[buildFlows] Starting build process..."));
   const fullInputDir = path.resolve(inputDir);
@@ -123,6 +136,7 @@ export async function buildFlows(inputDir = "flows", outputFile = "public/main.j
       }
       assertUniqueOptionValues(flow);
       assertNoOrphanQuestions(flow);
+      assertNoUnreachableResults(flow);
 
       const questionAliasMap = {};
       const resultAliasMap = new Set(Object.keys(flow.results));

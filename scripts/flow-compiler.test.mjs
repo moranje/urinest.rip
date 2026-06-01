@@ -112,4 +112,34 @@ logic:
       'Invalid condition syntax: "answer === yes"',
     );
   });
+
+  it("rejects result aliases that no show rule can reach", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: unreachable-result
+version: "1"
+title: Unreachable result
+questions:
+  answer:
+    text: Answer
+    type: select
+    options:
+      - text: Yes
+        value: yes
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+  never:
+    title: Never
+logic:
+  - when: ["answer == yes"]
+    show: ok
+`);
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Unreachable result alias "never": defined but not referenced by any show rule.',
+    );
+  });
 });
