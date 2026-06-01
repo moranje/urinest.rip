@@ -161,7 +161,11 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { parseOutcome } from "@beslismodel/core";
+import {
+  detectRedirectCycle,
+  findNextQuestionId as findNextQuestionIdCore,
+  parseOutcome,
+} from "@beslismodel/core";
 import QuestionOption from "../components/QuestionOption.vue";
 import Button from "../components/primitives/Button.vue";
 import Icon from "../components/primitives/Icon.vue";
@@ -445,33 +449,13 @@ const getQuestionStepId = (questionId: string | null): string | undefined => {
 };
 
 const findNextQuestionId = (startQuestionId: string | null = null): string | null => {
-  const qData = questionnaire.value;
-  if (!qData || !qData.stepIds) return null;
-
-  let searching = !startQuestionId;
-
-  for (const stepId of qData.stepIds) {
-    const step = questionnaireStore.getStepById(stepId);
-    if (!step || !step.questionIds) continue;
-
-    for (const questionId of step.questionIds) {
-      if (searching) {
-        const questionDef = questionnaireStore.getQuestionById(questionId);
-        if (questionDef) {
-          const { isValid } = questionnaireStore.validateConditions(
-            props.id,
-            questionDef.conditions || [],
-          );
-          if (isValid) {
-            return questionId;
-          }
-        }
-      } else if (questionId === startQuestionId) {
-        searching = true;
-      }
-    }
-  }
-  return null;
+  const qData = questionnaireStore.getFullQuestionnaire(props.id);
+  if (!qData) return null;
+  return findNextQuestionIdCore({
+    questionnaire: qData,
+    answers: questionnaireStore.getEnhancedAnswers(props.id),
+    startQuestionId,
+  });
 };
 
 const advanceQuestionState = (branch?: string): void => {
@@ -555,22 +539,23 @@ const determineResult = (): void => {
     if (typedOutcome.type === "redirect") {
       const value = typedOutcome.target;
       const redirectChain = readRedirectChain(props.id);
-      if (redirectChain.includes(value)) {
+      const cycle = detectRedirectCycle(redirectChain, value);
+      if (cycle.hasCycle) {
         handleError(
-          new Error(`Redirect cycle detected: ${[...redirectChain, value].join(" -> ")}`),
+          new Error(`Redirect cycle detected: ${cycle.chain.join(" -> ")}`),
           "decision-engine:redirect-cycle",
           {
             questionnaireId: props.id,
             targetQuestionnaireId: value,
             role: roleStore.role,
-            redirectChain: [...redirectChain, value],
+            redirectChain: cycle.chain,
           },
         );
         clearRedirectChain();
         router.push("/error");
         return;
       }
-      writeRedirectChain([...redirectChain, value]);
+      writeRedirectChain([...cycle.chain]);
       recordFlowRedirect({
         flowId: props.id,
         version: fullQuestionnaire.version,

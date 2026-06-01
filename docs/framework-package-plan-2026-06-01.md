@@ -58,10 +58,10 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Flow manifest types
 - [x] Normalisatie van questionnaires/questions/steps/results
 - [x] Condition validation wrapper
-- [ ] Graph traversal
+- [x] Graph traversal
 - [x] Progress calculation
 - [x] Typed outcome resolver
-- [ ] Redirect-cycle detector
+- [x] Redirect-cycle detector
 - [x] Role/context injection via pure `RuntimeContext`
 - [x] Domein-agnostisch calculator extensiecontract
 - [ ] CVRM/PREVENT calculators buiten core houden als consumer/domain package

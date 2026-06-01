@@ -8,6 +8,26 @@ export { createCalculatorRegistry } from "./calculator";
 export type { ConditionAnswers, ConditionValidationResult } from "./conditions";
 export { evaluateCondition, validateConditions } from "./conditions";
 export type {
+  FindNextQuestionInput,
+  NormalizeRedirectTrailOptions,
+  QuestionnaireGraph,
+  QuestionnaireGraphInput,
+  QuestionNode,
+  QuestionTraversalQuestionnaire,
+  RedirectCycleResult,
+  RedirectTrail,
+  RedirectTrailAppendResult,
+} from "./graph";
+export {
+  appendRedirectTrail,
+  describeQuestionnaireGraph,
+  detectRedirectCycle,
+  findNextQuestion,
+  findNextQuestionId,
+  getQuestionnaireQuestionOrder,
+  normalizeRedirectTrail,
+} from "./graph";
+export type {
   DecisionManifest,
   DuplicateManifestIdPolicy,
   ManifestCondition,

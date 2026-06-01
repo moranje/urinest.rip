@@ -2,6 +2,8 @@ import {
   createCalculatorRegistry,
   createMarkdownRenderer,
   createRuntimeContext,
+  detectRedirectCycle,
+  findNextQuestionId,
   getQuestionProgress,
   normalizeDecisionManifest,
   parseOutcome,
@@ -70,6 +72,19 @@ const conditions = validateConditions({ answer: { value: "yes" } }, [
 ]);
 if (!conditions.isValid || conditions.matchedCount !== 1) {
   throw new Error("validateConditions export failed");
+}
+
+const nextQuestionId = findNextQuestionId({
+  questionnaire: {
+    questions: [{ id: "q1", text: "Question", type: "select", options: [] }],
+  },
+});
+if (nextQuestionId !== "q1") {
+  throw new Error("findNextQuestionId export failed");
+}
+
+if (!detectRedirectCycle(["a", "b"], "a").hasCycle) {
+  throw new Error("detectRedirectCycle export failed");
 }
 
 console.log("@beslismodel/core package exports ok");
