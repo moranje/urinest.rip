@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   flushLogs,
   flushViaBeaconForTests,
@@ -55,6 +55,10 @@ describe("log-sink", () => {
     vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon-key");
   });
 
+  afterEach(() => {
+    resetLogSinkForTests();
+  });
+
   it("persists diagnostic info events", async () => {
     insertMock.mockResolvedValue({ error: null });
 
@@ -108,5 +112,43 @@ describe("log-sink", () => {
     await flushLogs();
 
     expect(insertMock).not.toHaveBeenCalled();
+  });
+
+  it("persists in dev when explicitly enabled", async () => {
+    vi.stubEnv("MODE", "development");
+    vi.stubEnv("DEV", true);
+    vi.stubEnv("VITE_ENABLE_LOG_PERSISTENCE", "true");
+    insertMock.mockResolvedValue({ error: null });
+
+    initLogSink();
+    persistSampleError("test:dev-enabled");
+    await flushLogs();
+
+    expect(insertMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps persistence disabled after a breaker reload", async () => {
+    localStorage.setItem("log_sink_down", "2026-06-01T00:00:00.000Z");
+
+    initLogSink();
+    persistSampleError("test:breaker-reload");
+    await flushLogs();
+
+    expect(insertMock).not.toHaveBeenCalled();
+  });
+
+  it("requeues buffered logs after thrown flush errors", async () => {
+    insertMock
+      .mockRejectedValueOnce(new Error("network down"))
+      .mockResolvedValueOnce({ error: null });
+
+    persistSampleError("test:requeue");
+    await flushLogs();
+    await flushLogs();
+
+    expect(insertMock).toHaveBeenCalledTimes(2);
+    expect(insertMock.mock.calls[1]?.[0]).toEqual([
+      expect.objectContaining({ module: "test:requeue" }),
+    ]);
   });
 });

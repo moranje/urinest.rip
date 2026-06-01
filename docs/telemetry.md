@@ -25,6 +25,8 @@ pipeline heeft:
 
 - `source = 'urinestrip'` is de discriminator voor gedeelde Supabase-logtabellen.
 - De sink heeft een circuit breaker; bij herhaalde failures wordt `localStorage.log_sink_down` gezet.
+- Als de circuit breaker gezet is, blijft persistence na reload uit tot de flag wordt gewist.
+- In dev staat Supabase-persistence standaard uit; zet `VITE_ENABLE_LOG_PERSISTENCE=true` om lokaal echt naar `app_logs` te schrijven.
 - De admin-log UI toont een banner wanneer die breaker actief is geweest.
 - Source maps worden in GitHub Actions geupload na productiebuild.
 - Richtlijn- en flowversies worden bij `loadInitialData()` als `flow.versions` telemetry-event vastgelegd.

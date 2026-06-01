@@ -28,6 +28,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY?: string;
   readonly VITE_LOG_LEVEL?: string;
   readonly VITE_LOG_MODULES?: string;
+  readonly VITE_ENABLE_LOG_PERSISTENCE?: "true" | "false";
   readonly VITE_UMAMI_SHARE_URL?: string;
 }
 

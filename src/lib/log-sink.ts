@@ -97,6 +97,9 @@ let breakerTripped = false;
 let persistenceDisabledReason: string | null = null;
 
 function resolvePersistenceDisabledReason(): string | null {
+  const breakerDownAt = getLogSinkDownAt();
+  if (breakerDownAt) return `disabled by circuit breaker at ${breakerDownAt}`;
+
   const explicit = import.meta.env.VITE_ENABLE_LOG_PERSISTENCE as string | undefined;
   if (explicit === "false") return "disabled by VITE_ENABLE_LOG_PERSISTENCE=false";
   if (import.meta.env.MODE !== "test" && import.meta.env.DEV && explicit !== "true") {
@@ -207,7 +210,10 @@ export async function flushLogs(): Promise<void> {
     consecutiveFailures++;
     if (consecutiveFailures >= MAX_FAILURES) {
       tripBreaker(`network exceptions exceeded threshold (${MAX_FAILURES})`);
+      return;
     }
+    const room = MAX_BUFFER - buffer.length;
+    if (room > 0) buffer.unshift(...batch.slice(0, room));
     log.warn("flush threw", { error: err });
   }
 }
