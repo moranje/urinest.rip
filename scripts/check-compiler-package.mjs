@@ -3,7 +3,12 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { buildFlows, decisionEngine } from "../packages/compiler/dist/index.js";
+import {
+  buildFlows,
+  decisionEngine,
+  flowSchema,
+  writeFlowSchema,
+} from "../packages/compiler/dist/index.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -39,6 +44,7 @@ try {
   const apiOutput = join(tempDir, "api", "main.json");
   const cliOutput = join(tempDir, "cli", "main.json");
   const pluginOutput = join(tempDir, "plugin", "main.json");
+  const schemaOutput = join(tempDir, "schema", "flow.schema.json");
   await mkdir(flowsDir);
   await writeFile(join(flowsDir, "fixture.yaml"), flowYaml);
 
@@ -69,6 +75,12 @@ try {
   const pluginManifest = JSON.parse(await readFile(pluginOutput, "utf8"));
   if (pluginManifest.questionnaires[0]?.id !== "package-smoke") {
     throw new Error("compiler package plugin export failed");
+  }
+
+  await writeFlowSchema(schemaOutput);
+  const schema = JSON.parse(await readFile(schemaOutput, "utf8"));
+  if (schema.$id !== flowSchema.$id || !schema.required.includes("logic")) {
+    throw new Error("compiler package schema export failed");
   }
 
   console.log("@beslismodel/compiler package exports ok");

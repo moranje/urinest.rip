@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildFlows } from "./compiler";
 import { decisionEngine } from "./plugin";
+import { writeFlowSchema } from "./schema";
 
 const tempDirs: string[] = [];
 
@@ -171,5 +172,16 @@ logic:
         id: "example-flow",
       }),
     );
+  });
+
+  it("writes the public flow JSON schema", async () => {
+    const { dir } = await createFixture(validFlow);
+    const outputFile = join(dir, "schema", "flow.schema.json");
+
+    const schema = await writeFlowSchema(outputFile);
+    const written = JSON.parse(await readFile(outputFile, "utf8")) as typeof schema;
+
+    expect(written).toEqual(schema);
+    expect(written.required).toEqual(["id", "title", "questions", "steps", "results", "logic"]);
   });
 });

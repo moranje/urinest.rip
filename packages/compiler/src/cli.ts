@@ -2,10 +2,12 @@
 /* eslint-disable no-console */
 import process from "node:process";
 import { buildFlows } from "./compiler";
+import { writeFlowSchema } from "./schema";
 
 function printHelp(): void {
   console.log(`Usage:
   beslismodel build --flows <dir> --out <file>
+  beslismodel schema --out <file>
 
 Options:
   --flows <dir>  Directory with YAML flow files. Defaults to "flows".
@@ -30,8 +32,13 @@ async function main(args: readonly string[]): Promise<void> {
   }
 
   const command = args[0];
+  if (command === "schema") {
+    await writeFlowSchema(readOption(args, "--out", "flow.schema.json"));
+    return;
+  }
+
   if (command !== "build") {
-    throw new Error(`Unknown command "${command ?? ""}". Expected "build".`);
+    throw new Error(`Unknown command "${command ?? ""}". Expected "build" or "schema".`);
   }
 
   await buildFlows(

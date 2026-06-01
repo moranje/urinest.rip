@@ -7,3 +7,4 @@ export type {
 export { buildFlows, compileFlowFiles } from "./compiler";
 export type { DecisionEnginePlugin, DecisionEnginePluginOptions } from "./plugin";
 export { decisionEngine } from "./plugin";
+export { flowSchema, writeFlowSchema } from "./schema";

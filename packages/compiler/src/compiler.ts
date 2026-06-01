@@ -1,11 +1,12 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import fs from "node:fs/promises";
 import path from "node:path";
-import Ajv from "ajv";
+import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import { glob } from "glob";
 import yaml from "js-yaml";
 import pc from "picocolors";
+import { flowSchema } from "./schema";
 
 export interface FlowCompilerLogger {
   info(message: string): void;
@@ -120,26 +121,8 @@ export interface CompiledDecisionManifest {
   readonly questionnaires: readonly CompiledQuestionnaire[];
 }
 
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
-
-const flowSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string", pattern: "^[a-z0-9-]+$" },
-    version: { type: "string" },
-    name: { type: "string" },
-    title: { type: "string" },
-    description: { type: "string" },
-    hiddenFromLandingPage: { type: "boolean" },
-    questions: { type: "object" },
-    steps: { type: "array" },
-    results: { type: "object" },
-    logic: { type: "array" },
-  },
-  required: ["id", "title", "questions", "steps", "results", "logic"],
-  additionalProperties: true,
-};
 
 const validateFlow = ajv.compile(flowSchema);
 

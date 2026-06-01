@@ -21,6 +21,7 @@ export default defineConfig({
         "node:path",
         "node:process",
         "ajv",
+        "ajv/dist/2020.js",
         "ajv-formats",
         "glob",
         "js-yaml",
