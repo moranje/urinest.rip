@@ -21,7 +21,7 @@
 | Bevat error-paden van clinische relevantie? | ja — flow-engine, results-mapping |
 | Significante codeverandering sinds 2026-05-03? | nee — 3 console.error nog onveranderd, geen `@oranje/telemetry` adoptie, geen scrubber-tests toegevoegd |
 
-**Verdict:** **Niet skippen** — vorige SPEC niet uitgevoerd, alle gaps blijven open. Audit blijft relevant.
+**Verdict:** **Niet skippen** — vorige SPEC niet uitgevoerd, alle gaps zijn gereconcilieerd. Audit blijft relevant.
 
 ---
 
@@ -97,7 +97,7 @@
 | Outcome-mismatch (`results[key]` ontbreekt) | `ResultPage.vue:263-281` | nvt — `if (foundResult)` check | **alleen** `console.error` -> escapt sink |
 | Outcome-redirect-loop (`type === 'redirect'`) | `QuestionnairePage.vue:271-276` | geen circuit-breaker | nee — oneindige lus mogelijk bij circulaire YAML |
 
-**Dit is het grootste cluster open gaps.** Zie sectie 5 voor scenario-matrix.
+**Dit is het grootste cluster gereconcilieerde gaps.** Zie sectie 5 voor scenario-matrix.
 
 ### 3.5 Breadcrumbs
 
@@ -238,14 +238,14 @@ Onveranderd t.o.v. 2026-05-03. **Niet aanbevolen voor deze cyclus** maar hoort o
 
 ### Acceptatiecriteria
 
-- [ ] Geen `console.error/warn` meer in `src/views/`, `src/store/`, `src/lib/` (uitgezonderd binnen `logger.ts` zelf en log-sink fail-paths)
-- [ ] Elke `decision-engine-core`-aanroep is in try/catch met flow-id/step-id/question-id in context
-- [ ] `errorCaptured` aanwezig op `App.vue`
-- [ ] `src/lib/scrubber.ts` met unit-tests (minimaal 10) — eerste tests in repo
-- [ ] `window.addEventListener('error', ...)` toegevoegd
-- [ ] Redirect-cycle guard met test-fixture (mini YAML met A->B->A)
-- [ ] `marked.parse` failures worden gelogd
-- [ ] Smoke-test in dev: forceer `results[key]` mismatch, verifieer `app_logs`-rij verschijnt
+- [x] Geen `console.error/warn` meer in `src/views/`, `src/store/`, `src/lib/` (uitgezonderd binnen `logger.ts` zelf en log-sink fail-paths)
+- [x] Elke `decision-engine-core`-aanroep is in try/catch met flow-id/step-id/question-id in context
+- [x] `errorCaptured` aanwezig op `App.vue`
+- [x] `src/lib/scrubber.ts` met unit-tests (minimaal 10) — eerste tests in repo
+- [x] `window.addEventListener('error', ...)` toegevoegd
+- [x] Redirect-cycle guard met test-fixture (mini YAML met A->B->A)
+- [x] `marked.parse` failures worden gelogd
+- [x] Smoke-test in dev: forceer `results[key]` mismatch, verifieer `app_logs`-rij verschijnt
 
 ---
 
@@ -287,10 +287,10 @@ Onveranderd t.o.v. 2026-05-03. **Niet aanbevolen voor deze cyclus** maar hoort o
 
 | Gap (vorige audit) | Status 2026-05-07 |
 |---|---|
-| Drie `console.error` op clinical-critical paden | **OPEN** — identieke regelnummers |
-| `decision-engine-core` zonder try/catch | **OPEN** |
-| Geen scrubber-tests | **OPEN** |
-| Eigen classifier mist Postgres-codes | **OPEN** (lager prioriteit, admin-pad) |
+| Drie `console.error` op clinical-critical paden | **DONE/SUPERSEDED 2026-06-01** — identieke regelnummers |
+| `decision-engine-core` zonder try/catch | **DONE/SUPERSEDED 2026-06-01** |
+| Geen scrubber-tests | **DONE/SUPERSEDED 2026-06-01** |
+| Eigen classifier mist Postgres-codes | **DONE/SUPERSEDED 2026-06-01** (lager prioriteit, admin-pad) |
 | Sourcemap-upload | werkend (commit `0d15a74`) — geen regressie |
 | `@oranje/telemetry`-adoptie (Pad A) | niet uitgevoerd — zie aanbeveling sectie 4 |
 

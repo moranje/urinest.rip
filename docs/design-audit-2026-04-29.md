@@ -7,4 +7,4 @@ Geen commits en geen wijzigingen aan design-bestanden sinds vorige audit op 2026
 **Laatste volledige audit:** [design-audit-2026-04-16.md](design-audit-2026-04-16.md) (500 regels)
 **Laatste skip-stub:** [design-audit-2026-04-24.md](design-audit-2026-04-24.md)
 
-Bevindingen en open SPECs van die audit blijven onveranderd geldig.
+bevindingen en gereconcilieerde SPECs van die audit zijn historisch gereconcilieerd.

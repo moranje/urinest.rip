@@ -96,15 +96,15 @@ $ find src -name "*.test.ts" -o -name "*.spec.ts" | xargs grep -l "scrub\|redact
 - Given een 401 vanuit Supabase, When `classifyError` draait, Then verschijnt user-msg "Sessie verlopen — log opnieuw in" (i18n, niet "Je hebt geen toegang").
 
 **Implementation steps:**
-- [ ] Maak `src/lib/scrubber.ts` met `scrubString()` en `scrubObject(depth=3)`
-- [ ] Wire in `src/lib/errors.ts:35` voor `persistError(...)` aanroep
-- [ ] Migreer `src/store/questionnaireStore.ts:150`, `src/views/QuestionnairePage.vue:175`, `src/views/ResultPage.vue:275` naar `log.error('…', { error })`
-- [ ] Voeg `eslint-plugin-no-console` regel toe (allow: `[]`)
-- [ ] Voeg `scripts/upload-sourcemaps.ts` toe + netlify post-build hook
-- [ ] Schrijf `src/lib/__tests__/scrubber.test.ts` met 5 fixtures (BSN, email, JWT, mixed stack, nested engine.state)
-- [ ] Schrijf `src/lib/__tests__/errors.test.ts` met classify-cases voor 23505/23503/42501/40001/PGRST301/401/429
-- [ ] Voeg `_resetTelemetry()` helper toe en gebruik in test-setup
-- [ ] Documenteer scrubber-regels in `docs/telemetry.md`
+- [x] Maak `src/lib/scrubber.ts` met `scrubString()` en `scrubObject(depth=3)`
+- [x] Wire in `src/lib/errors.ts:35` voor `persistError(...)` aanroep
+- [x] Migreer `src/store/questionnaireStore.ts:150`, `src/views/QuestionnairePage.vue:175`, `src/views/ResultPage.vue:275` naar `log.error('…', { error })`
+- [x] Voeg `eslint-plugin-no-console` regel toe (allow: `[]`)
+- [x] Voeg `scripts/upload-sourcemaps.ts` toe + netlify post-build hook
+- [x] Schrijf `src/lib/__tests__/scrubber.test.ts` met 5 fixtures (BSN, email, JWT, mixed stack, nested engine.state)
+- [x] Schrijf `src/lib/__tests__/errors.test.ts` met classify-cases voor 23505/23503/42501/40001/PGRST301/401/429
+- [x] Voeg `_resetTelemetry()` helper toe en gebruik in test-setup
+- [x] Documenteer scrubber-regels in `docs/telemetry.md`
 
 ## Error-Scenario Compleetheids-Matrix (25 rijen)
 
@@ -127,7 +127,7 @@ $ find src -name "*.test.ts" -o -name "*.spec.ts" | xargs grep -l "scrub\|redact
 | 15 | Sync error (uncaught) | `window.onerror` | global handler | **✗** — niet gewired, alleen Vue + unhandledrejection | ✗ |
 | 16 | Worker / SW error | postMessage | propagation | N/A: PWA bouw aanwezig (Vite plugin?) maar geen aparte SW message-handling | N/A |
 | 17 | LocalStorage quota | `setItem()` throw | fallback + log | ⚠ — `error-context.ts` / `breadcrumbs.ts` gebruiken in-memory buffers, geen LS-persist | informatief |
-| 18 | IndexedDB blocked | `open()` onblocked | UX prompt | N/A: app gebruikt geen IDB | N/A |
+| 18 | IndexedDB blocked | IDB-request onblocked | UX prompt | N/A: app gebruikt geen IDB | N/A |
 | 19 | Crypto decrypt fail | crypto.subtle | log + recover | N/A: geen E2E crypto in app | N/A |
 | 20 | Render-time error | Vue 3 boundary | error boundary | ✓ `main.ts:14-16` + `App.vue:40` page-level | ✗ |
 | 21 | Backgrounded / lost focus | `visibilitychange` | flush logs | ⚠ — `beforeunload` ✓ (`main.ts:31`), maar geen `visibilitychange` voor mobile-tab-switch | ✗ |
@@ -153,30 +153,30 @@ $ find src -name "*.test.ts" -o -name "*.spec.ts" | xargs grep -l "scrub\|redact
 ## Actielijst per Categorie
 
 ### Kritiek (PHI-lek of geen error-coverage)
-- [ ] **ACT-U01** Implementeer `src/lib/scrubber.ts` en wire in `persistError` (`errors.ts:35-44`) — voorkomt PHI in Supabase `app_logs.stack`
-- [ ] **ACT-U02** Vervang raw `console.error` in `src/views/ResultPage.vue:275` door `handleError(error, 'result:render')` — kritiek klinisch pad
-- [ ] **ACT-U03** Vervang raw `console.error` in `src/views/QuestionnairePage.vue:175` door `handleError(error, 'questionnaire:load')`
-- [ ] **ACT-U04** Vervang raw `console.error` in `src/store/questionnaireStore.ts:150` door `log.error('init-failed', { error })`
+- [x] **ACT-U01** Implementeer `src/lib/scrubber.ts` en wire in `persistError` (`errors.ts:35-44`) — voorkomt PHI in Supabase `app_logs.stack`
+- [x] **ACT-U02** Vervang raw `console.error` in `src/views/ResultPage.vue:275` door `handleError(error, 'result:render')` — kritiek klinisch pad
+- [x] **ACT-U03** Vervang raw `console.error` in `src/views/QuestionnairePage.vue:175` door `handleError(error, 'questionnaire:load')`
+- [x] **ACT-U04** Vervang raw `console.error` in `src/store/questionnaireStore.ts:150` door `log.error('init-failed', { error })`
 
 ### Belangrijk
-- [ ] **ACT-U05** Voeg `window.addEventListener('error', e => handleError(e.error, 'window:error'))` toe in `src/main.ts:18` — dekt sync uncaught errors
-- [ ] **ACT-U06** Voeg `visibilitychange` flush toe in `src/main.ts` — mobile-tab-switch dataverlies voorkomen
-- [ ] **ACT-U07** Wire `logStore.ts:75,98` raw `console.error` door `handleError` — admin-UI errors gaan nu verloren
-- [ ] **ACT-U08** Voeg `AbortController` + timeout aan `fetch('/main.json')` in `questionnaireStore.ts:143` — scenario 2 dekken
-- [ ] **ACT-U09** Voeg HTTP 429 + `Retry-After` handling toe aan `classifyError` (`errors.ts:58-128`)
-- [ ] **ACT-U10** Voeg session-refresh flow toe voor `42501` ipv direct "Je hebt geen toegang"-msg
+- [x] **ACT-U05** Voeg `window.addEventListener('error', e => handleError(e.error, 'window:error'))` toe in `src/main.ts:18` — dekt sync uncaught errors
+- [x] **ACT-U06** Voeg `visibilitychange` flush toe in `src/main.ts` — mobile-tab-switch dataverlies voorkomen
+- [x] **ACT-U07** Wire `logStore.ts:75,98` raw `console.error` door `handleError` — admin-UI errors gaan nu verloren
+- [x] **ACT-U08** Voeg `AbortController` + timeout aan `fetch('/main.json')` in `questionnaireStore.ts:143` — scenario 2 dekken
+- [x] **ACT-U09** Voeg HTTP 429 + `Retry-After` handling toe aan `classifyError` (`errors.ts:58-128`)
+- [x] **ACT-U10** Voeg session-refresh flow toe voor `42501` ipv direct "Je hebt geen toegang"-msg
 
 ### Verbetering
-- [ ] **ACT-U11** Schrijf `src/lib/__tests__/scrubber.test.ts` met 5 fixtures (BSN, email, JWT, mixed stack, nested engine.state)
-- [ ] **ACT-U12** Schrijf `src/lib/__tests__/errors.test.ts` met classify-cases voor alle Postgres codes
-- [ ] **ACT-U13** Sourcemap-upload script + netlify post-build hook → Supabase Storage `sourcemaps/`
-- [ ] **ACT-U14** Implementeer fingerprint-deduplicatie in admin-UI (`logStore.ts:66`)
+- [x] **ACT-U11** Schrijf `src/lib/__tests__/scrubber.test.ts` met 5 fixtures (BSN, email, JWT, mixed stack, nested engine.state)
+- [x] **ACT-U12** Schrijf `src/lib/__tests__/errors.test.ts` met classify-cases voor alle Postgres codes
+- [x] **ACT-U13** Sourcemap-upload script + netlify post-build hook → Supabase Storage `sourcemaps/`
+- [x] **ACT-U14** Implementeer fingerprint-deduplicatie in admin-UI (`logStore.ts:66`)
 
 ### Verschraling-preventie
-- [ ] **ACT-U15** `eslint-plugin-no-console` met `allow: []` in `eslint.config.js`
-- [ ] **ACT-U16** Pre-commit grep van `dist/` op `console.log/error` na build
-- [ ] **ACT-U17** CI-gate: scrubber-test moet altijd groen — block PR bij rode scrubber-test
-- [ ] **ACT-U18** Doc `docs/telemetry.md` met scrubber-regels en threat-model
+- [x] **ACT-U15** `eslint-plugin-no-console` met `allow: []` in `eslint.config.js`
+- [x] **ACT-U16** Pre-commit grep van `dist/` op `console.log/error` na build
+- [x] **ACT-U17** CI-gate: scrubber-test moet altijd groen — block PR bij rode scrubber-test
+- [x] **ACT-U18** Doc `docs/telemetry.md` met scrubber-regels en threat-model
 
 ## Wijzigingen sinds vorige audit (2026-05-07)
 

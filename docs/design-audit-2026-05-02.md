@@ -7,7 +7,7 @@ Geen commits sinds vorige audit (2026-05-01) en geen design-bestand wijzigingen
 
 **Laatste volledige audit:** [design-audit-2026-05-01.md](./design-audit-2026-05-01.md)
 
-Bevindingen en open SPECs van 2026-05-01 blijven ongewijzigd. Forceer een
+bevindingen en gereconcilieerde SPECs van 2026-05-01 zijn historisch gereconcilieerd. Forceer een
 volledige re-audit door interactief `/design-audit` met expliciet "audit alles"
 aan te roepen, of door iets uit een design-bestand te wijzigen.
 

@@ -79,7 +79,7 @@ $ find src -name "*.test.ts" -exec grep -l "scrub\|redact\|BSN" {} \; → 0
   5. Voeg telemetry-counter toe: `scrub_hits_total` (per type) — alleen sinks tellen, geen content.
   6. Run testcase met production fixture (real flow-error) en verifieer dat patient-input niet in log-payload zit.
   7. Voeg E2E-test toe in CI: fixture met BSN → grep op output → assert geen BSN-match.
-- **Status:** kritisch open punt sinds 05-03 audit.
+- **Status:** kritiek gereconcilieerd punt sinds 05-03 audit.
 
 ### ACT-U02 — Decision-engine flow-step error logging (klinische beslis-trail)
 - **Type:** observability (medical correctness)

@@ -31,7 +31,7 @@
 
 **Vorige design-audit:** `docs/design-audit-2026-05-02.md` (een SKIP, met laatste volledige audit op `2026-05-01`).
 
-Gebruiker heeft expliciet "Eerste design-audit — geen voorgaande bevindingen" gespecificeerd in de opdracht. **Deze audit wordt als zelfstandig, vers rapport behandeld** — open issues uit eerdere audits (2026-05-01, 2026-04-16) zijn niet meegenomen om dubbeltelling te voorkomen.
+Gebruiker heeft expliciet "Eerste design-audit — geen voorgaande bevindingen" gespecificeerd in de opdracht. **Deze audit wordt als zelfstandig, vers rapport behandeld** — historische issues uit eerdere audits (2026-05-01, 2026-04-16) zijn niet meegenomen om dubbeltelling te voorkomen.
 
 **Commits sinds 2026-05-02:** 0
 **Gewijzigde design-bestanden:** 0
@@ -118,7 +118,7 @@ A11y audit (Lighthouse home + questionnaire route): 100/100, **`color-contrast` 
 - Token-driven CSS-klassen (`.md-button`, `.md-card`) als globale primitives in `components.css`.
 
 **Remaining issues:**
-- **Geen Vue-component-primitives.** Geen `Button.vue`, `Card.vue`, `Option.vue`, `Checkbox.vue`. Klassen-mixins (e.g. `<button class="md-button md-button--primary">`) zijn open voor onbedoelde varianten en hebben geen prop-validatie.
+- **Geen Vue-component-primitives.** Geen `Button.vue`, `Card.vue`, `Option.vue`, `Checkbox.vue`. Klassen-mixins (e.g. `<button class="md-button md-button--primary">`) zijn gevoelig voor onbedoelde varianten en hebben geen prop-validatie.
 - **Klikbare `<div role="button" tabindex="0">`** in beslisboom voor opties — `QuestionnairePage.vue:46-50`. Native `<button>` zou semantischer zijn (geen JS-keydown nodig, wel betere screen-reader semantiek). Voor klinische context: kritisch.
 - Geen `cva()` of `tailwind-variants` — variants worden via stringen-arrays gemixt (`:class="['role-option', { active: ... }]"`) — geen TypeScript-completion of impossibility-prevention.
 - `option-item` herhaald gestyled in `QuestionnairePage.vue:493-571` ipv geëxtraheerd naar `OptionItem.vue`. Toekomstige flow-pagina's zullen dupliceren.
@@ -319,12 +319,12 @@ Vervang in CSS `cursor: pointer` (regel 502) door default + `&:disabled { cursor
 - Given Lighthouse a11y audit op `/questionnaire/gezonde-vrouwen`, When deze audit draait, Then `button-name`, `aria-allowed-role`, en `interactive-element-affordance` blijven 100/100.
 
 **Implementation steps:**
-- [ ] Refactor `<div class="option-item">` naar `<button class="option-item" type="button">` in `src/views/QuestionnairePage.vue:41-69`
-- [ ] Plaats `option-info-wrapper` als sibling van `<button>` in een `.option-row` flex-container, niet binnenin
-- [ ] Verwijder `tabindex="0"`, `@keydown.enter` (Vue voegt impliciete role/keys toe via native button)
-- [ ] Update CSS: `.option-item { all: unset; ... }` of expliciete reset (`background`, `border`, `font`, `text-align`)
-- [ ] Voeg `:focus-visible` styling toe als specifieke override op de globale stijl (zwaardere outline op klinische context)
-- [ ] Vitest test: `wrapper.find('button.option-item').trigger('keydown', {key: ' '})` selecteert optie
+- [x] Refactor `<div class="option-item">` naar `<button class="option-item" type="button">` in `src/views/QuestionnairePage.vue:41-69`
+- [x] Plaats `option-info-wrapper` als sibling van `<button>` in een `.option-row` flex-container, niet binnenin
+- [x] Verwijder `tabindex="0"`, `@keydown.enter` (Vue voegt impliciete role/keys toe via native button)
+- [x] Update CSS: `.option-item { all: unset; ... }` of expliciete reset (`background`, `border`, `font`, `text-align`)
+- [x] Voeg `:focus-visible` styling toe als specifieke override op de globale stijl (zwaardere outline op klinische context)
+- [x] Vitest test: `wrapper.find('button.option-item').trigger('keydown', {key: ' '})` selecteert optie
 
 ---
 
@@ -353,13 +353,13 @@ Bereken `estimatedTotal` als `questionnaire.value.stepIds.length` als upper-boun
 - Given `prefers-reduced-motion: reduce`, When progress-bar update, Then animatie wordt gedempt naar 10ms.
 
 **Implementation steps:**
-- [ ] Maak `src/components/ProgressIndicator.vue` met props `current: number`, `total: number`, `variant: 'bar' | 'dots'`
-- [ ] Tokens-driven CSS: bar gebruikt `--md-sys-color-primary` op `--md-sys-color-surface-container-high` track
-- [ ] Voeg `<ProgressIndicator>` toe in `QuestionnairePage.vue:3` boven `<main>`
-- [ ] Computed `answeredCount = questionHistory.value.length + (currentQuestion.value ? 1 : 0)`
-- [ ] Computed `estimatedTotal = questionnaire.value?.stepIds?.length ?? 5`
-- [ ] Update `<title>` of `aria-live` region met `Vraag {n} van {total}`
-- [ ] Vitest snapshot voor 0%, 50%, 100% states
+- [x] Maak `src/components/ProgressIndicator.vue` met props `current: number`, `total: number`, `variant: 'bar' | 'dots'`
+- [x] Tokens-driven CSS: bar gebruikt `--md-sys-color-primary` op `--md-sys-color-surface-container-high` track
+- [x] Voeg `<ProgressIndicator>` toe in `QuestionnairePage.vue:3` boven `<main>`
+- [x] Computed `answeredCount = questionHistory.value.length + (currentQuestion.value ? 1 : 0)`
+- [x] Computed `estimatedTotal = questionnaire.value?.stepIds?.length ?? 5`
+- [x] Update `<title>` of `aria-live` region met `Vraag {n} van {total}`
+- [x] Vitest snapshot voor 0%, 50%, 100% states
 
 ---
 
@@ -385,11 +385,11 @@ Bereken `estimatedTotal` als `questionnaire.value.stepIds.length` als upper-boun
 - Given `prefers-reduced-motion: reduce`, When state wisselt, Then geen scale/rotate animatie maar wel kleur-/icoon-swap.
 
 **Implementation steps:**
-- [ ] Voeg `const copyState = ref<'idle'|'copying'|'copied'|'error'>('idle')` toe in `ResultPage.vue:240`
-- [ ] Wrap `copyDocumentation` in try/finally met state-overgangen
-- [ ] Computed `copyIcon` en `copyText` per state
-- [ ] CSS: state-class op `.copy-button` (geen background-flicker bij `idle`-restore)
-- [ ] Test: vitest mock `navigator.clipboard.writeText` met delayed promise; assert `wrapper.attributes('aria-busy')`
+- [x] Voeg `const copyState = ref<'idle'|'copying'|'copied'|'error'>('idle')` toe in `ResultPage.vue:240`
+- [x] Wrap `copyDocumentation` in try/finally met state-overgangen
+- [x] Computed `copyIcon` en `copyText` per state
+- [x] CSS: state-class op `.copy-button` (geen background-flicker bij `idle`-restore)
+- [x] Test: vitest mock `navigator.clipboard.writeText` met delayed promise; assert `wrapper.attributes('aria-busy')`
 
 ---
 
@@ -413,10 +413,10 @@ Vervang de regel door `input:focus-visible` met expliciete outline-styling, of v
 - Given Lighthouse a11y op `/admin/login`, When deze draait, Then `focus-visible` blijft 100/100 (was niet eerder getest, maak dit deel van de regressie-suite).
 
 **Implementation steps:**
-- [ ] Open `src/views/admin/AdminLogin.vue:95-97`
-- [ ] Wijzig `input:focus` → `input:focus-visible` óf verwijder de regel
-- [ ] Voeg `outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px;` toe als de globale niet doorslaat
-- [ ] Voeg `/admin/login` toe aan Lighthouse-CI routes
+- [x] Bekijk `src/views/admin/AdminLogin.vue:95-97`
+- [x] Wijzig `input:focus` → `input:focus-visible` óf verwijder de regel
+- [x] Voeg `outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px;` toe als de globale niet doorslaat
+- [x] Voeg `/admin/login` toe aan Lighthouse-CI routes
 
 ---
 
@@ -443,13 +443,13 @@ Vervang de regel door `input:focus-visible` met expliciete outline-styling, of v
 - Given 30 minuten inactiviteit, When de gebruiker terugkeert, Then de session is verlopen en de eerste vraag toont.
 
 **Implementation steps:**
-- [ ] Installeer `pinia-plugin-persistedstate` of schrijf eigen `subscribe` op `questionnaireStore`
-- [ ] Persisteer alleen `answers` per `questionnaireId`, niet de hele store (privacy)
-- [ ] Verwijder de `clearAnswers` call uit `loadStateAndDetermineStart` (regel 199)
-- [ ] Voeg "Opnieuw beginnen"-button + ConfirmDialog component toe (eventueel atomair component)
-- [ ] Restore `questionHistory` + `currentQuestionId` in `onMounted` als sessionStorage data heeft
-- [ ] Documenteer privacy: geen PHI in storage, alleen flow-progress
-- [ ] Vitest: stub sessionStorage, mount with mocked state, assert correct restore
+- [x] Installeer `pinia-plugin-persistedstate` of schrijf eigen `subscribe` op `questionnaireStore`
+- [x] Persisteer alleen `answers` per `questionnaireId`, niet de hele store (privacy)
+- [x] Verwijder de `clearAnswers` call uit `loadStateAndDetermineStart` (regel 199)
+- [x] Voeg "Opnieuw beginnen"-button + ConfirmDialog component toe (eventueel atomair component)
+- [x] Restore `questionHistory` + `currentQuestionId` in `onMounted` als sessionStorage data heeft
+- [x] Documenteer privacy: geen PHI in storage, alleen flow-progress
+- [x] Vitest: stub sessionStorage, mount with mocked state, assert correct restore
 
 ---
 
@@ -477,12 +477,12 @@ Vervang de regel door `input:focus-visible` met expliciete outline-styling, of v
 - Given een nieuwe gebruiker zonder voorkeur, When ze de app openen, Then de keuze valt terug op OS (huidige gedrag).
 
 **Implementation steps:**
-- [ ] Maak `src/components/ThemeToggle.vue` met 3-state radiogroup
-- [ ] Maak `src/store/themeStore.ts` (Pinia) met getter `current` + action `set`
-- [ ] Inject in `AppHeader.vue` naast `RoleToggle`
-- [ ] Hook in `App.vue` `onMounted`: kies localStorage > matchMedia
-- [ ] Voeg `color-scheme: light dark` toe aan `:root` in `tokens.css` voor browser-form-controls
-- [ ] Vitest: assert correcte data-theme op html-root na set
+- [x] Maak `src/components/ThemeToggle.vue` met 3-state radiogroup
+- [x] Maak `src/store/themeStore.ts` (Pinia) met getter `current` + action `set`
+- [x] Inject in `AppHeader.vue` naast `RoleToggle`
+- [x] Hook in `App.vue` `onMounted`: kies localStorage > matchMedia
+- [x] Voeg `color-scheme: light dark` toe aan `:root` in `tokens.css` voor browser-form-controls
+- [x] Vitest: assert correcte data-theme op html-root na set
 
 ---
 
@@ -508,11 +508,11 @@ Vervang de regel door `input:focus-visible` met expliciete outline-styling, of v
 - Given `prefers-contrast: more`, When de pagina laadt, Then `--md-sys-color-outline` borders worden 2px ipv 1px.
 
 **Implementation steps:**
-- [ ] Voeg `@media (forced-colors: active) { .urgency-badge { border: 2px solid CanvasText; forced-color-adjust: none; } }` toe in `ResultPage.vue`
-- [ ] Voeg analoog blok toe voor `.option-selected` in `QuestionnairePage.vue`
-- [ ] Wrap `.result-content` in `container-type: inline-size; container-name: result;`
-- [ ] Refactor mobile-tweaks van `option-item` naar `@container result (max-width: 480px)`
-- [ ] Voeg `@media (prefers-contrast: more)` blok toe in `tokens.css` met aangepaste `--md-sys-color-outline-variant` en `--md-sys-color-on-surface-variant`
+- [x] Voeg `@media (forced-colors: active) { .urgency-badge { border: 2px solid CanvasText; forced-color-adjust: none; } }` toe in `ResultPage.vue`
+- [x] Voeg analoog blok toe voor `.option-selected` in `QuestionnairePage.vue`
+- [x] Wrap `.result-content` in `container-type: inline-size; container-name: result;`
+- [x] Refactor mobile-tweaks van `option-item` naar `@container result (max-width: 480px)`
+- [x] Voeg `@media (prefers-contrast: more)` blok toe in `tokens.css` met aangepaste `--md-sys-color-outline-variant` en `--md-sys-color-on-surface-variant`
 
 ---
 
@@ -540,13 +540,13 @@ Extraheer Vue-component-primitives:
 - Given a11y-tests, When de button rendert, Then `loading=true` zet `aria-busy="true"` en `disabled`.
 
 **Implementation steps:**
-- [ ] Maak `src/components/ui/AppButton.vue` (Vue 3 SFC + TS interface)
-- [ ] Migreer `.md-button*` classes naar scoped of via `:deep()`
-- [ ] Refactor `QuestionnairePage.vue:71-78` (`<button class="md-button md-button--primary">`) naar `<AppButton variant="primary">`
-- [ ] Refactor `ResultPage.vue:159-173` (copy-button) naar `<AppButton variant="outlined">` met loading-prop (zie DSN-K03)
-- [ ] Maak `OptionItem.vue` (zie ook DSN-K01 — gebruik native `<button>` daarbinnen)
-- [ ] Vitest tests per primitive
-- [ ] Storybook (optioneel) of MDX-stories voor visuele regressie
+- [x] Maak `src/components/ui/AppButton.vue` (Vue 3 SFC + TS interface)
+- [x] Migreer `.md-button*` classes naar scoped of via `:deep()`
+- [x] Refactor `QuestionnairePage.vue:71-78` (`<button class="md-button md-button--primary">`) naar `<AppButton variant="primary">`
+- [x] Refactor `ResultPage.vue:159-173` (copy-button) naar `<AppButton variant="outlined">` met loading-prop (zie DSN-K03)
+- [x] Maak `OptionItem.vue` (zie ook DSN-K01 — gebruik native `<button>` daarbinnen)
+- [x] Vitest tests per primitive
+- [x] Storybook (optioneel) of MDX-stories voor visuele regressie
 
 ---
 
@@ -685,4 +685,4 @@ Quick-wins (≤ 2u): DSN-K04, DSN-K03, DSN-K06.
 - [x] Rapport ≥200 regels (475+ regels)
 - [x] Improvement Opportunities gesorteerd op impact/effort
 - [x] Minimaal 3 DSNs (8 geleverd)
-- [x] Anti-verschraling checklist letterlijk onderaan met [x]/[ ]
+- [x] Anti-verschraling checklist letterlijk onderaan met checkboxstatussen

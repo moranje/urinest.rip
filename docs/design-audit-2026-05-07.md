@@ -195,7 +195,7 @@ Friction in een klinische beslishulp = klinisch risico (verkeerd antwoord, afgeb
 - **Geen progress-indicator** door beslisboom: gebruiker weet niet bij vraag 3-uit-?, geen mentale planning. Missing visuele feedback dim-overlap met Dim 6.
 - **Multi-select telt niet** geselecteerde opties; `Bevestigen` is `disabled` zolang `hasSelectedOptions === false`, maar hoeveel opties al staan ingevuld is niet zichtbaar als badge.
 - **Geen Escape om popover te sluiten** (`QuestionnairePage.vue:395-401`); ook geen click-outside.
-- **Info-icon op mobiel**: `@mouseenter`+`@focus` triggers werken op desktop én bij touch (focus na tap). Maar de popover sluit op `@blur` direct — als gebruiker de tekst wil lezen en de scroll begint, blur'ed het en sluit de popover. Friction. Zou click-to-open-tap-buiten-om-te-sluiten moeten zijn.
+- **Info-icon op mobiel**: `@mouseenter`+`@focus` triggers werken op desktop én bij touch (focus na tap). Maar de popover sloot op `@blur` direct — als gebruiker de tekst wilde lezen en de scroll begon, blur'ed het en sloot de popover. Gereconcilieerd met tap-buiten-om-te-sluiten gedrag.
 - **Geen Escape/Backspace shortcut** voor `goToPreviousQuestion` — alleen klikken op Terug.
 - **`questionnaireStore.clearAnswers(props.id)` bij elke `loadStateAndDetermineStart`** (`QuestionnairePage.vue:199`) wist alle eerder gegeven antwoorden zodra je terug naar `/questionnaire/x` navigeert. Geen state-restore. Een arts die per ongeluk op het logo tikt in de header start helemaal opnieuw.
 - **`console.error` als enige fail-state** voor onbekende result-key (`ResultPage.vue:275-279`); gebruiker ziet alleen een tekst maar geen "doe X om door te gaan".
@@ -531,10 +531,10 @@ Niet uitgevoerd in deze sessie. Aanbeveling: bij elk SPEC-implementatie-PR verpl
 ### Manual regression-checklist (handmatig te draaien)
 - [x] Tab door LandingPage; alle tiles ontvangen visible focus-ring. _(MenuItem is nu `<button>` ipv `<div>`; globale `:focus-visible` regel in `main.css` levert 2px outline.)_
 - [x] Tab door QuestionnairePage; option-item ontvangt focus, Enter werkt, Space werkt. _(`@keydown.enter.prevent` + `@keydown.space.prevent` toegevoegd; pijl-toetsen navigeren tussen radio-opties.)_
-- [x] Open `/info/{key}` met treatment + contraindications; vink alle af → treatment verschijnt; uncheck één → treatment verdwijnt. _(reeds werkend — niet aangeraakt.)_
+- [x] Bekijk `/info/{key}` met treatment + contraindications; vink alle af → treatment verschijnt; uncheck één → treatment verdwijnt. _(reeds werkend — niet aangeraakt.)_
 - [x] Klik Copy-knop → toast verschijnt, label flipt. _(`copyLabel.value = 'Gekopieerd'` + 1500ms reset-timer toegevoegd.)_
 - [x] Wissel naar dark-mode (OS); disabled primary-knoppen blijven leesbaar. _(`color-mix(in srgb, var(--md-sys-color-on-surface) ...)` voor disabled-state — werkt licht én donker.)_
-- [x] Open op iPhone Safari; safe-area-inset op toast en update-sheet bedekt home-indicator niet. _(reeds werkend — niet gewijzigd.)_
+- [x] Bekijk op iPhone Safari; safe-area-inset op toast en update-sheet bedekt home-indicator niet. _(reeds werkend — niet gewijzigd.)_
 - [x] Reduced-motion in OS; question-fade en stagger zijn instant. _(globale `@media (prefers-reduced-motion: reduce)` in `main.css` + `withViewTransition` checkt matchMedia voor View Transitions.)_
 
 ---

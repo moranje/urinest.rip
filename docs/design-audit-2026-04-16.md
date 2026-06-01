@@ -256,11 +256,11 @@ Vervang `.urgency-badge { color: white; }` door een role-specifieke color-proper
 - Given dark-theme, When de badge rendert, Then contrast ≥ 4.5:1 blijft (dark-theme `--md-sys-color-warning` is `#fde047`, vereist donkere tekst).
 
 **Implementation steps:**
-- [ ] Splits `.urgency-badge` kleur-declaratie: verwijder generieke `color: white`.
-- [ ] `.urgency-badge--u2 { color: var(--md-sys-color-on-error); }` — `on-error` is wit in beide thema's.
-- [ ] `.urgency-badge--u3 { color: var(--md-sys-color-on-warning-container); }` — donker in light, licht in dark.
-- [ ] Verifieer met devtools op alle 4 combinaties (u2/u3 × light/dark).
-- [ ] Voeg een Vitest snapshot test voor render van beide badges.
+- [x] Splits `.urgency-badge` kleur-declaratie: verwijder generieke `color: white`.
+- [x] `.urgency-badge--u2 { color: var(--md-sys-color-on-error); }` — `on-error` is wit in beide thema's.
+- [x] `.urgency-badge--u3 { color: var(--md-sys-color-on-warning-container); }` — donker in light, licht in dark.
+- [x] Verifieer met devtools op alle 4 combinaties (u2/u3 × light/dark).
+- [x] Voeg een Vitest snapshot test voor render van beide badges.
 
 ### DSN-K02: `<div role="button">` in QuestionnairePage mist Space-activation en primitive
 
@@ -287,11 +287,11 @@ Creëer `src/components/Option.vue` als native `<button type="button">` primitiv
 - Given een multi-select-vraag, When Space of Enter op een optie, Then de selectie toggelt; `aria-pressed` reflecteert state.
 
 **Implementation steps:**
-- [ ] Maak `src/components/Option.vue` met `<button type="button" :aria-pressed="selected">` skelet.
-- [ ] Migreer CSS `.option-item` uit QuestionnairePage scoped style naar Option.vue scoped style.
-- [ ] Vervang div in QuestionnairePage.vue:44-50 door `<Option :selected="isOptionSelected(option)" @select="...">`.
-- [ ] Verwijder `tabindex="0"` en `role="button"` (native knop heeft deze gratis).
-- [ ] Voeg Vitest met `@vue/test-utils` die Enter én Space dispatcht en assert dat `select`-emit fired.
+- [x] Maak `src/components/Option.vue` met `<button type="button" :aria-pressed="selected">` skelet.
+- [x] Migreer CSS `.option-item` uit QuestionnairePage scoped style naar Option.vue scoped style.
+- [x] Vervang div in QuestionnairePage.vue:44-50 door `<Option :selected="isOptionSelected(option)" @select="...">`.
+- [x] Verwijder `tabindex="0"` en `role="button"` (native knop heeft deze gratis).
+- [x] Voeg Vitest met `@vue/test-utils` die Enter én Space dispatcht en assert dat `select`-emit fired.
 
 ### DSN-K03: Main bundle te groot voor klinische snelheid (328 KB gzipped)
 
@@ -315,11 +315,11 @@ Creëer `src/components/Option.vue` als native `<button type="button">` primitiv
 - Given een flow zonder markdown-descriptions, Then `marked` wordt niet geladen.
 
 **Implementation steps:**
-- [ ] Verplaats `src/store/authStore.ts` supabase-import naar een dynamic `import()` binnen `init()`.
-- [ ] In `src/lib/log-sink.ts` — laad supabase-client lazy, fallback op queue in memory.
-- [ ] Wrap `marked` in een async helper `compiledMarkdown = async (t) => (await import('marked')).marked.parse(t)`; return `v-html` via `ref` in QuestionnairePage.
-- [ ] Run `vite build` en verifieer bundle report: doelen behaald.
-- [ ] Voeg een `bundle-budget.json` + CI-check (simpele script die `dist/assets/index-*.js` grootte tegen drempel vergelijkt).
+- [x] Verplaats `src/store/authStore.ts` supabase-import naar een dynamic `import()` binnen `init()`.
+- [x] In `src/lib/log-sink.ts` — laad supabase-client lazy, fallback op queue in memory.
+- [x] Wrap `marked` in een async helper `compiledMarkdown = async (t) => (await import('marked')).marked.parse(t)`; return `v-html` via `ref` in QuestionnairePage.
+- [x] Run `vite build` en verifieer bundle report: doelen behaald.
+- [x] Voeg een `bundle-budget.json` + CI-check (simpele script die `dist/assets/index-*.js` grootte tegen drempel vergelijkt).
 
 ### DSN-B04: Primitives ontbreken — Button/Input/Card als CSS-classes
 
@@ -340,11 +340,11 @@ Introduceer `src/components/ui/Button.vue` (props: `variant: 'primary'|'outlined
 - Given `<Button loading>`, Then er verschijnt een ingebouwde 16×16 spinner + `aria-busy="true"` + button is `disabled`.
 
 **Implementation steps:**
-- [ ] Maak `src/components/ui/Button.vue` met CVA-achtige class-mapping (handmatig, geen Tailwind).
-- [ ] Maak `src/components/ui/Icon.vue` met geregistreerde SVG-paths (zie DSN-B05).
-- [ ] Migreer `.md-button` CSS naar scoped style in Button.vue.
-- [ ] Vervang bestaande `.md-button` usages (grep en replace): ResultPage, QuestionnairePage.
-- [ ] Verwijder oude CSS-classes uit `components.css` na migratie.
+- [x] Maak `src/components/ui/Button.vue` met CVA-achtige class-mapping (handmatig, geen Tailwind).
+- [x] Maak `src/components/ui/Icon.vue` met geregistreerde SVG-paths (zie DSN-B05).
+- [x] Migreer `.md-button` CSS naar scoped style in Button.vue.
+- [x] Vervang bestaande `.md-button` usages (grep en replace): ResultPage, QuestionnairePage.
+- [x] Verwijder oude CSS-classes uit `components.css` na migratie.
 
 ### DSN-B05: Iconen zijn 5+ gedupliceerde inline SVGs
 
@@ -372,10 +372,10 @@ Introduceer `src/components/ui/Button.vue` (props: `variant: 'primary'|'outlined
 - Given de designer wil het kopieer-icoon vervangen, When hij `icons.ts` updatet, Then alle instances in de app veranderen.
 
 **Implementation steps:**
-- [ ] Creëer `src/components/ui/icons.ts` met alle 10 benodigde paths (migreer uit huidige views).
-- [ ] Creëer `Icon.vue` met `size` (default 24) + `title`-slot voor a11y.
-- [ ] Vervang alle bestaande inline `<svg>` op de 8 locaties.
-- [ ] Verifieer bundle-size voor-na (verwacht: -2 tot -4 KB gzipped).
+- [x] Creëer `src/components/ui/icons.ts` met alle 10 benodigde paths (migreer uit huidige views).
+- [x] Creëer `Icon.vue` met `size` (default 24) + `title`-slot voor a11y.
+- [x] Vervang alle bestaande inline `<svg>` op de 8 locaties.
+- [x] Verifieer bundle-size voor-na (verwacht: -2 tot -4 KB gzipped).
 
 ### DSN-B06: Geen `color-scheme` + `forced-colors` support
 
@@ -396,11 +396,11 @@ Voeg aan `:root` toe: `color-scheme: light dark;`. Voeg een `@media (forced-colo
 - Given dark-mode OS-thema, When de SPA laadt, Then scrollbars zijn donker (zonder custom CSS).
 
 **Implementation steps:**
-- [ ] `src/styles/tokens.css:1` — voeg `color-scheme: light dark;` toe aan `:root`.
-- [ ] Voeg `@media (forced-colors: active)` sectie toe aan `main.css`:
+- [x] `src/styles/tokens.css:1` — voeg `color-scheme: light dark;` toe aan `:root`.
+- [x] Voeg `@media (forced-colors: active)` sectie toe aan `main.css`:
   - `.urgency-badge { border: 2px solid CanvasText; forced-color-adjust: none; }`
   - `.option-selected { outline: 2px solid Highlight; }`
-- [ ] Manual test met Windows High Contrast (of Chrome DevTools emulate forced-colors).
+- [x] Manual test met Windows High Contrast (of Chrome DevTools emulate forced-colors).
 
 ## Test Results
 

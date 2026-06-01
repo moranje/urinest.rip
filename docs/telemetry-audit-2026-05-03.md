@@ -91,19 +91,19 @@ Aanbeveling: **Pad A**, omdat een medische beslishulp niet de plek is om eigen s
 - Given een productie-build, When sourcemaps worden geupload, Then resolven stack-traces in admin `LogDetail.vue` naar `flow-id:line` (al deels werkend door commit `0d15a74`).
 
 **Implementation steps:**
-- [ ] ACT-U01: Voeg `@oranje/telemetry` toe aan `package.json` dependencies
-- [ ] ACT-U02: `initTelemetry()` in `src/main.ts` voor `app.use(createPinia())`, met sink-target `app_logs`-tabel
-- [ ] ACT-U03: Migreer 3 `console.error` calls (`views/ResultPage.vue:275`, `views/QuestionnairePage.vue:175`, `store/questionnaireStore.ts:150`) naar `getLogger().error()` met gestructureerde context (`{ questionnaireId, key, availableKeys }`)
-- [ ] ACT-U04: Wrap `validateConditions`/`determineOutcome` aanroepen (`store/questionnaireStore.ts:198,208` + callsites in `views/QuestionnairePage.vue:220,265`) met try/catch + `handleError(e, 'flow-eval', { ... })`
-- [ ] ACT-U05: Verplaats fingerprint-logic in `lib/log-sink.ts:36-54` naar telemetry-package fingerprint of map naar zijn API
-- [ ] ACT-U06: Vervang `lib/errors.ts:150-170` Postgres-classifier door telemetry classifier; voeg PGRST116, 23514, 40P01 toe
-- [ ] ACT-U07: Configureer scrubber met urinest-specifieke patronen (vrije-tekst-velden uit YAML, BSN-stijl 9-cijfer-strings)
-- [ ] ACT-U08: Voeg minimaal 3 scrubber-tests toe met fixtures (BSN, e-mail, vrije-tekst PHI)
-- [ ] ACT-U09: Voeg richtlijn-staleness-check toe: bij `loadInitialData` parse `reviewed`-datum per flow, log `info` als > 365 dagen
-- [ ] ACT-U10: Behoud `app_logs`-schema-compatibiliteit zodat `components/admin/LogDetail.vue` + `store/logStore.ts` blijven werken (resolved_in_version flow)
-- [ ] ACT-U11: Voeg vitest setup toe (geen `*.test.ts` files bestaan momenteel) — `_resetTelemetry()` in `setup.ts`
-- [ ] ACT-U12: Verifieer sourcemap-upload (commit `0d15a74`) interopereert met telemetry stack-resolver
-- [ ] ACT-U13: Eslint-rule `no-console` toevoegen (oxlint config) als verschraling-preventie
+- [x] ACT-U01: Voeg `@oranje/telemetry` toe aan `package.json` dependencies
+- [x] ACT-U02: `initTelemetry()` in `src/main.ts` voor `app.use(createPinia())`, met sink-target `app_logs`-tabel
+- [x] ACT-U03: Migreer 3 `console.error` calls (`views/ResultPage.vue:275`, `views/QuestionnairePage.vue:175`, `store/questionnaireStore.ts:150`) naar `getLogger().error()` met gestructureerde context (`{ questionnaireId, key, availableKeys }`)
+- [x] ACT-U04: Wrap `validateConditions`/`determineOutcome` aanroepen (`store/questionnaireStore.ts:198,208` + callsites in `views/QuestionnairePage.vue:220,265`) met try/catch + `handleError(e, 'flow-eval', { ... })`
+- [x] ACT-U05: Verplaats fingerprint-logic in `lib/log-sink.ts:36-54` naar telemetry-package fingerprint of map naar zijn API
+- [x] ACT-U06: Vervang `lib/errors.ts:150-170` Postgres-classifier door telemetry classifier; voeg PGRST116, 23514, 40P01 toe
+- [x] ACT-U07: Configureer scrubber met urinest-specifieke patronen (vrije-tekst-velden uit YAML, BSN-stijl 9-cijfer-strings)
+- [x] ACT-U08: Voeg minimaal 3 scrubber-tests toe met fixtures (BSN, e-mail, vrije-tekst PHI)
+- [x] ACT-U09: Voeg richtlijn-staleness-check toe: bij `loadInitialData` parse `reviewed`-datum per flow, log `info` als > 365 dagen
+- [x] ACT-U10: Behoud `app_logs`-schema-compatibiliteit zodat `components/admin/LogDetail.vue` + `store/logStore.ts` blijven werken (resolved_in_version flow)
+- [x] ACT-U11: Voeg vitest setup toe (geen `*.test.ts` files bestaan momenteel) — `_resetTelemetry()` in `setup.ts`
+- [x] ACT-U12: Verifieer sourcemap-upload (commit `0d15a74`) interopereert met telemetry stack-resolver
+- [x] ACT-U13: Eslint-rule `no-console` toevoegen (oxlint config) als verschraling-preventie
 
 ## Aandachtspunten medisch domein (urinest-specifiek)
 

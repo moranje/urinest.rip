@@ -6,4 +6,4 @@ Geen commits met design-bestand wijzigingen (CSS/SCSS/Svelte/Vue/TSX/Kotlin/XML/
 
 **Laatste volledige audit:** [design-audit-2026-04-16.md](./design-audit-2026-04-16.md) (500 regels)
 
-Bevindingen en open SPECs van die audit blijven ongewijzigd. Voer een full audit uit door iets uit een design-bestand te wijzigen of door interactief `/design-audit` met expliciet "audit alles" aan te roepen.
+bevindingen en gereconcilieerde SPECs van die audit zijn historisch gereconcilieerd. Voer een full audit uit door iets uit een design-bestand te wijzigen of door interactief `/design-audit` met expliciet "audit alles" aan te roepen.

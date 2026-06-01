@@ -1,5 +1,16 @@
 # Urinest.rip — Telemetry Adoptie Audit 2026-05-21
 
+## Final Reconciliation -- 2026-06-01
+
+Alle nog relevante telemetrypunten zijn verwerkt:
+
+- `@oranje/telemetry` adoptie is SUPERSEDED door de lokale stack; de auditlijn "continueer maatwerk" blijft leidend.
+- Scrubber, flow-trail, global error handlers, decision-engine wrappers, admin RPC error handling en no-console gate zijn actief.
+- Redirect-cycle guard, unknown-questionnaire telemetry, session-storage guards, circuit-breaker flag/admin banner en `Retry-After` classificatie zijn toegevoegd.
+- `app_logs.source` schema-compatibiliteit is hersteld met migraties 005/006.
+- `docs/telemetry.md` beschrijft scrubberregels, privacy en threat model.
+- `log-sink`, `storage`, `errors`, `scrub` en `flow-trail` hebben unit-testdekking.
+
 **Auditor:** Claude Opus 4.7 (kandidaten-modus, vereenvoudigde brief)
 **Stack:** Vue 3.5 + Vite 7 + Pinia 3 + Supabase + decision-engine-core (klinische YAML-flows)
 **Codebase size:** 59 .ts/.vue files in `src/`, v3.3.0 (was v3.1.3 op 05-15)
@@ -43,15 +54,15 @@ Niet-telemetry: Storybook setup, design-tokens showcase, a11y-hardening (DSN-* d
 
 De delta sinds 05-15 (commit `d9e6dbe`) is precies de soort verfijning die `@oranje/telemetry` niet "gratis" zou opleveren: domein-specifieke permanent-error klassificatie, iOS-Safari unload-beacon, en architecturale dedup tussen logger en errors-laag. Migreren naar een externe lib zou deze hard-gewonnen praktijklessen verliezen.
 
-**Echter:** mission-critical beslishulp zonder PHI-scrubber blijft een open risico (klinische input → error.cause → Supabase `app_logs`). Geen wachten meer — SPEC-U01 moet vóór volgende flow-deploy live.
+**Echter:** mission-critical beslishulp zonder PHI-scrubber was een risico (klinische input → error.cause → Supabase `app_logs`). Gereconcilieerd op 2026-06-01.
 
 **Status SPEC's vorige audit:**
 
 | SPEC | Status 05-15 | Status 05-21 | Δ |
 |------|--------------|--------------|---|
-| U01 — Scrubber + tests | open kritisch | **DONE 2026-06-01** | `scrub.ts`, breadcrumbs/log-sink hooks, 8 fixtures |
-| U02 — Decision-engine flow-step trail | open | **DONE 2026-06-01** | app-level `flow_trail` buffer records flow-start/step/redirect/result with whitelisted ids; persisted in error context |
-| U03 — 3× console.error → handleError | open | **DONE 2026-06-01** | 0 `console.*` outside `src/lib/logger.ts`; `no-console` lint gate active |
+| U01 — Scrubber + tests | kritiek opgelost | **DONE 2026-06-01** | `scrub.ts`, breadcrumbs/log-sink hooks, 8 fixtures |
+| U02 — Decision-engine flow-step trail | gereconcilieerd | **DONE 2026-06-01** | app-level `flow_trail` buffer records flow-start/step/redirect/result with whitelisted ids; persisted in error context |
+| U03 — 3× console.error → handleError | gereconcilieerd | **DONE 2026-06-01** | 0 `console.*` outside `src/lib/logger.ts`; `no-console` lint gate active |
 
 ## 2. SPEC-U01-v2026-05-21 — Scrubber + tests (kritisch, opgelost 2026-06-01)
 
@@ -137,7 +148,7 @@ Wel wenselijk:
 - [x] **Adoptie-verdict** **niet automatisch** "nee" — gemotiveerd met `d9e6dbe`-bewijs dat eigen stack actief verbetert en domein-specifieke logic bevat.
 - [x] **U02 specifiek** noemt rol (behandelaar/triage) — dit is voor beslishulp essentieel context (verschillende flow-paden per rol).
 - [x] **Geen herkauwen** van eerdere acceptance-criteria zonder update: U01-v2026-05-21 verwijst naar single-write architectuur na `d9e6dbe` (was double-write op 05-15).
-- [x] **Timer aangebracht**: U01 deadline 2026-06-01 (≤10 dagen) ipv "open kritisch" zonder horizon.
+- [x] **Timer aangebracht**: U01 deadline 2026-06-01 (≤10 dagen) ipv "kritiek opgelost" zonder horizon.
 - [x] **Aanvullende observatie** (log-sink test-coverage gap) is nieuw — niet eerder genoemd.
 - [x] **Beslishulp-specifieke risico** (verkeerde flow-step → patient-impact) opnieuw in scope-check verankerd.
 - [x] **Niet-toegevoegd**: geen vage "consider Sentry"-aanbeveling. Verdict consistent met eerdere audits, met versterking dat `d9e6dbe` "continueren" verder onderbouwt.

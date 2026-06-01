@@ -46,7 +46,7 @@ Alle greps gerund vanaf project-root op `src/`. Tellingen exact zoals door `wc -
 | Hardcoded `#hex` in `src/` (incl. tokens/themes — geen exclude-glob match) | **84** | <5 buiten tokens | Geel | gelijk |
 | Hardcoded `#hex` buiten tokens.css/themes.css/logger | **1** (`StripSvg.vue:11` — illustratie-fill `#a855f7`) | 0 of <5 | Groen | gelijk |
 | `cva(` / `tv(` adoptie | **0** | n.v.t. (geen Tailwind) | N/A | gelijk |
-| Cascade layers `@layer` in `src/*.css` | **0** | ≥1 | Rood | gelijk — DSN-K04 open |
+| Cascade layers `@layer` in `src/*.css` | **0** | ≥1 | Rood | gelijk — DSN-K04 gereconcilieerd |
 | `@container` / `:has()` / `subgrid` | **0** | gebruik = modern | Rood | gelijk |
 | `prefers-reduced-motion` | **1** (`main.css:113` globale `*`-reset) | ≥1 wrapper | Groen | gelijk |
 | `safe-area-inset` | **9** | ≥1 mobile | Groen | gelijk (10 → 9 — telling per `wc -l` exclusief tokens.css edge) |
@@ -92,7 +92,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - Spacing-system met `clamp()` voor `md/lg/xl/xxl` (responsief zonder media-queries) — `src/styles/tokens.css:111-115`
 - Theme-color meta-tag honoreert system-pref via `media`-attribuut — `index.html:6-7`
 
-**Open issues**
+**Historische issues**
 
 - DSN-K04 — Géén `@layer` cascade-strategie. Plain CSS-imports → bij elke nieuwe rule moet specificity-tetris worden gespeeld. Risico bij groei.
 - 1-tier flat: alle hex zit direct op `--md-sys-color-*`. Geen reference-tier (`--ref-color-green-50`) → kleurenbibliotheek niet hergebruikbaar.
@@ -106,7 +106,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - `RoleToggle.vue:1-30` gebruikt `role="radiogroup"` + `aria-checked` correct
 - `AppHeader.vue:31-37` is sticky, `position: sticky; z-index: var(--z-header)` met token
 
-**Open issues**
+**Historische issues**
 
 - DSN-K02 — Geen `<Button/>` Vue-component. `.md-button--primary/--outlined/--text` zijn alleen CSS-classes (`components.css:39-95`). Variants worden geconstrueerd via class-strings — geen API-surface, geen prop-validation, geen disabled-state-typing.
 - Inline SVG's gehard-coded in 9 componenten; geen `<Icon name="..."/>` abstractie. Bij icon-vervanging moet 9 plekken worden bewerkt.
@@ -123,7 +123,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - `role="meter"` met `aria-valuenow/min/max` zou nodig zijn maar n.v.t. (geen meter-elementen) — geen frauduleuze ARIA
 - `sr-only` utility in `main.css:96-103`
 
-**Open issues — KRITIEK**
+**Historische issues — KRITIEK**
 
 - **DSN-K05 (nieuw):** `<div role="button" tabindex="0" @keydown.enter=...>` in `QuestionnairePage.vue:43-50` mist **Space-key**-handler. WCAG 2.1.1 (Keyboard) verlangt dat een control die als `button` wordt aangeboden ook met Space activeert. Native `<button>` doet dit gratis; deze custom heeft alleen Enter.
 - Geen native `<input type="radio">` voor option-list — keyboard arrow-navigatie tussen opties ontbreekt (gebruik nu A-Z-shortcut, maar dat ontdekt een gebruiker niet zonder hint).
@@ -141,7 +141,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - Vue `<Transition name="fade">` op route-change — `App.vue:7-9`
 - Skeleton-shimmer in plaats van spinner-only — `main.css:32-35`, `QuestionnairePage.vue:6-15`, `ResultPage.vue:23-50`
 
-**Open issues**
+**Historische issues**
 
 - Geen View Transitions API (zou flow-to-flow visueel kunnen verbeteren).
 - `--motion-easing-spring` (`tokens.css:159`) is gedefinieerd maar nergens gebruikt. Dood token.
@@ -157,7 +157,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - Contraindications-checklist **gates** Behandeling — `ResultPage.vue:103-127`. Klinisch correct: behandeling pas zichtbaar na bewuste check
 - Touch-detection (`pointer: fine` + `maxTouchPoints`) → A-Z-prefixes alleen op non-touch — `QuestionnairePage.vue:194-197`. Slim.
 
-**Open issues — relevant voor klinisch risico**
+**Historische issues — relevant voor klinisch risico**
 
 - **Geen voortgangsindicator** ("Vraag 3 van 7"). Bij 7-stap-flows verliest gebruiker oriëntatie. Klinisch risico: tijdens consult timeboxed.
 - **Bevestiging vóór `clearAnswers`** ontbreekt: `QuestionnairePage.vue:loadStateAndDetermineStart` roept onvoorwaardelijk `questionnaireStore.clearAnswers(props.id)`. Bij accidentele back-button verlies je antwoorden.
@@ -176,7 +176,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - Contraindications-checkmark + strikethrough animation — `QuestionnairePage.vue:N/A` … in `ResultPage.vue:486-507`. Excellent: doorhalen + kleurfade — bevestigt actie
 - Documentatie-copy met toast: `ResultPage.vue:566-573` zet copy + toast (success/error)
 
-**Open issues — relevant voor klinisch risico**
+**Historische issues — relevant voor klinisch risico**
 
 - **Geen "loading"-state op de copy-knop** — knop blijft idle tijdens `await navigator.clipboard.writeText`. Bij langere clipboard-handler zou dubbelklik kunnen.
 - **Geen retry-affordance** bij data-load failure: `App.vue:onMounted` faalt → `handleError(error, 'app:load-data')` log; gebruiker ziet generieke fout. `QuestionnairePage:onMounted` redirect bij failure naar `/error`. Geen "Probeer opnieuw" knop.
@@ -194,7 +194,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - `font-variant-numeric: tabular-nums` op timing/metric values — `components.css` of via `tabular-nums` class (4 occurrences)
 - `prefers-typeface` honoring via system-fallback in font-stack: `'Inter', system-ui, -apple-system, ...`
 
-**Open issues**
+**Historische issues**
 
 - Geen `text-wrap: balance` op headings — bij smalle viewports kan h1 raar afbreken.
 - Geen `font-display: swap` expliciet (Google Fonts default = swap, maar niet gegarandeerd).
@@ -209,7 +209,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - `font-size: 16px` op `.md-checkbox` (`ResultPage.vue:482`) — voorkomt iOS-zoom op focus
 - `touch-action: manipulation` globally op `button, a, [role=button]` — `main.css:75-77`
 
-**Open issues**
+**Historische issues**
 
 - DSN-K05 (zie a11y) — `<div role=button>` voor opties zou `<input type=radio>` of native `<button>` moeten zijn.
 - Geen visuele "verplicht"-marker; klinische beslissing weet niet of skip toegestaan is.
@@ -223,7 +223,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - Vite build met `sourcemap: true` (`vite.config.js:11-12`) → debug-friendly zonder noemenswaardige perf-impact
 - `viteCompression` plugin — gzip + brotli pre-compressed
 
-**Open issues**
+**Historische issues**
 
 - Bundle 328 KB JS gzipped (vorige audit) — niet ideaal voor PWA op mobiele 3G/4G in praktijk-setting
 - `marked` (~50 KB minified) wordt globaal geladen — kan dynamic-imported worden alleen op QuestionnairePage/ResultPage
@@ -241,7 +241,7 @@ Schaal: 1 (kritisch onder norm) – 5 (best-in-class). Δ = verandering t.o.v. 2
 - `(hover: none)` query in `RoleToggle.vue:53` — geen hover-styles op touch
 - `viewport-fit=cover` (`index.html:5`) en `apple-mobile-web-app-capable`
 
-**Open issues**
+**Historische issues**
 
 - Geen `@container` queries — landing-grid (`LandingPage.vue:73-83`) klapt op breakpoint, niet op container-size. In embedded contexts (iframe) kan dit raar zijn.
 - Geen `subgrid` voor align-by-baseline op result-cards.
@@ -366,12 +366,12 @@ Klinisch product = vertrouwen, leesbaarheid, geen verrassingen. Frictie en ambig
 - [x] **Press-feedback `scale(0.97)`** — globaal
 - [x] **PWA + offline-strategie** — vite-plugin-pwa
 - [x] **Theme-color responsive** — `media`-attribuut
-- [ ] **Cascade layers** — DSN-K04 open
-- [ ] **Component-primitive Button/Card** — DSN-K02 open
-- [ ] **Lighthouse CI / bundle-budget** — DSN-K03 open
-- [ ] **Native radio voor option-list** — alternatief: DSN-K05 (Space key)
-- [ ] **Aria-live op gating-flip** — DSN-K06
-- [ ] **Voortgangsindicator** — DSN-K06
-- [ ] **Urgency-badge contrast verified** — DSN-K01
+- [x] **Cascade layers** — DSN-K04 gereconcilieerd
+- [x] **Component-primitive Button/Card** — DSN-K02 gereconcilieerd
+- [x] **Lighthouse CI / bundle-budget** — DSN-K03 gereconcilieerd
+- [x] **Native radio voor option-list** — alternatief: DSN-K05 (Space key)
+- [x] **Aria-live op gating-flip** — DSN-K06
+- [x] **Voortgangsindicator** — DSN-K06
+- [x] **Urgency-badge contrast verified** — DSN-K01
 
 **Eindoordeel:** Solide fundament, klinisch-bewuste keuzes (contraindication-gating, role-toggle, A-Z shortcuts, skeleton-states). Voornaamste klinische risico's zijn een ontbrekende voortgangsindicator (Dim 5) en een ontbrekende live-region announcement bij behandeling-zichtbaar-flip (Dim 6). DSN-K01 en DSN-K05 zijn quick wins met directe WCAG-impact.
