@@ -35,6 +35,7 @@ interface RawQuestionnaire {
   icon?: string;
   hiddenFromLandingPage?: boolean;
   recommendedStart?: boolean;
+  metadata?: Readonly<Record<string, unknown>>;
   questions?: Question[];
   steps?: Step[];
   results?: Record<string, ResultData>;
@@ -111,6 +112,7 @@ const fetchManifest = async (): Promise<BeslismodelManifestInput<ResultData>> =>
       icon: questionnaire.icon,
       hiddenFromLandingPage: questionnaire.hiddenFromLandingPage,
       recommendedStart: questionnaire.recommendedStart,
+      metadata: questionnaire.metadata,
       questions: questionnaire.questions ?? [],
       steps: questionnaire.steps ?? [],
       results: questionnaire.results ?? {},

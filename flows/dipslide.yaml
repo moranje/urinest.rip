@@ -5,7 +5,11 @@ description: Beoordeling van de dipslide.
 category: diagnostiek
 audience: [behandelaar, triagist]
 domain: urineonderzoek
+icon: dipslide
 recommendedStart: false
+metadata:
+  landingOrder: 30
+  landingSection: primary
 
 questions:
   macConkey:

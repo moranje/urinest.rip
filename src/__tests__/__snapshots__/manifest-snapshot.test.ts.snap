@@ -10,7 +10,13 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "beleid",
     "domain": "urineweginfecties",
     "hiddenFromLandingPage": false,
+    "icon": undefined,
     "id": "bacteriurie",
+    "metadata": {
+      "landingDescription": "Diagnose & behandeling",
+      "landingOrder": 110,
+      "landingSection": "secondary",
+    },
     "optionValues": {
       "q_bac_catheter": [
         "yes",
@@ -536,7 +542,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "diagnostiek",
     "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
+    "icon": "dipslide",
     "id": "dipslide",
+    "metadata": {
+      "landingOrder": 30,
+      "landingSection": "primary",
+    },
     "optionValues": {
       "q_ds_cled": [
         "positive",
@@ -584,7 +595,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "beleid",
     "domain": "urineweginfecties",
     "hiddenFromLandingPage": false,
+    "icon": "healthy",
     "id": "gezonde-vrouwen",
+    "metadata": {
+      "landingOrder": 10,
+      "landingSection": "primary",
+    },
     "optionValues": {
       "q_gv_checklist": [
         "1",
@@ -692,7 +708,13 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "diagnostiek",
     "domain": "hematurie",
     "hiddenFromLandingPage": false,
+    "icon": undefined,
     "id": "hematurie",
+    "metadata": {
+      "landingDescription": "Beoordeling hematurie",
+      "landingOrder": 130,
+      "landingSection": "secondary",
+    },
     "optionValues": {
       "q_hematuria_type": [
         "visible",
@@ -739,7 +761,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "diagnostiek",
     "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
+    "icon": "culture",
     "id": "kweek",
+    "metadata": {
+      "landingOrder": 50,
+      "landingSection": "primary",
+    },
     "optionValues": {
       "q_kweek_result": [
         "positive",
@@ -785,7 +812,13 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "vervolgonderzoek",
     "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
+    "icon": undefined,
     "id": "leukocyturie",
+    "metadata": {
+      "landingDescription": "Geïsoleerde leukocyturie",
+      "landingOrder": 120,
+      "landingSection": "secondary",
+    },
     "optionValues": {
       "q_leuk_followup_child": [
         "dipslide",
@@ -877,7 +910,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "diagnostiek",
     "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
+    "icon": "sediment",
     "id": "sediment",
+    "metadata": {
+      "landingOrder": 40,
+      "landingSection": "primary",
+    },
     "optionValues": {
       "q_sed_bacteruria": [
         "positive",
@@ -923,7 +961,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "category": "diagnostiek",
     "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
+    "icon": "strip",
     "id": "strip",
+    "metadata": {
+      "landingOrder": 20,
+      "landingSection": "primary",
+    },
     "optionValues": {
       "q_strip_ery": [
         "positive_1",

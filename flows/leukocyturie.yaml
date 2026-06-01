@@ -6,6 +6,10 @@ category: vervolgonderzoek
 audience: [behandelaar, triagist]
 domain: urineonderzoek
 recommendedStart: false
+metadata:
+  landingOrder: 120
+  landingSection: secondary
+  landingDescription: Geïsoleerde leukocyturie
 
 questions:
   population:

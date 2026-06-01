@@ -1,11 +1,16 @@
 id: kweek
 version: '1'
+name: Kweek
 title: Urinekweek
 description: Beoordeling van de urinekweek.
 category: diagnostiek
 audience: [behandelaar, triagist]
 domain: urineonderzoek
+icon: culture
 recommendedStart: false
+metadata:
+  landingOrder: 50
+  landingSection: primary
 
 questions:
   cultureResult:

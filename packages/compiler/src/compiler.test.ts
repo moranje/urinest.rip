@@ -26,7 +26,10 @@ title: Example flow
 category: test
 audience: [tester]
 domain: test
+icon: example
 recommendedStart: true
+metadata:
+  landingOrder: 10
 questions:
   answer:
     text: Answer
@@ -63,6 +66,8 @@ describe("compiler package", () => {
     expect(manifest.questionnaires[0]).toEqual(
       expect.objectContaining({
         id: "example-flow",
+        icon: "example",
+        metadata: { landingOrder: 10 },
         resultsLogic: [
           expect.objectContaining({
             id: "example-flow-rule-1",

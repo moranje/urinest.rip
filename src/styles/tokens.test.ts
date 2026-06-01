@@ -61,10 +61,31 @@ describe("design tokens", () => {
 
     expect(landingPage).not.toContain("28vw");
     expect(landingPage).not.toContain("@container landing (max-width: 56.25rem)");
+    expect(landingPage).toContain('class="landing-grid stagger-children"');
     expect(landingPage).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
     expect(landingPage).toContain(
       "grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)))",
     );
     expect(landingPage).toContain("max-inline-size: var(--landing-tile-size)");
+  });
+
+  it("keeps landing routes driven by manifest taxonomy", () => {
+    const landingPage = read("src/views/LandingPage.vue");
+
+    expect(landingPage).toContain("questionnaireStore.questionnaireList");
+    expect(landingPage).toContain("metadata?.landingOrder");
+    expect(landingPage).toContain("metadata?.landingSection");
+    expect(landingPage).toContain("iconComponents");
+    expect(landingPage).not.toContain('to="/questionnaire/strip"');
+    expect(landingPage).not.toContain('to="/questionnaire/bacteriurie"');
+  });
+
+  it("keeps the dev flow compiler from dropping landing taxonomy", () => {
+    const flowCompiler = read("scripts/flow-compiler.mjs");
+
+    expect(flowCompiler).toContain('icon: { type: "string" }');
+    expect(flowCompiler).toContain('metadata: { type: "object" }');
+    expect(flowCompiler).toContain("icon: flow.icon");
+    expect(flowCompiler).toContain("metadata: flow.metadata");
   });
 });

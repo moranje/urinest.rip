@@ -16,11 +16,15 @@ interface ManifestRule {
 interface ManifestQuestionnaire {
   readonly id: string;
   readonly version?: string;
+  readonly name?: string;
+  readonly title?: string;
   readonly category?: string;
   readonly audience?: readonly string[];
   readonly domain?: string;
+  readonly icon?: string;
   readonly hiddenFromLandingPage?: boolean;
   readonly recommendedStart?: boolean;
+  readonly metadata?: Readonly<Record<string, unknown>>;
   readonly questions: readonly ManifestQuestion[];
   readonly results: Readonly<Record<string, unknown>>;
   readonly resultsLogic: readonly ManifestRule[];
@@ -34,8 +38,10 @@ describe("compiled manifest snapshot", () => {
       category: flow.category,
       audience: flow.audience,
       domain: flow.domain,
+      icon: flow.icon,
       hiddenFromLandingPage: flow.hiddenFromLandingPage,
       recommendedStart: flow.recommendedStart,
+      metadata: flow.metadata,
       questionIds: flow.questions.map((question) => question.id),
       optionValues: Object.fromEntries(
         flow.questions.map((question) => [
@@ -53,5 +59,41 @@ describe("compiled manifest snapshot", () => {
     }));
 
     expect(summary).toMatchSnapshot();
+  });
+
+  it("preserves landing taxonomy for the generated dev manifest", () => {
+    const flows = new Map(
+      (mainData.questionnaires as readonly ManifestQuestionnaire[]).map((flow) => [flow.id, flow]),
+    );
+
+    expect(flows.get("strip")).toEqual(
+      expect.objectContaining({
+        icon: "strip",
+        metadata: expect.objectContaining({
+          landingOrder: 20,
+          landingSection: "primary",
+        }),
+      }),
+    );
+    expect(flows.get("bacteriurie")).toEqual(
+      expect.objectContaining({
+        name: "Bacteriurie",
+        metadata: expect.objectContaining({
+          landingDescription: "Diagnose & behandeling",
+          landingOrder: 110,
+          landingSection: "secondary",
+        }),
+      }),
+    );
+    expect(flows.get("kweek")).toEqual(
+      expect.objectContaining({
+        icon: "culture",
+        name: "Kweek",
+        metadata: expect.objectContaining({
+          landingOrder: 50,
+          landingSection: "primary",
+        }),
+      }),
+    );
   });
 });

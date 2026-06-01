@@ -5,7 +5,11 @@ description: Beoordeling van de urinestrip.
 category: diagnostiek
 audience: [behandelaar, triagist]
 domain: urineonderzoek
+icon: strip
 recommendedStart: true
+metadata:
+  landingOrder: 20
+  landingSection: primary
 
 questions:
   nitrite:

@@ -1,11 +1,16 @@
 id: sediment
 version: '1'
+name: Sediment
 title: Urine sediment
 description: Beoordeling van het urine sediment.
 category: diagnostiek
 audience: [behandelaar, triagist]
 domain: urineonderzoek
+icon: sediment
 recommendedStart: false
+metadata:
+  landingOrder: 40
+  landingSection: primary
 
 questions:
   bacteruria:

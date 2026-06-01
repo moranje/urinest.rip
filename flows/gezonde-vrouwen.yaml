@@ -5,7 +5,11 @@ description: Stel de diagnose urineweginfectie bij gezonde vrouwen zonder urineo
 category: beleid
 audience: [behandelaar]
 domain: urineweginfecties
+icon: healthy
 recommendedStart: true
+metadata:
+  landingOrder: 10
+  landingSection: primary
 
 questions:
   healthyWoman:

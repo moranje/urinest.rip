@@ -101,7 +101,7 @@ Vue runtime en UI.
 - [ ] `ResultRenderer`
 - [ ] `LandingMenuGrid`
 - [ ] Slot-based result sections
-- [ ] Consumer-owned labels/icons/taxonomy
+- [x] Consumer-owned labels/icons/taxonomy
 - [x] Vue, Pinia, Router als peer dependencies
 
 ### `@beslismodel/testing`
@@ -122,8 +122,8 @@ Framework test tools.
 App blijft eigenaar van domeindata en branding.
 
 - [ ] YAML flows
-- [ ] Urinest icons/taxonomy
-- [ ] Guideline traceability
+- [x] Urinest icons/taxonomy
+- [x] Guideline traceability
 - [ ] About page
 - [ ] PWA branding
 - [ ] Supabase admin/log dashboard
@@ -133,7 +133,7 @@ App blijft eigenaar van domeindata en branding.
 
 - [ ] `QuestionnairePage.vue` splitsen in runner composable + page shell + organisms.
 - [ ] `ResultPage.vue` splitsen in renderer composable + `ResultSection` organisms.
-- [ ] `LandingPage.vue` genereren uit manifest/taxonomy, geen hard-coded flow links.
+- [x] `LandingPage.vue` genereren uit manifest/taxonomy, geen hard-coded flow links.
 - [x] Store hard-coded `/main.json` vervangen door injectable loader.
 - [x] Storage keys app-configurabel maken.
 - [x] Hard-coded `urinestrip` telemetry source vervangen door app config.
@@ -297,7 +297,7 @@ Urinestrip wordt eerste end-to-end package fixture.
 
 - [x] Compile `flows/strip.yaml` via strict compiler.
 - [x] Load manifest through injected loader.
-- [ ] Render landing from manifest taxonomy.
+- [x] Render landing from manifest taxonomy.
 - [x] Run questionnaire through framework runner.
 - [x] `nitrite == positive` gives typed redirect outcome `{ type: "redirect", target: "bacteriurie" }`.
 - [x] `nitrite == negative`, `leukocytes == positive` redirects to `leukocyturie`.

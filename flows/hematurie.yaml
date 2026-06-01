@@ -6,6 +6,10 @@ category: diagnostiek
 audience: [behandelaar, triagist]
 domain: hematurie
 recommendedStart: false
+metadata:
+  landingOrder: 130
+  landingSection: secondary
+  landingDescription: Beoordeling hematurie
 
 questions:
   hematuriaType:

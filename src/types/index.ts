@@ -62,6 +62,7 @@ export interface QuestionnaireMeta {
   icon?: string;
   hiddenFromLandingPage?: boolean;
   recommendedStart?: boolean;
+  metadata?: Readonly<Record<string, unknown>>;
   questionIds: string[];
   stepIds: string[];
   resultsLogicIds: string[];
