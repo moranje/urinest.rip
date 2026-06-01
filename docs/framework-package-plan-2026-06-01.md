@@ -360,4 +360,4 @@ Examples:
 - [x] Geen unhandled benign browser transitions.
 - [x] Geen dev Supabase 401 noise zonder opt-in.
 - [ ] Landing/questionnaire/result/admin a11y pass.
-- [ ] Package exports bruikbaar in extern project.
+- [x] Package exports bruikbaar in extern project.

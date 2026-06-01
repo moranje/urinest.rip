@@ -14,6 +14,7 @@
     "prepare": "husky",
     "check": "vue-tsc --noEmit",
     "check:tsgo": "tsgo --noEmit --project tsconfig.tsgo.json",
+    "check:core-package": "node scripts/check-core-package.mjs",
     "check:guidelines": "node scripts/check-guideline-traceability.mjs",
     "format": "oxfmt --write src/ packages/",
     "format:check": "oxfmt --check src/ packages/",
