@@ -60,6 +60,8 @@ import CultureSvg from "../components/CultureSvg.vue";
 }
 
 .landing-content {
+  --landing-tile-size: clamp(16rem, 18vw, 20rem);
+
   max-width: var(--layout-content-max-width);
   margin: 0 auto;
   container-type: inline-size;
@@ -68,15 +70,15 @@ import CultureSvg from "../components/CultureSvg.vue";
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 13.5rem));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(3, minmax(0, var(--landing-tile-size)));
+  gap: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
   justify-content: center;
   align-items: start;
 }
 
 .grid > * {
   inline-size: 100%;
-  max-inline-size: 13.5rem;
+  max-inline-size: var(--landing-tile-size);
   aspect-ratio: 1 / 1;
   justify-self: center;
   overflow: hidden;
@@ -84,7 +86,9 @@ import CultureSvg from "../components/CultureSvg.vue";
 
 @container landing (max-width: 56.25rem) {
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 12rem));
+    --landing-tile-size: clamp(13rem, 32vw, 17rem);
+
+    grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)));
   }
 }
 
@@ -97,7 +101,7 @@ import CultureSvg from "../components/CultureSvg.vue";
 
 @container landing (max-width: 22rem) {
   .grid {
-    grid-template-columns: minmax(0, 13.5rem);
+    grid-template-columns: minmax(0, var(--landing-tile-size));
   }
 }
 

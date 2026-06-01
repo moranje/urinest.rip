@@ -89,7 +89,7 @@ function tap(): void {
   flex-grow: 1;
   text-transform: uppercase;
   text-align: center;
-  font: var(--md-sys-typescale-title-medium);
+  font: var(--md-sys-typescale-headline-small);
   padding: var(--spacing-sm) 0;
   transition: color var(--motion-duration-short) var(--motion-easing-standard);
 }
