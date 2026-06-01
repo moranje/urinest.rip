@@ -15,9 +15,6 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
     __BUILD_DATE__: JSON.stringify((() => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`; })())
   },
-  test: {
-    passWithNoTests: true
-  },
   plugins: [
     vue(),
     decisionEngine(),

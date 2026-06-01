@@ -7,7 +7,11 @@
     <meta name="theme-color" content="#005a2b" media="(prefers-color-scheme: dark)" />
     <script>
       (function() {
-        var theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var stored = null;
+        try { stored = localStorage.getItem('urinest-theme'); } catch (_) {}
+        var theme = stored === 'light' || stored === 'dark'
+          ? stored
+          : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>

@@ -9,8 +9,16 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { getSupabase } from "../lib/supabase/client";
+import { handleError } from "../lib/errors";
+import { clearLogSinkDownFlag, getLogSinkDownAt } from "../lib/log-sink";
 
 const APP_SOURCE = "urinestrip";
+type SupabaseClient = NonNullable<ReturnType<typeof getSupabase>>;
+
+interface RpcResult<T> {
+  data: T | null;
+  error: unknown;
+}
 
 // -- Types --
 
@@ -45,6 +53,28 @@ export interface LogFilters {
   status: string;
 }
 
+function isAuthRefreshable(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const record = error as Record<string, unknown>;
+  return record.code === "42501" || record.status === 401;
+}
+
+async function withAuthRetry<T>(
+  supabase: SupabaseClient,
+  operation: () => Promise<RpcResult<T>>,
+  context: string,
+): Promise<RpcResult<T>> {
+  const first = await operation();
+  if (!first.error || !isAuthRefreshable(first.error)) return first;
+
+  const { error: refreshError } = await supabase.auth.refreshSession();
+  if (refreshError) {
+    handleError(refreshError, `${context}:refresh-session`);
+    return first;
+  }
+  return operation();
+}
+
 export const useLogStore = defineStore("logs", () => {
   const groups = ref<LogGroup[]>([]);
   const events = ref<LogEvent[]>([]);
@@ -53,7 +83,17 @@ export const useLogStore = defineStore("logs", () => {
   const loading = ref(false);
   const loadingEvents = ref(false);
   const error = ref("");
+  const sinkDownAt = ref<string | null>(getLogSinkDownAt());
   let refreshTimer: ReturnType<typeof setInterval> | null = null;
+
+  function refreshSinkStatus(): void {
+    sinkDownAt.value = getLogSinkDownAt();
+  }
+
+  function clearSinkStatus(): void {
+    clearLogSinkDownFlag();
+    refreshSinkStatus();
+  }
 
   async function loadGroups(): Promise<void> {
     const supabase = getSupabase();
@@ -63,16 +103,22 @@ export const useLogStore = defineStore("logs", () => {
     error.value = "";
 
     try {
-      const { data, error: rpcError } = await supabase.rpc("get_grouped_logs_by_source", {
-        p_source: APP_SOURCE,
-        p_hours: filters.value.hours,
-        p_level: filters.value.level,
-        p_status: filters.value.status,
-      });
+      const { data, error: rpcError } = await withAuthRetry(
+        supabase,
+        async () =>
+          await supabase.rpc("get_grouped_logs_by_source", {
+            p_source: APP_SOURCE,
+            p_hours: filters.value.hours,
+            p_level: filters.value.level,
+            p_status: filters.value.status,
+          }),
+        "logs:load-groups",
+      );
 
       if (rpcError) throw rpcError;
       groups.value = (data ?? []) as LogGroup[];
     } catch (e) {
+      handleError(e, "logs:load-groups", { filters: filters.value });
       error.value = e instanceof Error ? e.message : "Logs laden mislukt";
       groups.value = [];
     } finally {
@@ -88,14 +134,20 @@ export const useLogStore = defineStore("logs", () => {
     loadingEvents.value = true;
 
     try {
-      const { data, error: rpcError } = await supabase.rpc("get_recent_logs_by_source", {
-        p_source: APP_SOURCE,
-        p_fingerprint: fingerprint,
-      });
+      const { data, error: rpcError } = await withAuthRetry(
+        supabase,
+        async () =>
+          await supabase.rpc("get_recent_logs_by_source", {
+            p_source: APP_SOURCE,
+            p_fingerprint: fingerprint,
+          }),
+        "logs:load-events",
+      );
 
       if (rpcError) throw rpcError;
       events.value = (data ?? []) as LogEvent[];
     } catch (e) {
+      handleError(e, "logs:load-events", { fingerprint });
       error.value = e instanceof Error ? e.message : "Events laden mislukt";
       events.value = [];
     } finally {
@@ -191,6 +243,9 @@ export const useLogStore = defineStore("logs", () => {
     loadEvents,
     selectGroup,
     setFilters,
+    sinkDownAt,
+    refreshSinkStatus,
+    clearSinkStatus,
     startAutoRefresh,
     stopAutoRefresh,
     resolveGroup,

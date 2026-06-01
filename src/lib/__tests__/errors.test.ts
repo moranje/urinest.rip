@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TimeoutError, classifyError } from "../errors";
+import { HttpStatusError, TimeoutError, classifyError } from "../errors";
 
 describe("classifyError", () => {
   it("classifies network timeouts", () => {
@@ -38,5 +38,11 @@ describe("classifyError", () => {
     [503, "Serverfout. Probeer het opnieuw."],
   ])("classifies HTTP status %s", (status, message) => {
     expect(classifyError({ status }).userMessage).toBe(message);
+  });
+
+  it("includes Retry-After guidance for 429 responses", () => {
+    expect(classifyError(new HttpStatusError(429, "rate limited", "12")).userMessage).toBe(
+      "Te veel pogingen. Probeer het over 12 seconden opnieuw.",
+    );
   });
 });

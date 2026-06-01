@@ -5,7 +5,10 @@ import {
   determineOutcome,
 } from "decision-engine-core";
 import { breadcrumbApi } from "../lib/breadcrumbs";
-import { handleError, TimeoutError } from "../lib/errors";
+import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
+import { guidelineReviews } from "../lib/guidelines";
+import { persistTelemetry } from "../lib/log-sink";
+import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { useRoleStore } from "./roleStore";
 import type {
   QuestionnaireMeta,
@@ -38,6 +41,19 @@ interface FetchedData {
   questionnaires?: RawQuestionnaire[];
 }
 
+interface PersistedAnswers {
+  version: 1;
+  updatedAt: number;
+  answers: Record<string, AnswerMap>;
+}
+
+const ANSWERS_STORAGE_KEY = "urinest-questionnaire-answers";
+const ANSWERS_TTL_MS = 8 * 60 * 60 * 1000;
+
+function isAnswerMap(value: unknown): value is AnswerMap {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export const useQuestionnaireStore = defineStore("questionnaire", () => {
   // == NORMALIZED STATE ==
   const questionnaires = ref<Record<string, QuestionnaireMeta>>({});
@@ -50,6 +66,50 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
   const isLoading = ref(false);
   const dataReady = ref(false);
   let loadingPromise: Promise<void> | null = null;
+
+  const persistAnswers = (): void => {
+    const payload: PersistedAnswers = {
+      version: 1,
+      updatedAt: Date.now(),
+      answers: answers.value,
+    };
+    if (!writeStorage("session", ANSWERS_STORAGE_KEY, JSON.stringify(payload))) {
+      handleError(new Error("Questionnaire answer storage unavailable"), "answers:write-storage");
+    }
+  };
+
+  const restorePersistedAnswers = (
+    baseAnswers: Record<string, AnswerMap>,
+  ): Record<string, AnswerMap> => {
+    const raw = readStorage("session", ANSWERS_STORAGE_KEY);
+    if (!raw) return baseAnswers;
+
+    try {
+      const parsed = JSON.parse(raw) as Partial<PersistedAnswers>;
+      if (
+        parsed.version !== 1 ||
+        typeof parsed.updatedAt !== "number" ||
+        Date.now() - parsed.updatedAt > ANSWERS_TTL_MS ||
+        !isAnswerMap(parsed.answers)
+      ) {
+        removeStorage("session", ANSWERS_STORAGE_KEY);
+        return baseAnswers;
+      }
+
+      const restored: Record<string, AnswerMap> = { ...baseAnswers };
+      for (const questionnaireId of Object.keys(baseAnswers)) {
+        const storedAnswers = parsed.answers[questionnaireId];
+        if (isAnswerMap(storedAnswers)) {
+          restored[questionnaireId] = storedAnswers;
+        }
+      }
+      return restored;
+    } catch (error) {
+      removeStorage("session", ANSWERS_STORAGE_KEY);
+      handleError(error, "answers:read-storage");
+      return baseAnswers;
+    }
+  };
 
   // --- Getters ---
   const getQuestionnaireById = (id: string): QuestionnaireMeta | undefined =>
@@ -132,8 +192,20 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
     steps.value = newSteps;
     results.value = newResults;
     resultsLogic.value = newResultsLogic;
-    answers.value = newAnswers;
+    answers.value = restorePersistedAnswers(newAnswers);
     dataReady.value = true;
+
+    persistTelemetry({
+      module: "questionnaire-store",
+      message: "flow.versions",
+      context: {
+        flows: Object.values(newQuestionnaires).map((q) => ({ id: q.id, version: q.version })),
+        guidelines: guidelineReviews.map((g) => ({
+          name: g.name,
+          reviewed: g.reviewedIso,
+        })),
+      },
+    });
   };
 
   const loadInitialData = async (): Promise<void> => {
@@ -158,7 +230,12 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
           .finally(() => clearTimeout(timeout));
         breadcrumbApi("GET", "/main.json", Math.round(performance.now() - started));
         if (!response.ok) {
-          throw new Error(`Failed to fetch main.json: ${response.statusText}`);
+          throw new HttpStatusError(
+            response.status,
+            `Failed to fetch main.json: ${response.statusText}`,
+            response.headers.get("Retry-After"),
+            response.headers,
+          );
         }
         const data: FetchedData = await response.json();
         processFetchedData(data);
@@ -178,6 +255,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
   const setAnswer = (questionnaireId: string, questionId: string, answer: Answer): void => {
     if (answers.value[questionnaireId]) {
       answers.value[questionnaireId][questionId] = answer;
+      persistAnswers();
     }
   };
 
@@ -192,6 +270,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
   const clearAnswers = (questionnaireId: string): void => {
     if (answers.value[questionnaireId]) {
       answers.value[questionnaireId] = {};
+      persistAnswers();
     }
   };
 

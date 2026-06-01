@@ -1,11 +1,12 @@
 -- App logs table for persisting client-side errors
 create table if not exists app_logs (
   id bigint generated always as identity primary key,
-  level text not null check (level in ('warn', 'error')),
+  level text not null check (level in ('info', 'warn', 'error')),
   module text not null,
   message text not null,
   detail jsonb,
   context jsonb,
+  source text not null default 'urinestrip',
   session_id text,
   url text,
   fingerprint text not null,
@@ -16,6 +17,7 @@ create table if not exists app_logs (
 create index idx_app_logs_created_at on app_logs (created_at desc);
 create index idx_app_logs_level_created on app_logs (level, created_at desc);
 create index idx_app_logs_fingerprint_created on app_logs (fingerprint, created_at desc);
+create index idx_app_logs_source_created on app_logs (source, created_at desc);
 
 -- RLS: anyone can INSERT (anonymous users), only admin can SELECT
 alter table app_logs enable row level security;

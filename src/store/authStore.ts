@@ -6,7 +6,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import type { User } from "@supabase/supabase-js";
-import { getSupabase } from "../lib/supabase/client";
 import { createLogger } from "../lib/logger";
 
 const log = createLogger("auth");
@@ -17,8 +16,13 @@ export const useAuthStore = defineStore("auth", () => {
 
   const isAuthenticated = computed(() => user.value !== null);
 
+  async function resolveSupabase() {
+    const { getSupabase } = await import("../lib/supabase/client");
+    return getSupabase();
+  }
+
   async function init(): Promise<void> {
-    const supabase = getSupabase();
+    const supabase = await resolveSupabase();
     if (!supabase) return;
 
     const { data } = await supabase.auth.getSession();
@@ -30,7 +34,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function signIn(email: string, password: string): Promise<void> {
-    const supabase = getSupabase();
+    const supabase = await resolveSupabase();
     if (!supabase) throw new Error("Supabase niet geconfigureerd");
 
     loading.value = true;
@@ -44,7 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function signOut(): Promise<void> {
-    const supabase = getSupabase();
+    const supabase = await resolveSupabase();
     if (!supabase) return;
 
     await supabase.auth.signOut();

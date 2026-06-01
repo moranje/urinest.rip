@@ -1,0 +1,99 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  flushLogs,
+  flushViaBeaconForTests,
+  persistError,
+  persistTelemetry,
+  resetLogSinkForTests,
+} from "../log-sink";
+
+const insertMock = vi.fn();
+
+vi.mock("../supabase/client", () => ({
+  getSupabase: () => ({
+    from: () => ({
+      insert: insertMock,
+    }),
+  }),
+}));
+
+function installStorage(name: "localStorage" | "sessionStorage") {
+  const values = new Map<string, string>();
+  const storage = {
+    get length() {
+      return values.size;
+    },
+    clear: vi.fn(() => values.clear()),
+    getItem: vi.fn((key: string) => values.get(key) ?? null),
+    key: vi.fn((index: number) => Array.from(values.keys())[index] ?? null),
+    removeItem: vi.fn((key: string) => values.delete(key)),
+    setItem: vi.fn((key: string, value: string) => values.set(key, value)),
+  };
+  Object.defineProperty(window, name, { value: storage, configurable: true });
+  vi.stubGlobal(name, storage);
+  return storage;
+}
+
+function persistSampleError(context = "test:error"): void {
+  persistError({
+    context,
+    userMessage: "Er ging iets mis.",
+    errorClass: "Error",
+    level: "error",
+  });
+}
+
+describe("log-sink", () => {
+  beforeEach(() => {
+    installStorage("localStorage");
+    installStorage("sessionStorage");
+    resetLogSinkForTests();
+    insertMock.mockReset();
+    vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon-key");
+  });
+
+  it("persists diagnostic info events", async () => {
+    insertMock.mockResolvedValue({ error: null });
+
+    persistTelemetry({
+      module: "questionnaire-store",
+      message: "flow.versions",
+      context: { flow: "strip" },
+    });
+    await flushLogs();
+
+    expect(insertMock).toHaveBeenCalledWith([
+      expect.objectContaining({
+        level: "info",
+        module: "questionnaire-store",
+        message: "flow.versions",
+        source: "urinestrip",
+      }),
+    ]);
+  });
+
+  it("sets a circuit-breaker flag after repeated transient failures", async () => {
+    insertMock.mockResolvedValue({ error: { message: "network", code: "503" } });
+
+    persistSampleError();
+    await flushLogs();
+    await flushLogs();
+    await flushLogs();
+
+    expect(localStorage.getItem("log_sink_down")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it("flushes buffered logs through sendBeacon on unload fallback", () => {
+    const sendBeacon = vi.fn(() => true);
+    vi.stubGlobal("navigator", { ...navigator, sendBeacon });
+
+    persistSampleError("test:beacon");
+    flushViaBeaconForTests();
+
+    expect(sendBeacon).toHaveBeenCalledWith(
+      "https://example.supabase.co/rest/v1/app_logs?apikey=anon-key",
+      expect.any(Blob),
+    );
+  });
+});

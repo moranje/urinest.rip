@@ -40,6 +40,7 @@ const selectedGroup = () => {
 };
 
 onMounted(() => {
+  logStore.refreshSinkStatus();
   logStore.loadGroups();
   logStore.startAutoRefresh();
 });
@@ -78,6 +79,11 @@ watch(
 
     <template v-else>
       <LogFilters :filters="logStore.filters" @change="handleFiltersChange" />
+
+      <div v-if="logStore.sinkDownAt" class="warning-banner" role="status">
+        Log-persistentie is uitgeschakeld sinds {{ logStore.sinkDownAt }}.
+        <button type="button" @click="logStore.clearSinkStatus()">Markeer gezien</button>
+      </div>
 
       <div v-if="logStore.error" class="error-banner">
         {{ logStore.error }}
@@ -138,5 +144,27 @@ h1 {
   border-radius: var(--md-sys-shape-corner-small);
   font: var(--md-sys-typescale-body-small);
   margin: var(--spacing-md) 0;
+}
+
+.warning-banner {
+  background: var(--md-sys-color-warning-container);
+  color: var(--md-sys-color-on-warning-container);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-body-small);
+  margin: var(--spacing-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.warning-banner button {
+  border: 1px solid currentColor;
+  border-radius: var(--md-sys-shape-corner-small);
+  background: transparent;
+  color: inherit;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  cursor: pointer;
 }
 </style>

@@ -29,11 +29,20 @@ const emit = defineEmits<{
       <label for="filter-level">Level</label>
       <select
         id="filter-level"
-        :value="filters.level ?? 'warn'"
-        @change="emit('change', { level: ($event.target as HTMLSelectElement).value })"
+        :value="filters.level ?? 'all'"
+        @change="
+          emit('change', {
+            level:
+              ($event.target as HTMLSelectElement).value === 'all'
+                ? null
+                : ($event.target as HTMLSelectElement).value,
+          })
+        "
       >
-        <option value="warn">Alle (warn+)</option>
-        <option value="error">Error+</option>
+        <option value="all">Alle levels</option>
+        <option value="info">Info</option>
+        <option value="warn">Waarschuwing</option>
+        <option value="error">Error</option>
       </select>
     </div>
     <div class="filter-group">

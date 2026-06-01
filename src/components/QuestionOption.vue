@@ -1,57 +1,56 @@
 <template>
-  <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-  <div
-    :ref="(el) => emit('optionRef', option.id, el)"
-    class="option-item"
-    :class="{ 'option-selected': selected }"
-    :role="multiSelect ? 'checkbox' : 'radio'"
-    :aria-checked="selected"
-    :tabindex="tabIndex"
-    @click="emit('choose', option)"
-    @keydown.enter.prevent="emit('choose', option)"
-    @keydown.space.prevent="emit('choose', option)"
-    @keydown.up.prevent="!multiSelect && emit('focusSibling', index, -1)"
-    @keydown.down.prevent="!multiSelect && emit('focusSibling', index, 1)"
-    @keydown.left.prevent="!multiSelect && emit('focusSibling', index, -1)"
-    @keydown.right.prevent="!multiSelect && emit('focusSibling', index, 1)"
-  >
-    <div class="option-content">
-      <span v-if="nonTouch" class="option-prefix" aria-hidden="true">
-        {{ String.fromCharCode(65 + index) }}.
+  <div class="option-row">
+    <button
+      :ref="(el) => emit('optionRef', option.id, el)"
+      class="option-item"
+      :class="{ 'option-selected': selected }"
+      type="button"
+      :role="multiSelect ? 'checkbox' : 'radio'"
+      :aria-checked="selected"
+      :tabindex="tabIndex"
+      :aria-describedby="popoverOpen ? popoverId : undefined"
+      @click="emit('choose', option)"
+      @keydown.enter.prevent="emit('choose', option)"
+      @keydown.space.prevent="emit('choose', option)"
+      @keydown.up.prevent="!multiSelect && emit('focusSibling', index, -1)"
+      @keydown.down.prevent="!multiSelect && emit('focusSibling', index, 1)"
+      @keydown.left.prevent="!multiSelect && emit('focusSibling', index, -1)"
+      @keydown.right.prevent="!multiSelect && emit('focusSibling', index, 1)"
+    >
+      <span class="option-content">
+        <span v-if="nonTouch" class="option-prefix" aria-hidden="true">
+          {{ String.fromCharCode(65 + index) }}.
+        </span>
+        <span class="option-text">{{ option.text }}</span>
       </span>
-      <span class="option-text">{{ option.text }}</span>
-    </div>
-    <!-- The wrapper exists to stop the click bubbling into the option-item.
-         `role="presentation"` declares it as purely structural so AT skips it. -->
-    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-    <div v-if="option.description" class="option-info-wrapper" role="presentation" @click.stop>
+    </button>
+    <div v-if="option.description" class="option-info-wrapper">
       <button
         class="info-icon"
         type="button"
         :aria-expanded="popoverOpen"
+        :aria-controls="popoverId"
+        :aria-describedby="popoverOpen ? popoverId : undefined"
         aria-label="Meer informatie"
         @click.stop="emit('togglePopover', option, $event)"
         @keydown.escape.stop="emit('closePopover')"
         @mouseenter.stop="emit('showPopover', option, $event)"
         @mouseleave.stop="emit('schedulePopoverClose')"
         @focus.stop="emit('showPopover', option, $event)"
-        @blur.stop="emit('schedulePopoverClose')"
+        @blur.stop="emit('closePopover')"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-          />
-        </svg>
+        <Icon name="info-circle" :size="18" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import Icon from "./primitives/Icon.vue";
 import type { QuestionOption } from "../types";
 
-defineProps<{
+const props = defineProps<{
   option: QuestionOption;
   index: number;
   selected: boolean;
@@ -60,6 +59,8 @@ defineProps<{
   tabIndex: number;
   popoverOpen: boolean;
 }>();
+
+const popoverId = computed(() => `option-info-${props.option.id}`);
 
 const emit = defineEmits<{
   choose: [option: QuestionOption];
@@ -73,6 +74,13 @@ const emit = defineEmits<{
 </script>
 
 <style scoped>
+.option-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
 .option-item {
   display: flex;
   align-items: center;
@@ -82,6 +90,7 @@ const emit = defineEmits<{
   min-height: 56px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--md-sys-shape-corner-small);
+  font: inherit;
   cursor: pointer;
   touch-action: manipulation;
   transition:
@@ -164,8 +173,9 @@ const emit = defineEmits<{
 }
 
 .option-info-wrapper {
-  margin-left: var(--spacing-sm);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .info-icon {

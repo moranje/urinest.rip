@@ -38,7 +38,10 @@ const routes = [
           await nextTick();
           next();
         } catch {
-          next({ name: "Error", query: { message: "Kon gegevens niet laden" } });
+          next({
+            name: "Error",
+            query: { message: "Kon gegevens niet laden", retry: to.fullPath },
+          });
         }
         return;
       }
@@ -50,10 +53,10 @@ const routes = [
           if (store.dataReady) {
             next();
           } else {
-            next({ name: "Error", query: { message: "Laden mislukt" } });
+            next({ name: "Error", query: { message: "Laden mislukt", retry: to.fullPath } });
           }
         } catch {
-          next({ name: "Error" });
+          next({ name: "Error", query: { retry: to.fullPath } });
         }
         return;
       }

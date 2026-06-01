@@ -6,9 +6,7 @@
       <section v-if="appError" class="app-error" role="alert" aria-live="assertive">
         <h1>Er ging iets mis</h1>
         <p>{{ appError }}</p>
-        <button class="md-button md-button--primary" type="button" @click="reloadApp">
-          Opnieuw laden
-        </button>
+        <Button @click="reloadApp">Opnieuw laden</Button>
       </section>
       <router-view v-else v-slot="{ Component, route: r }">
         <component :is="Component" :key="r.fullPath" />
@@ -27,11 +25,14 @@ import AppHeader from "./components/AppHeader.vue";
 import ToastContainer from "./components/ToastContainer.vue";
 import UpdatePrompt from "./components/UpdatePrompt.vue";
 import OfflineBanner from "./components/OfflineBanner.vue";
+import Button from "./components/primitives/Button.vue";
 import { useQuestionnaireStore } from "./store/questionnaireStore";
+import { useThemeStore } from "./store/themeStore";
 import { handleError } from "./lib/errors";
 
 const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
+const themeStore = useThemeStore();
 
 const dropletAnimate = ref(false);
 const appError = ref<string | null>(null);
@@ -52,10 +53,7 @@ onMounted(async () => {
     // loadInitialData reports via telemetry; App only keeps boot going.
   }
 
-  const themeMql = window.matchMedia("(prefers-color-scheme: dark)");
-  themeMql.addEventListener("change", (e) => {
-    document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
-  });
+  themeStore.init();
 });
 
 onErrorCaptured((error) => {

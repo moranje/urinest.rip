@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Icon from "../primitives/Icon.vue";
 import type { LogGroup } from "../../store/logStore";
 
 defineProps<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 
 function levelBadgeClass(level: string): string {
   if (level === "error") return "badge-error";
+  if (level === "info") return "badge-info";
   return "badge-warn";
 }
 
@@ -37,19 +39,7 @@ function timeAgo(dateStr: string): string {
   </div>
 
   <div v-else-if="groups.length === 0" class="empty-state">
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-    </svg>
+    <Icon name="activity" :size="32" />
     <p>Geen errors gevonden in deze periode</p>
   </div>
 
@@ -177,6 +167,11 @@ function timeAgo(dateStr: string): string {
 .badge-warn {
   background: var(--md-sys-color-warning-container);
   color: var(--md-sys-color-on-warning-container);
+}
+
+.badge-info {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 .status-badge {

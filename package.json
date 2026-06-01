@@ -12,6 +12,7 @@
     "check:tsgo": "tsgo --noEmit --project tsconfig.tsgo.json",
     "format": "oxfmt --write src/",
     "format:check": "oxfmt --check src/",
+    "budget": "node scripts/check-bundle-budget.mjs",
     "lint": "oxlint src/ --deny-warnings",
     "lint:eslint": "eslint src/",
     "lint:all": "oxlint src/ --deny-warnings && eslint src/",

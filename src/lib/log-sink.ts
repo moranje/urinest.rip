@@ -15,6 +15,7 @@ import { getBreadcrumbs } from "./breadcrumbs";
 import { getErrorContext, parseSourceLocation } from "./error-context";
 import { getFlowTrail } from "./flow-trail";
 import { scrubValue } from "./scrub";
+import { readStorage, removeStorage, writeStorage } from "./storage";
 
 const log = createLogger("log-sink");
 
@@ -28,13 +29,22 @@ export interface PersistErrorInput {
   extraContext?: Record<string, unknown>;
 }
 
+export interface PersistTelemetryInput {
+  module: string;
+  message: string;
+  level?: "info" | "warn";
+  context?: Record<string, unknown>;
+}
+
+const BREAKER_STORAGE_KEY = "log_sink_down";
+
 // Session ID for grouping logs from the same browser session
 const SESSION_ID = (() => {
   const key = "log_session_id";
-  let id = sessionStorage.getItem(key);
+  let id = readStorage("session", key);
   if (!id) {
     id = crypto.randomUUID();
-    sessionStorage.setItem(key, id);
+    writeStorage("session", key, id);
   }
   return id;
 })();
@@ -64,7 +74,7 @@ function computeFingerprint(input: PersistErrorInput): string {
 // -- Buffer --
 
 interface BufferedEntry {
-  level: string;
+  level: "info" | "warn" | "error";
   module: string;
   message: string;
   detail: unknown;
@@ -98,7 +108,16 @@ function tripBreaker(reason: string): void {
     flushTimer = null;
   }
   buffer.length = 0;
+  writeStorage("local", BREAKER_STORAGE_KEY, new Date().toISOString());
   log.warn("log persistence disabled", { reason });
+}
+
+export function getLogSinkDownAt(): string | null {
+  return readStorage("local", BREAKER_STORAGE_KEY);
+}
+
+export function clearLogSinkDownFlag(): void {
+  removeStorage("local", BREAKER_STORAGE_KEY);
 }
 
 interface SupabaseError {
@@ -199,6 +218,11 @@ function flushViaBeacon(): void {
   }
 }
 
+export function flushViaBeaconForTests(): void {
+  if (import.meta.env.MODE !== "test") return;
+  flushViaBeacon();
+}
+
 // -- Public API --
 
 export function persistError(input: PersistErrorInput): void {
@@ -251,6 +275,35 @@ export function persistError(input: PersistErrorInput): void {
   }
 }
 
+export function persistTelemetry(input: PersistTelemetryInput): void {
+  if (breakerTripped) return;
+
+  const errorContext = getErrorContext();
+  const safeContext = scrubValue({
+    ...(errorContext ? { ...errorContext } : {}),
+    ...input.context,
+  }).value;
+  const safeMessage = scrubValue(input.message).value;
+
+  if (buffer.length >= MAX_BUFFER) buffer.shift();
+  buffer.push({
+    level: input.level ?? "info",
+    module: input.module,
+    message: safeMessage,
+    detail: null,
+    context: safeContext,
+    source: "urinestrip",
+    session_id: SESSION_ID,
+    url: window.location.pathname,
+    fingerprint: fnv1a(`${input.module}|${input.message}`),
+    created_at: new Date().toISOString(),
+  });
+
+  if (buffer.length >= MAX_BUFFER) {
+    flushLogs();
+  }
+}
+
 export function initLogSink(): void {
   // Persistence is driven exclusively by handleError() in lib/errors.ts,
   // which calls persistError() directly with rich context (stack, errorClass).
@@ -279,4 +332,16 @@ export function initLogSink(): void {
   }
 
   log.debug("log sink initialized");
+}
+
+export function resetLogSinkForTests(): void {
+  if (import.meta.env.MODE !== "test") return;
+  if (flushTimer) {
+    clearInterval(flushTimer);
+    flushTimer = null;
+  }
+  buffer.length = 0;
+  consecutiveFailures = 0;
+  breakerTripped = false;
+  clearLogSinkDownFlag();
 }

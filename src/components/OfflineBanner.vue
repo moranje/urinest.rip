@@ -1,12 +1,7 @@
 <template>
   <Transition name="offline-fade">
     <div v-if="isOffline" class="offline-banner" role="status" aria-live="polite">
-      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M2.05 7.05a14.85 14.85 0 0 1 5.27-3.43L5.85 2.15A16.85 16.85 0 0 0 .64 5.63zm9.95 0a14.85 14.85 0 0 1 9.95 4l1.46-1.45A16.85 16.85 0 0 0 12 5q-.34 0-.66.02zM12 13a4 4 0 0 0-2.83 1.17l2.83 2.83l2.83-2.83A4 4 0 0 0 12 13m9.19-5.36l-1.45 1.45A11.85 11.85 0 0 1 21.95 11l-1.46 1.46A9.85 9.85 0 0 0 12 9l9.19-1.36zM3 21l18-18l-1.41-1.42L1.59 19.58zM7.76 16.95a4.85 4.85 0 0 1 3.07-1.4l2.34 2.34l-2.83 2.83z"
-        />
-      </svg>
+      <Icon name="wifi-off" :size="16" />
       <span>Offline modus — vragen en resultaten werken nog</span>
     </div>
   </Transition>
@@ -14,6 +9,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import Icon from "./primitives/Icon.vue";
 
 const isOffline = ref(false);
 

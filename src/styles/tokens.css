@@ -5,11 +5,41 @@
 
   /* --- Color System --- */
 
+  /* Reference palettes */
+  --md-ref-palette-clinical-green-20: #003d1a;
+  --md-ref-palette-clinical-green-30: #005a2b;
+  --md-ref-palette-clinical-green-40: #16a34a;
+  --md-ref-palette-clinical-green-80: #86efac;
+  --md-ref-palette-clinical-green-90: #dcfce7;
+  --md-ref-palette-red-20: #410002;
+  --md-ref-palette-red-30: #690005;
+  --md-ref-palette-red-40: #ba1a1a;
+  --md-ref-palette-red-80: #ffb4ab;
+  --md-ref-palette-red-90: #ffdad6;
+  --md-ref-palette-amber-40: #ca8a04;
+  --md-ref-palette-amber-90: #fef9c3;
+  --md-ref-palette-amber-20: #713f12;
+  --md-ref-palette-neutral-0: #ffffff;
+  --md-ref-palette-neutral-6: #1a1c1e;
+  --md-ref-palette-neutral-10: #2f3033;
+  --md-ref-palette-neutral-90: #e2e2e6;
+  --md-ref-palette-neutral-98: #fcfcff;
+  --md-ref-palette-purple-50: #a855f7;
+
   /* Primary (Medical green) */
-  --md-sys-color-primary: light-dark(#16a34a, #86efac);
-  --md-sys-color-on-primary: light-dark(#ffffff, #003d1a);
-  --md-sys-color-primary-container: light-dark(#dcfce7, #005a2b);
-  --md-sys-color-on-primary-container: light-dark(#052e16, #dcfce7);
+  --md-sys-color-primary: light-dark(
+    var(--md-ref-palette-clinical-green-40),
+    var(--md-ref-palette-clinical-green-80)
+  );
+  --md-sys-color-on-primary: light-dark(
+    var(--md-ref-palette-neutral-0),
+    var(--md-ref-palette-clinical-green-20)
+  );
+  --md-sys-color-primary-container: light-dark(
+    var(--md-ref-palette-clinical-green-90),
+    var(--md-ref-palette-clinical-green-30)
+  );
+  --md-sys-color-on-primary-container: light-dark(#052e16, var(--md-ref-palette-clinical-green-90));
 
   /* Secondary */
   --md-sys-color-secondary: #535f70;
@@ -24,25 +54,43 @@
   --md-sys-color-on-tertiary-container: #251431;
 
   /* Indicator (urinestrip positive — viewable on both themes) */
-  --md-sys-color-indicator-positive: #a855f7;
+  --md-sys-color-indicator-positive: var(--md-ref-palette-purple-50);
 
   /* Error */
-  --md-sys-color-error: light-dark(#ba1a1a, #ffb4ab);
-  --md-sys-color-on-error: light-dark(#ffffff, #690005);
-  --md-sys-color-error-container: light-dark(#ffdad6, #93000a);
-  --md-sys-color-on-error-container: light-dark(#410002, #ffdad6);
+  --md-sys-color-error: light-dark(var(--md-ref-palette-red-40), var(--md-ref-palette-red-80));
+  --md-sys-color-on-error: light-dark(
+    var(--md-ref-palette-neutral-0),
+    var(--md-ref-palette-red-30)
+  );
+  --md-sys-color-error-container: light-dark(var(--md-ref-palette-red-90), #93000a);
+  --md-sys-color-on-error-container: light-dark(
+    var(--md-ref-palette-red-20),
+    var(--md-ref-palette-red-90)
+  );
 
   /* Warning (for medical warnings) */
-  --md-sys-color-warning: #ca8a04;
-  --md-sys-color-on-warning: #ffffff;
-  --md-sys-color-warning-container: #fef9c3;
-  --md-sys-color-on-warning-container: #713f12;
+  --md-sys-color-warning: var(--md-ref-palette-amber-40);
+  --md-sys-color-on-warning: var(--md-ref-palette-neutral-0);
+  --md-sys-color-warning-container: var(--md-ref-palette-amber-90);
+  --md-sys-color-on-warning-container: var(--md-ref-palette-amber-20);
 
   /* Surface — cooler grays for clinical feel */
-  --md-sys-color-background: light-dark(#fcfcff, #1a1c1e);
-  --md-sys-color-on-background: light-dark(#1a1c1e, #e2e2e6);
-  --md-sys-color-surface: light-dark(#fcfcff, #1a1c1e);
-  --md-sys-color-on-surface: light-dark(#1a1c1e, #e2e2e6);
+  --md-sys-color-background: light-dark(
+    var(--md-ref-palette-neutral-98),
+    var(--md-ref-palette-neutral-6)
+  );
+  --md-sys-color-on-background: light-dark(
+    var(--md-ref-palette-neutral-6),
+    var(--md-ref-palette-neutral-90)
+  );
+  --md-sys-color-surface: light-dark(
+    var(--md-ref-palette-neutral-98),
+    var(--md-ref-palette-neutral-6)
+  );
+  --md-sys-color-on-surface: light-dark(
+    var(--md-ref-palette-neutral-6),
+    var(--md-ref-palette-neutral-90)
+  );
 
   /* Surface Variants */
   --md-sys-color-surface-variant: #dfe2eb;
@@ -58,7 +106,7 @@
   --md-sys-color-surface-container-highest: #e0e3e8;
 
   /* Inverse */
-  --md-sys-color-inverse-surface: #2f3033;
+  --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-10);
   --md-sys-color-inverse-on-surface: #f1f0f4;
   --md-sys-color-inverse-primary: #86efac;
 
@@ -69,45 +117,30 @@
   --md-ref-typeface-weight-medium: 500;
   --md-ref-typeface-weight-bold: 700;
 
-  /* Display — fluid scaling */
-  --md-sys-typescale-display-large: 400 clamp(2.25rem, 1.5rem + 3vw, 3.5625rem)/1.15
-    var(--md-ref-typeface-brand);
-  --md-sys-typescale-display-medium: 400 clamp(1.875rem, 1.25rem + 2.5vw, 2.8125rem)/1.2
-    var(--md-ref-typeface-brand);
-  --md-sys-typescale-display-small: 400 clamp(1.5rem, 1.125rem + 1.5vw, 2.25rem)/1.25
-    var(--md-ref-typeface-brand);
+  /* Display */
+  --md-sys-typescale-display-large: 400 3.5rem/1.15 var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-medium: 400 2.75rem/1.2 var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-small: 400 2.25rem/1.25 var(--md-ref-typeface-brand);
 
   /* Headline */
-  --md-sys-typescale-headline-large: 400 clamp(1.5rem, 1.125rem + 1.5vw, 2rem)/1.3
-    var(--md-ref-typeface-brand);
-  --md-sys-typescale-headline-medium: 400 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.35
-    var(--md-ref-typeface-brand);
-  --md-sys-typescale-headline-small: 400 clamp(1.125rem, 0.9375rem + 0.75vw, 1.5rem)/1.35
-    var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-large: 400 2rem/1.3 var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-medium: 400 1.75rem/1.35 var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-small: 400 1.5rem/1.35 var(--md-ref-typeface-brand);
 
   /* Title */
-  --md-sys-typescale-title-large: 500 clamp(1.0625rem, 0.9375rem + 0.5vw, 1.375rem)/1.4
-    var(--md-ref-typeface-brand);
-  --md-sys-typescale-title-medium: 500 clamp(0.9375rem, 0.875rem + 0.25vw, 1rem)/1.5
-    var(--md-ref-typeface-plain);
-  --md-sys-typescale-title-small: 500 clamp(0.875rem, 0.8125rem + 0.25vw, 0.9375rem)/1.5
-    var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-large: 500 1.375rem/1.4 var(--md-ref-typeface-brand);
+  --md-sys-typescale-title-medium: 500 1rem/1.5 var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-small: 500 0.9375rem/1.5 var(--md-ref-typeface-plain);
 
   /* Body — medical readability: min 15-16px, line-height 1.5-1.6 */
-  --md-sys-typescale-body-large: 400 clamp(1rem, 0.9375rem + 0.25vw, 1.0625rem)/1.6
-    var(--md-ref-typeface-plain);
-  --md-sys-typescale-body-medium: 400 clamp(0.9375rem, 0.875rem + 0.25vw, 1rem)/1.55
-    var(--md-ref-typeface-plain);
-  --md-sys-typescale-body-small: 400 clamp(0.8125rem, 0.75rem + 0.25vw, 0.875rem)/1.5
-    var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-large: 400 1rem/1.6 var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-medium: 400 0.9375rem/1.55 var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-small: 400 0.875rem/1.5 var(--md-ref-typeface-plain);
 
   /* Label */
-  --md-sys-typescale-label-large: 500 clamp(0.875rem, 0.8125rem + 0.25vw, 0.9375rem)/1.45
-    var(--md-ref-typeface-plain);
-  --md-sys-typescale-label-medium: 500 clamp(0.75rem, 0.6875rem + 0.25vw, 0.8125rem)/1.4
-    var(--md-ref-typeface-plain);
-  --md-sys-typescale-label-small: 500 clamp(0.6875rem, 0.625rem + 0.25vw, 0.75rem)/1.4
-    var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-large: 500 0.9375rem/1.45 var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-medium: 500 0.8125rem/1.4 var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-small: 500 0.75rem/1.4 var(--md-ref-typeface-plain);
 
   /* --- Elevation --- */
   --md-sys-elevation-0: none;

@@ -1,6 +1,4 @@
--- Source-filtered RPCs for multi-app log isolation.
--- These avoid overwriting patient-tracker's richer get_grouped_logs / get_recent_logs.
-
+-- Recreate source-filtered RPCs after app_logs.source is guaranteed to exist.
 create or replace function get_grouped_logs_by_source(
   p_source text,
   p_hours int default 24,

@@ -62,6 +62,13 @@ export function usePopover() {
     popoverStyle.value.opacity = 0;
   };
 
+  const cancelPopoverClose = (): void => {
+    if (hidePopoverTimeout) {
+      clearTimeout(hidePopoverTimeout);
+      hidePopoverTimeout = null;
+    }
+  };
+
   const schedulePopoverClose = (): void => {
     if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
     hidePopoverTimeout = setTimeout(() => {
@@ -83,6 +90,7 @@ export function usePopover() {
     popoverStyle,
     showPopover,
     closePopover,
+    cancelPopoverClose,
     schedulePopoverClose,
     togglePopover,
   };

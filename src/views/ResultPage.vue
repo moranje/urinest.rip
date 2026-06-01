@@ -85,6 +85,7 @@
         <div
           v-if="allContraindicationsChecked && resultData.treatment"
           class="result-section treatment-section"
+          aria-live="polite"
         >
           <h3 class="section-title">Behandeling</h3>
           <p>{{ resultData.treatment }}</p>
@@ -97,10 +98,14 @@
             <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
           </p>
         </div>
+        <p class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
 
         <!-- Warnings -->
         <div v-if="resultData.warnings" class="result-section warning-section">
-          <h3 class="section-title">Waarschuwing</h3>
+          <h3 class="section-title warning-title">
+            <Icon name="warning" :size="20" />
+            Waarschuwing
+          </h3>
           <p>{{ resultData.warnings }}</p>
         </div>
 
@@ -121,21 +126,19 @@
           <h3 class="section-title">Documenteer (voor EPD)</h3>
           <div class="documentation-content">
             <pre class="documentation-text">{{ planDocumentation }}</pre>
-            <button
-              class="md-button md-button--outlined copy-button"
+            <Button
+              variant="outlined"
+              class="copy-button"
               :class="`copy-button--${copyState}`"
               :disabled="copyState === 'copying'"
-              :aria-busy="copyState === 'copying' || undefined"
+              :loading="copyState === 'copying'"
               @click="copyDocumentation"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
-                />
-              </svg>
+              <template #leading>
+                <Icon name="copy" :size="16" />
+              </template>
               {{ copyLabel }}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -151,21 +154,11 @@
                 rel="noopener noreferrer"
                 class="source-item source-link"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill="currentColor"
-                    d="M17 13H7v-2h10m-3-8H5v14h14V8h-5V5M7 3h7l5 5v11H5V3Z"
-                  />
-                </svg>
+                <Icon name="file-text" :size="14" />
                 {{ source.name }}
               </a>
               <span v-else class="source-item source-text">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill="currentColor"
-                    d="M17 13H7v-2h10m-3-8H5v14h14V8h-5V5M7 3h7l5 5v11H5V3Z"
-                  />
-                </svg>
+                <Icon name="file-text" :size="14" />
                 {{ source.name }}
               </span>
             </li>
@@ -183,6 +176,8 @@ import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
+import Button from "../components/primitives/Button.vue";
+import Icon from "../components/primitives/Icon.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
 
@@ -196,6 +191,7 @@ const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const copyState = ref<"idle" | "copying" | "copied" | "error">("idle");
+const treatmentStatusMessage = ref("");
 
 const contraindicationsState = reactive<Array<Contraindication & { checked: boolean }>>([]);
 
@@ -222,6 +218,13 @@ const copyLabel = computed(() => {
   if (copyState.value === "copied") return "Gekopieerd";
   if (copyState.value === "error") return "Niet gekopieerd";
   return "Kopieer";
+});
+
+watch(allContraindicationsChecked, (isChecked) => {
+  if (!resultData.value?.treatment) return;
+  treatmentStatusMessage.value = isChecked
+    ? "Behandeling beschikbaar na controle van contra-indicaties."
+    : "Behandeling verborgen tot alle contra-indicaties zijn gecontroleerd.";
 });
 
 const fetchResultData = (key: string): void => {
@@ -403,7 +406,6 @@ watch(
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--md-sys-shape-corner-full);
   margin-bottom: var(--spacing-sm);
-  color: white;
 }
 .urgency-badge--u1 {
   background-color: var(--md-sys-color-error);
@@ -411,9 +413,11 @@ watch(
 }
 .urgency-badge--u2 {
   background-color: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
 }
 .urgency-badge--u3 {
   background-color: var(--md-sys-color-warning);
+  color: var(--md-sys-color-on-warning-container);
 }
 
 .urgency-badge--pulse {
@@ -537,6 +541,11 @@ watch(
 .warning-section .section-title {
   color: var(--md-sys-color-on-warning-container);
   border-bottom-color: var(--md-sys-color-warning);
+}
+.warning-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 .warning-section p {
   color: var(--md-sys-color-on-warning-container);

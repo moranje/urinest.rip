@@ -21,50 +21,24 @@
         <div v-if="currentQuestion" :key="currentQuestion.id" class="md-card question-card">
           <div class="question-toolbar">
             <button
-              v-if="questionHistory.length > 0"
+              v-if="hasHistory"
               class="back-button"
               type="button"
               aria-label="Vorige vraag (Esc of Backspace)"
               @click="goToPreviousQuestion"
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M19 12H5" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
+              <Icon name="arrow-left" :size="20" />
               Terug
             </button>
             <span class="question-toolbar-spacer" />
             <button
-              v-if="questionHistory.length > 0"
+              v-if="hasHistory"
               class="restart-button"
               type="button"
               aria-label="Opnieuw beginnen"
               @click="restartQuestionnaire"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="23 4 23 10 17 10" />
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-              </svg>
+              <Icon name="restart" :size="18" />
             </button>
           </div>
           <ProgressBar
@@ -72,6 +46,9 @@
             :max="progressMax"
             :label="`Vraag ${progressValue} van ongeveer ${progressMax}`"
           />
+          <p class="sr-only" aria-live="polite">
+            Vraag {{ progressValue }} van ongeveer {{ progressMax }}: {{ currentQuestion.text }}
+          </p>
           <div class="question-header">
             <h1
               :id="`q-title-${currentQuestion.id}`"
@@ -121,14 +98,16 @@
               <span v-else>{{ selectedCount }} geselecteerd</span>
             </p>
 
-            <button
+            <Button
               v-if="isMultiSelect"
-              class="md-button md-button--primary confirm-button"
+              class="confirm-button"
               :disabled="!hasSelectedOptions"
+              full-width
+              size="lg"
               @click="confirmMultipleChoice"
             >
               Bevestigen<span v-if="selectedCount > 0"> ({{ selectedCount }})</span>
-            </button>
+            </Button>
           </div>
 
           <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
@@ -149,15 +128,31 @@
     </section>
 
     <teleport to="body">
+      <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
       <div
         v-if="activePopoverOptionId"
         class="info-popover md-card"
+        :id="activePopoverOptionId ? `option-info-${activePopoverOptionId}` : undefined"
         :style="popoverStyle"
-        role="tooltip"
+        role="dialog"
+        aria-label="Meer informatie"
+        tabindex="-1"
+        @mouseenter="cancelPopoverClose"
+        @mouseleave="schedulePopoverClose"
+        @focusin="cancelPopoverClose"
+        @focusout="schedulePopoverClose"
       >
         <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
         <div v-html="compiledMarkdown(popoverDescription)" />
         <!-- eslint-enable vue/no-v-html -->
+        <button
+          class="info-popover-close"
+          type="button"
+          aria-label="Informatie sluiten"
+          @click="closePopover"
+        >
+          <Icon name="x" :size="16" />
+        </button>
       </div>
     </teleport>
   </div>
@@ -167,11 +162,14 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import QuestionOption from "../components/QuestionOption.vue";
+import Button from "../components/primitives/Button.vue";
+import Icon from "../components/primitives/Icon.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import { usePopover } from "../composables/usePopover";
+import { useQuestionNavigation } from "../composables/useQuestionNavigation";
 import { breadcrumbClick } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
 import {
@@ -182,24 +180,41 @@ import {
   recordFlowStep,
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
+import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
 import type { QuestionOption as QuestionOptionData, Question, Step, AnswerValue } from "../types";
 
 const router = useRouter();
+const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
 const roleStore = useRoleStore();
 const log = createLogger("questionnaire-page");
+const REDIRECT_CHAIN_STORAGE_KEY = "urinest-redirect-chain";
+const REDIRECT_CHAIN_TTL_MS = 5 * 60 * 1000;
+
+interface RedirectChain {
+  flows: string[];
+  updatedAt: number;
+}
 
 const props = defineProps<{
   id: string;
 }>();
 
 const isLoading = ref(true);
-const currentQuestionId = ref<string | null>(null);
 const isNonTouchDevice = ref(false);
 const isNavigating = ref(false);
-const questionHistory = ref<string[]>([]);
+const {
+  currentQuestionId,
+  questionHistory,
+  hasHistory,
+  setCurrentQuestion,
+  pushHistory,
+  replaceHistory,
+  resetNavigation,
+  goBack: goBackQuestion,
+} = useQuestionNavigation();
 
 // Option refs (for keyboard focus navigation in single-select radiogroup)
 const optionRefs = ref<Record<string, HTMLElement | null>>({});
@@ -213,9 +228,44 @@ const {
   popoverStyle,
   showPopover,
   closePopover,
+  cancelPopoverClose,
   schedulePopoverClose,
   togglePopover,
 } = usePopover();
+
+const readRedirectChain = (flowId: string): string[] => {
+  const raw = readStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
+  if (!raw) return [flowId];
+  try {
+    const parsed = JSON.parse(raw) as Partial<RedirectChain>;
+    if (
+      !Array.isArray(parsed.flows) ||
+      typeof parsed.updatedAt !== "number" ||
+      Date.now() - parsed.updatedAt > REDIRECT_CHAIN_TTL_MS
+    ) {
+      removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
+      return [flowId];
+    }
+    const currentIndex = parsed.flows.indexOf(flowId);
+    return currentIndex >= 0 ? parsed.flows.slice(0, currentIndex + 1) : [flowId];
+  } catch (error) {
+    removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
+    handleError(error, "questionnaire:redirect-chain-read", { flowId });
+    return [flowId];
+  }
+};
+
+const writeRedirectChain = (flows: string[]): void => {
+  writeStorage(
+    "session",
+    REDIRECT_CHAIN_STORAGE_KEY,
+    JSON.stringify({ flows, updatedAt: Date.now() } satisfies RedirectChain),
+  );
+};
+
+const clearRedirectChain = (): void => {
+  removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
+};
 
 // --- Computed Properties ---
 
@@ -295,7 +345,10 @@ onMounted(async () => {
     } catch (err) {
       log.warn("load failed", { error: err, questionnaireId: props.id });
       isLoading.value = false;
-      router.replace("/error");
+      router.replace({
+        name: "Error",
+        query: { message: "Kon gegevens niet laden", retry: route.fullPath },
+      });
       return;
     }
   }
@@ -315,7 +368,10 @@ onBeforeUnmount(() => {
 const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Promise<void> => {
   isLoading.value = true;
   if (!questionnaire.value) {
-    router.replace("/");
+    handleError(new Error(`Questionnaire not found: ${props.id}`), "questionnaire:not-found", {
+      questionnaireId: props.id,
+    });
+    router.replace({ name: "Error", query: { message: "Vragenlijst niet gevonden" } });
     return;
   }
 
@@ -324,9 +380,9 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
   // flow-id preserves progress (DSN-C02).
   if (options.reset) {
     questionnaireStore.clearAnswers(props.id);
-    questionHistory.value = [];
+    resetNavigation();
   }
-  currentQuestionId.value = findNextQuestionId(null);
+  setCurrentQuestion(findNextQuestionId(null));
 
   // If there are existing answers, fast-forward to the first unanswered valid question
   if (!options.reset) {
@@ -341,8 +397,8 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
         next = findNextQuestionId(next);
       }
       if (newHistory.length > 0) {
-        questionHistory.value = newHistory;
-        currentQuestionId.value = next;
+        replaceHistory(newHistory);
+        setCurrentQuestion(next);
       }
     }
   }
@@ -360,7 +416,16 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
 };
 
 const restartQuestionnaire = (): void => {
+  const hasStoredAnswers =
+    Object.keys(questionnaireStore.getAllAnswersForQuestionnaire(props.id)).length > 0;
+  if (
+    (hasHistory.value || hasStoredAnswers) &&
+    !window.confirm("Opnieuw beginnen met deze vragenlijst?")
+  ) {
+    return;
+  }
   clearFlowTrail();
+  clearRedirectChain();
   void loadStateAndDetermineStart({ reset: true });
 };
 
@@ -413,20 +478,20 @@ const advanceQuestionState = (branch?: string): void => {
       branch,
       role: roleStore.role,
     });
-    questionHistory.value.push(previousQuestionId);
+    pushHistory(previousQuestionId);
   }
   const nextId = findNextQuestionId(previousQuestionId);
   if (nextId) {
-    currentQuestionId.value = nextId;
+    setCurrentQuestion(nextId);
   } else {
-    currentQuestionId.value = null;
+    setCurrentQuestion(null);
     determineResult();
   }
 };
 
 const previousQuestionState = (): void => {
-  if (questionHistory.value.length === 0) return;
-  currentQuestionId.value = questionHistory.value.pop() ?? null;
+  if (!hasHistory.value) return;
+  goBackQuestion();
 };
 
 // View Transitions API helper — feature-detect + reduced-motion fallback
@@ -478,22 +543,28 @@ const determineResult = (): void => {
         role: roleStore.role,
         answeredQuestionIds: Object.keys(answers),
       });
+      clearRedirectChain();
       router.push("/error");
       return;
     }
     if (type === "redirect") {
-      if (value === props.id) {
+      const redirectChain = readRedirectChain(props.id);
+      if (redirectChain.includes(value)) {
         handleError(
-          new Error(`Redirect cycle detected: ${props.id}`),
+          new Error(`Redirect cycle detected: ${[...redirectChain, value].join(" -> ")}`),
           "decision-engine:redirect-cycle",
           {
             questionnaireId: props.id,
+            targetQuestionnaireId: value,
             role: roleStore.role,
+            redirectChain: [...redirectChain, value],
           },
         );
+        clearRedirectChain();
         router.push("/error");
         return;
       }
+      writeRedirectChain([...redirectChain, value]);
       recordFlowRedirect({
         flowId: props.id,
         version: fullQuestionnaire.version,
@@ -509,6 +580,7 @@ const determineResult = (): void => {
         resultId: value,
         role: roleStore.role,
       });
+      clearRedirectChain();
       router.push(`/info/${value}`);
     } else {
       handleError(
@@ -520,6 +592,7 @@ const determineResult = (): void => {
           role: roleStore.role,
         },
       );
+      clearRedirectChain();
       router.push("/error");
     }
   } else {
@@ -528,6 +601,7 @@ const determineResult = (): void => {
       role: roleStore.role,
       answeredQuestionIds: Object.keys(answers),
     });
+    clearRedirectChain();
     router.push("/error");
   }
 };
@@ -621,13 +695,13 @@ const handleKeyDown = (e: KeyboardEvent): void => {
       e.preventDefault();
       return;
     }
-    if (questionHistory.value.length > 0) {
+    if (hasHistory.value) {
       goToPreviousQuestion();
       e.preventDefault();
       return;
     }
   }
-  if (e.key === "Backspace" && !isFormField && questionHistory.value.length > 0) {
+  if (e.key === "Backspace" && !isFormField && hasHistory.value) {
     goToPreviousQuestion();
     e.preventDefault();
     return;
@@ -682,7 +756,7 @@ watch(
   () => props.id,
   async () => {
     isNavigating.value = false;
-    questionHistory.value = [];
+    resetNavigation();
     await loadStateAndDetermineStart({ reset: true });
   },
 );
@@ -707,6 +781,8 @@ watch(
 .questionnaire-page {
   display: flex;
   flex-direction: column;
+  container-type: inline-size;
+  container-name: questionnaire;
 }
 
 .page-content {
@@ -837,6 +913,26 @@ watch(
   max-height: 300px;
 }
 
+.info-popover-close {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-popover-close:hover {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+}
+
 .question-description {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-sm);
@@ -899,8 +995,7 @@ watch(
   animation-delay: 200ms;
 }
 
-/* Mobile Adjustments — bp-md: 600px */
-@media (max-width: 599.98px) {
+@container questionnaire (max-width: 37.5rem) {
   .page-content {
     padding: var(--spacing-sm);
   }
@@ -925,8 +1020,7 @@ watch(
   }
 }
 
-/* Tablet and Desktop — bp-md: 600px */
-@media (min-width: 600px) {
+@container questionnaire (min-width: 37.5rem) {
   .page-content {
     padding: var(--spacing-md) 0;
   }
@@ -939,8 +1033,7 @@ watch(
   }
 }
 
-/* bp-lg: 900px */
-@media (min-width: 900px) {
+@container questionnaire (min-width: 56.25rem) {
   .page-content {
     padding: var(--spacing-md);
   }

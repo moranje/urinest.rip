@@ -62,6 +62,8 @@ import CultureSvg from "../components/CultureSvg.vue";
 .landing-content {
   max-width: var(--layout-content-max-width);
   margin: 0 auto;
+  container-type: inline-size;
+  container-name: landing;
 }
 
 .grid {
@@ -80,19 +82,18 @@ import CultureSvg from "../components/CultureSvg.vue";
   overflow: hidden;
 }
 
-/* bp-lg: 900px — below this we drop to 2 columns */
-@media only screen and (max-width: 899.98px) {
+@container landing (max-width: 56.25rem) {
   .grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
   }
 }
 
-/* bp-sm: 480px — single column.
+/* Single-column layout.
  * Drop grid-auto-rows so row height comes from each tile's aspect-ratio: 1/1
  * (otherwise a fixed row height conflicts with the square tile size and
  * the tiles overflow into the next row). */
-@media only screen and (max-width: 479.98px) {
+@container landing (max-width: 30rem) {
   .grid {
     grid-template-columns: 1fr;
     grid-template-rows: none;
@@ -148,18 +149,19 @@ import CultureSvg from "../components/CultureSvg.vue";
   color: var(--md-sys-color-on-surface-variant);
 }
 
-/* bp-md: tablets show 2 columns */
-@media only screen and (max-width: 599.98px) {
+@container landing (max-width: 37.5rem) {
   .uti-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-/* bp-sm: single column on small phones */
-@media only screen and (max-width: 479.98px) {
+@container landing (max-width: 30rem) {
   .uti-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@media only screen and (max-width: 479.98px) {
   .landing-page {
     padding: var(--spacing-sm);
   }

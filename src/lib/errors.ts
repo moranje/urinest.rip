@@ -99,7 +99,7 @@ export function classifyError(error: unknown): ClassifiedError {
   }
 
   if (hasStatus(error)) {
-    return classifyHttpStatus(error.status);
+    return classifyHttpStatus(error.status, retryAfterSeconds(error));
   }
 
   // Supabase AuthError
@@ -257,7 +257,24 @@ function classifyAuthError(e: Error & { status?: number }): ClassifiedError {
   };
 }
 
-function classifyHttpStatus(status: number): ClassifiedError {
+function retryAfterSeconds(e: unknown): number | null {
+  if (typeof e !== "object" || e === null) return null;
+  const value = (e as Record<string, unknown>).retryAfter;
+  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.round(value));
+  if (typeof value === "string") {
+    const seconds = Number(value);
+    if (Number.isFinite(seconds)) return Math.max(0, Math.round(seconds));
+    const dateMs = Date.parse(value);
+    if (Number.isFinite(dateMs)) return Math.max(0, Math.ceil((dateMs - Date.now()) / 1000));
+  }
+  const headers = (e as Record<string, unknown>).headers;
+  if (headers && typeof (headers as Headers).get === "function") {
+    return retryAfterSeconds({ retryAfter: (headers as Headers).get("Retry-After") });
+  }
+  return null;
+}
+
+function classifyHttpStatus(status: number, retryAfter: number | null = null): ClassifiedError {
   if (status === 401) {
     return { userMessage: "Sessie verlopen. Log opnieuw in.", level: "warning", notify: true };
   }
@@ -272,7 +289,10 @@ function classifyHttpStatus(status: number): ClassifiedError {
   }
   if (status === 429) {
     return {
-      userMessage: "Te veel pogingen. Probeer het later opnieuw.",
+      userMessage:
+        retryAfter && retryAfter > 0
+          ? `Te veel pogingen. Probeer het over ${retryAfter} seconden opnieuw.`
+          : "Te veel pogingen. Probeer het later opnieuw.",
       level: "warning",
       notify: true,
     };
@@ -305,6 +325,25 @@ export class TimeoutError extends Error {
   constructor(ms: number) {
     super(`Request timed out after ${ms}ms`);
     this.name = "TimeoutError";
+  }
+}
+
+export class HttpStatusError extends Error {
+  status: number;
+  retryAfter?: string | number | null;
+  headers?: Headers;
+
+  constructor(
+    status: number,
+    message: string,
+    retryAfter?: string | number | null,
+    headers?: Headers,
+  ) {
+    super(message);
+    this.name = "HttpStatusError";
+    this.status = status;
+    this.retryAfter = retryAfter;
+    this.headers = headers;
   }
 }
 

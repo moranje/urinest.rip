@@ -62,6 +62,12 @@ jobs:
       - name: Storybook build (geen deploy)
         run: npm run build-storybook
 
+      - name: Production build
+        run: npm run build
+
+      - name: Bundle budget
+        run: npm run budget
+
   deploy:
     name: Release & Deploy
     needs: ci
@@ -120,6 +126,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Bundle budget
+        run: npm run budget
 
       - name: Upload source maps
         run: |

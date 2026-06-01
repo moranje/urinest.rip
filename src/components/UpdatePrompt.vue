@@ -4,50 +4,34 @@
       <div v-if="needRefresh" class="update-scrim" aria-hidden="true" />
     </Transition>
     <Transition name="sheet-fly">
-      <div v-if="needRefresh" class="update-sheet">
+      <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
+      <div
+        v-if="needRefresh"
+        ref="sheetRef"
+        class="update-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="update-title"
+        aria-describedby="update-text"
+        tabindex="-1"
+        @keydown.esc.stop.prevent="handleDismiss"
+      >
         <div class="drag-indicator" />
         <div class="update-icon">
-          <svg
-            v-if="!updating"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          <svg
-            v-else
-            class="spin"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 12a9 9 0 1 1-6.22-8.56" />
-          </svg>
+          <Icon v-if="!updating" name="download" :size="28" />
+          <Icon v-else name="spinner" :size="28" spin />
         </div>
-        <h3 class="update-title">{{ updating ? "Bijwerken..." : "Update beschikbaar" }}</h3>
-        <p class="update-text">
+        <h3 id="update-title" class="update-title">
+          {{ updating ? "Bijwerken..." : "Update beschikbaar" }}
+        </h3>
+        <p id="update-text" class="update-text">
           {{ updating ? "Even geduld..." : "Er is een nieuwe versie beschikbaar." }}
         </p>
         <div class="update-actions">
-          <button class="md-button md-button--primary" @click="handleUpdate" :disabled="updating">
+          <Button :loading="updating" @click="handleUpdate">
             {{ updating ? "Bijwerken..." : "Nu bijwerken" }}
-          </button>
-          <button v-if="!updating" class="md-button md-button--text" @click="handleDismiss">
-            Later
-          </button>
+          </Button>
+          <Button v-if="!updating" variant="text" @click="handleDismiss"> Later </Button>
         </div>
       </div>
     </Transition>
@@ -55,9 +39,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { nextTick, onMounted, ref, watch } from "vue";
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { handleError } from "../lib/errors";
+import Button from "./primitives/Button.vue";
+import Icon from "./primitives/Icon.vue";
 
 const UPDATE_CHECK_INTERVAL = 60 * 60 * 1000;
 
@@ -97,6 +83,13 @@ onMounted(() => {
 });
 
 const updating = ref(false);
+const sheetRef = ref<HTMLElement | null>(null);
+
+watch(needRefresh, async (visible) => {
+  if (!visible) return;
+  await nextTick();
+  sheetRef.value?.focus();
+});
 
 function handleUpdate() {
   updating.value = true;
@@ -164,10 +157,6 @@ function handleDismiss() {
   gap: var(--spacing-sm);
   width: 100%;
   justify-content: center;
-}
-
-.spin {
-  animation: spin 1.2s linear infinite;
 }
 
 /* Transitions */

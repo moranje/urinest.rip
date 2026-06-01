@@ -25,6 +25,8 @@ describe("QuestionOption", () => {
     const wrapper = mount(QuestionOption, { props: baseProps });
     const item = wrapper.get(".option-item");
 
+    expect(item.element.tagName).toBe("BUTTON");
+    expect(item.attributes("type")).toBe("button");
     expect(item.attributes("role")).toBe("radio");
     expect(item.attributes("aria-checked")).toBe("false");
     expect(wrapper.text()).toContain("A.");
