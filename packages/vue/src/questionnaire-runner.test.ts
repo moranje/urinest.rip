@@ -55,6 +55,9 @@ const createStore = (
     questionnaireId === "missing" ? undefined : questionnaire,
   ),
   getStepById: vi.fn((stepId: string) => steps.find((step) => step.id === stepId)),
+  setAnswer: vi.fn((_: string, questionId: string, answer: TestAnswer | TestAnswer[]) => {
+    answers[questionId] = answer;
+  }),
 });
 
 describe("useQuestionnaireRunner", () => {
@@ -125,6 +128,47 @@ describe("useQuestionnaireRunner", () => {
       type: "question",
     });
     expect(runner.questionHistory.value).toEqual([]);
+  });
+
+  it("selects single options and advances with the option id as branch", () => {
+    const answers: Record<string, TestAnswer | TestAnswer[]> = {};
+    const store = createStore(answers);
+    const runner = useQuestionnaireRunner(store, { questionnaireId: "example-flow" });
+
+    runner.start();
+    expect(runner.selectOption({ id: "o_show", text: "Show", value: "show" })).toEqual({
+      branch: "o_show",
+      previousQuestionId: "q1",
+      questionId: "q2",
+      type: "question",
+    });
+    expect(answers.q1).toEqual({ text: "Show", value: "show" });
+    expect(runner.isOptionSelected({ value: "show" })).toBe(false);
+  });
+
+  it("toggles multiple options and confirms with a stable value branch", () => {
+    const answers = {
+      q1: { value: "hide", text: "Hide" },
+    };
+    const runner = useQuestionnaireRunner(createStore(answers), {
+      questionnaireId: "example-flow",
+    });
+
+    runner.start({ replayAnswers: false });
+    runner.advance();
+    expect(runner.currentQuestionId.value).toBe("q3");
+    expect(runner.toggleOption({ text: "B", value: "b" })).toEqual([{ text: "B", value: "b" }]);
+    expect(runner.toggleOption({ text: "A", value: "a" })).toEqual([
+      { text: "B", value: "b" },
+      { text: "A", value: "a" },
+    ]);
+    expect(runner.isOptionSelected({ value: "a" })).toBe(true);
+    expect(runner.selectedCount.value).toBe(2);
+    expect(runner.confirmMultipleChoice()).toEqual({
+      branch: "a+b",
+      previousQuestionId: "q3",
+      type: "complete",
+    });
   });
 
   it("reports missing questionnaires without app-owned routing", () => {

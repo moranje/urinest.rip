@@ -111,6 +111,7 @@ const runner = useQuestionnaireRunner(
       stepIds: [],
     }),
     getStepById: () => undefined,
+    setAnswer: () => undefined,
   },
   { questionnaireId: "package-smoke" },
 );
