@@ -153,12 +153,21 @@ jobs:
               UPLOADED=$((UPLOADED + 1))
             else
               echo "  ✗ urinest.rip/${NAME} (HTTP $STATUS)"
+              exit 1
             fi
           done
           echo "Done: ${UPLOADED} source map(s) uploaded"
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - name: Remove source maps from deploy artifact
+        run: |
+          find dist -name '*.map' -delete
+          if find dist -name '*.map' | grep -q .; then
+            echo "::error::Source maps still present in deploy artifact"
+            exit 1
+          fi
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3

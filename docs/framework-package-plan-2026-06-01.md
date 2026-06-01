@@ -36,7 +36,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 
 ## Kritieke Bevindingen Uit Agent-Ronde
 
-- [ ] Source maps uploaden naar Supabase, daarna `.map` uit `dist` verwijderen vóór Netlify deploy.
+- [x] Source maps uploaden naar Supabase, daarna `.map` uit `dist` verwijderen vóór Netlify deploy.
 - [x] Tests niet laten afhangen van ignored/stale `public/main.json`; flow-build vóór test of tests direct uit YAML compile.
 - [ ] Supabase admin policies beperken tot admin claim/email allowlist, niet elke `authenticated` user.
 - [ ] Legacy unfiltered log RPCs droppen/revoken.
@@ -243,7 +243,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] RLS/admin dashboard blijft app-only.
 - [ ] Admin RLS gebruikt claim/email allowlist.
 - [ ] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
-- [ ] `.map` files niet publiek deployen.
+- [x] `.map` files niet publiek deployen.
 - [ ] Security tests voor malicious flow metadata.
 
 ## Testing Checklist
@@ -276,7 +276,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Bundle budget package en app.
 - [ ] Lighthouse CI landing/questionnaire/result.
 - [ ] No layout shift from SVG/menu tiles.
-- [ ] Source maps buiten public deploy artifact houden.
+- [x] Source maps buiten public deploy artifact houden.
 
 ## Urinestrip Test Case
 
