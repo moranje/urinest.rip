@@ -34,6 +34,7 @@ export default [
     plugins: { security },
     rules: {
       ...security.configs.recommended.rules,
+      'no-console': 'error',
       'security/detect-object-injection': 'off',
       // Static UA-parsing regexes, not user-controlled input
       'security/detect-unsafe-regex': 'off',
@@ -47,8 +48,8 @@ export default [
       // Attribute order is a style preference — oxfmt handles
       'vue/attributes-order': 'off',
       'vue/html-closing-bracket-newline': 'off',
-      // v-html is used for trusted markdown content from our own data
-      'vue/no-v-html': 'off',
+      // v-html requires inline proof that content has passed through sanitizer.
+      'vue/no-v-html': 'error',
       // a11y — explicit role for non-interactive elements is sometimes required
       // for ARIA pattern (radiogroup, checkbox). We use it knowingly.
       'vuejs-accessibility/no-static-element-interactions': 'warn',
@@ -68,6 +69,14 @@ export default [
     files: ['**/*.test.ts'],
     rules: {
       'security/detect-non-literal-regexp': 'off'
+    }
+  },
+
+  // Logger is the only production module allowed to touch browser console APIs.
+  {
+    files: ['src/lib/logger.ts'],
+    rules: {
+      'no-console': 'off'
     }
   },
 

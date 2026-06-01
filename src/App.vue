@@ -3,7 +3,14 @@
     <a href="#main-content" class="skip-link">Naar inhoud springen</a>
     <app-header :droplet-animate="dropletAnimate" />
     <main id="main-content" class="app-content" tabindex="-1">
-      <router-view v-slot="{ Component, route: r }">
+      <section v-if="appError" class="app-error" role="alert" aria-live="assertive">
+        <h1>Er ging iets mis</h1>
+        <p>{{ appError }}</p>
+        <button class="md-button md-button--primary" type="button" @click="reloadApp">
+          Opnieuw laden
+        </button>
+      </section>
+      <router-view v-else v-slot="{ Component, route: r }">
         <component :is="Component" :key="r.fullPath" />
       </router-view>
     </main>
@@ -14,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onErrorCaptured } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import ToastContainer from "./components/ToastContainer.vue";
@@ -27,6 +34,7 @@ const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
 
 const dropletAnimate = ref(false);
+const appError = ref<string | null>(null);
 watch(
   () => route.path,
   () => {
@@ -40,8 +48,8 @@ watch(
 onMounted(async () => {
   try {
     await questionnaireStore.loadInitialData();
-  } catch (error) {
-    handleError(error, "app:load-data");
+  } catch {
+    // loadInitialData reports via telemetry; App only keeps boot going.
   }
 
   const themeMql = window.matchMedia("(prefers-color-scheme: dark)");
@@ -49,6 +57,16 @@ onMounted(async () => {
     document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
   });
 });
+
+onErrorCaptured((error) => {
+  handleError(error, "app:error-captured");
+  appError.value = "De applicatie kon dit onderdeel niet tonen.";
+  return false;
+});
+
+const reloadApp = (): void => {
+  window.location.reload();
+};
 </script>
 
 <style>
@@ -58,7 +76,9 @@ onMounted(async () => {
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100vh;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100lvh;
   overflow: hidden;
   background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
@@ -98,5 +118,15 @@ body {
 
 #main-content:focus {
   outline: none;
+}
+
+.app-error {
+  width: min(100% - var(--spacing-lg), 42rem);
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--md-sys-color-error);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
 }
 </style>

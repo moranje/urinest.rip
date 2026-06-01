@@ -5,59 +5,74 @@
  * Consecutive identical messages are collapsed with a count.
  */
 
+import { scrubText, scrubValue } from "./scrub";
+
 export interface Breadcrumb {
-  type: 'navigation' | 'click' | 'api' | 'log'
-  message: string
-  timestamp: string
-  count?: number
-  data?: Record<string, unknown>
+  type: "navigation" | "click" | "api" | "log" | "flow";
+  message: string;
+  timestamp: string;
+  count?: number;
+  data?: Record<string, unknown>;
 }
 
-const MAX_BREADCRUMBS = 25
-const buffer: Breadcrumb[] = []
+const MAX_BREADCRUMBS = 25;
+const buffer: Breadcrumb[] = [];
 
-export function addBreadcrumb(crumb: Omit<Breadcrumb, 'timestamp' | 'count'>): void {
-  const last = buffer[buffer.length - 1]
-  if (last && last.type === crumb.type && last.message === crumb.message) {
-    last.count = (last.count ?? 1) + 1
-    last.timestamp = new Date().toISOString()
-    return
+export function addBreadcrumb(crumb: Omit<Breadcrumb, "timestamp" | "count">): void {
+  const messageStats = { hits: 0 };
+  const safeMessage = scrubText(crumb.message, messageStats);
+  const safeData = crumb.data ? scrubValue(crumb.data) : undefined;
+  const scrubHits = messageStats.hits + (safeData?.stats.hits ?? 0);
+  const safeCrumb: Omit<Breadcrumb, "timestamp" | "count"> = {
+    ...crumb,
+    message: safeMessage,
+    data: safeData?.value,
+  };
+  if (scrubHits > 0) {
+    safeCrumb.data = { ...safeCrumb.data, scrub_hits_total: scrubHits };
+  }
+
+  const last = buffer[buffer.length - 1];
+  if (last && last.type === safeCrumb.type && last.message === safeCrumb.message) {
+    last.count = (last.count ?? 1) + 1;
+    last.timestamp = new Date().toISOString();
+    return;
   }
 
   buffer.push({
-    ...crumb,
-    timestamp: new Date().toISOString()
-  })
+    ...safeCrumb,
+    timestamp: new Date().toISOString(),
+  });
   if (buffer.length > MAX_BREADCRUMBS) {
-    buffer.shift()
+    buffer.shift();
   }
 }
 
 export function getBreadcrumbs(): Breadcrumb[] {
-  return buffer.map((b) => ({ ...b }))
+  return buffer.map((b) => ({ ...b }));
 }
 
 export function clearBreadcrumbs(): void {
-  buffer.length = 0
+  buffer.length = 0;
 }
 
 export function breadcrumbNav(from: string, to: string): void {
-  addBreadcrumb({ type: 'navigation', message: `${from} → ${to}` })
+  addBreadcrumb({ type: "navigation", message: `${from} → ${to}` });
 }
 
-export function breadcrumbClick(label: string): void {
-  addBreadcrumb({ type: 'click', message: label })
+export function breadcrumbClick(label: string, data?: Record<string, unknown>): void {
+  addBreadcrumb({ type: "click", message: label, data });
 }
 
 export function breadcrumbApi(method: string, url: string, duration?: number): void {
   addBreadcrumb({
-    type: 'api',
+    type: "api",
     message: `${method} ${url}`,
-    data: duration != null ? { ms: duration } : undefined
-  })
+    data: duration != null ? { ms: duration } : undefined,
+  });
 }
 
 export function breadcrumbLog(level: string, module: string, message: string): void {
-  if (level === 'debug' || level === 'info') return
-  addBreadcrumb({ type: 'log', message: `[${module}] ${message}`.slice(0, 120) })
+  if (level === "debug" || level === "info") return;
+  addBreadcrumb({ type: "log", message: `[${module}] ${message}`.slice(0, 120) });
 }

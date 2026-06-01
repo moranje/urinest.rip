@@ -795,6 +795,9 @@ h3 {
 .bc-log {
   color: var(--md-sys-color-outline);
 }
+.bc-flow {
+  color: var(--md-sys-color-tertiary);
+}
 
 .breadcrumb-message {
   overflow: hidden;

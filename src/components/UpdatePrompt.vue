@@ -57,19 +57,29 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRegisterSW } from "virtual:pwa-register/vue";
+import { handleError } from "../lib/errors";
 
 const UPDATE_CHECK_INTERVAL = 60 * 60 * 1000;
 
 const { needRefresh, updateServiceWorker } = useRegisterSW({
+  onRegisterError(error) {
+    handleError(error, "service-worker:register");
+  },
   onRegisteredSW(_swUrl: string, registration: ServiceWorkerRegistration | undefined) {
     if (!registration) return;
     setInterval(async () => {
       if (registration.installing || !navigator.onLine) return;
-      await registration.update();
+      try {
+        await registration.update();
+      } catch (error) {
+        handleError(error, "service-worker:update");
+      }
     }, UPDATE_CHECK_INTERVAL);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible" && !registration.installing) {
-        registration.update();
+        registration.update().catch((error: unknown) => {
+          handleError(error, "service-worker:update-visible");
+        });
       }
     });
   },
@@ -77,9 +87,13 @@ const { needRefresh, updateServiceWorker } = useRegisterSW({
 
 onMounted(() => {
   if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.ready.then((reg) => {
-    if (reg.waiting) needRefresh.value = true;
-  });
+  navigator.serviceWorker.ready
+    .then((reg) => {
+      if (reg.waiting) needRefresh.value = true;
+    })
+    .catch((error: unknown) => {
+      handleError(error, "service-worker:ready");
+    });
 });
 
 const updating = ref(false);

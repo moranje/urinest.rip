@@ -13,6 +13,8 @@
 import { createLogger } from "./logger";
 import { getBreadcrumbs } from "./breadcrumbs";
 import { getErrorContext, parseSourceLocation } from "./error-context";
+import { getFlowTrail } from "./flow-trail";
+import { scrubValue } from "./scrub";
 
 const log = createLogger("log-sink");
 
@@ -23,6 +25,7 @@ export interface PersistErrorInput {
   errorClass: string;
   stack?: string;
   level: "warn" | "error";
+  extraContext?: Record<string, unknown>;
 }
 
 // Session ID for grouping logs from the same browser session
@@ -202,22 +205,35 @@ export function persistError(input: PersistErrorInput): void {
   if (breakerTripped) return;
 
   const errorContext = getErrorContext();
-  const breadcrumbs = getBreadcrumbs();
+  const breadcrumbs = scrubValue(getBreadcrumbs()).value;
+  const flowTrail = getFlowTrail();
   const fingerprint = computeFingerprint(input);
   const source = parseSourceLocation(input.stack);
+  const safeMessage = scrubValue(input.userMessage).value;
+  const safeDetail = scrubValue({
+    devDetail: input.devDetail,
+    errorClass: input.errorClass,
+    stack: input.stack,
+    sourceLocation: source,
+    breadcrumbs,
+  }).value;
+  const safeContext = scrubValue({
+    ...(errorContext ? { ...errorContext } : {}),
+    ...(flowTrail.length > 0 ? { flow_trail: flowTrail } : {}),
+    ...input.extraContext,
+  }).value;
+  const scrubHits =
+    scrubValue(input.userMessage).stats.hits +
+    scrubValue(input.devDetail ?? "").stats.hits +
+    scrubValue(input.stack ?? "").stats.hits +
+    scrubValue(input.extraContext ?? {}).stats.hits;
 
   const entry: BufferedEntry = {
     level: input.level,
     module: input.context,
-    message: input.userMessage,
-    detail: {
-      devDetail: input.devDetail,
-      errorClass: input.errorClass,
-      stack: input.stack,
-      sourceLocation: source,
-      breadcrumbs,
-    },
-    context: errorContext ? { ...errorContext } : {},
+    message: safeMessage,
+    detail: safeDetail,
+    context: scrubHits > 0 ? { ...safeContext, scrub_hits_total: scrubHits } : safeContext,
     source: "urinestrip",
     session_id: SESSION_ID,
     url: window.location.pathname,
@@ -243,8 +259,19 @@ export function initLogSink(): void {
   startFlushTimer();
 
   if (typeof window !== "undefined") {
+    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+    if (!url || !key) {
+      log.warn("supabase log persistence not configured", {
+        hasUrl: Boolean(url),
+        hasAnonKey: Boolean(key),
+      });
+    }
     // pagehide is more reliable than beforeunload on mobile (esp. iOS Safari)
     window.addEventListener("pagehide", flushViaBeacon);
+    window.addEventListener("online", () => {
+      flushLogs();
+    });
     // visibilitychange catches tab-switch scenarios before pagehide fires
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") flushViaBeacon();

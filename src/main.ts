@@ -20,6 +20,14 @@ window.addEventListener("unhandledrejection", (e) => {
   handleError(e.reason, "unhandled-rejection");
 });
 
+window.addEventListener("error", (e) => {
+  handleError(e.error ?? new Error(e.message), "window:error", {
+    filename: e.filename,
+    lineno: e.lineno,
+    colno: e.colno,
+  });
+});
+
 // Initialize error context, log sink, and auth
 initErrorContext();
 initLogSink();

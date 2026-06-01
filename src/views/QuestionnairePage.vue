@@ -97,60 +97,24 @@
               currentStep?.description ? `q-step-${currentQuestion.id}` : undefined
             "
           >
-            <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-            <div
+            <QuestionOption
               v-for="(option, index) in currentQuestion.options"
-              :ref="(el) => setOptionRef(option.id, el)"
               :key="option.id"
-              class="option-item"
-              :class="{ 'option-selected': isOptionSelected(option) }"
-              :role="isMultiSelect ? 'checkbox' : 'radio'"
-              :aria-checked="isOptionSelected(option)"
-              :tabindex="getOptionTabIndex(option, index)"
-              @click="isMultiSelect ? toggleOption(option) : selectOption(option)"
-              @keydown.enter.prevent="isMultiSelect ? toggleOption(option) : selectOption(option)"
-              @keydown.space.prevent="isMultiSelect ? toggleOption(option) : selectOption(option)"
-              @keydown.up.prevent="!isMultiSelect && focusSiblingOption(index, -1)"
-              @keydown.down.prevent="!isMultiSelect && focusSiblingOption(index, 1)"
-              @keydown.left.prevent="!isMultiSelect && focusSiblingOption(index, -1)"
-              @keydown.right.prevent="!isMultiSelect && focusSiblingOption(index, 1)"
-            >
-              <div class="option-content">
-                <span v-if="isNonTouchDevice" class="option-prefix" aria-hidden="true"
-                  >{{ String.fromCharCode(65 + index) }}.</span
-                >
-                <span class="option-text">{{ option.text }}</span>
-              </div>
-              <!-- The wrapper exists to stop the click bubbling into the option-item.
-                   `role="presentation"` declares it as purely structural so AT skips it. -->
-              <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-              <div
-                v-if="option.description"
-                class="option-info-wrapper"
-                role="presentation"
-                @click.stop
-              >
-                <button
-                  class="info-icon"
-                  type="button"
-                  :aria-expanded="activePopoverOptionId === option.id"
-                  aria-label="Meer informatie"
-                  @click.stop="togglePopover(option, $event)"
-                  @keydown.escape.stop="closePopover"
-                  @mouseenter.stop="showPopover(option, $event)"
-                  @mouseleave.stop="schedulePopoverClose"
-                  @focus.stop="showPopover(option, $event)"
-                  @blur.stop="schedulePopoverClose"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      fill="currentColor"
-                      d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+              :option="option"
+              :index="index"
+              :selected="isOptionSelected(option)"
+              :multi-select="isMultiSelect"
+              :non-touch="isNonTouchDevice"
+              :tab-index="getOptionTabIndex(option, index)"
+              :popover-open="activePopoverOptionId === option.id"
+              @choose="isMultiSelect ? toggleOption(option) : selectOption(option)"
+              @option-ref="setOptionRef"
+              @focus-sibling="focusSiblingOption"
+              @show-popover="showPopover"
+              @toggle-popover="togglePopover"
+              @schedule-popover-close="schedulePopoverClose"
+              @close-popover="closePopover"
+            />
 
             <p v-if="isMultiSelect" class="multi-counter" :aria-live="'polite'">
               <span v-if="selectedCount === 0">Geen geselecteerd</span>
@@ -167,11 +131,13 @@
             </button>
           </div>
 
+          <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
           <div
             v-if="currentQuestion.description"
             class="question-description"
             v-html="compiledMarkdown(currentQuestion.description)"
           />
+          <!-- eslint-enable vue/no-v-html -->
         </div>
         <div v-else-if="!isLoading && !currentQuestion">
           <div class="loading-message">
@@ -189,7 +155,9 @@
         :style="popoverStyle"
         role="tooltip"
       >
+        <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
         <div v-html="compiledMarkdown(popoverDescription)" />
+        <!-- eslint-enable vue/no-v-html -->
       </div>
     </teleport>
   </div>
@@ -197,15 +165,31 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { useRouter } from "vue-router";
-import { useQuestionnaireStore } from "../store/questionnaireStore";
+import QuestionOption from "../components/QuestionOption.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
-import type { QuestionOption, Question, Step, AnswerValue, PopoverStyle } from "../types";
+import { usePopover } from "../composables/usePopover";
+import { breadcrumbClick } from "../lib/breadcrumbs";
+import { handleError } from "../lib/errors";
+import {
+  clearFlowTrail,
+  recordFlowRedirect,
+  recordFlowResult,
+  recordFlowStart,
+  recordFlowStep,
+} from "../lib/flow-trail";
+import { createLogger } from "../lib/logger";
+import { useQuestionnaireStore } from "../store/questionnaireStore";
+import { useRoleStore } from "../store/roleStore";
+import type { QuestionOption as QuestionOptionData, Question, Step, AnswerValue } from "../types";
 
 const router = useRouter();
 const questionnaireStore = useQuestionnaireStore();
+const roleStore = useRoleStore();
+const log = createLogger("questionnaire-page");
 
 const props = defineProps<{
   id: string;
@@ -223,11 +207,15 @@ const setOptionRef = (optionId: string, el: Element | unknown): void => {
   optionRefs.value[optionId] = (el as HTMLElement) ?? null;
 };
 
-// Popover State
-const activePopoverOptionId = ref<string | null>(null);
-const popoverDescription = ref("");
-const popoverStyle = ref<PopoverStyle>({ top: "0px", left: "0px", visibility: "hidden" });
-let hidePopoverTimeout: ReturnType<typeof setTimeout> | null = null;
+const {
+  activePopoverOptionId,
+  popoverDescription,
+  popoverStyle,
+  showPopover,
+  closePopover,
+  schedulePopoverClose,
+  togglePopover,
+} = usePopover();
 
 // --- Computed Properties ---
 
@@ -279,7 +267,7 @@ const progressMax = computed((): number => {
   return Math.max(progressValue.value, qData.questionIds?.length ?? progressValue.value);
 });
 
-const getOptionTabIndex = (option: QuestionOption, index: number): number => {
+const getOptionTabIndex = (option: QuestionOptionData, index: number): number => {
   if (isMultiSelect.value) return 0;
   // For radiogroup: only the selected option (or the first if none selected) is in the tab order
   if (isOptionSelected(option)) return 0;
@@ -305,7 +293,7 @@ onMounted(async () => {
     try {
       await questionnaireStore.loadInitialData();
     } catch (err) {
-      console.error("Error loading questionnaire data", err);
+      log.warn("load failed", { error: err, questionnaireId: props.id });
       isLoading.value = false;
       router.replace("/error");
       return;
@@ -359,11 +347,29 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     }
   }
 
+  if (currentQuestionId.value) {
+    recordFlowStart({
+      flowId: props.id,
+      version: questionnaire.value.version,
+      role: roleStore.role,
+      questionId: currentQuestionId.value,
+    });
+  }
+
   isLoading.value = false;
 };
 
 const restartQuestionnaire = (): void => {
+  clearFlowTrail();
   void loadStateAndDetermineStart({ reset: true });
+};
+
+const getQuestionStepId = (questionId: string | null): string | undefined => {
+  if (!questionId || !questionnaire.value) return undefined;
+  return questionnaire.value.stepIds.find((sid: string) => {
+    const step = questionnaireStore.getStepById(sid);
+    return step?.questionIds.includes(questionId);
+  });
 };
 
 const findNextQuestionId = (startQuestionId: string | null = null): string | null => {
@@ -396,11 +402,20 @@ const findNextQuestionId = (startQuestionId: string | null = null): string | nul
   return null;
 };
 
-const advanceQuestionState = (): void => {
-  if (currentQuestionId.value) {
-    questionHistory.value.push(currentQuestionId.value);
+const advanceQuestionState = (branch?: string): void => {
+  const previousQuestionId = currentQuestionId.value;
+  if (previousQuestionId) {
+    recordFlowStep({
+      flowId: props.id,
+      version: questionnaire.value?.version ?? "unknown",
+      stepId: getQuestionStepId(previousQuestionId),
+      questionId: previousQuestionId,
+      branch,
+      role: roleStore.role,
+    });
+    questionHistory.value.push(previousQuestionId);
   }
-  const nextId = findNextQuestionId(currentQuestionId.value);
+  const nextId = findNextQuestionId(previousQuestionId);
   if (nextId) {
     currentQuestionId.value = nextId;
   } else {
@@ -430,8 +445,8 @@ const withViewTransition = (mutate: () => void): void => {
   }
 };
 
-const goToNextQuestion = (): void => {
-  withViewTransition(advanceQuestionState);
+const goToNextQuestion = (branch?: string): void => {
+  withViewTransition(() => advanceQuestionState(branch));
 };
 
 const goToPreviousQuestion = (): void => {
@@ -457,29 +472,84 @@ const determineResult = (): void => {
 
   if (outcome) {
     const [type, value] = outcome.split(":");
+    if (!type || !value) {
+      handleError(new Error(`Malformed outcome: ${outcome}`), "decision-engine:malformed-outcome", {
+        questionnaireId: props.id,
+        role: roleStore.role,
+        answeredQuestionIds: Object.keys(answers),
+      });
+      router.push("/error");
+      return;
+    }
     if (type === "redirect") {
+      if (value === props.id) {
+        handleError(
+          new Error(`Redirect cycle detected: ${props.id}`),
+          "decision-engine:redirect-cycle",
+          {
+            questionnaireId: props.id,
+            role: roleStore.role,
+          },
+        );
+        router.push("/error");
+        return;
+      }
+      recordFlowRedirect({
+        flowId: props.id,
+        version: fullQuestionnaire.version,
+        targetFlowId: value,
+        role: roleStore.role,
+      });
       questionnaireStore.clearAnswers(props.id);
       router.replace(`/questionnaire/${value}`);
-    } else {
+    } else if (type === "result") {
+      recordFlowResult({
+        flowId: props.id,
+        version: fullQuestionnaire.version,
+        resultId: value,
+        role: roleStore.role,
+      });
       router.push(`/info/${value}`);
+    } else {
+      handleError(
+        new Error(`Unsupported outcome type: ${type}`),
+        "decision-engine:unknown-outcome",
+        {
+          questionnaireId: props.id,
+          outcome,
+          role: roleStore.role,
+        },
+      );
+      router.push("/error");
     }
   } else {
+    handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
+      questionnaireId: props.id,
+      role: roleStore.role,
+      answeredQuestionIds: Object.keys(answers),
+    });
     router.push("/error");
   }
 };
 
 // --- Answer & Interaction Handlers ---
 
-const selectOption = (option: QuestionOption): void => {
+const selectOption = (option: QuestionOptionData): void => {
   if (!currentQuestion.value) return;
+  breadcrumbClick("question-option-selected", {
+    flowId: props.id,
+    questionId: currentQuestion.value.id,
+    optionId: option.id,
+    role: roleStore.role,
+  });
   questionnaireStore.setAnswer(props.id, currentQuestion.value.id, {
     value: option.value,
     text: option.text,
   });
-  goToNextQuestion();
+  goToNextQuestion(option.id);
 };
 
-const toggleOption = (option: QuestionOption): void => {
+const toggleOption = (option: QuestionOptionData): void => {
   if (!currentQuestion.value) return;
   const currentAnswer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
   const answerArray = (Array.isArray(currentAnswer) ? currentAnswer : []) as AnswerValue[];
@@ -491,14 +561,42 @@ const toggleOption = (option: QuestionOption): void => {
   } else {
     newAnswer.push({ value: option.value, text: option.text });
   }
+  breadcrumbClick("question-option-toggled", {
+    flowId: props.id,
+    questionId: currentQuestion.value.id,
+    optionId: option.id,
+    selected: existingIndex < 0,
+    role: roleStore.role,
+  });
   questionnaireStore.setAnswer(props.id, currentQuestion.value.id, newAnswer);
 };
 
 const confirmMultipleChoice = (): void => {
+  if (currentQuestion.value) {
+    const currentAnswer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
+    const selectedValues = new Set(
+      (Array.isArray(currentAnswer) ? currentAnswer : [])
+        .filter((answer) => answer && typeof answer.value === "string")
+        .map((answer) => answer.value),
+    );
+    const branch = currentQuestion.value.options
+      .filter((option) => selectedValues.has(option.value))
+      .map((option) => option.id)
+      .sort()
+      .join("+");
+    breadcrumbClick("question-multiselect-confirmed", {
+      flowId: props.id,
+      questionId: currentQuestion.value.id,
+      selectedCount: selectedCount.value,
+      role: roleStore.role,
+    });
+    goToNextQuestion(branch || undefined);
+    return;
+  }
   goToNextQuestion();
 };
 
-const isOptionSelected = (option: QuestionOption): boolean => {
+const isOptionSelected = (option: QuestionOptionData): boolean => {
   if (!currentQuestion.value) return false;
   const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
   if (answer === undefined) return false;
@@ -555,77 +653,13 @@ const checkNonTouch = (): void => {
     window.matchMedia("(pointer: fine)").matches || navigator.maxTouchPoints === 0;
 };
 
-const compiledMarkdown = (text: string | undefined): string =>
-  text ? (marked.parse(text) as string) : "";
-
-const showPopover = (option: QuestionOption, event: MouseEvent | FocusEvent): void => {
-  if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
-  const target = event.currentTarget as HTMLElement;
-  const rect = target.getBoundingClientRect();
-  activePopoverOptionId.value = option.id;
-  popoverDescription.value = option.description || "";
-
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-  const margin = 16;
-  const availableWidth = windowWidth - margin * 2;
-  const popoverWidth = Math.min(300, availableWidth);
-  const popoverMaxHeight = 300;
-  const gap = 5;
-
-  const spaceBelow = windowHeight - rect.bottom - gap;
-  const spaceAbove = rect.top - gap;
-  const fitsBelow = spaceBelow >= Math.min(popoverMaxHeight, 120);
-
-  const style: PopoverStyle = {
-    position: "fixed",
-    visibility: "visible",
-    opacity: 1,
-    maxWidth: `${popoverWidth}px`,
-  };
-
-  if (fitsBelow) {
-    style.top = `${rect.bottom + gap}px`;
-  } else {
-    style.top = `${Math.max(margin, rect.top - gap - Math.min(popoverMaxHeight, spaceAbove))}px`;
-  }
-
-  // Center on icon, then clamp to viewport
-  const iconCenter = rect.left + rect.width / 2;
-  let left = iconCenter - popoverWidth / 2;
-  if (left + popoverWidth > windowWidth - margin) {
-    left = windowWidth - margin - popoverWidth;
-  }
-  if (left < margin) {
-    left = margin;
-  }
-  style.left = `${left}px`;
-
-  popoverStyle.value = style;
-};
-
-const closePopover = (): void => {
-  if (hidePopoverTimeout) {
-    clearTimeout(hidePopoverTimeout);
-    hidePopoverTimeout = null;
-  }
-  activePopoverOptionId.value = null;
-  popoverStyle.value.visibility = "hidden";
-  popoverStyle.value.opacity = 0;
-};
-
-const schedulePopoverClose = (): void => {
-  if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
-  hidePopoverTimeout = setTimeout(() => {
-    closePopover();
-  }, 300);
-};
-
-const togglePopover = (option: QuestionOption, event: MouseEvent | FocusEvent): void => {
-  if (activePopoverOptionId.value === option.id) {
-    closePopover();
-  } else {
-    showPopover(option, event);
+const compiledMarkdown = (text: string | undefined): string => {
+  if (!text) return "";
+  try {
+    return DOMPurify.sanitize(marked.parse(text) as string, { USE_PROFILES: { html: true } });
+  } catch (error) {
+    handleError(error, "markdown:compile", { questionnaireId: props.id });
+    return "";
   }
 };
 
@@ -782,122 +816,6 @@ watch(
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
   flex: 1;
-}
-
-.option-item {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding: var(--spacing-md);
-  min-height: 56px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
-  cursor: pointer;
-  touch-action: manipulation;
-  transition:
-    background-color var(--motion-duration-medium) var(--motion-easing-standard),
-    border-color var(--motion-duration-medium) var(--motion-easing-standard),
-    box-shadow var(--motion-duration-medium) var(--motion-easing-standard),
-    transform var(--motion-duration-short) var(--motion-easing-standard);
-  position: relative;
-  overflow: hidden;
-  text-align: left;
-  background-color: var(--md-sys-color-surface-container-lowest);
-  color: var(--md-sys-color-on-surface);
-}
-
-.option-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: var(--md-sys-color-primary);
-  opacity: 0;
-  transition: opacity var(--motion-duration-medium) var(--motion-easing-standard);
-  pointer-events: none;
-}
-
-.option-item:hover {
-  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 4%,
-    var(--md-sys-color-surface-container-lowest)
-  );
-}
-.option-item:active::before {
-  opacity: var(--md-sys-state-pressed-state-layer-opacity);
-  transition-duration: var(--motion-duration-press);
-}
-
-.option-selected {
-  border-color: var(--md-sys-color-primary);
-  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 8%,
-    var(--md-sys-color-surface-container-lowest)
-  );
-  color: var(--md-sys-color-primary);
-}
-.option-selected .option-prefix {
-  color: var(--md-sys-color-on-primary);
-  background-color: var(--md-sys-color-primary);
-}
-
-.option-content {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  width: 100%;
-}
-
-.option-prefix {
-  font-weight: 500;
-  color: var(--md-sys-color-primary);
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
-  border-radius: 50%;
-  min-width: 1.75em;
-  height: 1.75em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9em;
-  line-height: 1;
-}
-
-.option-text {
-  font: var(--md-sys-typescale-body-large);
-  line-height: 1.4;
-  flex-grow: 1;
-}
-
-.option-info-wrapper {
-  margin-left: var(--spacing-sm);
-  flex-shrink: 0;
-}
-
-.info-icon {
-  background: none;
-  border: none;
-  padding: 13px;
-  margin: -13px;
-  border-radius: 50%;
-  cursor: help;
-  color: var(--md-sys-color-on-surface-variant);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
-}
-.info-icon svg {
-  width: 18px;
-  height: 18px;
-}
-.option-info-wrapper:hover .info-icon {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
 
 .info-popover {

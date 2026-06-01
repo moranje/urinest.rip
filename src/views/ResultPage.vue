@@ -121,7 +121,13 @@
           <h3 class="section-title">Documenteer (voor EPD)</h3>
           <div class="documentation-content">
             <pre class="documentation-text">{{ planDocumentation }}</pre>
-            <button class="md-button md-button--outlined copy-button" @click="copyDocumentation">
+            <button
+              class="md-button md-button--outlined copy-button"
+              :class="`copy-button--${copyState}`"
+              :disabled="copyState === 'copying'"
+              :aria-busy="copyState === 'copying' || undefined"
+              @click="copyDocumentation"
+            >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   fill="currentColor"
@@ -173,6 +179,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
@@ -188,7 +195,7 @@ const toast = useToastStore();
 const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const copyLabel = ref("Kopieer");
+const copyState = ref<"idle" | "copying" | "copied" | "error">("idle");
 
 const contraindicationsState = reactive<Array<Contraindication & { checked: boolean }>>([]);
 
@@ -208,6 +215,13 @@ const urgencyAriaLabel = computed(() => {
   if (u === "u2") return "Urgentie U2 — binnen 24 uur";
   if (u === "u3") return "Urgentie U3 — niet-spoedeisend";
   return resultData.value?.urgency ?? "";
+});
+
+const copyLabel = computed(() => {
+  if (copyState.value === "copying") return "Kopiëren...";
+  if (copyState.value === "copied") return "Gekopieerd";
+  if (copyState.value === "error") return "Niet gekopieerd";
+  return "Kopieer";
 });
 
 const fetchResultData = (key: string): void => {
@@ -231,11 +245,11 @@ const fetchResultData = (key: string): void => {
   } else {
     const availableKeys = Object.keys(store.results);
     const questionnaires = store.questionnaireList.map((q) => q.id);
-    console.error(
-      `[ResultPage] Resultaat "${key}" niet gevonden.\n` +
-        `Doorzochte vragenlijsten: ${questionnaires.join(" → ")}\n` +
-        `Beschikbare resultaten (${availableKeys.length}): ${availableKeys.join(", ")}`,
-    );
+    handleError(new Error(`Result key not found: ${key}`), "result-page:key-not-found", {
+      resultKey: key,
+      availableKeys,
+      questionnaires,
+    });
     error.value = `Resultaat "${key}" niet gevonden. Doorzochte vragenlijsten: ${questionnaires.join(" → ")}`;
   }
 
@@ -243,7 +257,11 @@ const fetchResultData = (key: string): void => {
 };
 
 const goBack = (): void => {
-  router.back();
+  if (window.history.state.back) {
+    router.back();
+  } else {
+    router.push("/");
+  }
 };
 
 let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
@@ -251,16 +269,24 @@ let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 const copyDocumentation = async (): Promise<void> => {
   const textToCopy = planDocumentation.value;
   if (!textToCopy) return;
+  copyState.value = "copying";
   try {
     await navigator.clipboard.writeText(textToCopy);
+    navigator.vibrate?.(10);
     toast.success("Gekopieerd naar klembord");
-    copyLabel.value = "Gekopieerd";
+    copyState.value = "copied";
     if (copyResetTimer) clearTimeout(copyResetTimer);
     copyResetTimer = setTimeout(() => {
-      copyLabel.value = "Kopieer";
+      copyState.value = "idle";
     }, 1500);
-  } catch {
+  } catch (copyError) {
+    handleError(copyError, "result-page:copy-documentation", { resultKey: props.resultKey });
+    copyState.value = "error";
     toast.error("Kopiëren mislukt");
+    if (copyResetTimer) clearTimeout(copyResetTimer);
+    copyResetTimer = setTimeout(() => {
+      copyState.value = "idle";
+    }, 1500);
   }
 };
 
@@ -269,7 +295,8 @@ onMounted(async () => {
   if (!store.dataReady) {
     try {
       await store.loadInitialData();
-    } catch {
+    } catch (loadError) {
+      handleError(loadError, "result-page:load-data", { resultKey: props.resultKey });
       error.value = "Kon vragenlijstgegevens niet laden";
       return;
     }
@@ -285,7 +312,8 @@ watch(
       if (!store.dataReady) {
         try {
           await store.loadInitialData();
-        } catch {
+        } catch (loadError) {
+          handleError(loadError, "result-page:load-data", { resultKey: newKey });
           error.value = "Kon vragenlijstgegevens niet laden";
           return;
         }
@@ -552,6 +580,17 @@ watch(
   min-height: var(--min-touch-target);
   padding: 0 var(--spacing-md);
   font: var(--md-sys-typescale-label-large);
+}
+.copy-button--copying {
+  cursor: progress;
+}
+.copy-button--copied {
+  border-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-primary);
+}
+.copy-button--error {
+  border-color: var(--md-sys-color-error);
+  color: var(--md-sys-color-error);
 }
 .copy-button svg {
   margin-right: var(--spacing-xs);
