@@ -71,6 +71,22 @@ function validationErrors() {
     .join(", ");
 }
 
+function assertUniqueOptionValues(flow) {
+  for (const [questionAlias, question] of Object.entries(flow.questions)) {
+    const seenValues = new Map();
+    for (const option of question.options ?? []) {
+      const valueKey = JSON.stringify(option.value);
+      const previous = seenValues.get(valueKey);
+      if (previous) {
+        throw new Error(
+          `Question "${questionAlias}" has duplicate option value ${valueKey} for options "${previous}" and "${option.text ?? option.id ?? valueKey}".`,
+        );
+      }
+      seenValues.set(valueKey, option.text ?? option.id ?? valueKey);
+    }
+  }
+}
+
 export async function buildFlows(inputDir = "flows", outputFile = "public/main.json") {
   console.log(pc.cyan("[buildFlows] Starting build process..."));
   const fullInputDir = path.resolve(inputDir);
@@ -92,6 +108,7 @@ export async function buildFlows(inputDir = "flows", outputFile = "public/main.j
       if (!validateFlow(flow)) {
         throw new Error(`Validation failed: ${validationErrors()}`);
       }
+      assertUniqueOptionValues(flow);
 
       const questionAliasMap = {};
       const resultAliasMap = new Set(Object.keys(flow.results));
@@ -110,7 +127,9 @@ export async function buildFlows(inputDir = "flows", outputFile = "public/main.j
       });
 
       processedQuestions.forEach((question) => {
-        const alias = Object.keys(questionAliasMap).find((key) => questionAliasMap[key] === question.id);
+        const alias = Object.keys(questionAliasMap).find(
+          (key) => questionAliasMap[key] === question.id,
+        );
         const originalQuestion = flow.questions[alias];
         if (originalQuestion.conditions) {
           question.conditions = originalQuestion.conditions.map((condition) =>

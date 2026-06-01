@@ -27,13 +27,13 @@ questions:
     options:
       - id: o_strip_leuko_1
         text: "+"
-        value: positive
+        value: positive_1
       - id: o_strip_leuko_2
         text: "++"
-        value: positive
+        value: positive_2
       - id: o_strip_leuko_3
         text: "+++"
-        value: positive
+        value: positive_3
       - id: o_strip_leuko_neg
         text: Negatief
         value: negative
@@ -49,16 +49,16 @@ questions:
     options:
       - id: o_strip_ery_1
         text: "+"
-        value: positive
+        value: positive_1
       - id: o_strip_ery_2
         text: "++"
-        value: positive
+        value: positive_2
       - id: o_strip_ery_3
         text: "+++"
-        value: positive
+        value: positive_3
       - id: o_strip_ery_4
         text: "++++"
-        value: positive
+        value: positive_4
       - id: o_strip_ery_neg
         text: Negatief
         value: negative
@@ -89,9 +89,9 @@ results:
 logic:
   - when: ["nitrite == positive"]
     redirect: bacteriurie
-  - when: ["nitrite == negative", "leukocytes == positive"]
+  - when: ["nitrite == negative", "leukocytes in ['positive_1', 'positive_2', 'positive_3']"]
     redirect: leukocyturie
-  - when: ["nitrite == negative", "leukocytes == negative", "erythrocytes == positive"]
+  - when: ["nitrite == negative", "leukocytes == negative", "erythrocytes in ['positive_1', 'positive_2', 'positive_3', 'positive_4']"]
     redirect: hematurie
   - when: ["nitrite == negative", "leukocytes == negative", "erythrocytes == negative"]
     show: other.noConclusiveAbnormality

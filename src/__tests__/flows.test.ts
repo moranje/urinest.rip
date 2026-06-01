@@ -61,7 +61,7 @@ describe("critical clinical flow paths", () => {
       "strip",
       {
         q_strip_nitrite: answer("negative"),
-        q_strip_leuko: answer("positive"),
+        q_strip_leuko: answer("positive_1"),
         _role: "behandelaar",
       },
       { type: "redirect", target: "leukocyturie", raw: "redirect:leukocyturie" },
@@ -72,7 +72,7 @@ describe("critical clinical flow paths", () => {
       {
         q_strip_nitrite: answer("negative"),
         q_strip_leuko: answer("negative"),
-        q_strip_ery: answer("positive"),
+        q_strip_ery: answer("positive_1"),
         _role: "behandelaar",
       },
       { type: "redirect", target: "hematurie", raw: "redirect:hematurie" },

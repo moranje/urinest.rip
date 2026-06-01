@@ -29,14 +29,14 @@ questions:
         value: healthy
       - id: o_bac_risk_dm
         text: Diabetes mellitus of een verminderde weerstand
-        value: vulnerable
+        value: vulnerable_diabetes_immunocompromised
       - id: o_bac_risk_renal
         text: Afwijkingen aan nieren of urinewegen
         description: "Ernstige nierfunctiestoornissen (eGFR < 30 ml/min/1,73 m²), cystenieren, nierstenen, neurogene blaas, bemoeilijkte mictie of bekend blaasresidu"
-        value: vulnerable
+        value: vulnerable_renal_urologic
       - id: o_bac_risk_neuro
         text: Patiënten met neurologische blaasfunctiestoornissen
-        value: vulnerable
+        value: vulnerable_neurologic_bladder
       - id: o_bac_risk_elderly
         text: Kwetsbare ouderen
         value: elderly
@@ -60,10 +60,10 @@ questions:
     options:
       - id: o_bac_eld_two
         text: Twee of meer van urineweggerelateerde symptomen
-        value: symptomatic
+        value: symptomatic_multiple
       - id: o_bac_eld_one
         text: Één zeer hinderlijk urineweggerelateerd symptoom waarvoor geen andere verklaring kan worden gevonden
-        value: symptomatic
+        value: symptomatic_single_severe
       - id: o_bac_eld_none
         text: Andere symptomen
         value: asymptomatic
@@ -75,7 +75,7 @@ questions:
     conditions:
       - if: "tissueInvasion == local"
       - if: "riskAssessment == elderly"
-      - if: "elderly == symptomatic"
+      - if: "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']"
     options:
       - id: o_bac_sex_male
         text: Man
@@ -151,7 +151,7 @@ questions:
     conditions:
       - if: "_role != triagist"
       - if: "tissueInvasion == local"
-      - if: "riskAssessment == vulnerable"
+      - if: "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']"
       - if: "urinaryCatheter == no"
     options:
       - id: o_tx_lv_0
@@ -231,7 +231,7 @@ questions:
       - if: "_role != triagist"
       - if: "tissueInvasion == local"
       - if: "riskAssessment == elderly"
-      - if: "elderly == symptomatic"
+      - if: "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']"
       - if: "sex == female"
     options:
       - id: o_tx_lev_0
@@ -255,7 +255,7 @@ questions:
       - if: "_role != triagist"
       - if: "tissueInvasion == local"
       - if: "riskAssessment == elderly"
-      - if: "elderly == symptomatic"
+      - if: "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']"
       - if: "sex == male"
     options:
       - id: o_tx_lem_0
@@ -299,7 +299,7 @@ questions:
     conditions:
       - if: "_role != triagist"
       - if: "tissueInvasion == tissueInvasion"
-      - if: "riskAssessment == vulnerable"
+      - if: "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']"
       - if: "urinaryCatheter == no"
     options:
       - id: o_tx_tiv_0
@@ -455,7 +455,7 @@ questions:
     conditions:
       - if: "_role != triagist"
       - if: "tissueInvasion == tissueInvasion"
-      - if: "riskAssessment == vulnerable"
+      - if: "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']"
       - if: "urinaryCatheter == yes"
     options:
       - id: o_tx_tivc_0
@@ -1072,7 +1072,7 @@ logic:
     show: triage.u2
 
   # Triagist + local + vulnerable → U3 same-day referral
-  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == vulnerable"]
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']"]
     show: triage.u3
 
   # Triagist + local + elderly → U3 same-day referral
@@ -1108,7 +1108,7 @@ logic:
   # Local + catheter → no treatment (cadMen result used for both)
   - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == yes"]
     show: uti.local.cadMen
-  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == yes"]
+  - when: ["tissueInvasion == local", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == yes"]
     show: uti.local.cadMen
   - when: ["tissueInvasion == local", "riskAssessment == men", "urinaryCatheter == yes"]
     show: uti.local.cadMen
@@ -1126,11 +1126,11 @@ logic:
   - when: ["tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentLocalHealthy == 3"]
     show: uti.local.healthy.3
 
-  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 0"]
+  - when: ["tissueInvasion == local", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentLocalVulnerable == 0"]
     show: uti.local.vulnerable.0
-  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 1"]
+  - when: ["tissueInvasion == local", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentLocalVulnerable == 1"]
     show: uti.local.vulnerable.1
-  - when: ["tissueInvasion == local", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentLocalVulnerable == 2"]
+  - when: ["tissueInvasion == local", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentLocalVulnerable == 2"]
     show: uti.local.vulnerable.2
 
   - when: ["tissueInvasion == local", "riskAssessment == pregnant", "treatmentLocalPregnant == 0"]
@@ -1149,17 +1149,17 @@ logic:
     show: uti.local.children.1
 
   # Local + elderly + symptomatic + female → uses vulnerable treatment
-  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 0"]
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']", "sex == female", "treatmentLocalElderlyVulnerable == 0"]
     show: uti.local.vulnerable.0
-  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 1"]
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']", "sex == female", "treatmentLocalElderlyVulnerable == 1"]
     show: uti.local.vulnerable.1
-  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == female", "treatmentLocalElderlyVulnerable == 2"]
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']", "sex == female", "treatmentLocalElderlyVulnerable == 2"]
     show: uti.local.vulnerable.2
 
   # Local + elderly + symptomatic + male → uses men treatment
-  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == male", "treatmentLocalElderlyMen == 0"]
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']", "sex == male", "treatmentLocalElderlyMen == 0"]
     show: uti.local.men.0
-  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly == symptomatic", "sex == male", "treatmentLocalElderlyMen == 1"]
+  - when: ["tissueInvasion == local", "riskAssessment == elderly", "elderly in ['symptomatic_multiple', 'symptomatic_single_severe']", "sex == male", "treatmentLocalElderlyMen == 1"]
     show: uti.local.men.1
 
   # === Tissue invasion treatment selections ===
@@ -1171,11 +1171,11 @@ logic:
   - when: ["tissueInvasion == tissueInvasion", "riskAssessment == healthy", "urinaryCatheter == no", "treatmentTiHealthy == 2"]
     show: uti.tissueInvasion.healthy.2
 
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 0"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentTiVulnerable == 0"]
     show: uti.tissueInvasion.vulnerable.0
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 1"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentTiVulnerable == 1"]
     show: uti.tissueInvasion.vulnerable.1
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == no", "treatmentTiVulnerable == 2"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == no", "treatmentTiVulnerable == 2"]
     show: uti.tissueInvasion.vulnerable.2
 
   - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == no", "treatmentTiMen == 0"]
@@ -1221,9 +1221,9 @@ logic:
     show: uti.tissueInvasion.men.2
 
   # TI + vulnerable + catheter
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 0"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 0"]
     show: uti.tissueInvasion.vulnerable.0
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 1"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 1"]
     show: uti.tissueInvasion.vulnerable.1
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == vulnerable", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 2"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment in ['vulnerable_diabetes_immunocompromised', 'vulnerable_renal_urologic', 'vulnerable_neurologic_bladder']", "urinaryCatheter == yes", "treatmentTiVulnerableCatheter == 2"]
     show: uti.tissueInvasion.vulnerable.2

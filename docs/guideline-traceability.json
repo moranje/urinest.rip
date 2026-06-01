@@ -54,13 +54,13 @@
           "claim": "Leukocyten worden alleen na negatieve nitriet beoordeeld; negatieve nitriet plus negatieve leukocyten maakt UWI onwaarschijnlijk.",
           "verdict": "supported",
           "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"],
-          "optionValues": ["positive", "positive", "positive", "negative"]
+          "optionValues": ["positive_1", "positive_2", "positive_3", "negative"]
         },
         "q_strip_ery": {
           "claim": "Erytrocyten worden pas bij negatieve UWI-screening beoordeeld om hematurie niet te missen zonder de UWI-route te vervuilen.",
           "verdict": "supported",
           "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"],
-          "optionValues": ["positive", "positive", "positive", "positive", "negative"]
+          "optionValues": ["positive_1", "positive_2", "positive_3", "positive_4", "negative"]
         }
       },
       "results": {
@@ -313,9 +313,9 @@
           "sourceIds": ["nhg-uwi", "verenso-uwi"],
           "optionValues": [
             "healthy",
-            "vulnerable",
-            "vulnerable",
-            "vulnerable",
+            "vulnerable_diabetes_immunocompromised",
+            "vulnerable_renal_urologic",
+            "vulnerable_neurologic_bladder",
             "elderly",
             "pregnant",
             "men",
@@ -326,7 +326,7 @@
           "claim": "Bij kwetsbare ouderen worden alleen urineweggerelateerde klachten of weefselinvasie als UWI-ondersteunend gebruikt; aspecifieke klachten niet.",
           "verdict": "supported",
           "sourceIds": ["verenso-uwi"],
-          "optionValues": ["symptomatic", "symptomatic", "asymptomatic"]
+          "optionValues": ["symptomatic_multiple", "symptomatic_single_severe", "asymptomatic"]
         },
         "q_bac_sex": {
           "claim": "Geslacht bepaalt lokale cystitisbehandeling bij kwetsbare ouderen en katheterroutes.",
