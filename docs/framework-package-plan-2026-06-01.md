@@ -62,7 +62,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Progress calculation
 - [x] Typed outcome resolver
 - [ ] Redirect-cycle detector
-- [ ] Role/context injection via pure `RuntimeContext`
+- [x] Role/context injection via pure `RuntimeContext`
 - [x] Domein-agnostisch calculator extensiecontract
 - [ ] CVRM/PREVENT calculators buiten core houden als consumer/domain package
 - [ ] Deterministic audit trail model

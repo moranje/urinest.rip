@@ -23,3 +23,9 @@ export type {
   QuestionProgressInput,
 } from "./progress";
 export { getQuestionProgress } from "./progress";
+export type {
+  ApplyRuntimeContextOptions,
+  RuntimeContext,
+  RuntimeContextValues,
+} from "./runtime-context";
+export { applyRuntimeContext, createRuntimeContext, extendRuntimeContext } from "./runtime-context";

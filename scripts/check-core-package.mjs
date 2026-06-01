@@ -1,6 +1,7 @@
 import {
   createCalculatorRegistry,
   createMarkdownRenderer,
+  createRuntimeContext,
   getQuestionProgress,
   parseOutcome,
   toLegacyOutcome,
@@ -41,6 +42,11 @@ const calculators = createCalculatorRegistry([
 ]);
 if ((await calculators.run("score.sum", { values: [1, 2, 3] })) !== 6) {
   throw new Error("createCalculatorRegistry export failed");
+}
+
+const context = createRuntimeContext({ role: "clinician" });
+if (context.get("role") !== "clinician") {
+  throw new Error("createRuntimeContext export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

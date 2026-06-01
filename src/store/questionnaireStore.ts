@@ -4,6 +4,7 @@ import {
   validateConditions as validateConditionsEngine,
   determineOutcome,
 } from "decision-engine-core";
+import { applyRuntimeContext, createRuntimeContext, type RuntimeContext } from "@beslismodel/core";
 import { breadcrumbApi } from "../lib/breadcrumbs";
 import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
 import { guidelineReviews } from "../lib/guidelines";
@@ -279,14 +280,15 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
     }
   };
 
-  // == Logic Execution (injects _role from roleStore) ==
-  const getEnhancedAnswers = (questionnaireId: string): Record<string, unknown> => {
+  const getRuntimeContext = (): RuntimeContext => {
     const roleStore = useRoleStore();
+    return createRuntimeContext({ role: roleStore.role });
+  };
+
+  // == Logic Execution (injects runtime context for legacy engine conditions) ==
+  const getEnhancedAnswers = (questionnaireId: string): Record<string, unknown> => {
     const baseAnswers = getAllAnswersForQuestionnaire(questionnaireId);
-    return {
-      ...baseAnswers,
-      _role: roleStore.role,
-    };
+    return applyRuntimeContext(baseAnswers, getRuntimeContext(), { aliases: { role: "_role" } });
   };
 
   const validateConditions = (
@@ -311,14 +313,16 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
     providedAnswers: AnswerMap,
     logic: ResultLogicRule[],
   ): OutcomeResult => {
-    const roleStore = useRoleStore();
-    const enhanced = { ...providedAnswers, _role: roleStore.role };
+    const runtimeContext = getRuntimeContext();
+    const enhanced = applyRuntimeContext(providedAnswers, runtimeContext, {
+      aliases: { role: "_role" },
+    });
     try {
       return determineOutcome(enhanced, logic);
     } catch (error) {
       handleError(error, "decision-engine:determine-outcome", {
         questionnaireId,
-        role: roleStore.role,
+        role: runtimeContext.get("role"),
         logicCount: logic.length,
       });
       throw error;
@@ -350,6 +354,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
     getAnswer,
     getAllAnswersForQuestionnaire,
     clearAnswers,
+    getRuntimeContext,
     getEnhancedAnswers,
 
     validateConditions,

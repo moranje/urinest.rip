@@ -1,6 +1,8 @@
+import type { RuntimeContextValues } from "./runtime-context";
+
 export type CalculatorId = string;
 
-export interface CalculatorExecutionContext {
+export interface CalculatorExecutionContext extends RuntimeContextValues {
   readonly role?: string;
   readonly locale?: string;
   readonly now?: Date;
