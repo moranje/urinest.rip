@@ -84,4 +84,32 @@ logic:
       'Orphan question alias "orphan": defined but not referenced by any step.',
     );
   });
+
+  it("rejects unknown condition operators", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: unknown-operator
+version: "1"
+title: Unknown operator
+questions:
+  answer:
+    text: Answer
+    type: select
+    options:
+      - text: Yes
+        value: yes
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+logic:
+  - when: ["answer === yes"]
+    show: ok
+`);
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Invalid condition syntax: "answer === yes"',
+    );
+  });
 });

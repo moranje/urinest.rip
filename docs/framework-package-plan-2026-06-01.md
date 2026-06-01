@@ -152,7 +152,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Rule IDs deterministisch maken.
 - [x] `Question.type` union alignen met generated `select`.
 - [x] Manifest `name/title/hiddenFromLandingPage` types alignen.
-- [ ] Schema controleert unknown condition operators.
+- [x] Schema controleert unknown condition operators.
 - [x] Schema controleert orphan questions.
 - [ ] Schema controleert unreachable results.
 - [x] Schema controleert duplicate option values.

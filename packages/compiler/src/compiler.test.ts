@@ -78,6 +78,16 @@ describe("compiler package", () => {
     );
   });
 
+  it("rejects unknown condition operators", async () => {
+    const { flowsDir, outputFile } = await createFixture(
+      validFlow.replace('when: ["answer == yes"]', 'when: ["answer === yes"]'),
+    );
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Invalid condition syntax: "answer === yes"',
+    );
+  });
+
   it("exposes a Vite-compatible plugin build hook", async () => {
     const { dir } = await createFixture(validFlow);
     const plugin = decisionEngine({
