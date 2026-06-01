@@ -38,8 +38,8 @@ results:
   other.noConclusiveAbnormality:
     title: "Geen afwijkingen gevonden"
     description: "Geen urineweginfectie gevonden."
-    documentation: "Het urine sediment toonde minder dan 20 bacteriën per gezichtsveld. De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen."
-    explainer: "Het sediment toont geen aanwijzingen voor een bacteriële urineweginfectie. Bij aanhoudende klachten moeten andere oorzaken worden overwogen."
+    documentation: "Het urine sediment toonde minder dan 20 bacteriën per gezichtsveld. De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen. Overweeg bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, ook ketamine-gerelateerde urologische klachten."
+    explainer: "Het sediment toont geen aanwijzingen voor een bacteriële urineweginfectie. Bij aanhoudende klachten moeten andere oorzaken worden overwogen. Wees bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, alert op ketamine-gerelateerde urologische klachten."
     sources:
       - name: "NHG-Standaard Urineweginfecties: beleid"
         url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"

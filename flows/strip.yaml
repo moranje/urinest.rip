@@ -78,8 +78,8 @@ results:
   other.noConclusiveAbnormality:
     title: "Geen afwijkingen gevonden"
     description: "Geen urineweginfectie gevonden."
-    documentation: "De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen. Bij kwetsbare ouderen wordt een negatieve nitriet in combinatie met leukocytentest gebruikt om een urineweginfectie uit te sluiten."
-    explainer: "Geen met zekerheid pathologische afwijkingen gevonden. Afwijkende waarden kunnen in bepaalde gevallen weldegelijk van betekenis zijn (glucosurie bij een niet-diabeet) maar moeten op individuele basis afgewogen worden."
+    documentation: "De kans op een urineweginfectie is verwaarloosbaar, bij aanhoudende klachten moeten andere oorzaken worden overwogen. Bij kwetsbare ouderen wordt een negatieve nitriet in combinatie met leukocytentest gebruikt om een urineweginfectie uit te sluiten. Overweeg bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, ook ketamine-gerelateerde urologische klachten."
+    explainer: "Geen met zekerheid pathologische afwijkingen gevonden. Afwijkende waarden kunnen in bepaalde gevallen weldegelijk van betekenis zijn (glucosurie bij een niet-diabeet) maar moeten op individuele basis afgewogen worden. Wees bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, alert op ketamine-gerelateerde urologische klachten."
     sources:
       - name: "NHG-Standaard Urineweginfecties: beleid"
         url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-richtlijnen-beleid-bij-cystitis"

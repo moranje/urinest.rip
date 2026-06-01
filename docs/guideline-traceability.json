@@ -1,0 +1,574 @@
+{
+  "reviewedOn": "2026-06-01",
+  "maxReviewAgeDays": 183,
+  "sources": {
+    "nhg-uwi": {
+      "title": "NHG-Standaard Urineweginfecties",
+      "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties",
+      "checkedOn": "2026-06-01"
+    },
+    "nhg-lab": {
+      "title": "NHG LESA Laboratoriumdiagnostiek: urineweginfecties",
+      "url": "https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek",
+      "checkedOn": "2026-06-01"
+    },
+    "nhg-pivmecillinam": {
+      "title": "NHG kennislacune pivmecillinam bij gezonde niet-zwangere vrouwen met cystitis",
+      "url": "https://richtlijnen.nhg.org/lacunes/pivmecillinam-bij-gezonde-niet-zwangere-vrouwen-met-cystitis",
+      "checkedOn": "2026-06-01"
+    },
+    "verenso-uwi": {
+      "title": "Verenso richtlijn Urineweginfecties bij kwetsbare ouderen",
+      "url": "https://www.verenso.nl/assets/Richtlijnen_kwaliteit/richtlijnen/database/Urineweginfecties/Overzicht-aanbevelingen-richtlijn-Urineweginfecties.pdf",
+      "checkedOn": "2026-06-01"
+    },
+    "nvu-hematurie": {
+      "title": "NVU richtlijn Hematurie 2023",
+      "url": "https://richtlijnendatabase.nl/richtlijn/hematurie/startpagina_bij_de_richtlijn_hematurie_2023.html",
+      "checkedOn": "2026-06-01"
+    },
+    "nvkc-hematurie-lab": {
+      "title": "NVKC/FMS Eenduidige en accurate laboratoriumdiagnostiek bij hematurie",
+      "url": "https://richtlijnendatabase.nl/richtlijn/eenduidige_en_accurate_laboratoriumdiagnostiek_bij_hematurie/indicatie_en_patientengroep_bij_hematurie.html",
+      "checkedOn": "2026-06-01"
+    },
+    "nhg-triagewijzer": {
+      "title": "NHG-TriageWijzer: urgentiecategorieen en urinewegproblemen",
+      "url": "https://triagewijzer.nhg.org/ingangsklachten/urinewegproblemen",
+      "checkedOn": "2026-06-01"
+    }
+  },
+  "flows": {
+    "strip": {
+      "claim": "De urinestrip-flow beoordeelt nitriet eerst, gebruikt leukocyten als vervolg bij negatieve nitriet en routeert geisoleerde erythrocyturie naar hematurieanalyse.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi", "nvkc-hematurie-lab"],
+      "questions": {
+        "q_strip_nitrite": {
+          "claim": "Nitriet is de eerste test omdat een positieve nitriettest de diagnose UWI ondersteunt/bevestigt.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"],
+          "optionValues": ["positive", "negative"]
+        },
+        "q_strip_leuko": {
+          "claim": "Leukocyten worden alleen na negatieve nitriet beoordeeld; negatieve nitriet plus negatieve leukocyten maakt UWI onwaarschijnlijk.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"],
+          "optionValues": ["positive", "positive", "positive", "negative"]
+        },
+        "q_strip_ery": {
+          "claim": "Erytrocyten worden pas bij negatieve UWI-screening beoordeeld om hematurie niet te missen zonder de UWI-route te vervuilen.",
+          "verdict": "supported",
+          "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"],
+          "optionValues": ["positive", "positive", "positive", "positive", "negative"]
+        }
+      },
+      "results": {
+        "other.noConclusiveAbnormality": {
+          "claim": "Negatieve nitriet, leukocyten en erytrocyten sluiten een relevante afwijking grotendeels uit; bij persisterende klachten volgt differentiaaldiagnostiek, inclusief NHG ketamine-alert.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+        }
+      },
+      "redirects": {
+        "bacteriurie": {
+          "claim": "Positieve nitriet past bij bacteriurie/UWI en hoort naar de UWI-behandelroute te gaan.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        },
+        "leukocyturie": {
+          "claim": "Negatieve nitriet met positieve leukocyten vraagt vervolgdiagnostiek in plaats van directe antibiotica.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+        },
+        "hematurie": {
+          "claim": "Geisoleerde erythrocyturie moet als hematurie worden beoordeeld.",
+          "verdict": "supported",
+          "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+        }
+      }
+    },
+    "sediment": {
+      "claim": "Sediment beoordeelt bacteriurie en monstercontaminatie als alternatief voor dipslide bij voldoende expertise.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-lab"],
+      "questions": {
+        "q_sed_bacteruria": {
+          "claim": "Bacterien per gezichtsveld en plaveiselepitheel bepalen respectievelijk UWI-waarschijnlijkheid en contaminatie.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-lab"],
+          "optionValues": ["positive", "contaminated", "negative"]
+        }
+      },
+      "results": {
+        "other.contaminatedSediment": {
+          "claim": "Veel plaveiselepitheel maakt het monster onvoldoende betrouwbaar en rechtvaardigt herhaling.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-lab"]
+        },
+        "other.noConclusiveAbnormality": {
+          "claim": "Negatief sediment maakt bacteriele UWI onwaarschijnlijk; bij persisterende klachten volgt andere diagnostiek, inclusief NHG ketamine-alert.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      },
+      "redirects": {
+        "bacteriurie": {
+          "claim": "Positieve bacteriurie in sediment ondersteunt de UWI-route.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      }
+    },
+    "leukocyturie": {
+      "claim": "Geisoleerde leukocyturie wordt gescheiden naar katheter, kind, kwetsbare oudere en overige patienten om overbehandeling te voorkomen.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"],
+      "questions": {
+        "q_leuk_population": {
+          "claim": "Katheterstatus, kinderleeftijd en kwetsbare oudere status bepalen of kweek, uitsluiten of aanvullend onderzoek passend is.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["cad", "child", "elderlySymptomatic", "elderlyAsymptomatic", "none"]
+        },
+        "q_leuk_followup_general": {
+          "claim": "Bij overige patienten zijn dipslide, sediment of kweek geldige vervolgonderzoeken na negatieve nitriet en positieve leukocyten.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"],
+          "optionValues": ["dipslide", "urineSediment", "urineCulture"]
+        },
+        "q_leuk_followup_child": {
+          "claim": "Bij kinderen zijn dipslide of kweek vervolgstappen; sediment heeft geen rol in UWI-diagnostiek bij kinderen onder 12 jaar.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"],
+          "optionValues": ["dipslide", "urineCulture"]
+        }
+      },
+      "results": {
+        "leukocytes.cad": {
+          "claim": "Bij katheterpatienten wordt niet behandeld op leukocyturie alleen; diagnose UWI vraagt kliniek en bij weefselinvasie kweek.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"]
+        },
+        "leukocytes.noCulture": {
+          "claim": "Kwetsbare ouderen zonder urineweggerelateerde klachten of weefselinvasie krijgen geen antibiotica voor asymptomatische bacteriurie/leukocyturie.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi"]
+        }
+      },
+      "resultGroups": [
+        {
+          "id": "followupDiagnostics",
+          "keys": ["leukocytes.urineCulture", "leukocytes.dipslide", "leukocytes.urineSediment"],
+          "claim": "Aanvullende diagnostiek is onderbouwd bij positieve leukocyten na negatieve nitriet, met kweek voor risicopaden en dipslide/sediment als praktijkopties.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+        }
+      ],
+      "redirects": {}
+    },
+    "kweek": {
+      "claim": "De kweek-flow beoordeelt positieve, ambigue en negatieve urinekweekuitslagen en routeert alleen overtuigende bacteriegroei naar UWI-beleid.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-lab"],
+      "questions": {
+        "q_kweek_result": {
+          "claim": "Kweekuitslagen worden gescheiden naar significante groei, lage groei met klinische verdenking en negatieve kweek.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"],
+          "optionValues": ["positive", "ambiguous", "negative"]
+        }
+      },
+      "results": {
+        "other.ambiguousCulture": {
+          "claim": "Lage groei met aanhoudende verdenking kan overleg met arts-microbioloog rechtvaardigen.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        },
+        "other.noUrineTractInfection": {
+          "claim": "Negatieve kweek sluit bacteriele UWI met voldoende zekerheid uit; bij persisterende dysurie volgt differentiaaldiagnostiek, inclusief NHG ketamine-alert.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      },
+      "redirects": {
+        "bacteriurie": {
+          "claim": "Significante bacteriegroei hoort naar UWI-classificatie en beleid te gaan.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      }
+    },
+    "hematurie": {
+      "claim": "Hematurie wordt onderscheiden in zichtbare hematurie, hematurie met proteinurie en microscopische hematurie vanwege verschillende follow-up en verwijspaden.",
+      "verdict": "supported",
+      "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab", "nhg-uwi"],
+      "questions": {
+        "q_hematuria_type": {
+          "claim": "Type hematurie is het minimale onderscheid dat nodig is voor vervolgdiagnostiek.",
+          "verdict": "supported",
+          "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"],
+          "optionValues": ["visible", "proteinuria", "microscopic"]
+        }
+      },
+      "resultGroups": [
+        {
+          "id": "hematuriaResults",
+          "keys": ["blood.visibleHematuria", "blood.proteinuria", "blood.microscopicHematuria"],
+          "claim": "Zichtbare hematurie, proteïnurie en persisterende microscopische hematurie vragen aanvullende diagnostiek of verwijzing afhankelijk van risico en nefrologische signalen.",
+          "verdict": "supported",
+          "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+        }
+      ],
+      "redirects": {}
+    },
+    "gezonde-vrouwen": {
+      "claim": "Deze afgebakende flow ondersteunt anamnese-gebaseerde waarschijnlijkheidsdiagnose alleen bij gezonde niet-zwangere vrouwen wanneer alle NHG-criteria aanwezig zijn.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-pivmecillinam"],
+      "questions": {
+        "q_gv_checklist": {
+          "claim": "Alle zeven NHG-criteria zijn nodig om zonder urineonderzoek een waarschijnlijkheidsdiagnose cystitis te stellen.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["1", "2", "3", "4", "5", "6", "7"]
+        },
+        "q_gv_treatment": {
+          "claim": "Afwachten, nitrofurantoine, fosfomycine en trimethoprim volgen het NHG-beleid; pivmecillinam is bewust geen standaardoptie vanwege lage/zeer lage bewijszekerheid en terughoudend advies.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-pivmecillinam"],
+          "optionValues": ["0", "1", "2", "3"]
+        }
+      },
+      "results": {
+        "other.ruleNotApplicable": {
+          "claim": "Als een van de NHG-criteria ontbreekt, is diagnose op anamnese alleen niet onderbouwd; bij onverklaarde/recidiverende dysurie geldt de NHG ketamine-alert.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        }
+      },
+      "resultGroups": [
+        {
+          "id": "healthyTreatmentResults",
+          "keys": [
+            "uti.local.healthy.0",
+            "uti.local.healthy.1",
+            "uti.local.healthy.2",
+            "uti.local.healthy.3"
+          ],
+          "claim": "De behandelopties voor gezonde niet-zwangere vrouwen volgen het NHG-stappenplan en bevatten geen overbodige pivmecillinam-optie.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-pivmecillinam"]
+        }
+      ],
+      "redirects": {}
+    },
+    "dipslide": {
+      "claim": "De dipslide-flow gebruikt MacConkey en CLED-groei om positieve bacteriegroei naar UWI-beleid te sturen en negatieve groei af te sluiten.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "nhg-lab"],
+      "questions": {
+        "q_ds_macconkey": {
+          "claim": "MacConkey-groei op gramnegatieve verwekkers ondersteunt bacteriurie.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-lab"],
+          "optionValues": ["positive", "negative"]
+        },
+        "q_ds_cled": {
+          "claim": "CLED beoordeelt kolonievormende eenheden als vervolg wanneer MacConkey negatief is.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-lab"],
+          "optionValues": ["positive", "negative"]
+        }
+      },
+      "results": {
+        "other.negativeDipslide": {
+          "claim": "Negatieve dipslide maakt UWI onwaarschijnlijk.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      },
+      "redirects": {
+        "bacteriurie": {
+          "claim": "Positieve dipslide hoort naar UWI-classificatie en beleid te gaan.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-lab"]
+        }
+      }
+    },
+    "bacteriurie": {
+      "claim": "De bacteriurie-flow classificeert cystitis versus weefselinvasie en splitst beleid naar NHG/Verenso-patientgroepen, katheterstatus, geslacht, zwangerschap en leeftijd.",
+      "verdict": "supported",
+      "sourceIds": ["nhg-uwi", "verenso-uwi", "nhg-triagewijzer"],
+      "questions": {
+        "q_bac_tissue": {
+          "claim": "Onderscheid tussen lokale cystitis en UWI met tekenen van weefselinvasie is de primaire NHG-indeling.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["local", "tissueInvasion"]
+        },
+        "q_bac_risk": {
+          "claim": "Risicogroepen zoals diabetes/verminderde weerstand, afwijkingen urinewegen, neurologische blaasstoornis, kwetsbare ouderen, zwangerschap, mannen en kinderen bepalen beleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": [
+            "healthy",
+            "vulnerable",
+            "vulnerable",
+            "vulnerable",
+            "elderly",
+            "pregnant",
+            "men",
+            "children"
+          ]
+        },
+        "q_bac_elderly": {
+          "claim": "Bij kwetsbare ouderen worden alleen urineweggerelateerde klachten of weefselinvasie als UWI-ondersteunend gebruikt; aspecifieke klachten niet.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi"],
+          "optionValues": ["symptomatic", "symptomatic", "asymptomatic"]
+        },
+        "q_bac_sex": {
+          "claim": "Geslacht bepaalt lokale cystitisbehandeling bij kwetsbare ouderen en katheterroutes.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["male", "female"]
+        },
+        "q_bac_sex_ti": {
+          "claim": "Geslacht bepaalt beleid bij weefselinvasie, waaronder prostatitisroutes bij mannen.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["male", "female"]
+        },
+        "q_bac_catheter": {
+          "claim": "Katheterstatus verandert diagnostiek en beleid: niet behandelen op bacteriurie alleen en bij verdenking kweek/katheterbeleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["yes", "no"]
+        },
+        "q_bac_tx_local_healthy": {
+          "claim": "Behandelopties voor lokale cystitis bij gezonde niet-zwangere vrouwen volgen afwachten, nitrofurantoine, fosfomycine en trimethoprim.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-pivmecillinam"],
+          "optionValues": ["0", "1", "2", "3"]
+        },
+        "q_bac_tx_local_vulnerable": {
+          "claim": "Lokale cystitis bij risicogroepen gebruikt nitrofurantoine, fosfomycine en kweekgestuurde/alternatieve opties volgens NHG.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_local_pregnant": {
+          "claim": "Zwangeren met cystitis hebben een smallere behandelset met nitrofurantoine en amoxicilline/clavulaanzuur; nitrofurantoine heeft termijnwaarschuwing.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1"]
+        },
+        "q_bac_tx_local_men": {
+          "claim": "Mannen met cystitis volgen geslachtsspecifieke behandeling met langere duur en beperkte opties.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1"]
+        },
+        "q_bac_tx_local_children": {
+          "claim": "Kinderen hebben een aparte behandelset en verwijscriteria.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1"]
+        },
+        "q_bac_tx_local_elderly_vuln": {
+          "claim": "Kwetsbare oudere vrouwen met meerdere/ernstige urinewegklachten volgen terughoudend maar behandelbaar Verenso/NHG beleid.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi", "nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_local_elderly_men": {
+          "claim": "Kwetsbare oudere mannen volgen de mannenroute wanneer behandeling geindiceerd is.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi", "nhg-uwi"],
+          "optionValues": ["0", "1"]
+        },
+        "q_bac_tx_ti_healthy": {
+          "claim": "Weefselinvasie bij gezonde vrouwen vraagt middelen met weefselpenetratie.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_vulnerable": {
+          "claim": "Weefselinvasie bij risicogroepen gebruikt middelen met weefselpenetratie en kweekgestuurde aanpassing.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_men": {
+          "claim": "Weefselinvasie/prostatitis bij mannen vraagt geslachtsspecifieke duur en middelkeuze.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_children": {
+          "claim": "Weefselinvasie bij kinderen gebruikt kind-specifieke behandeling en verwijzing.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"],
+          "optionValues": ["0", "1"]
+        },
+        "q_bac_tx_ti_cad_woman": {
+          "claim": "Kathetergerelateerde UWI met weefselinvasie bij vrouwen volgt katheter- en kweekbeleid plus middelen met weefselpenetratie.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_cad_men": {
+          "claim": "Kathetergerelateerde UWI met weefselinvasie bij mannen volgt katheter- en kweekbeleid plus mannen/prostatitisduur.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_elderly_woman": {
+          "claim": "Kwetsbare oudere vrouwen met weefselinvasie volgen Verenso/NHG beleid met lokale resistentie/kweekcontext.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi", "nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_elderly_men": {
+          "claim": "Kwetsbare oudere mannen met weefselinvasie volgen Verenso/NHG mannenbeleid.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi", "nhg-uwi"],
+          "optionValues": ["0", "1", "2"]
+        },
+        "q_bac_tx_ti_vuln_cath": {
+          "claim": "Risicogroepen met katheter en weefselinvasie volgen katheter- en kweekbeleid met middelen die weefselspiegels halen.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"],
+          "optionValues": ["0", "1", "2"]
+        }
+      },
+      "resultGroups": [
+        {
+          "id": "triageUrgency",
+          "keys": ["triage.u2", "triage.u3"],
+          "claim": "Triagist-uitkomsten beperken zich tot urgentie en spreekuurverwijzing; U2/U3-labels volgen publieke NHG-TriageWijzer urgentiecategorieen en klinische UWI-risico-inschatting.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-triagewijzer", "nhg-uwi", "verenso-uwi"]
+        },
+        {
+          "id": "noAntibiotics",
+          "keys": ["uti.local.elderly", "uti.local.cadMen"],
+          "claim": "Asymptomatische kwetsbare ouderen en katheterpatienten zonder weefselinvasie worden niet behandeld op bacteriurie alleen.",
+          "verdict": "supported",
+          "sourceIds": ["verenso-uwi", "nhg-uwi"]
+        },
+        {
+          "id": "pregnantTissueInvasion",
+          "keys": ["uti.tissueInvasion.pregnant"],
+          "claim": "Zwangeren met tekenen van weefselinvasie worden verwezen/overlegd vanwege hoger risico en afwijkend beleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "localHealthy",
+          "keys": [
+            "uti.local.healthy.0",
+            "uti.local.healthy.1",
+            "uti.local.healthy.2",
+            "uti.local.healthy.3"
+          ],
+          "claim": "Lokale cystitis bij gezonde niet-zwangere vrouwen volgt afwachten en NHG-antibiotica in volgorde; pivmecillinam blijft buiten het standaardpad.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "nhg-pivmecillinam"]
+        },
+        {
+          "id": "localVulnerable",
+          "keys": ["uti.local.vulnerable.0", "uti.local.vulnerable.1", "uti.local.vulnerable.2"],
+          "claim": "Lokale cystitis bij risicogroepen volgt NHG-behandelopties en kweekbeleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "localPregnant",
+          "keys": ["uti.local.pregnant.0", "uti.local.pregnant.1"],
+          "claim": "Lokale cystitis bij zwangeren volgt NHG-behandelopties; nitrofurantoine bevat de veiligheidscheck vanaf 36 weken.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "localMen",
+          "keys": ["uti.local.men.0", "uti.local.men.1"],
+          "claim": "Lokale cystitis bij mannen volgt NHG-mannenbeleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "localChildren",
+          "keys": ["uti.local.children.0", "uti.local.children.1"],
+          "claim": "Lokale cystitis bij kinderen volgt kind-specifieke NHG-opties.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "tissueHealthy",
+          "keys": [
+            "uti.tissueInvasion.healthy.0",
+            "uti.tissueInvasion.healthy.1",
+            "uti.tissueInvasion.healthy.2"
+          ],
+          "claim": "Weefselinvasie bij gezonde vrouwen gebruikt NHG-middelen met weefselpenetratie en follow-up.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "tissueVulnerable",
+          "keys": [
+            "uti.tissueInvasion.vulnerable.0",
+            "uti.tissueInvasion.vulnerable.1",
+            "uti.tissueInvasion.vulnerable.2"
+          ],
+          "claim": "Weefselinvasie bij kwetsbare/risicopatienten gebruikt NHG/Verenso opties met kweekgestuurde stroomlijning.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"]
+        },
+        {
+          "id": "tissueMen",
+          "keys": [
+            "uti.tissueInvasion.men.0",
+            "uti.tissueInvasion.men.1",
+            "uti.tissueInvasion.men.2"
+          ],
+          "claim": "Weefselinvasie/prostatitis bij mannen volgt NHG-opties en duur.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "tissueChildren",
+          "keys": ["uti.tissueInvasion.children.0", "uti.tissueInvasion.children.1"],
+          "claim": "Weefselinvasie bij kinderen volgt kind-specifiek NHG-beleid en verwijzing/follow-up.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi"]
+        },
+        {
+          "id": "tissueCatheterWomen",
+          "keys": [
+            "uti.tissueInvasion.cadWoman.0",
+            "uti.tissueInvasion.cadWoman.1",
+            "uti.tissueInvasion.cadWoman.2"
+          ],
+          "claim": "Kathetergerelateerde UWI met weefselinvasie bij vrouwen volgt kathetervervanging/kweek en empirische opties.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"]
+        },
+        {
+          "id": "tissueCatheterMen",
+          "keys": [
+            "uti.tissueInvasion.cadMen.0",
+            "uti.tissueInvasion.cadMen.1",
+            "uti.tissueInvasion.cadMen.2"
+          ],
+          "claim": "Kathetergerelateerde UWI met weefselinvasie bij mannen volgt kathetervervanging/kweek en mannenbeleid.",
+          "verdict": "supported",
+          "sourceIds": ["nhg-uwi", "verenso-uwi"]
+        }
+      ],
+      "redirects": {}
+    }
+  }
+}

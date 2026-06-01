@@ -73,8 +73,8 @@ results:
   other.ruleNotApplicable:
     title: "Diagnose niet mogelijk op anamnese alleen"
     description: "Verdere diagnostiek nodig."
-    documentation: "Op basis van de anamnese alleen is geen waarschijnlijkheidsdiagnose urineweginfectie te stellen."
-    explainer: "Stel de waarschijnlijkheidsdiagnose alleen als aan alle criteria voldaan wordt."
+    documentation: "Op basis van de anamnese alleen is geen waarschijnlijkheidsdiagnose urineweginfectie te stellen. Overweeg bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, ook ketamine-gerelateerde urologische klachten."
+    explainer: "Stel de waarschijnlijkheidsdiagnose alleen als aan alle criteria voldaan wordt. Wees bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, alert op ketamine-gerelateerde urologische klachten."
     sources:
       - name: "NHG-Standaard Urineweginfecties: evaluatie"
         url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-evaluatie"

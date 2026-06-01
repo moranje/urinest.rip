@@ -39,8 +39,8 @@ results:
   other.noUrineTractInfection:
     title: "Geen urineweginfectie"
     description: "Geen behandeling nodig."
-    documentation: "Geen bacterie in de urinekweek. Urineweginfectie met voldoende zekerheid uitgesloten."
-    explainer: "De urinekweek is de gouden standaard voor het bepalen van een urineweginfectie."
+    documentation: "Geen bacterie in de urinekweek. Urineweginfectie met voldoende zekerheid uitgesloten. Overweeg bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, ook ketamine-gerelateerde urologische klachten."
+    explainer: "De urinekweek is de gouden standaard voor het bepalen van een urineweginfectie. Wees bij onverklaarde, therapieresistente of recidiverende dysurie, vooral bij jongvolwassenen, alert op ketamine-gerelateerde urologische klachten."
     sources:
       - name: "NHG-Standaard Urineweginfecties: aanvullend onderzoek"
         url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst-aanvullend-onderzoek"

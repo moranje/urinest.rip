@@ -176,6 +176,19 @@ describe("critical clinical flow paths", () => {
     );
     expect(result.warnings).toContain("gecontra-indiceerd vanaf 36 weken zwangerschap");
   });
+
+  it("surfaces ketamine-related differential diagnosis on unexplained negative UWI outcomes", () => {
+    const results = [
+      getFlow("strip").results["other.noConclusiveAbnormality"],
+      getFlow("sediment").results["other.noConclusiveAbnormality"],
+      getFlow("kweek").results["other.noUrineTractInfection"],
+      getFlow("gezonde-vrouwen").results["other.ruleNotApplicable"],
+    ] as Array<{ documentation?: string; explainer?: string }>;
+
+    for (const result of results) {
+      expect(`${result.documentation ?? ""} ${result.explainer ?? ""}`).toContain("ketamine");
+    }
+  });
 });
 
 describe("dead-end coverage", () => {

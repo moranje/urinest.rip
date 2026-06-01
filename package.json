@@ -10,6 +10,7 @@
     "prepare": "husky",
     "check": "vue-tsc --noEmit",
     "check:tsgo": "tsgo --noEmit --project tsconfig.tsgo.json",
+    "check:guidelines": "node scripts/check-guideline-traceability.mjs",
     "format": "oxfmt --write src/",
     "format:check": "oxfmt --check src/",
     "budget": "node scripts/check-bundle-budget.mjs",

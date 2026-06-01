@@ -18,6 +18,7 @@ Vue 3 + Vite SPA voor huisartsen. Klinische beslisbomen in YAML (`flows/`), geco
 - `npm run build` — productie build
 - `npm run check` — vue-tsc type-check
 - `npm run check:tsgo` — TypeScript Go/native preview check voor TS-only lagen
+- `npm run check:guidelines` — valideert richtlijntraceerbaarheid voor alle UI-flowstappen
 - `npm run lint` — oxlint
 - `npm run lint:eslint` — eslint (security rules)
 - `npm run lint:all` — oxlint + eslint
@@ -38,6 +39,7 @@ Conventional commits (commitlint). Types: feat, fix, docs, chore, ci, refactor, 
 
 ### Richtlijn review-datums
 Bij inhoudelijke wijzigingen aan flows MOET de `reviewed` datum in `src/views/AboutPage.vue` gecontroleerd en bijgewerkt worden voor de betreffende richtlijn(en). De build-datum (`__BUILD_DATE__`) wordt automatisch ingevuld door Vite.
+Elke zichtbare vraag, antwoordset, resultaatkaart en redirect moet ook in `docs/guideline-traceability.json` onderbouwd zijn. Draai na flowwijzigingen `npm run build` en `npm run check:guidelines`.
 
 ### Flows
 YAML bestanden in `flows/`. Elke flow heeft: id, version, title, description, questions, steps, results, resultsLogic. Validatie vindt plaats tijdens build via de decision-engine-core plugin.
