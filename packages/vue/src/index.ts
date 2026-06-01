@@ -24,5 +24,14 @@ export type {
   CreateBeslismodelDataReadyGuardOptions,
 } from "./router";
 export { createBeslismodelDataReadyGuard } from "./router";
+export type {
+  BeslismodelFullRunnerQuestionnaire,
+  BeslismodelQuestionnaireRunnerStore,
+  BeslismodelRunnerQuestionnaire,
+  BeslismodelRunnerTransition,
+  StartQuestionnaireRunnerOptions,
+  UseQuestionnaireRunnerOptions,
+} from "./questionnaire-runner";
+export { useQuestionnaireRunner } from "./questionnaire-runner";
 export type { BeslismodelTelemetryAdapter, BeslismodelTelemetryEvent } from "./telemetry";
 export { noopTelemetryAdapter } from "./telemetry";

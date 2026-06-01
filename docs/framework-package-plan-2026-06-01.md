@@ -94,7 +94,7 @@ YAML/JSON naar strict manifest.
 Vue runtime en UI.
 
 - [x] `createBeslismodelStore({ loadManifest, storage, contextProvider, telemetry, onError })`
-- [ ] `useQuestionnaireRunner`
+- [x] `useQuestionnaireRunner`
 - [x] `useResultResolver`
 - [x] Route helpers
 - [ ] `QuestionnaireRunner`
@@ -266,6 +266,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Package unit tests per package.
 - [x] Result resolver package tests.
 - [x] Route helper package tests.
+- [x] Questionnaire runner package tests.
 - [ ] Consumer fixture app.
 - [ ] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.
 - [ ] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
@@ -323,7 +324,7 @@ Exit criteria:
 ### Ronde 2 — Vue Runtime
 
 - [x] Store factory.
-- [ ] Runner composable.
+- [x] Runner composable.
 - [ ] Questionnaire organism.
 - [x] Result resolver composable.
 - [ ] Result renderer organism.

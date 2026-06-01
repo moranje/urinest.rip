@@ -6,6 +6,7 @@ import {
   createBeslismodelDataReadyGuard,
   createBeslismodelStore,
   noopTelemetryAdapter,
+  useQuestionnaireRunner,
   useResultResolver,
 } from "../packages/vue/dist/index.js";
 
@@ -87,6 +88,35 @@ const guard = createBeslismodelDataReadyGuard({
 
 if ((await guard({ name: "Questionnaire" }, { name: "Landing" })) !== true) {
   throw new Error("vue package route helper export failed");
+}
+
+const runner = useQuestionnaireRunner(
+  {
+    getAllAnswersForQuestionnaire: () => ({}),
+    getAnswer: () => undefined,
+    getEnhancedAnswers: () => ({}),
+    getFullQuestionnaire: () => ({
+      id: "package-smoke",
+      version: "1",
+      questionIds: ["q1"],
+      stepIds: [],
+      questions: [{ id: "q1", text: "Question", type: "select", options: [] }],
+      steps: [],
+    }),
+    getQuestionById: () => ({ id: "q1", text: "Question", type: "select", options: [] }),
+    getQuestionnaireById: () => ({
+      id: "package-smoke",
+      version: "1",
+      questionIds: ["q1"],
+      stepIds: [],
+    }),
+    getStepById: () => undefined,
+  },
+  { questionnaireId: "package-smoke" },
+);
+
+if (runner.start().type !== "question") {
+  throw new Error("vue package questionnaire runner export failed");
 }
 
 noopTelemetryAdapter.track({
