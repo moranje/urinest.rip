@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build:flows": "node scripts/build-flows.mjs",
+    "build:core": "vite build --config packages/core/vite.config.ts && tsc -p packages/core/tsconfig.json",
+    "build:packages": "npm run build:core",
     "build": "vite build",
     "pretest": "npm run build:flows",
     "preview": "vite preview",

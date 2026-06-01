@@ -28,7 +28,7 @@ jobs:
 
       - name: Lint + Type-check + Tests (parallel)
         run: |
-          npx oxlint src/ --deny-warnings &
+          npm run lint &
           PID_LINT=$!
           npm run lint:eslint &
           PID_ESLINT=$!
@@ -63,6 +63,9 @@ jobs:
 
       - name: Storybook build (geen deploy)
         run: npm run build-storybook
+
+      - name: Package build
+        run: npm run build:packages
 
       - name: Production build
         run: npm run build

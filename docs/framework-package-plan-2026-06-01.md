@@ -333,8 +333,8 @@ Exit criteria:
 
 ### Ronde 5 — Package Build
 
-- [ ] Exports/files/declarations.
-- [ ] Library build via Rolldown/Vite.
+- [x] Exports/files/declarations.
+- [x] Library build via Rolldown/Vite.
 - [ ] Consumer fixture app.
 - [ ] CI matrix.
 - [ ] Versioning strategy.
