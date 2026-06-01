@@ -520,7 +520,12 @@ const withViewTransition = (mutate: () => void): void => {
 };
 
 const goToNextQuestion = (branch?: string): void => {
-  withViewTransition(() => advanceQuestionState(branch));
+  const nextId = findNextQuestionId(currentQuestionId.value);
+  if (nextId) {
+    withViewTransition(() => advanceQuestionState(branch));
+    return;
+  }
+  advanceQuestionState(branch);
 };
 
 const goToPreviousQuestion = (): void => {
