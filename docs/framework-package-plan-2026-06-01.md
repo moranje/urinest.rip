@@ -131,7 +131,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Role injection `_role` vervangen door framework context provider.
 - [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
 - [ ] Redirect-chain logic uit page naar core/runtime.
-- [ ] Markdown renderer injectable maken met sanitizer contract.
+- [x] Markdown renderer injectable maken met sanitizer contract.
 - [ ] Admin routes buiten framework houden.
 - [ ] App shell en framework runner scheiden.
 
@@ -237,7 +237,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] No PHI in storage contract.
 - [ ] Storage TTL en keys configureerbaar.
 - [ ] CSP guidance voor consumer apps.
-- [ ] Sanitizer contract verplicht voor markdown/html.
+- [x] Sanitizer contract verplicht voor markdown/html.
 - [ ] Dependency audit in package CI.
 - [ ] Secret scanning in CI.
 - [ ] RLS/admin dashboard blijft app-only.
@@ -270,7 +270,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Core package zero DOM/framework dependencies.
 - [ ] Vue package tree-shakeable exports.
 - [ ] Admin/Supabase lazy app-only.
-- [ ] Markdown renderer lazy or injectable.
+- [x] Markdown renderer lazy or injectable.
 - [ ] Manifest load cache strategy configurable.
 - [ ] Route prefetch opt-in.
 - [ ] Bundle budget package en app.

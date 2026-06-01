@@ -1,4 +1,9 @@
-import { getQuestionProgress, parseOutcome, toLegacyOutcome } from "../packages/core/dist/index.js";
+import {
+  createMarkdownRenderer,
+  getQuestionProgress,
+  parseOutcome,
+  toLegacyOutcome,
+} from "../packages/core/dist/index.js";
 
 const redirect = parseOutcome("redirect:bacteriurie");
 if (redirect.type !== "redirect" || redirect.target !== "bacteriurie") {
@@ -17,6 +22,14 @@ const progress = getQuestionProgress({
 });
 if (progress.text !== "Vraag 1/1") {
   throw new Error("getQuestionProgress export failed");
+}
+
+const markdownRenderer = createMarkdownRenderer({
+  parse: (markdown) => `<p>${markdown}</p>`,
+  sanitize: (html) => html.replace("<script>", ""),
+});
+if (markdownRenderer.render("tekst") !== "<p>tekst</p>") {
+  throw new Error("createMarkdownRenderer export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

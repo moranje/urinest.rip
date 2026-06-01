@@ -1,3 +1,5 @@
+export type { MarkdownRenderer, MarkdownRendererOptions } from "./markdown";
+export { createMarkdownRenderer } from "./markdown";
 export type {
   LegacyOutcomeString,
   NoneOutcome,

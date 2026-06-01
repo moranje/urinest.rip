@@ -160,8 +160,6 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
 import { useRoute, useRouter } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import QuestionOption from "../components/QuestionOption.vue";
@@ -181,6 +179,7 @@ import {
   recordFlowStep,
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
+import { renderMarkdown } from "../lib/markdown-renderer";
 import { getQuestionProgress } from "../lib/question-progress";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { observeViewTransition } from "../lib/view-transition";
@@ -733,9 +732,8 @@ const checkNonTouch = (): void => {
 };
 
 const compiledMarkdown = (text: string | undefined): string => {
-  if (!text) return "";
   try {
-    return DOMPurify.sanitize(marked.parse(text) as string, { USE_PROFILES: { html: true } });
+    return renderMarkdown(text);
   } catch (error) {
     handleError(error, "markdown:compile", { questionnaireId: props.id });
     return "";
