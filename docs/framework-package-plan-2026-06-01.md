@@ -223,7 +223,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Supabase adapter apart package/app-only houden.
 - [ ] Error classification delen tussen app en package.
 - [ ] Breadcrumb model typed maken.
-- [ ] Log persistence tests voor 401/403/429/5xx/offline.
+- [x] Log persistence tests voor 401/403/429/5xx/offline.
 - [x] Flush throw-path requeue test.
 - [x] Breaker reload behavior test.
 - [x] Explicit dev persistence enable test.

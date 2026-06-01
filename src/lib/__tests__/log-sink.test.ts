@@ -91,6 +91,39 @@ describe("log-sink", () => {
     expect(localStorage.getItem("log_sink_down")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 
+  it.each([
+    [401, "unauthorized"],
+    [403, "forbidden"],
+  ])("disables persistence immediately for permanent HTTP %s failures", async (status, message) => {
+    rpcMock.mockResolvedValue({ error: { status, message } });
+
+    persistSampleError(`test:http-${status}`);
+    await flushLogs();
+    await flushLogs();
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem("log_sink_down")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it.each([
+    [429, "rate limited"],
+    [503, "service unavailable"],
+  ])("requeues logs for transient HTTP %s failures", async (status, message) => {
+    rpcMock
+      .mockResolvedValueOnce({ error: { status, message } })
+      .mockResolvedValueOnce({ error: null });
+
+    persistSampleError(`test:http-${status}`);
+    await flushLogs();
+    await flushLogs();
+
+    expect(rpcMock).toHaveBeenCalledTimes(2);
+    expect(rpcMock.mock.calls[1]?.[1]).toEqual({
+      p_logs: [expect.objectContaining({ module: `test:http-${status}` })],
+    });
+    expect(localStorage.getItem("log_sink_down")).toBeNull();
+  });
+
   it("flushes buffered logs through sendBeacon on unload fallback", () => {
     const sendBeacon = vi.fn(() => true);
     vi.stubGlobal("navigator", { ...navigator, sendBeacon });
@@ -138,7 +171,7 @@ describe("log-sink", () => {
     expect(rpcMock).not.toHaveBeenCalled();
   });
 
-  it("requeues buffered logs after thrown flush errors", async () => {
+  it("requeues buffered logs after thrown offline flush errors", async () => {
     rpcMock.mockRejectedValueOnce(new Error("network down")).mockResolvedValueOnce({ error: null });
 
     persistSampleError("test:requeue");

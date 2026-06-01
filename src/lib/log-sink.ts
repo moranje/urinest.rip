@@ -144,11 +144,13 @@ interface SupabaseError {
   message?: string;
   details?: string;
   hint?: string;
+  status?: number;
 }
 
 // Permanent errors mean retrying won't help: auth failure, missing column,
 // RLS denial, schema mismatch. We drop the batch and disable persistence.
 function isPermanentError(error: SupabaseError): boolean {
+  if (error.status === 401 || error.status === 403) return true;
   const msg = (error.message ?? "").toLowerCase();
   if (
     msg.includes("jwt") ||
