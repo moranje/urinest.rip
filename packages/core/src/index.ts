@@ -1,3 +1,10 @@
+export type {
+  CalculatorDefinition,
+  CalculatorExecutionContext,
+  CalculatorId,
+  CalculatorRegistry,
+} from "./calculator";
+export { createCalculatorRegistry } from "./calculator";
 export type { MarkdownRenderer, MarkdownRendererOptions } from "./markdown";
 export { createMarkdownRenderer } from "./markdown";
 export type {

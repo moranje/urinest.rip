@@ -1,4 +1,5 @@
 import {
+  createCalculatorRegistry,
   createMarkdownRenderer,
   getQuestionProgress,
   parseOutcome,
@@ -30,6 +31,16 @@ const markdownRenderer = createMarkdownRenderer({
 });
 if (markdownRenderer.render("tekst") !== "<p>tekst</p>") {
   throw new Error("createMarkdownRenderer export failed");
+}
+
+const calculators = createCalculatorRegistry([
+  {
+    id: "score.sum",
+    calculate: (input) => input.values.reduce((sum, value) => sum + value, 0),
+  },
+]);
+if ((await calculators.run("score.sum", { values: [1, 2, 3] })) !== 6) {
+  throw new Error("createCalculatorRegistry export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

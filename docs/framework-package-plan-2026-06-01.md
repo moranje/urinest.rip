@@ -7,7 +7,7 @@ Maak van `urinest.rip` een herbruikbaar, standalone beslismodel-framework voor m
 Primair gebruik:
 - `urinest.rip`: eerste productie-app en Urinestrip test case.
 - `huisarts.land`: centrale landing voor meerdere richtlijnen, vragenlijsten en protocollen.
-- Nieuwe domeinen: CVRM inclusief PREVENT-risicoberekeningen, COPD, DM, ouderenzorg, triage, praktijkprotocollen.
+- Nieuwe domeinen als externe domeinpakketten: CVRM inclusief PREVENT-risicoberekeningen, COPD, DM, ouderenzorg, triage, praktijkprotocollen.
 
 Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testing en design-system opnieuw te bouwen.
 
@@ -63,7 +63,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Typed outcome resolver
 - [ ] Redirect-cycle detector
 - [ ] Role/context injection via pure `RuntimeContext`
-- [ ] Domein-agnostisch calculator extensiecontract
+- [x] Domein-agnostisch calculator extensiecontract
 - [ ] CVRM/PREVENT calculators buiten core houden als consumer/domain package
 - [ ] Deterministic audit trail model
 

@@ -3,18 +3,18 @@ import { parseOutcome, toLegacyOutcome } from "./outcome";
 
 describe("parseOutcome", () => {
   it("parses redirect outcomes", () => {
-    expect(parseOutcome("redirect:bacteriurie")).toEqual({
+    expect(parseOutcome("redirect:next-flow")).toEqual({
       type: "redirect",
-      target: "bacteriurie",
-      raw: "redirect:bacteriurie",
+      target: "next-flow",
+      raw: "redirect:next-flow",
     });
   });
 
   it("parses result outcomes", () => {
-    expect(parseOutcome("result:uti.local.healthy.0")).toEqual({
+    expect(parseOutcome("result:example.outcome.primary")).toEqual({
       type: "result",
-      key: "uti.local.healthy.0",
-      raw: "result:uti.local.healthy.0",
+      key: "example.outcome.primary",
+      raw: "result:example.outcome.primary",
     });
   });
 
