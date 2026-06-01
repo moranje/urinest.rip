@@ -50,4 +50,38 @@ logic:
       'Question "answer" has duplicate option value "yes"',
     );
   });
+
+  it("rejects questions that are not referenced by any step", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: orphan-question
+version: "1"
+title: Orphan question
+questions:
+  answer:
+    text: Answer
+    type: select
+    options:
+      - text: Yes
+        value: yes
+  orphan:
+    text: Orphan
+    type: select
+    options:
+      - text: No
+        value: no
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+logic:
+  - when: ["answer == yes"]
+    show: ok
+`);
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Orphan question alias "orphan": defined but not referenced by any step.',
+    );
+  });
 });

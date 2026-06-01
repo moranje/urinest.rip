@@ -87,6 +87,19 @@ function assertUniqueOptionValues(flow) {
   }
 }
 
+function assertNoOrphanQuestions(flow) {
+  const referencedQuestionAliases = new Set(
+    flow.steps.flatMap((step) => (Array.isArray(step.questions) ? step.questions : [])),
+  );
+  for (const questionAlias of Object.keys(flow.questions)) {
+    if (!referencedQuestionAliases.has(questionAlias)) {
+      throw new Error(
+        `Orphan question alias "${questionAlias}": defined but not referenced by any step.`,
+      );
+    }
+  }
+}
+
 export async function buildFlows(inputDir = "flows", outputFile = "public/main.json") {
   console.log(pc.cyan("[buildFlows] Starting build process..."));
   const fullInputDir = path.resolve(inputDir);
@@ -109,6 +122,7 @@ export async function buildFlows(inputDir = "flows", outputFile = "public/main.j
         throw new Error(`Validation failed: ${validationErrors()}`);
       }
       assertUniqueOptionValues(flow);
+      assertNoOrphanQuestions(flow);
 
       const questionAliasMap = {};
       const resultAliasMap = new Set(Object.keys(flow.results));

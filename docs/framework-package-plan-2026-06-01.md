@@ -153,7 +153,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `Question.type` union alignen met generated `select`.
 - [x] Manifest `name/title/hiddenFromLandingPage` types alignen.
 - [ ] Schema controleert unknown condition operators.
-- [ ] Schema controleert orphan questions.
+- [x] Schema controleert orphan questions.
 - [ ] Schema controleert unreachable results.
 - [x] Schema controleert duplicate option values.
 - [ ] Schema controleert missing guideline/source metadata waar verplicht.
