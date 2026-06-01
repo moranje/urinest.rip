@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { clearBreadcrumbs } from "../breadcrumbs";
+import { clearFlowTrail, recordFlowStep } from "../flow-trail";
 import {
   flushLogs,
   flushViaBeaconForTests,
@@ -48,6 +50,8 @@ describe("log-sink", () => {
     installStorage("localStorage");
     installStorage("sessionStorage");
     resetLogSinkForTests();
+    clearBreadcrumbs();
+    clearFlowTrail();
     rpcMock.mockReset();
     vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
     vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon-key");
@@ -159,6 +163,29 @@ describe("log-sink", () => {
     await flushLogs();
 
     expect(rpcMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("persists only sanitized flow trail context", async () => {
+    rpcMock.mockResolvedValue({ error: null });
+    recordFlowStep({
+      flowId: "bacteriurie",
+      version: "1",
+      stepId: "risk",
+      questionId: "q1",
+      branch: "q1-o2",
+      role: "behandelaar",
+    });
+
+    persistSampleError("test:flow-trail");
+    await flushLogs();
+
+    const payload = rpcMock.mock.calls[0]?.[1];
+    const serialized = JSON.stringify(payload);
+    expect(serialized).toContain("flow_trail");
+    expect(serialized).toContain("flow_");
+    expect(serialized).toContain("question_");
+    expect(serialized).not.toContain("bacteriurie");
+    expect(serialized).not.toContain("q1-o2");
   });
 
   it("keeps persistence disabled after a breaker reload", async () => {

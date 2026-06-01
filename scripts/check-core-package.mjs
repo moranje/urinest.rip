@@ -1,12 +1,16 @@
 import {
+  appendAuditTrailEvent,
   createCalculatorRegistry,
+  createAuditTrailEvent,
   createMarkdownRenderer,
   createRuntimeContext,
   detectRedirectCycle,
   findNextQuestionId,
   getQuestionProgress,
+  nextAuditTrailSequence,
   normalizeDecisionManifest,
   parseOutcome,
+  toAuditBreadcrumbData,
   toLegacyOutcome,
   validateConditions,
 } from "../packages/core/dist/index.js";
@@ -46,6 +50,18 @@ const calculators = createCalculatorRegistry([
 ]);
 if ((await calculators.run("score.sum", { values: [1, 2, 3] })) !== 6) {
   throw new Error("createCalculatorRegistry export failed");
+}
+
+const auditEvent = createAuditTrailEvent(
+  { type: "flow-start", flowId: "example-flow", version: "1" },
+  { sequence: 0, ts: "2026-06-01T00:00:00.000Z" },
+);
+const auditTrail = appendAuditTrailEvent([], auditEvent);
+if (
+  nextAuditTrailSequence(auditTrail) !== 1 ||
+  toAuditBreadcrumbData(auditEvent).flowId !== "example-flow"
+) {
+  throw new Error("audit trail export failed");
 }
 
 const context = createRuntimeContext({ role: "clinician" });

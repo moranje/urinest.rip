@@ -1,51 +1,36 @@
+import {
+  appendAuditTrailEvent,
+  createAuditTrailEvent,
+  nextAuditTrailSequence,
+  toAuditBreadcrumbData,
+  type AuditTrailEvent,
+  type AuditTrailEventInput,
+} from "@beslismodel/core";
 import { addBreadcrumb } from "./breadcrumbs";
 import { scrubValue } from "./scrub";
 import { sanitizeFlowTrailEvent } from "./telemetry-privacy";
 
-type FlowTrailType = "flow-start" | "flow-step" | "flow-redirect" | "flow-result";
-
-export interface FlowTrailEvent {
-  type: FlowTrailType;
-  flowId?: string;
-  version?: string;
-  stepId?: string;
-  questionId?: string;
-  branch?: string;
-  role?: string;
-  targetFlowId?: string;
-  resultId?: string;
-  ts: string;
-}
+export type FlowTrailEvent = AuditTrailEvent;
 
 const MAX_FLOW_TRAIL = 40;
 const buffer: FlowTrailEvent[] = [];
 
-function addFlowTrailEvent(event: Omit<FlowTrailEvent, "ts">): void {
-  const scrubbed = scrubValue(
-    sanitizeFlowTrailEvent({
-      ...event,
-      ts: new Date().toISOString(),
-    }),
-  ).value as FlowTrailEvent;
+function addFlowTrailEvent(event: AuditTrailEventInput): void {
+  const rawEvent = createAuditTrailEvent(event, {
+    sequence: nextAuditTrailSequence(buffer),
+    ts: new Date().toISOString(),
+  });
+  const scrubbed = scrubValue(sanitizeFlowTrailEvent(rawEvent)).value as FlowTrailEvent;
+  const nextTrail = appendAuditTrailEvent(buffer, scrubbed, {
+    maxLength: MAX_FLOW_TRAIL,
+  });
 
-  buffer.push(scrubbed);
-  if (buffer.length > MAX_FLOW_TRAIL) {
-    buffer.shift();
-  }
+  buffer.splice(0, buffer.length, ...nextTrail);
 
   addBreadcrumb({
     type: "flow",
     message: scrubbed.type,
-    data: {
-      flowId: scrubbed.flowId,
-      version: scrubbed.version,
-      stepId: scrubbed.stepId,
-      questionId: scrubbed.questionId,
-      branch: scrubbed.branch,
-      role: scrubbed.role,
-      targetFlowId: scrubbed.targetFlowId,
-      resultId: scrubbed.resultId,
-    },
+    data: toAuditBreadcrumbData(scrubbed),
   });
 }
 

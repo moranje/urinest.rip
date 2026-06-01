@@ -1,6 +1,12 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { clearBreadcrumbs, getBreadcrumbs } from "../breadcrumbs";
-import { clearFlowTrail, getFlowTrail, recordFlowResult, recordFlowStep } from "../flow-trail";
+import {
+  clearFlowTrail,
+  getFlowTrail,
+  recordFlowResult,
+  recordFlowStart,
+  recordFlowStep,
+} from "../flow-trail";
 
 describe("flow trail", () => {
   beforeEach(() => {
@@ -21,6 +27,8 @@ describe("flow trail", () => {
     expect(getFlowTrail()).toEqual([
       expect.objectContaining({
         type: "flow-step",
+        sequence: 0,
+        ts: expect.any(String),
         flowId: expect.stringMatching(/^flow_[a-f0-9]{8}$/),
         version: "1",
         stepId: expect.stringMatching(/^step_[a-f0-9]{8}$/),
@@ -50,10 +58,38 @@ describe("flow trail", () => {
           flowId: expect.stringMatching(/^flow_[a-f0-9]{8}$/),
           resultId: expect.stringMatching(/^result_[a-f0-9]{8}$/),
           role: "triagist",
+          sequence: 0,
         }),
       }),
     ]);
     expect(JSON.stringify(getBreadcrumbs())).not.toContain("bacteriurie");
     expect(JSON.stringify(getBreadcrumbs())).not.toContain("uti.local.healthy.0");
+  });
+
+  it("keeps a capped trail and returns defensive copies", () => {
+    for (let index = 0; index < 42; index += 1) {
+      recordFlowStart({
+        flowId: `flow-${index}`,
+        version: "1",
+        role: "behandelaar",
+      });
+    }
+
+    const trail = getFlowTrail();
+    trail[0] = {
+      ...trail[0],
+      flowId: "mutated",
+    };
+
+    expect(trail).toHaveLength(40);
+    expect(getFlowTrail()).toHaveLength(40);
+    expect(getFlowTrail()[0]).toEqual(
+      expect.objectContaining({
+        flowId: expect.stringMatching(/^flow_[a-f0-9]{8}$/),
+        sequence: 2,
+      }),
+    );
+    expect(JSON.stringify(getFlowTrail())).not.toContain("flow-0");
+    expect(JSON.stringify(getFlowTrail())).not.toContain("mutated");
   });
 });

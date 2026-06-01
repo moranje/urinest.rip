@@ -1,4 +1,20 @@
 export type {
+  AppendAuditTrailEventOptions,
+  AuditTrail,
+  AuditTrailEvent,
+  AuditTrailEventInput,
+  AuditTrailEventType,
+  CreateAuditTrailEventOptions,
+} from "./audit-trail";
+export {
+  appendAuditTrailEvent,
+  clearAuditTrail,
+  createAuditTrail,
+  createAuditTrailEvent,
+  nextAuditTrailSequence,
+  toAuditBreadcrumbData,
+} from "./audit-trail";
+export type {
   CalculatorDefinition,
   CalculatorExecutionContext,
   CalculatorId,

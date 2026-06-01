@@ -65,7 +65,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Role/context injection via pure `RuntimeContext`
 - [x] Domein-agnostisch calculator extensiecontract
 - [ ] CVRM/PREVENT calculators buiten core houden als consumer/domain package
-- [ ] Deterministic audit trail model
+- [x] Deterministic audit trail model
 
 ### `@beslismodel/compiler`
 
