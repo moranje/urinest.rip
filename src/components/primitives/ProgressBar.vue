@@ -10,7 +10,7 @@
     <div class="progress-bar-track" aria-hidden="true">
       <div class="progress-bar-fill" :style="{ width: percentage + '%' }" />
     </div>
-    <span v-if="showText" class="progress-bar-text">{{ value }} / {{ max }}</span>
+    <span v-if="showText" class="progress-bar-text">{{ text ?? `${value} / ${max}` }}</span>
   </div>
 </template>
 
@@ -22,6 +22,7 @@ const props = withDefaults(
     value: number;
     max: number;
     label?: string;
+    text?: string;
     showText?: boolean;
   }>(),
   {
@@ -47,6 +48,7 @@ const percentage = computed(() => {
 
 .progress-bar-track {
   flex: 1;
+  min-width: 96px;
   height: 6px;
   background: var(--md-sys-color-surface-container-high);
   border-radius: var(--md-sys-shape-corner-full);
@@ -64,6 +66,7 @@ const percentage = computed(() => {
   font: var(--md-sys-typescale-label-small);
   color: var(--md-sys-color-on-surface-variant);
   min-width: 3.5em;
+  white-space: nowrap;
   text-align: right;
 }
 </style>

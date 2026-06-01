@@ -44,11 +44,11 @@
           <ProgressBar
             :value="progressValue"
             :max="progressMax"
-            :label="`Vraag ${progressValue} van ongeveer ${progressMax}`"
+            :label="progressLabel"
+            :text="progressText"
+            show-text
           />
-          <p class="sr-only" aria-live="polite">
-            Vraag {{ progressValue }} van ongeveer {{ progressMax }}: {{ currentQuestion.text }}
-          </p>
+          <p class="sr-only" aria-live="polite">{{ progressLabel }}: {{ currentQuestion.text }}</p>
           <div class="question-header">
             <h1
               :id="`q-title-${currentQuestion.id}`"
@@ -180,6 +180,7 @@ import {
   recordFlowStep,
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
+import { getQuestionProgress } from "../lib/question-progress";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
@@ -307,15 +308,19 @@ const selectedCount = computed((): number => {
   return 0;
 });
 
-// Progress tracking — questionHistory.length is the count of completed questions
-// progressMax is the estimated remaining + completed; we count answered questions + 1 for the current
-const progressValue = computed((): number => questionHistory.value.length + 1);
-const progressMax = computed((): number => {
-  const qData = questionnaire.value;
-  if (!qData) return progressValue.value;
-  // Estimate as total number of questions in the flow (upper bound)
-  return Math.max(progressValue.value, qData.questionIds?.length ?? progressValue.value);
+const progress = computed(() => {
+  const qData = questionnaireStore.getFullQuestionnaire(props.id) ?? questionnaire.value;
+  return getQuestionProgress({
+    questionnaire: qData,
+    currentQuestionId: currentQuestionId.value,
+    questionHistory: questionHistory.value,
+    answers: questionnaireStore.getEnhancedAnswers(props.id),
+  });
 });
+const progressValue = computed((): number => progress.value.value);
+const progressMax = computed((): number => progress.value.max);
+const progressLabel = computed((): string => progress.value.label);
+const progressText = computed((): string => progress.value.text);
 
 const getOptionTabIndex = (option: QuestionOptionData, index: number): number => {
   if (isMultiSelect.value) return 0;

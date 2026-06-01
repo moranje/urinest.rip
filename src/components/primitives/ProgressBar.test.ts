@@ -44,4 +44,17 @@ describe("ProgressBar primitive", () => {
     const wrapper = mount(ProgressBar, { props: { value: 2, max: 5, showText: true } });
     expect(wrapper.text()).toContain("2 / 5");
   });
+
+  it("shows custom text when provided", () => {
+    const wrapper = mount(ProgressBar, {
+      props: {
+        value: 2,
+        max: 5,
+        label: "Vraag 2 van ongeveer 5",
+        text: "Vraag 2 van ongeveer 5",
+        showText: true,
+      },
+    });
+    expect(wrapper.text()).toContain("Vraag 2 van ongeveer 5");
+  });
 });
