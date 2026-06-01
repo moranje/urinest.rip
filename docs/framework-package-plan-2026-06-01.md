@@ -115,7 +115,7 @@ Framework test tools.
 - [x] Role/context matrix runner
 - [ ] Snapshot helpers
 - [ ] Clinical safety fixtures
-- [ ] Urinestrip testcase template
+- [x] Urinestrip testcase template
 
 ### `urinest.rip` app
 
@@ -258,7 +258,7 @@ App blijft eigenaar van domeindata en branding.
 
 ## Testing Checklist
 
-- [x] Current full suite groen: 20 files, 113 tests.
+- [x] Current full suite groen: 42 files, 214 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -368,7 +368,7 @@ Examples:
 ## Done Criteria
 
 - [ ] Alle checklistitems hierboven afgevinkt of vervangen door concreter item.
-- [ ] Urinestrip fixture werkt als package consumer.
+- [x] Urinestrip fixture werkt als package consumer.
 - [ ] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
 - [x] CI bouwt flows vóór tests.
 - [x] Geen unhandled benign browser transitions.
