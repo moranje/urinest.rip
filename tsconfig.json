@@ -10,9 +10,10 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
+      "@beslismodel/core": ["./packages/core/src/index.ts"],
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue", "packages/**/*.ts", "env.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

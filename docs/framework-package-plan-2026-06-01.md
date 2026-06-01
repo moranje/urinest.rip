@@ -59,8 +59,8 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [ ] Normalisatie van questionnaires/questions/steps/results
 - [ ] Condition validation wrapper
 - [ ] Graph traversal
-- [ ] Progress calculation
-- [ ] Typed outcome resolver
+- [x] Progress calculation
+- [x] Typed outcome resolver
 - [ ] Redirect-cycle detector
 - [ ] Role/context injection via pure `RuntimeContext`
 - [ ] CVRM/PREVENT calculator extensiepunt
@@ -129,7 +129,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Storage keys app-configurabel maken.
 - [ ] Hard-coded `urinestrip` telemetry source vervangen door app config.
 - [ ] Role injection `_role` vervangen door framework context provider.
-- [ ] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
+- [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
 - [ ] Redirect-chain logic uit page naar core/runtime.
 - [ ] Markdown renderer injectable maken met sanitizer contract.
 - [ ] Admin routes buiten framework houden.
@@ -254,7 +254,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Telemetry scrub/log-sink tests bestaan.
 - [x] `build:flows` vóór tests in CI.
 - [x] Flow tests gebruiken verse compiled output.
-- [ ] Package unit tests per package.
+- [x] Package unit tests per package.
 - [ ] Consumer fixture app.
 - [ ] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.
 - [ ] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
@@ -305,9 +305,9 @@ Urinestrip wordt eerste end-to-end package fixture.
 
 Exit criteria:
 - [ ] `build:flows` strict.
-- [ ] `@beslismodel/core` scaffold.
-- [ ] Typed outcome model.
-- [ ] Urinestrip tests still green.
+- [x] `@beslismodel/core` scaffold.
+- [x] Typed outcome model.
+- [x] Urinestrip tests still green.
 
 ### Ronde 2 — Vue Runtime
 

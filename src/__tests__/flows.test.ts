@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { determineOutcome, validateConditions } from "decision-engine-core";
+import { parseOutcome, toLegacyOutcome, type TypedOutcome } from "@beslismodel/core";
 import mainData from "../../public/main.json";
 
 type Option = { id: string; value: string; text: string };
@@ -39,10 +40,12 @@ function getFlow(id: string): Flow {
   return flow;
 }
 
-function expectOutcome(flowId: string, answers: AnswerMap, expected: string): void {
+function expectOutcome(flowId: string, answers: AnswerMap, expected: TypedOutcome): void {
   const flow = getFlow(flowId);
   const result = determineOutcome(answers, flow.resultsLogic);
-  expect(result.outcome).toBe(expected);
+  const parsed = parseOutcome(result.outcome);
+  expect(parsed).toEqual(expected);
+  expect(toLegacyOutcome(parsed)).toBe(toLegacyOutcome(expected));
 }
 
 describe("critical clinical flow paths", () => {
@@ -51,7 +54,7 @@ describe("critical clinical flow paths", () => {
       "strip nitriet-positive redirects to bacteriurie",
       "strip",
       { q_strip_nitrite: answer("positive"), _role: "behandelaar" },
-      "redirect:bacteriurie",
+      { type: "redirect", target: "bacteriurie", raw: "redirect:bacteriurie" },
     ],
     [
       "strip leukocyturie redirects to leukocyturie flow",
@@ -61,7 +64,7 @@ describe("critical clinical flow paths", () => {
         q_strip_leuko: answer("positive"),
         _role: "behandelaar",
       },
-      "redirect:leukocyturie",
+      { type: "redirect", target: "leukocyturie", raw: "redirect:leukocyturie" },
     ],
     [
       "strip isolated erythrocyturia redirects to hematurie flow",
@@ -72,7 +75,7 @@ describe("critical clinical flow paths", () => {
         q_strip_ery: answer("positive"),
         _role: "behandelaar",
       },
-      "redirect:hematurie",
+      { type: "redirect", target: "hematurie", raw: "redirect:hematurie" },
     ],
     [
       "strip all negative returns no conclusive abnormality",
@@ -83,7 +86,11 @@ describe("critical clinical flow paths", () => {
         q_strip_ery: answer("negative"),
         _role: "behandelaar",
       },
-      "result:other.noConclusiveAbnormality",
+      {
+        type: "result",
+        key: "other.noConclusiveAbnormality",
+        raw: "result:other.noConclusiveAbnormality",
+      },
     ],
     [
       "pregnant local cystitis nitrofurantoin path resolves",
@@ -94,7 +101,7 @@ describe("critical clinical flow paths", () => {
         q_bac_tx_local_pregnant: answer("0"),
         _role: "behandelaar",
       },
-      "result:uti.local.pregnant.0",
+      { type: "result", key: "uti.local.pregnant.0", raw: "result:uti.local.pregnant.0" },
     ],
     [
       "pregnant tissue invasion routes to referral result",
@@ -104,7 +111,11 @@ describe("critical clinical flow paths", () => {
         q_bac_risk: answer("pregnant"),
         _role: "behandelaar",
       },
-      "result:uti.tissueInvasion.pregnant",
+      {
+        type: "result",
+        key: "uti.tissueInvasion.pregnant",
+        raw: "result:uti.tissueInvasion.pregnant",
+      },
     ],
     [
       "elderly asymptomatic bacteriurie returns no antibiotics",
@@ -115,7 +126,7 @@ describe("critical clinical flow paths", () => {
         q_bac_elderly: answer("asymptomatic"),
         _role: "behandelaar",
       },
-      "result:uti.local.elderly",
+      { type: "result", key: "uti.local.elderly", raw: "result:uti.local.elderly" },
     ],
     [
       "healthy local cystitis treatment option resolves",
@@ -127,7 +138,7 @@ describe("critical clinical flow paths", () => {
         q_bac_tx_local_healthy: answer("0"),
         _role: "behandelaar",
       },
-      "result:uti.local.healthy.0",
+      { type: "result", key: "uti.local.healthy.0", raw: "result:uti.local.healthy.0" },
     ],
     [
       "leukocyturie child dipslide path resolves",
@@ -137,19 +148,19 @@ describe("critical clinical flow paths", () => {
         q_leuk_followup_child: answer("dipslide"),
         _role: "triagist",
       },
-      "result:leukocytes.dipslide",
+      { type: "result", key: "leukocytes.dipslide", raw: "result:leukocytes.dipslide" },
     ],
     [
       "hematurie visible path resolves",
       "hematurie",
       { q_hematuria_type: answer("visible"), _role: "behandelaar" },
-      "result:blood.visibleHematuria",
+      { type: "result", key: "blood.visibleHematuria", raw: "result:blood.visibleHematuria" },
     ],
     [
       "dipslide positive redirects to bacteriurie",
       "dipslide",
       { q_ds_macconkey: answer("positive"), _role: "triagist" },
-      "redirect:bacteriurie",
+      { type: "redirect", target: "bacteriurie", raw: "redirect:bacteriurie" },
     ],
     [
       "healthy-women all criteria and nitrofurantoin resolves",
@@ -159,10 +170,10 @@ describe("critical clinical flow paths", () => {
         q_gv_treatment: answer("1"),
         _role: "behandelaar",
       },
-      "result:uti.local.healthy.1",
+      { type: "result", key: "uti.local.healthy.1", raw: "result:uti.local.healthy.1" },
     ],
   ])("%s", (_name, flowId, answers, expected) => {
-    expectOutcome(flowId as string, answers as AnswerMap, expected as string);
+    expectOutcome(flowId as string, answers as AnswerMap, expected as TypedOutcome);
   });
 
   it("documents nitrofurantoin pregnancy contraindication from 36 weeks", () => {
@@ -230,14 +241,17 @@ describe("dead-end coverage", () => {
     const walk = (answers: AnswerMap, currentQuestionId: string | null): void => {
       const next = nextQuestionId(answers, currentQuestionId);
       if (!next) {
-        const outcome = determineOutcome(answers, flow.resultsLogic).outcome as string | null;
-        if (!outcome) {
+        const outcome = parseOutcome(determineOutcome(answers, flow.resultsLogic).outcome);
+        if (outcome.type === "none") {
           failures.push(JSON.stringify(answers));
           return;
         }
-        const [type, value] = outcome.split(":");
-        if (type === "result" && !flow.results[value]) failures.push(`missing result ${value}`);
-        if (type === "redirect" && !flowById.has(value)) failures.push(`missing flow ${value}`);
+        if (outcome.type === "result" && !flow.results[outcome.key]) {
+          failures.push(`missing result ${outcome.key}`);
+        }
+        if (outcome.type === "redirect" && !flowById.has(outcome.target)) {
+          failures.push(`missing flow ${outcome.target}`);
+        }
         return;
       }
 

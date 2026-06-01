@@ -8,6 +8,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@beslismodel/core': new URL('./packages/core/src/index.ts', import.meta.url).pathname
+    }
+  },
   build: {
     sourcemap: true
   },

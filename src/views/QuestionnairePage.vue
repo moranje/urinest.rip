@@ -163,6 +163,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue"
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { useRoute, useRouter } from "vue-router";
+import { parseOutcome } from "@beslismodel/core";
 import QuestionOption from "../components/QuestionOption.vue";
 import Button from "../components/primitives/Button.vue";
 import Icon from "../components/primitives/Icon.vue";
@@ -549,19 +550,10 @@ const determineResult = (): void => {
     fullQuestionnaire.resultsLogic,
   );
 
-  if (outcome) {
-    const [type, value] = outcome.split(":");
-    if (!type || !value) {
-      handleError(new Error(`Malformed outcome: ${outcome}`), "decision-engine:malformed-outcome", {
-        questionnaireId: props.id,
-        role: roleStore.role,
-        answeredQuestionIds: Object.keys(answers),
-      });
-      clearRedirectChain();
-      router.push("/error");
-      return;
-    }
-    if (type === "redirect") {
+  try {
+    const typedOutcome = parseOutcome(outcome);
+    if (typedOutcome.type === "redirect") {
+      const value = typedOutcome.target;
       const redirectChain = readRedirectChain(props.id);
       if (redirectChain.includes(value)) {
         handleError(
@@ -587,7 +579,8 @@ const determineResult = (): void => {
       });
       questionnaireStore.clearAnswers(props.id);
       router.replace(`/questionnaire/${value}`);
-    } else if (type === "result") {
+    } else if (typedOutcome.type === "result") {
+      const value = typedOutcome.key;
       recordFlowResult({
         flowId: props.id,
         version: fullQuestionnaire.version,
@@ -597,21 +590,18 @@ const determineResult = (): void => {
       clearRedirectChain();
       router.push(`/info/${value}`);
     } else {
-      handleError(
-        new Error(`Unsupported outcome type: ${type}`),
-        "decision-engine:unknown-outcome",
-        {
-          questionnaireId: props.id,
-          outcome,
-          role: roleStore.role,
-        },
-      );
+      handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
+        questionnaireId: props.id,
+        role: roleStore.role,
+        answeredQuestionIds: Object.keys(answers),
+      });
       clearRedirectChain();
       router.push("/error");
     }
-  } else {
-    handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
+  } catch (error) {
+    handleError(error, "decision-engine:typed-outcome", {
       questionnaireId: props.id,
+      outcome,
       role: roleStore.role,
       answeredQuestionIds: Object.keys(answers),
     });

@@ -10,7 +10,7 @@ export default [
 
   // TypeScript parser for .ts files only
   {
-    files: ['src/**/*.ts'],
+    files: ['src/**/*.ts', 'packages/**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       sourceType: 'module'
@@ -30,7 +30,7 @@ export default [
 
   // Security + rules for all src files
   {
-    files: ['src/**/*.{ts,vue}'],
+    files: ['src/**/*.{ts,vue}', 'packages/**/*.ts'],
     plugins: { security },
     rules: {
       ...security.configs.recommended.rules,
