@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { nextTick } from "vue";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { breadcrumbNav } from "../lib/breadcrumbs";
+import { handleError } from "../lib/errors";
+import { observeViewTransition } from "../lib/view-transition";
 import { useAuthStore } from "../store/authStore";
 
 import LandingPage from "../views/LandingPage.vue";
@@ -138,12 +140,13 @@ router.beforeResolve((to, from) => {
     const doc = document as Document & {
       startViewTransition: (cb: () => void | Promise<void>) => unknown;
     };
-    doc.startViewTransition(() => {
+    const transition = doc.startViewTransition(() => {
       proceed();
       return new Promise<void>((commit) => {
         pendingCommit = commit;
       });
     });
+    observeViewTransition(transition, (error) => handleError(error, "router:view-transition"));
   });
 });
 

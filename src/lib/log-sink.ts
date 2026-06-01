@@ -94,6 +94,21 @@ const MAX_FAILURES = 3;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 let consecutiveFailures = 0;
 let breakerTripped = false;
+let persistenceDisabledReason: string | null = null;
+
+function resolvePersistenceDisabledReason(): string | null {
+  const explicit = import.meta.env.VITE_ENABLE_LOG_PERSISTENCE as string | undefined;
+  if (explicit === "false") return "disabled by VITE_ENABLE_LOG_PERSISTENCE=false";
+  if (import.meta.env.MODE !== "test" && import.meta.env.DEV && explicit !== "true") {
+    return "disabled in dev; set VITE_ENABLE_LOG_PERSISTENCE=true to test Supabase persistence";
+  }
+
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  if (!url || !key) return "no supabase client configured";
+
+  return null;
+}
 
 function startFlushTimer(): void {
   if (flushTimer || breakerTripped) return;
@@ -151,7 +166,7 @@ function isPermanentError(error: SupabaseError): boolean {
 }
 
 export async function flushLogs(): Promise<void> {
-  if (buffer.length === 0 || breakerTripped) return;
+  if (buffer.length === 0 || breakerTripped || persistenceDisabledReason) return;
 
   const batch = buffer.splice(0, buffer.length);
 
@@ -204,7 +219,7 @@ export async function flushLogs(): Promise<void> {
 // no response handling.
 
 function flushViaBeacon(): void {
-  if (buffer.length === 0 || breakerTripped) return;
+  if (buffer.length === 0 || breakerTripped || persistenceDisabledReason) return;
   if (typeof navigator === "undefined" || typeof navigator.sendBeacon !== "function") return;
 
   const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -226,7 +241,7 @@ export function flushViaBeaconForTests(): void {
 // -- Public API --
 
 export function persistError(input: PersistErrorInput): void {
-  if (breakerTripped) return;
+  if (breakerTripped || persistenceDisabledReason) return;
 
   const errorContext = getErrorContext();
   const breadcrumbs = scrubValue(getBreadcrumbs()).value;
@@ -276,7 +291,7 @@ export function persistError(input: PersistErrorInput): void {
 }
 
 export function persistTelemetry(input: PersistTelemetryInput): void {
-  if (breakerTripped) return;
+  if (breakerTripped || persistenceDisabledReason) return;
 
   const errorContext = getErrorContext();
   const safeContext = scrubValue({
@@ -309,16 +324,13 @@ export function initLogSink(): void {
   // which calls persistError() directly with rich context (stack, errorClass).
   // We deliberately do NOT register an addLogSink callback here, because that
   // would double-write every error (once via log.error → sink, once direct).
-  startFlushTimer();
+  persistenceDisabledReason = resolvePersistenceDisabledReason();
 
   if (typeof window !== "undefined") {
-    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-    const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-    if (!url || !key) {
-      log.warn("supabase log persistence not configured", {
-        hasUrl: Boolean(url),
-        hasAnonKey: Boolean(key),
-      });
+    if (persistenceDisabledReason) {
+      log.debug("supabase log persistence disabled", { reason: persistenceDisabledReason });
+    } else {
+      startFlushTimer();
     }
     // pagehide is more reliable than beforeunload on mobile (esp. iOS Safari)
     window.addEventListener("pagehide", flushViaBeacon);
@@ -343,5 +355,6 @@ export function resetLogSinkForTests(): void {
   buffer.length = 0;
   consecutiveFailures = 0;
   breakerTripped = false;
+  persistenceDisabledReason = null;
   clearLogSinkDownFlag();
 }

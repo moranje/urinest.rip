@@ -182,6 +182,7 @@ import {
 import { createLogger } from "../lib/logger";
 import { getQuestionProgress } from "../lib/question-progress";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
+import { observeViewTransition } from "../lib/view-transition";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
 import type { QuestionOption as QuestionOptionData, Question, Step, AnswerValue } from "../types";
@@ -507,9 +508,12 @@ const withViewTransition = (mutate: () => void): void => {
   const doc = document as DocumentWithViewTransitions;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (typeof doc.startViewTransition === "function" && !reduced) {
-    doc.startViewTransition(() => {
+    const transition = doc.startViewTransition(() => {
       mutate();
     });
+    observeViewTransition(transition, (error) =>
+      handleError(error, "questionnaire:view-transition"),
+    );
   } else {
     mutate();
   }

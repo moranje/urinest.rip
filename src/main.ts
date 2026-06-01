@@ -5,6 +5,7 @@ import router from "./router/index";
 import { handleError } from "./lib/errors";
 import { initErrorContext } from "./lib/error-context";
 import { initLogSink } from "./lib/log-sink";
+import { isSkippedViewTransition } from "./lib/view-transition";
 
 const app = createApp(App);
 app.use(createPinia());
@@ -17,6 +18,7 @@ app.config.errorHandler = (err, _instance, info) => {
 
 window.addEventListener("unhandledrejection", (e) => {
   e.preventDefault();
+  if (isSkippedViewTransition(e.reason)) return;
   handleError(e.reason, "unhandled-rejection");
 });
 

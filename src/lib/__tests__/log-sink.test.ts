@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   flushLogs,
   flushViaBeaconForTests,
+  initLogSink,
   persistError,
   persistTelemetry,
   resetLogSinkForTests,
@@ -45,6 +46,7 @@ function persistSampleError(context = "test:error"): void {
 
 describe("log-sink", () => {
   beforeEach(() => {
+    vi.unstubAllEnvs();
     installStorage("localStorage");
     installStorage("sessionStorage");
     resetLogSinkForTests();
@@ -95,5 +97,16 @@ describe("log-sink", () => {
       "https://example.supabase.co/rest/v1/app_logs?apikey=anon-key",
       expect.any(Blob),
     );
+  });
+
+  it("does not persist in dev unless explicitly enabled", async () => {
+    vi.stubEnv("MODE", "development");
+    vi.stubEnv("DEV", true);
+
+    initLogSink();
+    persistSampleError("test:dev-disabled");
+    await flushLogs();
+
+    expect(insertMock).not.toHaveBeenCalled();
   });
 });
