@@ -2,6 +2,10 @@ id: gezonde-vrouwen
 version: '1'
 title: Gezonde vrouwen
 description: Stel de diagnose urineweginfectie bij gezonde vrouwen zonder urineonderzoek, mits aan alle criteria wordt voldaan.
+category: beleid
+audience: [behandelaar]
+domain: urineweginfecties
+recommendedStart: true
 
 questions:
   healthyWoman:

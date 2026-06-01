@@ -2,6 +2,10 @@ id: leukocyturie
 version: '1'
 title: Leukocyturie
 description: Beoordeling bij geïsoleerde leukocyturie (nitriet negatief, leukocyten positief).
+category: vervolgonderzoek
+audience: [behandelaar, triagist]
+domain: urineonderzoek
+recommendedStart: false
 
 questions:
   population:

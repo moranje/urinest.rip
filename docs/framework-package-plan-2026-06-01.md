@@ -87,7 +87,7 @@ YAML/JSON naar strict manifest.
 - [x] Generated JSON schema
 - [x] Generated `.d.ts`
 - [x] Stable manifest snapshots
-- [ ] Flow taxonomy metadata (`category`, `audience`, `domain`, `hiddenFromLandingPage`, `recommendedStart`)
+- [x] Flow taxonomy metadata (`category`, `audience`, `domain`, `hiddenFromLandingPage`, `recommendedStart`)
 
 ### `@beslismodel/vue`
 

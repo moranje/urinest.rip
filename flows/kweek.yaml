@@ -2,6 +2,10 @@ id: kweek
 version: '1'
 title: Urinekweek
 description: Beoordeling van de urinekweek.
+category: diagnostiek
+audience: [behandelaar, triagist]
+domain: urineonderzoek
+recommendedStart: false
 
 questions:
   cultureResult:

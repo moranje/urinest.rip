@@ -56,8 +56,12 @@ export interface QuestionnaireMeta {
   name: string;
   title: string;
   description?: string;
+  category?: string;
+  audience?: readonly string[];
+  domain?: string;
   icon?: string;
   hiddenFromLandingPage?: boolean;
+  recommendedStart?: boolean;
   questionIds: string[];
   stepIds: string[];
   resultsLogicIds: string[];

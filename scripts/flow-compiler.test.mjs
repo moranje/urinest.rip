@@ -26,6 +26,10 @@ describe("flow compiler", () => {
 id: duplicate-options
 version: "1"
 title: Duplicate options
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -59,6 +63,10 @@ logic:
 id: orphan-question
 version: "1"
 title: Orphan question
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -96,6 +104,10 @@ logic:
 id: unknown-operator
 version: "1"
 title: Unknown operator
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -127,6 +139,10 @@ logic:
 id: unreachable-result
 version: "1"
 title: Unreachable result
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -163,6 +179,10 @@ logic:
 id: missing-source
 version: "1"
 title: Missing source
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer

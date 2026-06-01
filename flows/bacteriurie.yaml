@@ -2,6 +2,10 @@ id: bacteriurie
 version: '1'
 title: Urineweginfectie
 description: Diagnose en behandeling van urineweginfecties.
+category: beleid
+audience: [behandelaar, triagist]
+domain: urineweginfecties
+recommendedStart: false
 
 questions:
   tissueInvasion:

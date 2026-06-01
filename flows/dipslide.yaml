@@ -2,6 +2,10 @@ id: dipslide
 version: '1'
 title: Dipslide
 description: Beoordeling van de dipslide.
+category: diagnostiek
+audience: [behandelaar, triagist]
+domain: urineonderzoek
+recommendedStart: false
 
 questions:
   macConkey:

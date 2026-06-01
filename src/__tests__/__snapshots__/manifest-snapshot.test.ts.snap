@@ -3,6 +3,12 @@
 exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
 [
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "beleid",
+    "domain": "urineweginfecties",
     "hiddenFromLandingPage": false,
     "id": "bacteriurie",
     "optionValues": {
@@ -138,6 +144,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
       "q_bac_tx_ti_elderly_men",
       "q_bac_tx_ti_vuln_cath",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "triage.u2",
       "triage.u3",
@@ -522,6 +529,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "diagnostiek",
+    "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
     "id": "dipslide",
     "optionValues": {
@@ -538,6 +551,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
       "q_ds_macconkey",
       "q_ds_cled",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "other.negativeDipslide",
     ],
@@ -564,6 +578,11 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+    ],
+    "category": "beleid",
+    "domain": "urineweginfecties",
     "hiddenFromLandingPage": false,
     "id": "gezonde-vrouwen",
     "optionValues": {
@@ -587,6 +606,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
       "q_gv_checklist",
       "q_gv_treatment",
     ],
+    "recommendedStart": true,
     "resultKeys": [
       "other.ruleNotApplicable",
       "uti.local.healthy.0",
@@ -665,6 +685,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "diagnostiek",
+    "domain": "hematurie",
     "hiddenFromLandingPage": false,
     "id": "hematurie",
     "optionValues": {
@@ -677,6 +703,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "questionIds": [
       "q_hematuria_type",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "blood.microscopicHematuria",
       "blood.proteinuria",
@@ -705,6 +732,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "diagnostiek",
+    "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
     "id": "kweek",
     "optionValues": {
@@ -717,6 +750,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "questionIds": [
       "q_kweek_result",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "other.ambiguousCulture",
       "other.noUrineTractInfection",
@@ -744,6 +778,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "vervolgonderzoek",
+    "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
     "id": "leukocyturie",
     "optionValues": {
@@ -769,6 +809,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
       "q_leuk_followup_general",
       "q_leuk_followup_child",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "leukocytes.cad",
       "leukocytes.dipslide",
@@ -829,6 +870,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "diagnostiek",
+    "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
     "id": "sediment",
     "optionValues": {
@@ -841,6 +888,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "questionIds": [
       "q_sed_bacteruria",
     ],
+    "recommendedStart": false,
     "resultKeys": [
       "other.contaminatedSediment",
       "other.noConclusiveAbnormality",
@@ -868,6 +916,12 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
     "version": "1",
   },
   {
+    "audience": [
+      "behandelaar",
+      "triagist",
+    ],
+    "category": "diagnostiek",
+    "domain": "urineonderzoek",
     "hiddenFromLandingPage": false,
     "id": "strip",
     "optionValues": {
@@ -894,6 +948,7 @@ exports[`compiled manifest snapshot > keeps stable public flow structure 1`] = `
       "q_strip_leuko",
       "q_strip_ery",
     ],
+    "recommendedStart": true,
     "resultKeys": [
       "other.noConclusiveAbnormality",
     ],

@@ -2,6 +2,10 @@ id: sediment
 version: '1'
 title: Urine sediment
 description: Beoordeling van het urine sediment.
+category: diagnostiek
+audience: [behandelaar, triagist]
+domain: urineonderzoek
+recommendedStart: false
 
 questions:
   bacteruria:

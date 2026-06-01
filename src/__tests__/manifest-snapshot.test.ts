@@ -16,7 +16,11 @@ interface ManifestRule {
 interface ManifestQuestionnaire {
   readonly id: string;
   readonly version?: string;
+  readonly category?: string;
+  readonly audience?: readonly string[];
+  readonly domain?: string;
   readonly hiddenFromLandingPage?: boolean;
+  readonly recommendedStart?: boolean;
   readonly questions: readonly ManifestQuestion[];
   readonly results: Readonly<Record<string, unknown>>;
   readonly resultsLogic: readonly ManifestRule[];
@@ -27,7 +31,11 @@ describe("compiled manifest snapshot", () => {
     const summary = (mainData.questionnaires as readonly ManifestQuestionnaire[]).map((flow) => ({
       id: flow.id,
       version: flow.version,
+      category: flow.category,
+      audience: flow.audience,
+      domain: flow.domain,
       hiddenFromLandingPage: flow.hiddenFromLandingPage,
+      recommendedStart: flow.recommendedStart,
       questionIds: flow.questions.map((question) => question.id),
       optionValues: Object.fromEntries(
         flow.questions.map((question) => [

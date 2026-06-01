@@ -23,6 +23,10 @@ const validFlow = `
 id: example-flow
 version: "1"
 title: Example flow
+category: test
+audience: [tester]
+domain: test
+recommendedStart: true
 questions:
   answer:
     text: Answer
@@ -97,6 +101,10 @@ describe("compiler package", () => {
 id: unreachable-result
 version: "1"
 title: Unreachable result
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -133,6 +141,10 @@ logic:
 id: missing-source
 version: "1"
 title: Missing source
+category: test
+audience: [tester]
+domain: test
+recommendedStart: false
 questions:
   answer:
     text: Answer
@@ -182,6 +194,17 @@ logic:
     const written = JSON.parse(await readFile(outputFile, "utf8")) as typeof schema;
 
     expect(written).toEqual(schema);
-    expect(written.required).toEqual(["id", "title", "questions", "steps", "results", "logic"]);
+    expect(written.required).toEqual([
+      "id",
+      "title",
+      "category",
+      "audience",
+      "domain",
+      "recommendedStart",
+      "questions",
+      "steps",
+      "results",
+      "logic",
+    ]);
   });
 });

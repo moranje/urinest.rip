@@ -61,7 +61,11 @@ interface RawFlow {
   readonly name?: string;
   readonly title: string;
   readonly description?: string;
+  readonly category: string;
+  readonly audience: readonly string[];
+  readonly domain: string;
   readonly hiddenFromLandingPage?: boolean;
+  readonly recommendedStart: boolean;
   readonly questions: Record<string, RawQuestion>;
   readonly steps: readonly RawStep[];
   readonly results: Record<string, RawResult>;
@@ -107,7 +111,11 @@ export interface CompiledQuestionnaire {
   readonly id: string;
   readonly version?: string;
   readonly name: string;
+  readonly category: string;
+  readonly audience: readonly string[];
+  readonly domain: string;
   readonly hiddenFromLandingPage: boolean;
+  readonly recommendedStart: boolean;
   readonly title: string;
   readonly description?: string;
   readonly questions: readonly CompiledQuestion[];
@@ -325,7 +333,11 @@ function compileFlow(flow: RawFlow): CompiledQuestionnaire {
     id: flow.id,
     version: flow.version,
     name: flow.name ?? flow.title,
+    category: flow.category,
+    audience: flow.audience,
+    domain: flow.domain,
     hiddenFromLandingPage: flow.hiddenFromLandingPage || false,
+    recommendedStart: flow.recommendedStart,
     title: flow.title,
     description: flow.description,
     questions: questionsWithConditions,

@@ -53,8 +53,12 @@ export interface ManifestQuestionnaire<ResultData = Readonly<Record<string, unkn
   readonly name?: string;
   readonly title: string;
   readonly description?: string;
+  readonly category?: string;
+  readonly audience?: readonly string[];
+  readonly domain?: string;
   readonly icon?: string;
   readonly hiddenFromLandingPage?: boolean;
+  readonly recommendedStart?: boolean;
   readonly questions?: readonly ManifestQuestion[];
   readonly steps?: readonly ManifestStep[];
   readonly results?: Readonly<Record<ManifestId, ResultData>>;
@@ -73,8 +77,12 @@ export interface NormalizedQuestionnaireMeta {
   readonly name?: string;
   readonly title: string;
   readonly description?: string;
+  readonly category?: string;
+  readonly audience?: readonly string[];
+  readonly domain?: string;
   readonly icon?: string;
   readonly hiddenFromLandingPage?: boolean;
+  readonly recommendedStart?: boolean;
   readonly questionIds: readonly ManifestId[];
   readonly stepIds: readonly ManifestId[];
   readonly resultsLogicIds: readonly ManifestId[];
@@ -158,8 +166,12 @@ export function normalizeDecisionManifest<ResultData = Readonly<Record<string, u
         name: questionnaire.name,
         title: questionnaire.title,
         description: questionnaire.description,
+        category: questionnaire.category,
+        audience: questionnaire.audience,
+        domain: questionnaire.domain,
         icon: questionnaire.icon,
         hiddenFromLandingPage: questionnaire.hiddenFromLandingPage,
+        recommendedStart: questionnaire.recommendedStart,
         questionIds,
         stepIds,
         resultsLogicIds,

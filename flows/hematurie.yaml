@@ -2,6 +2,10 @@ id: hematurie
 version: '1'
 title: Hematurie
 description: Beoordeling van hematurie op basis van urineonderzoek.
+category: diagnostiek
+audience: [behandelaar, triagist]
+domain: hematurie
+recommendedStart: false
 
 questions:
   hematuriaType:

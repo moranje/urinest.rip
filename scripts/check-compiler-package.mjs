@@ -16,6 +16,10 @@ const flowYaml = `
 id: package-smoke
 version: "1"
 title: Package smoke
+category: test
+audience: [tester]
+domain: test
+recommendedStart: true
 questions:
   answer:
     text: Answer
