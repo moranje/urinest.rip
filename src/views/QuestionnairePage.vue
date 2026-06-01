@@ -161,18 +161,14 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import {
-  detectRedirectCycle,
-  findNextQuestionId as findNextQuestionIdCore,
-  parseOutcome,
-} from "@beslismodel/core";
+import { detectRedirectCycle, parseOutcome } from "@beslismodel/core";
+import { useQuestionnaireRunner } from "@beslismodel/vue";
 import QuestionOption from "../components/QuestionOption.vue";
 import Button from "../components/primitives/Button.vue";
 import Icon from "../components/primitives/Icon.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import { usePopover } from "../composables/usePopover";
-import { useQuestionNavigation } from "../composables/useQuestionNavigation";
 import { breadcrumbClick } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
 import {
@@ -184,13 +180,12 @@ import {
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
 import { renderMarkdown } from "../lib/markdown-renderer";
-import { getQuestionProgress } from "../lib/question-progress";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { observeViewTransition } from "../lib/view-transition";
 import { appConfig } from "../config/app-config";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
-import type { QuestionOption as QuestionOptionData, Question, Step, AnswerValue } from "../types";
+import type { QuestionOption as QuestionOptionData, AnswerValue } from "../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -212,16 +207,23 @@ const props = defineProps<{
 const isLoading = ref(true);
 const isNonTouchDevice = ref(false);
 const isNavigating = ref(false);
+const runner = useQuestionnaireRunner(questionnaireStore, { questionnaireId: () => props.id });
 const {
   currentQuestionId,
-  questionHistory,
-  hasHistory,
-  setCurrentQuestion,
-  pushHistory,
-  replaceHistory,
-  resetNavigation,
+  currentQuestion,
+  currentStep,
+  findNextQuestionId,
   goBack: goBackQuestion,
-} = useQuestionNavigation();
+  hasHistory,
+  hasSelectedOptions,
+  isMultiSelect,
+  progress,
+  questionnaire,
+  resetNavigation,
+  selectedCount,
+  start: startQuestionnaire,
+  advance: advanceQuestion,
+} = runner;
 
 // Option refs (for keyboard focus navigation in single-select radiogroup)
 const optionRefs = ref<Record<string, HTMLElement | null>>({});
@@ -276,53 +278,6 @@ const clearRedirectChain = (): void => {
 
 // --- Computed Properties ---
 
-const isMultiSelect = computed(() => {
-  const t = currentQuestion.value?.type;
-  return t === "multiple" || t === "multi_select";
-});
-
-const questionnaire = computed(() => questionnaireStore.getQuestionnaireById(props.id));
-
-const currentQuestion = computed((): Question | null | undefined => {
-  if (!currentQuestionId.value) return null;
-  return questionnaireStore.getQuestionById(currentQuestionId.value) ?? null;
-});
-
-const currentStep = computed((): Step | null | undefined => {
-  if (!currentQuestionId.value || !questionnaire.value) return null;
-  const stepId = questionnaire.value.stepIds.find((sid: string) => {
-    const step = questionnaireStore.getStepById(sid);
-    return step?.questionIds.includes(currentQuestionId.value!);
-  });
-  return stepId ? (questionnaireStore.getStepById(stepId) ?? null) : null;
-});
-
-const hasSelectedOptions = computed(() => {
-  if (!currentQuestion.value) return false;
-  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
-  if (answer === undefined || answer === null) return false;
-  if (isMultiSelect.value) {
-    return Array.isArray(answer) && answer.length > 0;
-  }
-  return true;
-});
-
-const selectedCount = computed((): number => {
-  if (!currentQuestion.value || !isMultiSelect.value) return 0;
-  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
-  if (Array.isArray(answer)) return answer.length;
-  return 0;
-});
-
-const progress = computed(() => {
-  const qData = questionnaireStore.getFullQuestionnaire(props.id) ?? questionnaire.value;
-  return getQuestionProgress({
-    questionnaire: qData,
-    currentQuestionId: currentQuestionId.value,
-    questionHistory: questionHistory.value,
-    answers: questionnaireStore.getEnhancedAnswers(props.id),
-  });
-});
 const progressValue = computed((): number => progress.value.value);
 const progressMax = computed((): number => progress.value.max);
 const progressLabel = computed((): string => progress.value.label);
@@ -391,39 +346,38 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
   // flow-id preserves progress (DSN-C02).
   if (options.reset) {
     questionnaireStore.clearAnswers(props.id);
-    resetNavigation();
-  }
-  setCurrentQuestion(findNextQuestionId(null));
-
-  // If there are existing answers, fast-forward to the first unanswered valid question
-  if (!options.reset) {
-    const answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
-    const answered = Object.keys(answers);
-    if (answered.length > 0) {
-      // walk through stepIds and rebuild history of answered question ids
-      const newHistory: string[] = [];
-      let next: string | null = currentQuestionId.value;
-      while (next && answered.includes(next)) {
-        newHistory.push(next);
-        next = findNextQuestionId(next);
-      }
-      if (newHistory.length > 0) {
-        replaceHistory(newHistory);
-        setCurrentQuestion(next);
-      }
-    }
   }
 
-  if (currentQuestionId.value) {
+  const transition = startQuestionnaire({
+    replayAnswers: !options.reset,
+    resetHistory: true,
+  });
+
+  if (transition.type === "missing") {
+    handleError(
+      new Error(`Questionnaire not found: ${transition.questionnaireId}`),
+      "questionnaire:not-found",
+      {
+        questionnaireId: transition.questionnaireId,
+      },
+    );
+    router.replace({ name: "Error", query: { message: "Vragenlijst niet gevonden" } });
+    return;
+  }
+
+  if (transition.type === "question") {
     recordFlowStart({
       flowId: props.id,
       version: questionnaire.value.version,
       role: roleStore.role,
-      questionId: currentQuestionId.value,
+      questionId: transition.questionId,
     });
   }
 
   isLoading.value = false;
+  if (transition.type === "complete") {
+    nextTick(determineResult);
+  }
 };
 
 const restartQuestionnaire = (): void => {
@@ -448,16 +402,6 @@ const getQuestionStepId = (questionId: string | null): string | undefined => {
   });
 };
 
-const findNextQuestionId = (startQuestionId: string | null = null): string | null => {
-  const qData = questionnaireStore.getFullQuestionnaire(props.id);
-  if (!qData) return null;
-  return findNextQuestionIdCore({
-    questionnaire: qData,
-    answers: questionnaireStore.getEnhancedAnswers(props.id),
-    startQuestionId,
-  });
-};
-
 const advanceQuestionState = (branch?: string): void => {
   const previousQuestionId = currentQuestionId.value;
   if (previousQuestionId) {
@@ -469,14 +413,21 @@ const advanceQuestionState = (branch?: string): void => {
       branch,
       role: roleStore.role,
     });
-    pushHistory(previousQuestionId);
   }
-  const nextId = findNextQuestionId(previousQuestionId);
-  if (nextId) {
-    setCurrentQuestion(nextId);
-  } else {
-    setCurrentQuestion(null);
+  const transition = advanceQuestion(branch);
+  if (transition.type === "complete") {
     determineResult();
+    return;
+  }
+  if (transition.type === "missing") {
+    handleError(
+      new Error(`Questionnaire not found: ${transition.questionnaireId}`),
+      "questionnaire:not-found",
+      {
+        questionnaireId: transition.questionnaireId,
+      },
+    );
+    router.replace({ name: "Error", query: { message: "Vragenlijst niet gevonden" } });
   }
 };
 
@@ -660,13 +611,7 @@ const confirmMultipleChoice = (): void => {
 };
 
 const isOptionSelected = (option: QuestionOptionData): boolean => {
-  if (!currentQuestion.value) return false;
-  const answer = questionnaireStore.getAnswer(props.id, currentQuestion.value.id);
-  if (answer === undefined) return false;
-  if (Array.isArray(answer)) {
-    return answer.some((a) => a.value === option.value);
-  }
-  return (answer as AnswerValue).value === option.value;
+  return runner.isOptionSelected(option);
 };
 
 // --- Utilities & UI ---
