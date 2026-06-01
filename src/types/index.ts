@@ -1,3 +1,6 @@
+import type { ManifestCondition, ManifestQuestionOption } from "@beslismodel/core";
+import type { CSSProperties } from "vue";
+
 // Toast system
 export interface Toast {
   id: number;
@@ -19,18 +22,9 @@ export type UserRole = "behandelaar" | "triagist";
 export type ThemePreference = "system" | "light" | "dark";
 
 // Decision engine types
-export interface QuestionOption {
-  id: string;
-  value: string;
-  text: string;
-  description?: string;
-}
+export type QuestionOption = ManifestQuestionOption<string>;
 
-export interface Condition {
-  questionId: string;
-  operator: string;
-  value: unknown;
-}
+export type Condition = ManifestCondition;
 
 export interface Question {
   id: string;
@@ -120,8 +114,6 @@ export interface OutcomeResult {
 }
 
 // Popover styling
-import type { CSSProperties } from "vue";
-
 export interface PopoverStyle {
   position?: CSSProperties["position"];
   top?: string;

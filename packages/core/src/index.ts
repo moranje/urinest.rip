@@ -5,6 +5,20 @@ export type {
   CalculatorRegistry,
 } from "./calculator";
 export { createCalculatorRegistry } from "./calculator";
+export type {
+  DecisionManifest,
+  ManifestCondition,
+  ManifestConditionOperator,
+  ManifestId,
+  ManifestQuestion,
+  ManifestQuestionnaire,
+  ManifestQuestionOption,
+  ManifestQuestionType,
+  ManifestResultLogicRule,
+  ManifestStep,
+  NormalizedDecisionManifest,
+  NormalizedQuestionnaireMeta,
+} from "./manifest";
 export type { MarkdownRenderer, MarkdownRendererOptions } from "./markdown";
 export { createMarkdownRenderer } from "./markdown";
 export type {
