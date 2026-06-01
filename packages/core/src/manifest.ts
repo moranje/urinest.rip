@@ -35,12 +35,16 @@ export interface ManifestStep {
 }
 
 export interface ManifestResultLogicRule {
-  readonly id: ManifestId;
+  readonly id?: ManifestId;
   readonly conditions: readonly ManifestCondition[];
   readonly actionType: string;
   readonly resultKey?: ManifestId;
   readonly redirectToQuestionnaire?: ManifestId;
   readonly metadata?: Readonly<Record<string, unknown>>;
+}
+
+export interface NormalizedResultLogicRule extends Omit<ManifestResultLogicRule, "id"> {
+  readonly id: ManifestId;
 }
 
 export interface ManifestQuestionnaire<ResultData = Readonly<Record<string, unknown>>> {
@@ -82,5 +86,95 @@ export interface NormalizedDecisionManifest<ResultData = Readonly<Record<string,
   readonly questions: Readonly<Record<ManifestId, ManifestQuestion>>;
   readonly steps: Readonly<Record<ManifestId, ManifestStep>>;
   readonly results: Readonly<Record<ManifestId, ResultData>>;
-  readonly resultsLogic: Readonly<Record<ManifestId, ManifestResultLogicRule>>;
+  readonly resultsLogic: Readonly<Record<ManifestId, NormalizedResultLogicRule>>;
+}
+
+export type DuplicateManifestIdPolicy = "throw" | "overwrite";
+
+export interface NormalizeDecisionManifestOptions {
+  readonly duplicateIdPolicy?: DuplicateManifestIdPolicy;
+}
+
+const setNormalizedEntity = <Entity>(
+  collectionName: string,
+  id: ManifestId,
+  entity: Entity,
+  collection: Record<ManifestId, Entity>,
+  duplicateIdPolicy: DuplicateManifestIdPolicy,
+): void => {
+  if (duplicateIdPolicy === "throw" && Object.prototype.hasOwnProperty.call(collection, id)) {
+    throw new Error(`Duplicate ${collectionName} id: ${id}`);
+  }
+  collection[id] = entity;
+};
+
+const ruleIdFor = (
+  questionnaireId: ManifestId,
+  rule: ManifestResultLogicRule,
+  index: number,
+): ManifestId => rule.id || `${questionnaireId}-rule-${index}`;
+
+export function normalizeDecisionManifest<ResultData = Readonly<Record<string, unknown>>>(
+  manifest: DecisionManifest<ResultData>,
+  options: NormalizeDecisionManifestOptions = {},
+): NormalizedDecisionManifest<ResultData> {
+  const duplicateIdPolicy = options.duplicateIdPolicy ?? "throw";
+  const questionnaires: Record<ManifestId, NormalizedQuestionnaireMeta> = {};
+  const questions: Record<ManifestId, ManifestQuestion> = {};
+  const steps: Record<ManifestId, ManifestStep> = {};
+  const results: Record<ManifestId, ResultData> = {};
+  const resultsLogic: Record<ManifestId, NormalizedResultLogicRule> = {};
+
+  for (const questionnaire of manifest.questionnaires) {
+    const questionIds: ManifestId[] = [];
+    for (const question of questionnaire.questions ?? []) {
+      setNormalizedEntity("question", question.id, question, questions, duplicateIdPolicy);
+      questionIds.push(question.id);
+    }
+
+    const stepIds: ManifestId[] = [];
+    for (const step of questionnaire.steps ?? []) {
+      setNormalizedEntity("step", step.id, step, steps, duplicateIdPolicy);
+      stepIds.push(step.id);
+    }
+
+    for (const [key, result] of Object.entries(questionnaire.results ?? {})) {
+      setNormalizedEntity("result", key, result, results, duplicateIdPolicy);
+    }
+
+    const resultsLogicIds: ManifestId[] = [];
+    (questionnaire.resultsLogic ?? []).forEach((rule, index) => {
+      const id = ruleIdFor(questionnaire.id, rule, index);
+      setNormalizedEntity("result logic", id, { ...rule, id }, resultsLogic, duplicateIdPolicy);
+      resultsLogicIds.push(id);
+    });
+
+    setNormalizedEntity(
+      "questionnaire",
+      questionnaire.id,
+      {
+        id: questionnaire.id,
+        version: questionnaire.version,
+        name: questionnaire.name,
+        title: questionnaire.title,
+        description: questionnaire.description,
+        icon: questionnaire.icon,
+        hiddenFromLandingPage: questionnaire.hiddenFromLandingPage,
+        questionIds,
+        stepIds,
+        resultsLogicIds,
+        metadata: questionnaire.metadata,
+      },
+      questionnaires,
+      duplicateIdPolicy,
+    );
+  }
+
+  return Object.freeze({
+    questionnaires: Object.freeze(questionnaires),
+    questions: Object.freeze(questions),
+    steps: Object.freeze(steps),
+    results: Object.freeze(results),
+    resultsLogic: Object.freeze(resultsLogic),
+  });
 }

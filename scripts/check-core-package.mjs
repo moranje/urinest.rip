@@ -3,6 +3,7 @@ import {
   createMarkdownRenderer,
   createRuntimeContext,
   getQuestionProgress,
+  normalizeDecisionManifest,
   parseOutcome,
   toLegacyOutcome,
 } from "../packages/core/dist/index.js";
@@ -47,6 +48,20 @@ if ((await calculators.run("score.sum", { values: [1, 2, 3] })) !== 6) {
 const context = createRuntimeContext({ role: "clinician" });
 if (context.get("role") !== "clinician") {
   throw new Error("createRuntimeContext export failed");
+}
+
+const normalized = normalizeDecisionManifest({
+  questionnaires: [
+    {
+      id: "example-flow",
+      version: "1",
+      title: "Example",
+      questions: [{ id: "q1", text: "Question", type: "select", options: [] }],
+    },
+  ],
+});
+if (normalized.questionnaires["example-flow"]?.questionIds[0] !== "q1") {
+  throw new Error("normalizeDecisionManifest export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

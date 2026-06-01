@@ -4,7 +4,13 @@ import {
   validateConditions as validateConditionsEngine,
   determineOutcome,
 } from "decision-engine-core";
-import { applyRuntimeContext, createRuntimeContext, type RuntimeContext } from "@beslismodel/core";
+import {
+  applyRuntimeContext,
+  createRuntimeContext,
+  normalizeDecisionManifest,
+  type DecisionManifest,
+  type RuntimeContext,
+} from "@beslismodel/core";
 import { breadcrumbApi } from "../lib/breadcrumbs";
 import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
 import { guidelineReviews } from "../lib/guidelines";
@@ -26,6 +32,8 @@ import type {
   OutcomeResult,
 } from "../types";
 
+type RawResultLogicRule = Omit<ResultLogicRule, "id"> & { id?: string };
+
 interface RawQuestionnaire {
   id: string;
   version?: string;
@@ -37,7 +45,7 @@ interface RawQuestionnaire {
   questions?: Question[];
   steps?: Step[];
   results?: Record<string, ResultData>;
-  resultsLogic?: Array<ResultLogicRule & { id?: string }>;
+  resultsLogic?: RawResultLogicRule[];
 }
 
 interface FetchedData {
@@ -140,42 +148,8 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
   const processFetchedData = (data: FetchedData): void => {
     if (!data?.questionnaires) return;
 
-    const newQuestionnaires: Record<string, QuestionnaireMeta> = {};
-    const newQuestions: Record<string, Question> = {};
-    const newSteps: Record<string, Step> = {};
-    const newResults: Record<string, ResultData> = {};
-    const newResultsLogic: Record<string, ResultLogicRule> = {};
-    const newAnswers: Record<string, AnswerMap> = {};
-
-    for (const q of data.questionnaires) {
-      if (q.questions) {
-        for (const question of q.questions) {
-          newQuestions[question.id] = question;
-        }
-      }
-
-      if (q.steps) {
-        for (const step of q.steps) {
-          newSteps[step.id] = step;
-        }
-      }
-
-      if (q.results) {
-        for (const [key, result] of Object.entries(q.results)) {
-          newResults[key] = result;
-        }
-      }
-
-      const ruleIds: string[] = [];
-      if (q.resultsLogic) {
-        q.resultsLogic.forEach((rule, index) => {
-          const ruleId = rule.id || `${q.id}-rule-${index}`;
-          newResultsLogic[ruleId] = { ...rule, id: ruleId };
-          ruleIds.push(ruleId);
-        });
-      }
-
-      newQuestionnaires[q.id] = {
+    const manifest: DecisionManifest<ResultData> = {
+      questionnaires: data.questionnaires.map((q) => ({
         id: q.id,
         version: q.version ?? "unknown",
         name: q.name,
@@ -183,19 +157,32 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
         description: q.description,
         icon: q.icon,
         hiddenFromLandingPage: q.hiddenFromLandingPage,
-        questionIds: q.questions ? q.questions.map((item) => item.id) : [],
-        stepIds: q.steps ? q.steps.map((item) => item.id) : [],
-        resultsLogicIds: ruleIds,
-      };
+        questions: q.questions ?? [],
+        steps: q.steps ?? [],
+        results: q.results ?? {},
+        resultsLogic: q.resultsLogic ?? [],
+      })),
+    };
+    const normalized = normalizeDecisionManifest(manifest, { duplicateIdPolicy: "overwrite" });
+    const newQuestionnaires: Record<string, QuestionnaireMeta> = {};
+    const newAnswers: Record<string, AnswerMap> = {};
 
+    for (const [id, q] of Object.entries(normalized.questionnaires)) {
+      newQuestionnaires[id] = {
+        ...q,
+        name: q.name ?? q.title,
+        questionIds: [...q.questionIds],
+        stepIds: [...q.stepIds],
+        resultsLogicIds: [...q.resultsLogicIds],
+      };
       newAnswers[q.id] = {};
     }
 
     questionnaires.value = newQuestionnaires;
-    questions.value = newQuestions;
-    steps.value = newSteps;
-    results.value = newResults;
-    resultsLogic.value = newResultsLogic;
+    questions.value = { ...normalized.questions } as Record<string, Question>;
+    steps.value = { ...normalized.steps } as Record<string, Step>;
+    results.value = { ...normalized.results };
+    resultsLogic.value = { ...normalized.resultsLogic } as Record<string, ResultLogicRule>;
     answers.value = restorePersistedAnswers(newAnswers);
     dataReady.value = true;
 

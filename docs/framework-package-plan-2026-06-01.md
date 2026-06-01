@@ -56,7 +56,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 
 - [x] Flow manifest types
-- [ ] Normalisatie van questionnaires/questions/steps/results
+- [x] Normalisatie van questionnaires/questions/steps/results
 - [ ] Condition validation wrapper
 - [ ] Graph traversal
 - [x] Progress calculation

@@ -7,6 +7,7 @@ export type {
 export { createCalculatorRegistry } from "./calculator";
 export type {
   DecisionManifest,
+  DuplicateManifestIdPolicy,
   ManifestCondition,
   ManifestConditionOperator,
   ManifestId,
@@ -16,9 +17,12 @@ export type {
   ManifestQuestionType,
   ManifestResultLogicRule,
   ManifestStep,
+  NormalizeDecisionManifestOptions,
   NormalizedDecisionManifest,
   NormalizedQuestionnaireMeta,
+  NormalizedResultLogicRule,
 } from "./manifest";
+export { normalizeDecisionManifest } from "./manifest";
 export type { MarkdownRenderer, MarkdownRendererOptions } from "./markdown";
 export { createMarkdownRenderer } from "./markdown";
 export type {
