@@ -35,7 +35,7 @@ export interface Condition {
 export interface Question {
   id: string;
   text: string;
-  type: "single" | "multiple" | "multi_select";
+  type: "select" | "single" | "multiple" | "multi_select";
   options: QuestionOption[];
   conditions?: Condition[];
   description?: string;
@@ -43,6 +43,7 @@ export interface Question {
 
 export interface Step {
   id: string;
+  title?: string;
   description?: string;
   questionIds: string[];
 }
@@ -62,6 +63,7 @@ export interface QuestionnaireMeta {
   title: string;
   description?: string;
   icon?: string;
+  hiddenFromLandingPage?: boolean;
   questionIds: string[];
   stepIds: string[];
   resultsLogicIds: string[];

@@ -31,6 +31,7 @@ interface RawQuestionnaire {
   title: string;
   description?: string;
   icon?: string;
+  hiddenFromLandingPage?: boolean;
   questions?: Question[];
   steps?: Step[];
   results?: Record<string, ResultData>;
@@ -179,6 +180,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
         title: q.title,
         description: q.description,
         icon: q.icon,
+        hiddenFromLandingPage: q.hiddenFromLandingPage,
         questionIds: q.questions ? q.questions.map((item) => item.id) : [],
         stepIds: q.steps ? q.steps.map((item) => item.id) : [],
         resultsLogicIds: ruleIds,

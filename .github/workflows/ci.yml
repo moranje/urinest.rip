@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build flow data
+        run: npm run build:flows
+
       - name: Lint + Type-check + Tests (parallel)
         run: |
           npx oxlint src/ --deny-warnings &

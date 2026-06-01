@@ -37,7 +37,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 ## Kritieke Bevindingen Uit Agent-Ronde
 
 - [ ] Source maps uploaden naar Supabase, daarna `.map` uit `dist` verwijderen vóór Netlify deploy.
-- [ ] Tests niet laten afhangen van ignored/stale `public/main.json`; flow-build vóór test of tests direct uit YAML compile.
+- [x] Tests niet laten afhangen van ignored/stale `public/main.json`; flow-build vóór test of tests direct uit YAML compile.
 - [ ] Supabase admin policies beperken tot admin claim/email allowlist, niet elke `authenticated` user.
 - [ ] Legacy unfiltered log RPCs droppen/revoken.
 - [ ] Anonymous log insert begrenzen via validated RPC/Edge Function met payload-size/rate/source checks.
@@ -137,12 +137,12 @@ App blijft eigenaar van domeindata en branding.
 
 ## Compiler Checklist
 
-- [ ] `build:flows` script toevoegen.
-- [ ] CI tests laten voorafgaan door flow-build.
-- [ ] Plugin `runBuild()` laat errors niet meer stil vallen.
-- [ ] Rule IDs deterministisch maken.
-- [ ] `Question.type` union alignen met generated `select`.
-- [ ] Manifest `name/title/hiddenFromLandingPage` types alignen.
+- [x] `build:flows` script toevoegen.
+- [x] CI tests laten voorafgaan door flow-build.
+- [x] Plugin `runBuild()` laat errors niet meer stil vallen.
+- [x] Rule IDs deterministisch maken.
+- [x] `Question.type` union alignen met generated `select`.
+- [x] Manifest `name/title/hiddenFromLandingPage` types alignen.
 - [ ] Schema controleert unknown condition operators.
 - [ ] Schema controleert orphan questions.
 - [ ] Schema controleert unreachable results.
@@ -252,8 +252,8 @@ App blijft eigenaar van domeindata en branding.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
-- [ ] `build:flows` vóór tests in CI.
-- [ ] Flow tests gebruiken verse compiled output.
+- [x] `build:flows` vóór tests in CI.
+- [x] Flow tests gebruiken verse compiled output.
 - [ ] Package unit tests per package.
 - [ ] Consumer fixture app.
 - [ ] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.

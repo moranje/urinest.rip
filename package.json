@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:flows": "node scripts/build-flows.mjs",
     "build": "vite build",
+    "pretest": "npm run build:flows",
     "preview": "vite preview",
     "prepare": "husky",
     "check": "vue-tsc --noEmit",
