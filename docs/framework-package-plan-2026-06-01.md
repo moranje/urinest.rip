@@ -41,7 +41,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 - [x] Supabase admin policies beperken tot admin claim/email allowlist, niet elke `authenticated` user.
 - [x] Legacy unfiltered log RPCs droppen/revoken.
 - [x] Anonymous log insert begrenzen via validated RPC/Edge Function met payload-size/rate/source checks.
-- [ ] Route params, result IDs, session IDs en flow trail entries hashen/redacten waar ze klinische state kunnen onthullen.
+- [x] Route params, result IDs, session IDs en flow trail entries hashen/redacten waar ze klinische state kunnen onthullen.
 - [x] Log-sink batch requeue bij thrown flush errors.
 - [x] Breaker flag bij reload lezen en persistence disabled houden.
 - [x] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.

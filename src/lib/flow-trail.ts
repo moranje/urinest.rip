@@ -1,5 +1,6 @@
 import { addBreadcrumb } from "./breadcrumbs";
 import { scrubValue } from "./scrub";
+import { sanitizeFlowTrailEvent } from "./telemetry-privacy";
 
 type FlowTrailType = "flow-start" | "flow-step" | "flow-redirect" | "flow-result";
 
@@ -20,10 +21,12 @@ const MAX_FLOW_TRAIL = 40;
 const buffer: FlowTrailEvent[] = [];
 
 function addFlowTrailEvent(event: Omit<FlowTrailEvent, "ts">): void {
-  const scrubbed = scrubValue({
-    ...event,
-    ts: new Date().toISOString(),
-  }).value as FlowTrailEvent;
+  const scrubbed = scrubValue(
+    sanitizeFlowTrailEvent({
+      ...event,
+      ts: new Date().toISOString(),
+    }),
+  ).value as FlowTrailEvent;
 
   buffer.push(scrubbed);
   if (buffer.length > MAX_FLOW_TRAIL) {

@@ -16,6 +16,7 @@ import { getErrorContext, parseSourceLocation } from "./error-context";
 import { getFlowTrail } from "./flow-trail";
 import { scrubValue } from "./scrub";
 import { readStorage, removeStorage, writeStorage } from "./storage";
+import { hashForTelemetry, sanitizeRouteForTelemetry } from "./telemetry-privacy";
 
 const log = createLogger("log-sink");
 
@@ -280,8 +281,8 @@ export function persistError(input: PersistErrorInput): void {
     detail: safeDetail,
     context: scrubHits > 0 ? { ...safeContext, scrub_hits_total: scrubHits } : safeContext,
     source: "urinestrip",
-    session_id: SESSION_ID,
-    url: window.location.pathname,
+    session_id: hashForTelemetry(SESSION_ID, "session") ?? "session_redacted",
+    url: sanitizeRouteForTelemetry(`${window.location.pathname}${window.location.search}`),
     fingerprint,
     created_at: new Date().toISOString(),
   };
@@ -314,8 +315,8 @@ export function persistTelemetry(input: PersistTelemetryInput): void {
     detail: null,
     context: safeContext,
     source: "urinestrip",
-    session_id: SESSION_ID,
-    url: window.location.pathname,
+    session_id: hashForTelemetry(SESSION_ID, "session") ?? "session_redacted",
+    url: sanitizeRouteForTelemetry(`${window.location.pathname}${window.location.search}`),
     fingerprint: fnv1a(`${input.module}|${input.message}`),
     created_at: new Date().toISOString(),
   });

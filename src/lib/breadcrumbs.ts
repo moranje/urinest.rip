@@ -6,6 +6,7 @@
  */
 
 import { scrubText, scrubValue } from "./scrub";
+import { sanitizeRouteForTelemetry } from "./telemetry-privacy";
 
 export interface Breadcrumb {
   type: "navigation" | "click" | "api" | "log" | "flow";
@@ -57,7 +58,10 @@ export function clearBreadcrumbs(): void {
 }
 
 export function breadcrumbNav(from: string, to: string): void {
-  addBreadcrumb({ type: "navigation", message: `${from} → ${to}` });
+  addBreadcrumb({
+    type: "navigation",
+    message: `${sanitizeRouteForTelemetry(from)} → ${sanitizeRouteForTelemetry(to)}`,
+  });
 }
 
 export function breadcrumbClick(label: string, data?: Record<string, unknown>): void {
@@ -67,7 +71,7 @@ export function breadcrumbClick(label: string, data?: Record<string, unknown>): 
 export function breadcrumbApi(method: string, url: string, duration?: number): void {
   addBreadcrumb({
     type: "api",
-    message: `${method} ${url}`,
+    message: `${method} ${sanitizeRouteForTelemetry(url)}`,
     data: duration != null ? { ms: duration } : undefined,
   });
 }

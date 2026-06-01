@@ -73,6 +73,7 @@ describe("log-sink", () => {
           level: "info",
           module: "questionnaire-store",
           message: "flow.versions",
+          session_id: expect.stringMatching(/^session_[a-f0-9]{8}$/),
           source: "urinestrip",
         }),
       ],
