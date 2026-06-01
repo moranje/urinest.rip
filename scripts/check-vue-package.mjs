@@ -4,7 +4,9 @@ import { fileURLToPath } from "node:url";
 import { createPinia, setActivePinia } from "pinia";
 import {
   createBeslismodelDataReadyGuard,
+  createBeslismodelLandingMenuSections,
   createBeslismodelStore,
+  LandingMenuGrid,
   noopTelemetryAdapter,
   useQuestionnaireRunner,
   useResultResolver,
@@ -118,6 +120,24 @@ const runner = useQuestionnaireRunner(
 
 if (runner.start().type !== "question") {
   throw new Error("vue package questionnaire runner export failed");
+}
+
+const landingSections = createBeslismodelLandingMenuSections(
+  [
+    {
+      id: "package-smoke",
+      title: "Package smoke",
+      icon: "smoke",
+      metadata: { landingOrder: 1, landingSection: "primary" },
+    },
+  ],
+  { iconKeys: ["smoke"] },
+);
+if (
+  landingSections.primary[0]?.id !== "package-smoke" ||
+  LandingMenuGrid.name !== "LandingMenuGrid"
+) {
+  throw new Error("vue package landing menu export failed");
 }
 
 noopTelemetryAdapter.track({

@@ -2,38 +2,41 @@
   <div class="landing-page">
     <div class="landing-content">
       <h1 class="sr-only">Beslishulp urineonderzoek — kies een test</h1>
-      <div class="landing-grid stagger-children">
-        <MenuItem
-          v-for="item in primaryItems"
-          :key="item.id"
-          v-slot="{ hover, touch }"
-          :to="questionnairePath(item.id)"
-          :name="questionnaireLabel(item)"
-        >
-          <component :is="item.component" :hover="hover" :touch="touch" />
-        </MenuItem>
-      </div>
-
-      <section v-if="secondaryItems.length > 0" class="uti-section stagger-children">
-        <h3 class="uti-heading">Urineweginfecties</h3>
-        <div class="uti-grid">
-          <router-link
-            v-for="item in secondaryItems"
-            :key="item.id"
-            :to="questionnairePath(item.id)"
-            class="uti-tile"
+      <LandingMenuGrid
+        :items="questionnaireStore.questionnaireList"
+        :icon-keys="landingIconKeys"
+        label="Beslishulp urineonderzoek"
+        secondary-heading="Urineweginfecties"
+      >
+        <template #primary="{ viewItem }">
+          <MenuItem
+            v-slot="{ hover, touch }"
+            :to="questionnairePath(viewItem.id)"
+            :name="viewItem.label"
           >
-            <span class="uti-tile-title">{{ questionnaireLabel(item) }}</span>
-            <span class="uti-tile-desc">{{ landingDescription(item) }}</span>
+            <component
+              :is="iconComponent(viewItem.icon)"
+              v-if="iconComponent(viewItem.icon)"
+              :hover="hover"
+              :touch="touch"
+            />
+          </MenuItem>
+        </template>
+
+        <template #secondary="{ viewItem }">
+          <router-link :to="questionnairePath(viewItem.id)" class="uti-tile">
+            <span class="uti-tile-title">{{ viewItem.label }}</span>
+            <span class="uti-tile-desc">{{ viewItem.description }}</span>
           </router-link>
-        </div>
-      </section>
+        </template>
+      </LandingMenuGrid>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, type Component } from "vue";
+import { onMounted, type Component } from "vue";
+import { LandingMenuGrid } from "@beslismodel/vue";
 import MenuItem from "../components/MenuItem.vue";
 import HealthySvg from "../components/HealthySvg.vue";
 import StripSvg from "../components/StripSvg.vue";
@@ -41,7 +44,6 @@ import DipslideSvg from "../components/DipslideSvg.vue";
 import SedimentSvg from "../components/SedimentSvg.vue";
 import CultureSvg from "../components/CultureSvg.vue";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
-import type { QuestionnaireMeta } from "../types";
 
 const questionnaireStore = useQuestionnaireStore();
 
@@ -54,59 +56,12 @@ const iconComponents = {
 } satisfies Record<string, Component>;
 
 type LandingIcon = keyof typeof iconComponents;
-type LandingSection = "primary" | "secondary";
-
-interface PrimaryLandingItem extends QuestionnaireMeta {
-  component: Component;
-}
+const landingIconKeys = Object.keys(iconComponents);
 
 const questionnairePath = (id: string): string => `/questionnaire/${id}`;
 
-const landingOrder = (questionnaire: QuestionnaireMeta): number => {
-  const order = questionnaire.metadata?.landingOrder;
-  return typeof order === "number" ? order : Number.MAX_SAFE_INTEGER;
-};
-
-const sortByLandingOrder = (a: QuestionnaireMeta, b: QuestionnaireMeta): number =>
-  landingOrder(a) - landingOrder(b) || a.title.localeCompare(b.title, "nl");
-
 const iconComponent = (icon: string | undefined): Component | null =>
   icon && icon in iconComponents ? iconComponents[icon as LandingIcon] : null;
-
-const landingSection = (questionnaire: QuestionnaireMeta): LandingSection => {
-  const section = questionnaire.metadata?.landingSection;
-  if (section === "primary" || section === "secondary") return section;
-  return iconComponent(questionnaire.icon) ? "primary" : "secondary";
-};
-
-const questionnaireLabel = (questionnaire: QuestionnaireMeta): string =>
-  questionnaire.name ?? questionnaire.title;
-
-const landingDescription = (questionnaire: QuestionnaireMeta): string => {
-  const description = questionnaire.metadata?.landingDescription;
-  return typeof description === "string" ? description : (questionnaire.description ?? "");
-};
-
-const visibleQuestionnaires = computed(() =>
-  [...questionnaireStore.questionnaireList]
-    .filter((questionnaire) => !questionnaire.hiddenFromLandingPage)
-    .sort(sortByLandingOrder),
-);
-
-const primaryItems = computed<PrimaryLandingItem[]>(() =>
-  visibleQuestionnaires.value.flatMap((questionnaire) => {
-    if (landingSection(questionnaire) !== "primary") return [];
-    const component = iconComponent(questionnaire.icon);
-    return component ? [{ ...questionnaire, component }] : [];
-  }),
-);
-
-const secondaryItems = computed(() =>
-  visibleQuestionnaires.value.filter((questionnaire) => {
-    if (landingSection(questionnaire) === "secondary") return true;
-    return !iconComponent(questionnaire.icon);
-  }),
-);
 
 onMounted(async () => {
   if (!questionnaireStore.dataReady && !questionnaireStore.isLoading) {
@@ -129,7 +84,7 @@ onMounted(async () => {
   container-name: landing;
 }
 
-.landing-grid {
+:deep(.bm-landing-menu-grid__primary) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)));
   gap: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
@@ -137,7 +92,7 @@ onMounted(async () => {
   align-items: start;
 }
 
-.landing-grid > * {
+:deep(.bm-landing-menu-grid__primary-item) {
   inline-size: 100%;
   max-inline-size: var(--landing-tile-size);
   aspect-ratio: 1 / 1;
@@ -145,40 +100,50 @@ onMounted(async () => {
   overflow: hidden;
 }
 
+:deep(.bm-landing-menu-grid__primary-item > *) {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
 @container landing (max-width: 44rem) {
-  .landing-grid {
+  :deep(.bm-landing-menu-grid__primary) {
     --landing-tile-size: clamp(13rem, 32vw, 17rem);
   }
 }
 
 @container landing (max-width: 30rem) {
-  .landing-grid {
+  :deep(.bm-landing-menu-grid__primary) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-md);
   }
 }
 
 @container landing (max-width: 22rem) {
-  .landing-grid {
+  :deep(.bm-landing-menu-grid__primary) {
     grid-template-columns: minmax(0, var(--landing-tile-size));
   }
 }
 
 /* UTI Section */
-.uti-section {
+:deep(.bm-landing-menu-grid__secondary) {
   margin-top: var(--spacing-xl, 2rem);
 }
 
-.uti-heading {
+:deep(.bm-landing-menu-grid__secondary-heading) {
   font: var(--md-sys-typescale-title-medium);
   color: var(--md-sys-color-on-surface-variant);
   margin: 0 0 var(--spacing-md);
 }
 
-.uti-grid {
+:deep(.bm-landing-menu-grid__secondary-items) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-sm);
+}
+
+:deep(.bm-landing-menu-grid__secondary-item > *) {
+  inline-size: 100%;
+  block-size: 100%;
 }
 
 .uti-tile {
@@ -213,13 +178,13 @@ onMounted(async () => {
 }
 
 @container landing (max-width: 37.5rem) {
-  .uti-grid {
+  :deep(.bm-landing-menu-grid__secondary-items) {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 @container landing (max-width: 30rem) {
-  .uti-grid {
+  :deep(.bm-landing-menu-grid__secondary-items) {
     grid-template-columns: 1fr;
   }
 }

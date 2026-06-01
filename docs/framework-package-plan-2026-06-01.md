@@ -99,7 +99,7 @@ Vue runtime en UI.
 - [x] Route helpers
 - [ ] `QuestionnaireRunner`
 - [ ] `ResultRenderer`
-- [ ] `LandingMenuGrid`
+- [x] `LandingMenuGrid`
 - [ ] Slot-based result sections
 - [x] Consumer-owned labels/icons/taxonomy
 - [x] Vue, Pinia, Router als peer dependencies
@@ -191,7 +191,7 @@ App blijft eigenaar van domeindata en branding.
 ### Organisms
 
 - [ ] `AppHeader`
-- [ ] `LandingMenuGrid`
+- [x] `LandingMenuGrid`
 - [ ] `QuestionPanel`
 - [ ] `QuestionToolbar`
 - [ ] `ResultSectionList`
@@ -329,7 +329,7 @@ Exit criteria:
 - [ ] Questionnaire organism.
 - [x] Result resolver composable.
 - [ ] Result renderer organism.
-- [ ] Landing generated from manifest.
+- [x] Landing generated from manifest.
 
 ### Ronde 3 — Design System
 

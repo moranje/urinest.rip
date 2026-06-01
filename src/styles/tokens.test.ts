@@ -61,7 +61,7 @@ describe("design tokens", () => {
 
     expect(landingPage).not.toContain("28vw");
     expect(landingPage).not.toContain("@container landing (max-width: 56.25rem)");
-    expect(landingPage).toContain('class="landing-grid stagger-children"');
+    expect(landingPage).toContain("bm-landing-menu-grid__primary");
     expect(landingPage).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
     expect(landingPage).toContain(
       "grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)))",
@@ -72,10 +72,9 @@ describe("design tokens", () => {
   it("keeps landing routes driven by manifest taxonomy", () => {
     const landingPage = read("src/views/LandingPage.vue");
 
+    expect(landingPage).toContain("LandingMenuGrid");
     expect(landingPage).toContain("questionnaireStore.questionnaireList");
-    expect(landingPage).toContain("metadata?.landingOrder");
-    expect(landingPage).toContain("metadata?.landingSection");
-    expect(landingPage).toContain("iconComponents");
+    expect(landingPage).toContain(':icon-keys="landingIconKeys"');
     expect(landingPage).not.toContain('to="/questionnaire/strip"');
     expect(landingPage).not.toContain('to="/questionnaire/bacteriurie"');
   });
