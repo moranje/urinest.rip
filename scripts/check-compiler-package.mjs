@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -82,6 +82,14 @@ try {
   if (schema.$id !== flowSchema.$id || !schema.required.includes("logic")) {
     throw new Error("compiler package schema export failed");
   }
+
+  await Promise.all([
+    access(new URL("../packages/compiler/dist/index.d.ts", import.meta.url)),
+    access(new URL("../packages/compiler/dist/cli.d.ts", import.meta.url)),
+    access(new URL("../packages/compiler/dist/compiler.d.ts", import.meta.url)),
+    access(new URL("../packages/compiler/dist/plugin.d.ts", import.meta.url)),
+    access(new URL("../packages/compiler/dist/schema.d.ts", import.meta.url)),
+  ]);
 
   console.log("@beslismodel/compiler package exports ok");
 } finally {

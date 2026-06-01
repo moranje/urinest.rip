@@ -85,7 +85,7 @@ YAML/JSON naar strict manifest.
 - [ ] Build faalt hard bij schema/logica fouten
 - [ ] Deterministic rule IDs
 - [x] Generated JSON schema
-- [ ] Generated `.d.ts`
+- [x] Generated `.d.ts`
 - [x] Stable manifest snapshots
 - [ ] Flow taxonomy metadata (`category`, `audience`, `domain`, `hiddenFromLandingPage`, `recommendedStart`)
 
