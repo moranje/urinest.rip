@@ -53,4 +53,4 @@ De app kent twee rollen (toggle in header):
 `VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY` worden als GitHub secrets doorgegeven aan de build step. Lokaal via `.env`.
 
 ### Design tokens
-Kleur-tokens gebruiken `light-dark(light, dark)` in `src/styles/tokens.css` met `@supports` fallback voor oudere browsers. `src/styles/themes.css` blijft bestaan voor expliciete `data-theme` overrides en FOUC-preventie.
+Kleur-tokens gebruiken `light-dark(light, dark)` in `src/styles/tokens.css` met `@supports` fallback voor oudere browsers. `data-theme` zet uitsluitend `color-scheme`; alle primitieve en semantische kleurrollen blijven in `tokens.css`.

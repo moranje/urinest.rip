@@ -3,7 +3,7 @@ import { defineComponent, h } from "vue";
 
 /**
  * DesignTokens showcase — toont de semantische MD3-token-set die in
- * `src/styles/tokens.css` en `src/styles/themes.css` is gedefinieerd.
+ * `src/styles/tokens.css` is gedefinieerd.
  * Bron-of-truth blijft de CSS; deze stories renderen swatches/voorbeelden
  * die live de `--md-sys-*` variabelen consumeren.
  */
@@ -201,7 +201,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          "Bron-of-truth: `src/styles/tokens.css` (light) + `src/styles/themes.css` (dark override). Wissel het Theme-toolbar voor licht/donker.",
+          "Bron-of-truth: `src/styles/tokens.css`. Wissel het Theme-toolbar voor licht/donker.",
       },
     },
   },

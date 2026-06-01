@@ -1,7 +1,6 @@
-@layer tokens, themes, components, base, utilities;
+@layer tokens, components, base, utilities;
 
 @import "./tokens.css" layer(tokens);
-@import "./themes.css" layer(themes);
 @import "./components.css" layer(components);
 
 /* Loading indicator */

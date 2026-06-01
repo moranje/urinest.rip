@@ -1,10 +1,7 @@
 import type { Preview } from "@storybook/vue3-vite";
 
-// Global styles — design tokens + base styles for accurate primitive rendering
-import "../src/styles/tokens.css";
-import "../src/styles/themes.css";
+// Global styles — imports tokens, component layer and base styles.
 import "../src/styles/main.css";
-import "../src/styles/components.css";
 
 const preview: Preview = {
   parameters: {
@@ -17,8 +14,8 @@ const preview: Preview = {
     backgrounds: {
       default: "surface",
       values: [
-        { name: "surface", value: "#fcfcff" },
-        { name: "surface-dark", value: "#1a1c1e" },
+        { name: "surface", value: "var(--md-sys-color-background)" },
+        { name: "surface-container", value: "var(--md-sys-color-surface-container)" },
       ],
     },
     options: {
