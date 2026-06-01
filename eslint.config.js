@@ -4,6 +4,10 @@ import pluginVue from 'eslint-plugin-vue'
 import vueA11y from 'eslint-plugin-vuejs-accessibility'
 
 export default [
+  {
+    ignores: ["dist/**", "packages/**/dist/**", "coverage/**"],
+  },
+
   // Vue plugin provides vue-eslint-parser for .vue files
   ...pluginVue.configs['flat/recommended'],
   ...vueA11y.configs['flat/recommended'],

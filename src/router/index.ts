@@ -7,6 +7,7 @@ import { handleError } from "../lib/errors";
 import { AUTH_SESSION_EXPIRED_EVENT } from "../lib/auth-events";
 import { observeViewTransition } from "../lib/view-transition";
 import { useAuthStore } from "../store/authStore";
+import { shouldUseRouteViewTransition } from "./view-transition-policy";
 
 import LandingPage from "../views/LandingPage.vue";
 import ResultPage from "../views/ResultPage.vue";
@@ -126,7 +127,7 @@ let pendingCommit: (() => void) | null = null;
 router.beforeResolve((to, from) => {
   if (!supportsViewTransitions()) return;
   if (prefersReducedMotion()) return;
-  if (to.path === from.path) return;
+  if (!shouldUseRouteViewTransition(to, from)) return;
 
   return new Promise<void>((proceed) => {
     const doc = document as Document & {
