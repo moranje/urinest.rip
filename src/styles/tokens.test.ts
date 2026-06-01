@@ -55,4 +55,12 @@ describe("design tokens", () => {
 
     expect(offenders).toEqual([]);
   });
+
+  it("keeps landing tiles bounded by component scale", () => {
+    const landingPage = read("src/views/LandingPage.vue");
+
+    expect(landingPage).not.toContain("28vw");
+    expect(landingPage).toContain("max-inline-size: 13.5rem");
+    expect(landingPage).toContain("repeat(auto-fit");
+  });
 });

@@ -68,36 +68,36 @@ import CultureSvg from "../components/CultureSvg.vue";
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-auto-flow: row;
-  gap: 1em;
-  justify-content: space-between;
-  align-content: space-evenly;
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 13.5rem));
+  gap: var(--spacing-lg);
+  justify-content: center;
+  align-items: start;
 }
 
 .grid > * {
+  inline-size: 100%;
+  max-inline-size: 13.5rem;
   aspect-ratio: 1 / 1;
-  min-height: clamp(10em, 28vw, 16em);
+  justify-self: center;
   overflow: hidden;
 }
 
 @container landing (max-width: 56.25rem) {
   .grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 12rem));
   }
 }
 
-/* Single-column layout.
- * Drop grid-auto-rows so row height comes from each tile's aspect-ratio: 1/1
- * (otherwise a fixed row height conflicts with the square tile size and
- * the tiles overflow into the next row). */
 @container landing (max-width: 30rem) {
   .grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-    gap: 0.75em;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+  }
+}
+
+@container landing (max-width: 22rem) {
+  .grid {
+    grid-template-columns: minmax(0, 13.5rem);
   }
 }
 
