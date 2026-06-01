@@ -1,0 +1,29 @@
+{
+  "name": "@beslismodel/compiler",
+  "version": "0.1.0",
+  "private": false,
+  "bin": {
+    "beslismodel": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "3.0.1",
+    "glob": "^13.0.0",
+    "js-yaml": "^4.1.1",
+    "picocolors": "^1.1.1"
+  }
+}

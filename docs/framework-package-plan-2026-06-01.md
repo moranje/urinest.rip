@@ -79,7 +79,7 @@ Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buite
 
 YAML/JSON naar strict manifest.
 
-- [ ] CLI `beslismodel build`
+- [x] CLI `beslismodel build`
 - [ ] Vite/Rolldown plugin
 - [ ] Strict schema validation
 - [ ] Build faalt hard bij schema/logica fouten
