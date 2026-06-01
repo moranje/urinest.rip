@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { nextTick } from "vue";
+import { createBeslismodelDataReadyGuard } from "@beslismodel/vue";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { breadcrumbNav } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
@@ -23,49 +24,25 @@ const routes = [
     name: "Questionnaire",
     component: () => import("../views/QuestionnairePage.vue").then((m) => m.default),
     props: true,
-    beforeEnter: async (
-      to: import("vue-router").RouteLocationNormalized,
-      _from: import("vue-router").RouteLocationNormalized,
-      next: import("vue-router").NavigationGuardNext,
-    ) => {
-      const store = useQuestionnaireStore();
-
-      if (store.dataReady) {
-        next();
-        return;
-      }
-
-      if (store.loadingPromise) {
-        try {
-          await store.loadingPromise;
-          await nextTick();
-          next();
-        } catch {
-          next({
+    beforeEnter: createBeslismodelDataReadyGuard({
+      afterLoad: () => nextTick(),
+      onFailure: (failure) => {
+        if (failure.reason === "load-error" && failure.phase === "pending") {
+          return {
             name: "Error",
-            query: { message: "Kon gegevens niet laden", retry: to.fullPath },
-          });
+            query: { message: "Kon gegevens niet laden", retry: failure.to.fullPath },
+          };
         }
-        return;
-      }
-
-      if (!store.isLoading && !store.dataReady) {
-        try {
-          await store.loadInitialData();
-          await nextTick();
-          if (store.dataReady) {
-            next();
-          } else {
-            next({ name: "Error", query: { message: "Laden mislukt", retry: to.fullPath } });
-          }
-        } catch {
-          next({ name: "Error", query: { retry: to.fullPath } });
+        if (failure.reason === "load-error") {
+          return { name: "Error", query: { retry: failure.to.fullPath } };
         }
-        return;
-      }
-
-      next();
-    },
+        return {
+          name: "Error",
+          query: { message: "Laden mislukt", retry: failure.to.fullPath },
+        };
+      },
+      useStore: useQuestionnaireStore,
+    }),
   },
   {
     path: "/info/:resultKey",
