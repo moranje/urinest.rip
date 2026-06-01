@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { buildFlows } from "../packages/compiler/dist/index.js";
+import { buildFlows, decisionEngine } from "../packages/compiler/dist/index.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -35,6 +35,7 @@ try {
   const flowsDir = join(tempDir, "flows");
   const apiOutput = join(tempDir, "api", "main.json");
   const cliOutput = join(tempDir, "cli", "main.json");
+  const pluginOutput = join(tempDir, "plugin", "main.json");
   await mkdir(flowsDir);
   await writeFile(join(flowsDir, "fixture.yaml"), flowYaml);
 
@@ -54,6 +55,17 @@ try {
   const cliManifest = JSON.parse(await readFile(cliOutput, "utf8"));
   if (cliManifest.questionnaires[0]?.id !== "package-smoke") {
     throw new Error("compiler package CLI export failed");
+  }
+
+  const plugin = decisionEngine({
+    flowsDir,
+    outputFile: pluginOutput,
+  });
+  plugin.configResolved({ root: tempDir });
+  await plugin.buildStart();
+  const pluginManifest = JSON.parse(await readFile(pluginOutput, "utf8"));
+  if (pluginManifest.questionnaires[0]?.id !== "package-smoke") {
+    throw new Error("compiler package plugin export failed");
   }
 
   console.log("@beslismodel/compiler package exports ok");

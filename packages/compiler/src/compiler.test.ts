@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildFlows } from "./compiler";
+import { decisionEngine } from "./plugin";
 
 const tempDirs: string[] = [];
 
@@ -14,7 +15,7 @@ async function createFixture(flowYaml: string) {
   await mkdir(flowsDir);
   await writeFile(join(flowsDir, "fixture.yaml"), flowYaml);
   tempDirs.push(dir);
-  return { flowsDir, outputFile };
+  return { dir, flowsDir, outputFile };
 }
 
 const validFlow = `
@@ -74,6 +75,24 @@ describe("compiler package", () => {
 
     await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
       'Question "answer" has duplicate option value "yes"',
+    );
+  });
+
+  it("exposes a Vite-compatible plugin build hook", async () => {
+    const { dir } = await createFixture(validFlow);
+    const plugin = decisionEngine({
+      flowsDir: "flows",
+      outputFile: "plugin/main.json",
+    });
+
+    plugin.configResolved({ root: dir });
+    await plugin.buildStart();
+
+    const written = JSON.parse(await readFile(join(dir, "plugin", "main.json"), "utf8"));
+    expect(written.questionnaires[0]).toEqual(
+      expect.objectContaining({
+        id: "example-flow",
+      }),
     );
   });
 });
