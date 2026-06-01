@@ -157,6 +157,8 @@ App blijft eigenaar van domeindata en branding.
 - [x] Schema controleert unreachable results.
 - [x] Schema controleert duplicate option values.
 - [x] Schema controleert missing guideline/source metadata waar verplicht.
+- [x] AI authoring-guide voor bronverdediging, vraagverdediging, info-knoppen, rolmatrix, telemetry/privacy en validatie.
+- [ ] Strict schema/gate voor question-, option- en info-button-defenses in nieuwe domeinen.
 
 ## UI/UX En Atomic Design Checklist
 
@@ -258,7 +260,8 @@ App blijft eigenaar van domeindata en branding.
 
 ## Testing Checklist
 
-- [x] Current full suite groen: 43 files, 217 tests.
+- [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
+- [x] Current full suite groen: 45 files, 225 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -368,6 +371,7 @@ Examples:
 ## Done Criteria
 
 - [ ] Alle checklistitems hierboven afgevinkt of vervangen door concreter item.
+- [x] AI-agents hebben een gedetailleerde authoring-guide voor nieuwe richtlijnwebsites en domeinpakketten.
 - [x] Urinestrip fixture werkt als package consumer.
 - [x] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
 - [x] CI bouwt flows vóór tests.

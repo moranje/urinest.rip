@@ -4,6 +4,11 @@ Deze repo behandelt flow-inhoud als klinische productcode. Iedere zichtbare vraa
 resultaatkaart en redirect in `public/main.json` moet daarom onderbouwd zijn in
 `docs/guideline-traceability.json`.
 
+Voor nieuwe richtlijnwebsites, domeinpakketten en AI-gegenereerde flows geldt aanvullend
+`docs/ai-guideline-authoring.md`. Die guide beschrijft hoe bronregister, vraagverdediging,
+antwoordopties, info-knoppen, rolverantwoordelijkheden, gebruikerstaal, telemetry/privacy en tests
+moeten worden opgebouwd voordat content wordt gepubliceerd.
+
 ## Gate
 
 Run:
