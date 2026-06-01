@@ -117,6 +117,9 @@ questions:
   # Treatment selection questions — one per namespace with multiple options
 
   treatmentLocalHealthy:
+    # Intentionally visible to triagists: this healthy, non-catheter local cystitis
+    # branch can redirect to the dedicated gezonde-vrouwen flow before treatment
+    # choices become clinically actionable.
     id: q_bac_tx_local_healthy
     text: Welke behandeling kan patiënt krijgen?
     type: select
@@ -343,7 +346,6 @@ questions:
       - if: "_role != triagist"
       - if: "tissueInvasion == tissueInvasion"
       - if: "riskAssessment == children"
-      - if: "urinaryCatheter == no"
     options:
       - id: o_tx_tic_0
         text: Amoxicilline/clavulaanzuur (1e keuze)
@@ -667,6 +669,8 @@ results:
     contraindications:
       - text: "eGFR < 30 ml/min"
       - text: "G6PD-deficiëntie"
+      - text: "Zwangerschapsduur ≥ 36 weken"
+    warnings: "Nitrofurantoïne is gecontra-indiceerd vanaf 36 weken zwangerschap; kies dan een alternatief of overleg met verloskunde/gynaecologie."
     additionalTests: "Urine op kweek."
     documentation: "Nitrofurantoïne, 7 dagen, 2 dd 100 mg mga of 4 dd 50 mg. Urine op kweek (ook om groep-B-streptokokken (GBS) uit te sluiten), graag contact over uitslag. Contact bij klachten zoals beschreven in https://www.thuisarts.nl/blaasontsteking/ik-ben-zwanger-en-heb-blaasontsteking"
     explainer: "Leg uit dat een urineweginfectie ernstig kan verlopen en een antibioticum noodzakelijk is. Adviseer ruime vochtinname. Laat de patiënt bij verergering van de klachten (koorts, algemeen ziek-zijn) direct contact opnemen met de (dienstdoende) huisarts. Vraag zwangeren contact op te nemen over de uitslag van de kweek vanwege de mogelijke consequenties van de uitslag voor de bevalling."
@@ -1181,9 +1185,9 @@ logic:
   - when: ["tissueInvasion == tissueInvasion", "riskAssessment == men", "urinaryCatheter == no", "treatmentTiMen == 2"]
     show: uti.tissueInvasion.men.2
 
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "urinaryCatheter == no", "treatmentTiChildren == 0"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "treatmentTiChildren == 0"]
     show: uti.tissueInvasion.children.0
-  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "urinaryCatheter == no", "treatmentTiChildren == 1"]
+  - when: ["tissueInvasion == tissueInvasion", "riskAssessment == children", "treatmentTiChildren == 1"]
     show: uti.tissueInvasion.children.1
 
   # TI + catheter (healthy = woman with catheter)

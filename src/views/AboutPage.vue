@@ -75,27 +75,27 @@ const guidelines = [
   {
     name: "NHG-Standaard Urineweginfecties",
     url: "https://richtlijnen.nhg.org/standaarden/urineweginfecties",
-    reviewed: "22 februari 2026",
+    reviewed: "1 juni 2026",
   },
   {
     name: "Verenso richtlijn Urineweginfecties",
     url: "https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties",
-    reviewed: "21 februari 2026",
+    reviewed: "1 juni 2026",
   },
   {
     name: "NVKC richtlijn Urineonderzoek",
     url: "https://www.nvkc.nl/kwaliteit/richtlijnen/normen-en-richtlijnen",
-    reviewed: "21 februari 2026",
+    reviewed: "1 juni 2026",
   },
   {
     name: "NVU richtlijn Hematurie",
     url: "https://www.nvu.nl/kwaliteitsbeleid/richtlijnen/actuele-richtlijnen/",
-    reviewed: "21 februari 2026",
+    reviewed: "1 juni 2026",
   },
   {
     name: "NHG-TriageWijzer Urinewegproblemen",
     url: "https://triagewijzer.nhg.org/ingangsklachten/urinewegproblemen",
-    reviewed: "21 februari 2026",
+    reviewed: "1 juni 2026",
   },
 ];
 </script>
