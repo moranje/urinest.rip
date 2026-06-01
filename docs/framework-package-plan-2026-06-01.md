@@ -42,10 +42,10 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 - [ ] Legacy unfiltered log RPCs droppen/revoken.
 - [ ] Anonymous log insert begrenzen via validated RPC/Edge Function met payload-size/rate/source checks.
 - [ ] Route params, result IDs, session IDs en flow trail entries hashen/redacten waar ze klinische state kunnen onthullen.
-- [ ] Log-sink batch requeue bij thrown flush errors.
-- [ ] Breaker flag bij reload lezen en persistence disabled houden.
+- [x] Log-sink batch requeue bij thrown flush errors.
+- [x] Breaker flag bij reload lezen en persistence disabled houden.
 - [ ] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.
-- [ ] `VITE_ENABLE_LOG_PERSISTENCE` typen en documenteren.
+- [x] `VITE_ENABLE_LOG_PERSISTENCE` typen en documenteren.
 - [x] `npm audit --omit=dev --audit-level=high` hard laten falen.
 - [x] CSP/HSTS/Permissions-Policy uitbreiden in `public/_headers`.
 
@@ -224,9 +224,9 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Error classification delen tussen app en package.
 - [ ] Breadcrumb model typed maken.
 - [ ] Log persistence tests voor 401/403/429/5xx/offline.
-- [ ] Flush throw-path requeue test.
-- [ ] Breaker reload behavior test.
-- [ ] Explicit dev persistence enable test.
+- [x] Flush throw-path requeue test.
+- [x] Breaker reload behavior test.
+- [x] Explicit dev persistence enable test.
 - [ ] User-facing errorcopy per domein configureerbaar.
 - [ ] Sourcemap/upload docs voor consumers.
 
@@ -356,8 +356,8 @@ Examples:
 - [ ] Alle checklistitems hierboven afgevinkt of vervangen door concreter item.
 - [ ] Urinestrip fixture werkt als package consumer.
 - [ ] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
-- [ ] CI bouwt flows vóór tests.
-- [ ] Geen unhandled benign browser transitions.
-- [ ] Geen dev Supabase 401 noise zonder opt-in.
+- [x] CI bouwt flows vóór tests.
+- [x] Geen unhandled benign browser transitions.
+- [x] Geen dev Supabase 401 noise zonder opt-in.
 - [ ] Landing/questionnaire/result/admin a11y pass.
 - [ ] Package exports bruikbaar in extern project.
