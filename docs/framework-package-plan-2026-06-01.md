@@ -57,7 +57,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 
 - [x] Flow manifest types
 - [x] Normalisatie van questionnaires/questions/steps/results
-- [ ] Condition validation wrapper
+- [x] Condition validation wrapper
 - [ ] Graph traversal
 - [x] Progress calculation
 - [x] Typed outcome resolver

@@ -5,6 +5,8 @@ export type {
   CalculatorRegistry,
 } from "./calculator";
 export { createCalculatorRegistry } from "./calculator";
+export type { ConditionAnswers, ConditionValidationResult } from "./conditions";
+export { evaluateCondition, validateConditions } from "./conditions";
 export type {
   DecisionManifest,
   DuplicateManifestIdPolicy,

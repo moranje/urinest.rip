@@ -1,13 +1,11 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import {
-  validateConditions as validateConditionsEngine,
-  determineOutcome,
-} from "decision-engine-core";
+import { determineOutcome } from "decision-engine-core";
 import {
   applyRuntimeContext,
   createRuntimeContext,
   normalizeDecisionManifest,
+  validateConditions as validateConditionsCore,
   type DecisionManifest,
   type RuntimeContext,
 } from "@beslismodel/core";
@@ -285,7 +283,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
   ): ValidationResult => {
     const currentAnswers = providedAnswers || getEnhancedAnswers(questionnaireId);
     try {
-      return validateConditionsEngine(currentAnswers, conditionList);
+      return validateConditionsCore(currentAnswers, conditionList);
     } catch (error) {
       handleError(error, "decision-engine:validate-conditions", {
         questionnaireId,

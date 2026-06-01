@@ -6,6 +6,7 @@ import {
   normalizeDecisionManifest,
   parseOutcome,
   toLegacyOutcome,
+  validateConditions,
 } from "../packages/core/dist/index.js";
 
 const redirect = parseOutcome("redirect:bacteriurie");
@@ -62,6 +63,13 @@ const normalized = normalizeDecisionManifest({
 });
 if (normalized.questionnaires["example-flow"]?.questionIds[0] !== "q1") {
   throw new Error("normalizeDecisionManifest export failed");
+}
+
+const conditions = validateConditions({ answer: { value: "yes" } }, [
+  { questionId: "answer", operator: "equals", value: "yes" },
+]);
+if (!conditions.isValid || conditions.matchedCount !== 1) {
+  throw new Error("validateConditions export failed");
 }
 
 console.log("@beslismodel/core package exports ok");
