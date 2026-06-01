@@ -139,7 +139,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Hard-coded `urinestrip` telemetry source vervangen door app config.
 - [x] Role injection `_role` vervangen door framework context provider.
 - [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
-- [ ] Redirect-chain logic uit page naar core/runtime.
+- [x] Redirect-chain logic uit page naar core/runtime.
 - [x] Markdown renderer injectable maken met sanitizer contract.
 - [ ] Admin routes buiten framework houden.
 - [ ] App shell en framework runner scheiden.
@@ -258,7 +258,7 @@ App blijft eigenaar van domeindata en branding.
 
 ## Testing Checklist
 
-- [x] Current full suite groen: 42 files, 214 tests.
+- [x] Current full suite groen: 43 files, 217 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -369,7 +369,7 @@ Examples:
 
 - [ ] Alle checklistitems hierboven afgevinkt of vervangen door concreter item.
 - [x] Urinestrip fixture werkt als package consumer.
-- [ ] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
+- [x] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
 - [x] CI bouwt flows vóór tests.
 - [x] Geen unhandled benign browser transitions.
 - [x] Geen dev Supabase 401 noise zonder opt-in.

@@ -161,7 +161,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detectRedirectCycle, parseOutcome } from "@beslismodel/core";
+import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
 import QuestionOption from "../components/QuestionOption.vue";
 import Button from "../components/primitives/Button.vue";
@@ -180,9 +180,8 @@ import {
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
 import { renderMarkdown } from "../lib/markdown-renderer";
-import { readStorage, removeStorage, writeStorage } from "../lib/storage";
+import { appendStoredRedirectTrail, clearStoredRedirectTrail } from "../lib/redirect-trail";
 import { observeViewTransition } from "../lib/view-transition";
-import { appConfig } from "../config/app-config";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
 import type { QuestionOption as QuestionOptionData, AnswerValue } from "../types";
@@ -192,13 +191,6 @@ const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
 const roleStore = useRoleStore();
 const log = createLogger("questionnaire-page");
-const REDIRECT_CHAIN_STORAGE_KEY = appConfig.storage.redirectChainKey;
-const REDIRECT_CHAIN_TTL_MS = appConfig.storage.redirectChainTtlMs;
-
-interface RedirectChain {
-  flows: string[];
-  updatedAt: number;
-}
 
 const props = defineProps<{
   id: string;
@@ -241,40 +233,6 @@ const {
   schedulePopoverClose,
   togglePopover,
 } = usePopover();
-
-const readRedirectChain = (flowId: string): string[] => {
-  const raw = readStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
-  if (!raw) return [flowId];
-  try {
-    const parsed = JSON.parse(raw) as Partial<RedirectChain>;
-    if (
-      !Array.isArray(parsed.flows) ||
-      typeof parsed.updatedAt !== "number" ||
-      Date.now() - parsed.updatedAt > REDIRECT_CHAIN_TTL_MS
-    ) {
-      removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
-      return [flowId];
-    }
-    const currentIndex = parsed.flows.indexOf(flowId);
-    return currentIndex >= 0 ? parsed.flows.slice(0, currentIndex + 1) : [flowId];
-  } catch (error) {
-    removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
-    handleError(error, "questionnaire:redirect-chain-read", { flowId });
-    return [flowId];
-  }
-};
-
-const writeRedirectChain = (flows: string[]): void => {
-  writeStorage(
-    "session",
-    REDIRECT_CHAIN_STORAGE_KEY,
-    JSON.stringify({ flows, updatedAt: Date.now() } satisfies RedirectChain),
-  );
-};
-
-const clearRedirectChain = (): void => {
-  removeStorage("session", REDIRECT_CHAIN_STORAGE_KEY);
-};
 
 // --- Computed Properties ---
 
@@ -390,7 +348,7 @@ const restartQuestionnaire = (): void => {
     return;
   }
   clearFlowTrail();
-  clearRedirectChain();
+  clearStoredRedirectTrail();
   void loadStateAndDetermineStart({ reset: true });
 };
 
@@ -489,24 +447,22 @@ const determineResult = (): void => {
     const typedOutcome = parseOutcome(outcome);
     if (typedOutcome.type === "redirect") {
       const value = typedOutcome.target;
-      const redirectChain = readRedirectChain(props.id);
-      const cycle = detectRedirectCycle(redirectChain, value);
-      if (cycle.hasCycle) {
+      const redirect = appendStoredRedirectTrail(props.id, value);
+      if (redirect.type === "cycle") {
         handleError(
-          new Error(`Redirect cycle detected: ${cycle.chain.join(" -> ")}`),
+          new Error(`Redirect cycle detected: ${redirect.cycle.join(" -> ")}`),
           "decision-engine:redirect-cycle",
           {
             questionnaireId: props.id,
             targetQuestionnaireId: value,
             role: roleStore.role,
-            redirectChain: cycle.chain,
+            redirectChain: redirect.cycle,
           },
         );
-        clearRedirectChain();
+        clearStoredRedirectTrail();
         router.push("/error");
         return;
       }
-      writeRedirectChain([...cycle.chain]);
       recordFlowRedirect({
         flowId: props.id,
         version: fullQuestionnaire.version,
@@ -523,7 +479,7 @@ const determineResult = (): void => {
         resultId: value,
         role: roleStore.role,
       });
-      clearRedirectChain();
+      clearStoredRedirectTrail();
       router.push(`/info/${value}`);
     } else {
       handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
@@ -531,7 +487,7 @@ const determineResult = (): void => {
         role: roleStore.role,
         answeredQuestionIds: Object.keys(answers),
       });
-      clearRedirectChain();
+      clearStoredRedirectTrail();
       router.push("/error");
     }
   } catch (error) {
@@ -541,7 +497,7 @@ const determineResult = (): void => {
       role: roleStore.role,
       answeredQuestionIds: Object.keys(answers),
     });
-    clearRedirectChain();
+    clearStoredRedirectTrail();
     router.push("/error");
   }
 };
