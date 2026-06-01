@@ -38,9 +38,9 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 
 - [x] Source maps uploaden naar Supabase, daarna `.map` uit `dist` verwijderen vóór Netlify deploy.
 - [x] Tests niet laten afhangen van ignored/stale `public/main.json`; flow-build vóór test of tests direct uit YAML compile.
-- [ ] Supabase admin policies beperken tot admin claim/email allowlist, niet elke `authenticated` user.
-- [ ] Legacy unfiltered log RPCs droppen/revoken.
-- [ ] Anonymous log insert begrenzen via validated RPC/Edge Function met payload-size/rate/source checks.
+- [x] Supabase admin policies beperken tot admin claim/email allowlist, niet elke `authenticated` user.
+- [x] Legacy unfiltered log RPCs droppen/revoken.
+- [x] Anonymous log insert begrenzen via validated RPC/Edge Function met payload-size/rate/source checks.
 - [ ] Route params, result IDs, session IDs en flow trail entries hashen/redacten waar ze klinische state kunnen onthullen.
 - [x] Log-sink batch requeue bij thrown flush errors.
 - [x] Breaker flag bij reload lezen en persistence disabled houden.
@@ -241,8 +241,8 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Dependency audit in package CI.
 - [ ] Secret scanning in CI.
 - [ ] RLS/admin dashboard blijft app-only.
-- [ ] Admin RLS gebruikt claim/email allowlist.
-- [ ] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
+- [x] Admin RLS gebruikt claim/email allowlist.
+- [x] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
 - [x] `.map` files niet publiek deployen.
 - [ ] Security tests voor malicious flow metadata.
 

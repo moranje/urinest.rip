@@ -181,7 +181,7 @@ export async function flushLogs(): Promise<void> {
       return;
     }
 
-    const { error } = await supabase.from("app_logs").insert(batch);
+    const { error } = await supabase.rpc("insert_app_logs", { p_logs: batch });
 
     if (!error) {
       consecutiveFailures = 0;
@@ -232,8 +232,8 @@ function flushViaBeacon(): void {
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
   if (!url || !key) return;
 
-  const endpoint = `${url}/rest/v1/app_logs?apikey=${encodeURIComponent(key)}`;
-  const blob = new Blob([JSON.stringify(buffer)], { type: "application/json" });
+  const endpoint = `${url}/rest/v1/rpc/insert_app_logs?apikey=${encodeURIComponent(key)}`;
+  const blob = new Blob([JSON.stringify({ p_logs: buffer })], { type: "application/json" });
   if (navigator.sendBeacon(endpoint, blob)) {
     buffer.length = 0;
   }

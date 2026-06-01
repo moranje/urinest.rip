@@ -8,13 +8,11 @@ import {
   resetLogSinkForTests,
 } from "../log-sink";
 
-const insertMock = vi.fn();
+const rpcMock = vi.fn();
 
 vi.mock("../supabase/client", () => ({
   getSupabase: () => ({
-    from: () => ({
-      insert: insertMock,
-    }),
+    rpc: rpcMock,
   }),
 }));
 
@@ -50,7 +48,7 @@ describe("log-sink", () => {
     installStorage("localStorage");
     installStorage("sessionStorage");
     resetLogSinkForTests();
-    insertMock.mockReset();
+    rpcMock.mockReset();
     vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
     vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon-key");
   });
@@ -60,7 +58,7 @@ describe("log-sink", () => {
   });
 
   it("persists diagnostic info events", async () => {
-    insertMock.mockResolvedValue({ error: null });
+    rpcMock.mockResolvedValue({ error: null });
 
     persistTelemetry({
       module: "questionnaire-store",
@@ -69,18 +67,20 @@ describe("log-sink", () => {
     });
     await flushLogs();
 
-    expect(insertMock).toHaveBeenCalledWith([
-      expect.objectContaining({
-        level: "info",
-        module: "questionnaire-store",
-        message: "flow.versions",
-        source: "urinestrip",
-      }),
-    ]);
+    expect(rpcMock).toHaveBeenCalledWith("insert_app_logs", {
+      p_logs: [
+        expect.objectContaining({
+          level: "info",
+          module: "questionnaire-store",
+          message: "flow.versions",
+          source: "urinestrip",
+        }),
+      ],
+    });
   });
 
   it("sets a circuit-breaker flag after repeated transient failures", async () => {
-    insertMock.mockResolvedValue({ error: { message: "network", code: "503" } });
+    rpcMock.mockResolvedValue({ error: { message: "network", code: "503" } });
 
     persistSampleError();
     await flushLogs();
@@ -98,7 +98,7 @@ describe("log-sink", () => {
     flushViaBeaconForTests();
 
     expect(sendBeacon).toHaveBeenCalledWith(
-      "https://example.supabase.co/rest/v1/app_logs?apikey=anon-key",
+      "https://example.supabase.co/rest/v1/rpc/insert_app_logs?apikey=anon-key",
       expect.any(Blob),
     );
   });
@@ -111,20 +111,20 @@ describe("log-sink", () => {
     persistSampleError("test:dev-disabled");
     await flushLogs();
 
-    expect(insertMock).not.toHaveBeenCalled();
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 
   it("persists in dev when explicitly enabled", async () => {
     vi.stubEnv("MODE", "development");
     vi.stubEnv("DEV", true);
     vi.stubEnv("VITE_ENABLE_LOG_PERSISTENCE", "true");
-    insertMock.mockResolvedValue({ error: null });
+    rpcMock.mockResolvedValue({ error: null });
 
     initLogSink();
     persistSampleError("test:dev-enabled");
     await flushLogs();
 
-    expect(insertMock).toHaveBeenCalledTimes(1);
+    expect(rpcMock).toHaveBeenCalledTimes(1);
   });
 
   it("keeps persistence disabled after a breaker reload", async () => {
@@ -134,21 +134,19 @@ describe("log-sink", () => {
     persistSampleError("test:breaker-reload");
     await flushLogs();
 
-    expect(insertMock).not.toHaveBeenCalled();
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 
   it("requeues buffered logs after thrown flush errors", async () => {
-    insertMock
-      .mockRejectedValueOnce(new Error("network down"))
-      .mockResolvedValueOnce({ error: null });
+    rpcMock.mockRejectedValueOnce(new Error("network down")).mockResolvedValueOnce({ error: null });
 
     persistSampleError("test:requeue");
     await flushLogs();
     await flushLogs();
 
-    expect(insertMock).toHaveBeenCalledTimes(2);
-    expect(insertMock.mock.calls[1]?.[0]).toEqual([
-      expect.objectContaining({ module: "test:requeue" }),
-    ]);
+    expect(rpcMock).toHaveBeenCalledTimes(2);
+    expect(rpcMock.mock.calls[1]?.[1]).toEqual({
+      p_logs: [expect.objectContaining({ module: "test:requeue" })],
+    });
   });
 });
