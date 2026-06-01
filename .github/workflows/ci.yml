@@ -65,7 +65,7 @@ jobs:
         run: npm run build-storybook
 
       - name: Package build
-        run: npm run build:packages && npm run check:core-package
+        run: npm run check:packages
 
       - name: Production build
         run: npm run build

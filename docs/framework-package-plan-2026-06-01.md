@@ -249,6 +249,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Sanitizer contract verplicht voor markdown/html.
 - [ ] Dependency audit in package CI.
 - [ ] Secret scanning in CI.
+- [x] Package consumer fixture in CI.
 - [ ] RLS/admin dashboard blijft app-only.
 - [x] Admin RLS gebruikt claim/email allowlist.
 - [x] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
@@ -267,10 +268,10 @@ App blijft eigenaar van domeindata en branding.
 - [x] Result resolver package tests.
 - [x] Route helper package tests.
 - [x] Questionnaire runner package tests.
-- [ ] Consumer fixture app.
-- [ ] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.
-- [ ] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
-- [ ] Urinestrip fixture e2e: alles negatief toont no-conclusive-abnormality.
+- [x] Consumer fixture app.
+- [x] Urinestrip fixture e2e: nitriet positief redirect naar bacteriurie.
+- [x] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
+- [x] Urinestrip fixture e2e: alles negatief toont no-conclusive-abnormality.
 - [ ] Role/context matrix tests.
 - [ ] Accessibility route tests.
 - [ ] Visual regression voor critical UI.
@@ -297,7 +298,7 @@ Urinestrip wordt eerste end-to-end package fixture.
 - [x] Compile `flows/strip.yaml` via strict compiler.
 - [x] Load manifest through injected loader.
 - [ ] Render landing from manifest taxonomy.
-- [ ] Run questionnaire through framework runner.
+- [x] Run questionnaire through framework runner.
 - [x] `nitrite == positive` gives typed redirect outcome `{ type: "redirect", target: "bacteriurie" }`.
 - [x] `nitrite == negative`, `leukocytes == positive` redirects to `leukocyturie`.
 - [x] `nitrite == negative`, `leukocytes == negative`, `erythrocytes == positive` redirects to `hematurie`.
@@ -348,7 +349,7 @@ Exit criteria:
 
 - [x] Exports/files/declarations.
 - [x] Library build via Rolldown/Vite.
-- [ ] Consumer fixture app.
+- [x] Consumer fixture app.
 - [ ] CI matrix.
 - [ ] Versioning strategy.
 
