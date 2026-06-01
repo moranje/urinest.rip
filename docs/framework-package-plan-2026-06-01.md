@@ -47,7 +47,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 - [ ] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.
 - [ ] `VITE_ENABLE_LOG_PERSISTENCE` typen en documenteren.
 - [x] `npm audit --omit=dev --audit-level=high` hard laten falen.
-- [ ] CSP/HSTS/Permissions-Policy uitbreiden in `public/_headers`.
+- [x] CSP/HSTS/Permissions-Policy uitbreiden in `public/_headers`.
 
 ## Package Boundaries
 
