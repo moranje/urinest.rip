@@ -35,6 +35,9 @@ steps:
 results:
   ok:
     title: Ok
+    sources:
+      - name: Test source
+        url: https://example.test/source
 logic:
   - when: ["answer == yes"]
     show: ok
@@ -106,8 +109,14 @@ steps:
 results:
   ok:
     title: Ok
+    sources:
+      - name: Test source
+        url: https://example.test/source
   never:
     title: Never
+    sources:
+      - name: Test source
+        url: https://example.test/source
 logic:
   - when: ["answer == yes"]
     show: ok
@@ -115,6 +124,34 @@ logic:
 
     await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
       'Unreachable result alias "never": defined but not referenced by any show rule.',
+    );
+  });
+
+  it("rejects results without source metadata", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: missing-source
+version: "1"
+title: Missing source
+questions:
+  answer:
+    text: Answer
+    type: select
+    options:
+      - text: Yes
+        value: yes
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+logic:
+  - when: ["answer == yes"]
+    show: ok
+`);
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Result alias "ok" must define at least one source.',
     );
   });
 

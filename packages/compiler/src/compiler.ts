@@ -39,6 +39,11 @@ interface RawStep {
 
 interface RawResult {
   readonly contraindications?: readonly (string | { readonly text?: string })[];
+  readonly sources?: readonly {
+    readonly name?: string;
+    readonly label?: string;
+    readonly url?: string;
+  }[];
   readonly [key: string]: unknown;
 }
 
@@ -231,10 +236,31 @@ function assertNoUnreachableResults(flow: RawFlow): void {
   }
 }
 
+function assertResultSources(flow: RawFlow): void {
+  for (const [resultAlias, result] of Object.entries(flow.results)) {
+    if (!Array.isArray(result.sources) || result.sources.length === 0) {
+      throw new Error(`Result alias "${resultAlias}" must define at least one source.`);
+    }
+    for (const [sourceIndex, source] of result.sources.entries()) {
+      if (!source?.url || typeof source.url !== "string" || !source.url.startsWith("https://")) {
+        throw new Error(
+          `Result alias "${resultAlias}" source ${sourceIndex + 1} must define an https url.`,
+        );
+      }
+      if (!source.name && !source.label) {
+        throw new Error(
+          `Result alias "${resultAlias}" source ${sourceIndex + 1} must define a name or label.`,
+        );
+      }
+    }
+  }
+}
+
 function compileFlow(flow: RawFlow): CompiledQuestionnaire {
   assertUniqueOptionValues(flow);
   assertNoOrphanQuestions(flow);
   assertNoUnreachableResults(flow);
+  assertResultSources(flow);
 
   const questionAliasMap: Record<string, string> = {};
   const resultAliasMap = new Set(Object.keys(flow.results));

@@ -156,7 +156,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Schema controleert orphan questions.
 - [x] Schema controleert unreachable results.
 - [x] Schema controleert duplicate option values.
-- [ ] Schema controleert missing guideline/source metadata waar verplicht.
+- [x] Schema controleert missing guideline/source metadata waar verplicht.
 
 ## UI/UX En Atomic Design Checklist
 

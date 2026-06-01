@@ -24,6 +24,9 @@ steps:
 results:
   ok:
     title: Ok
+    sources:
+      - name: Test source
+        url: https://example.test/source
 logic:
   - when: ["answer == yes"]
     show: ok

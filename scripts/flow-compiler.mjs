@@ -113,6 +113,26 @@ function assertNoUnreachableResults(flow) {
   }
 }
 
+function assertResultSources(flow) {
+  for (const [resultAlias, result] of Object.entries(flow.results)) {
+    if (!Array.isArray(result.sources) || result.sources.length === 0) {
+      throw new Error(`Result alias "${resultAlias}" must define at least one source.`);
+    }
+    for (const [sourceIndex, source] of result.sources.entries()) {
+      if (!source?.url || typeof source.url !== "string" || !source.url.startsWith("https://")) {
+        throw new Error(
+          `Result alias "${resultAlias}" source ${sourceIndex + 1} must define an https url.`,
+        );
+      }
+      if (!source.name && !source.label) {
+        throw new Error(
+          `Result alias "${resultAlias}" source ${sourceIndex + 1} must define a name or label.`,
+        );
+      }
+    }
+  }
+}
+
 export async function buildFlows(inputDir = "flows", outputFile = "public/main.json") {
   console.log(pc.cyan("[buildFlows] Starting build process..."));
   const fullInputDir = path.resolve(inputDir);
@@ -137,6 +157,7 @@ export async function buildFlows(inputDir = "flows", outputFile = "public/main.j
       assertUniqueOptionValues(flow);
       assertNoOrphanQuestions(flow);
       assertNoUnreachableResults(flow);
+      assertResultSources(flow);
 
       const questionAliasMap = {};
       const resultAliasMap = new Set(Object.keys(flow.results));
