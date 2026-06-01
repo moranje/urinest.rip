@@ -84,7 +84,7 @@ import CultureSvg from "../components/CultureSvg.vue";
   overflow: hidden;
 }
 
-@container landing (max-width: 56.25rem) {
+@container landing (max-width: 44rem) {
   .grid {
     --landing-tile-size: clamp(13rem, 32vw, 17rem);
 

@@ -60,6 +60,7 @@ describe("design tokens", () => {
     const landingPage = read("src/views/LandingPage.vue");
 
     expect(landingPage).not.toContain("28vw");
+    expect(landingPage).not.toContain("@container landing (max-width: 56.25rem)");
     expect(landingPage).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
     expect(landingPage).toContain("max-inline-size: var(--landing-tile-size)");
   });
