@@ -81,9 +81,9 @@ YAML/JSON naar strict manifest.
 
 - [x] CLI `beslismodel build`
 - [x] Vite/Rolldown plugin
-- [ ] Strict schema validation
-- [ ] Build faalt hard bij schema/logica fouten
-- [ ] Deterministic rule IDs
+- [x] Strict schema validation
+- [x] Build faalt hard bij schema/logica fouten
+- [x] Deterministic rule IDs
 - [x] Generated JSON schema
 - [x] Generated `.d.ts`
 - [x] Stable manifest snapshots

@@ -65,6 +65,7 @@ describe("compiler package", () => {
         id: "example-flow",
         resultsLogic: [
           expect.objectContaining({
+            id: "example-flow-rule-1",
             actionType: "showResult",
             resultKey: "ok",
           }),
