@@ -126,8 +126,8 @@ App blijft eigenaar van domeindata en branding.
 - [ ] `ResultPage.vue` splitsen in renderer composable + `ResultSection` organisms.
 - [ ] `LandingPage.vue` genereren uit manifest/taxonomy, geen hard-coded flow links.
 - [ ] Store hard-coded `/main.json` vervangen door injectable loader.
-- [ ] Storage keys app-configurabel maken.
-- [ ] Hard-coded `urinestrip` telemetry source vervangen door app config.
+- [x] Storage keys app-configurabel maken.
+- [x] Hard-coded `urinestrip` telemetry source vervangen door app config.
 - [ ] Role injection `_role` vervangen door framework context provider.
 - [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
 - [ ] Redirect-chain logic uit page naar core/runtime.

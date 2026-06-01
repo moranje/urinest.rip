@@ -9,6 +9,7 @@ import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
 import { guidelineReviews } from "../lib/guidelines";
 import { persistTelemetry } from "../lib/log-sink";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
+import { appConfig } from "../config/app-config";
 import { useRoleStore } from "./roleStore";
 import type {
   QuestionnaireMeta,
@@ -48,8 +49,8 @@ interface PersistedAnswers {
   answers: Record<string, AnswerMap>;
 }
 
-const ANSWERS_STORAGE_KEY = "urinest-questionnaire-answers";
-const ANSWERS_TTL_MS = 8 * 60 * 60 * 1000;
+const ANSWERS_STORAGE_KEY = appConfig.storage.answersKey;
+const ANSWERS_TTL_MS = appConfig.storage.answersTtlMs;
 
 function isAnswerMap(value: unknown): value is AnswerMap {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -222,7 +223,9 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
         const started = performance.now();
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(new TimeoutError(10000)), 10000);
-        const response = await fetch("/main.json?t=" + Date.now(), { signal: controller.signal })
+        const response = await fetch(`${appConfig.manifestUrl}?t=${Date.now()}`, {
+          signal: controller.signal,
+        })
           .catch((error: unknown) => {
             if (controller.signal.aborted && controller.signal.reason) {
               throw controller.signal.reason;
@@ -230,7 +233,7 @@ export const useQuestionnaireStore = defineStore("questionnaire", () => {
             throw error;
           })
           .finally(() => clearTimeout(timeout));
-        breadcrumbApi("GET", "/main.json", Math.round(performance.now() - started));
+        breadcrumbApi("GET", appConfig.manifestUrl, Math.round(performance.now() - started));
         if (!response.ok) {
           throw new HttpStatusError(
             response.status,

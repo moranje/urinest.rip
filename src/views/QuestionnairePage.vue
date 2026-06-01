@@ -184,6 +184,7 @@ import { createLogger } from "../lib/logger";
 import { getQuestionProgress } from "../lib/question-progress";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { observeViewTransition } from "../lib/view-transition";
+import { appConfig } from "../config/app-config";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
 import type { QuestionOption as QuestionOptionData, Question, Step, AnswerValue } from "../types";
@@ -193,8 +194,8 @@ const route = useRoute();
 const questionnaireStore = useQuestionnaireStore();
 const roleStore = useRoleStore();
 const log = createLogger("questionnaire-page");
-const REDIRECT_CHAIN_STORAGE_KEY = "urinest-redirect-chain";
-const REDIRECT_CHAIN_TTL_MS = 5 * 60 * 1000;
+const REDIRECT_CHAIN_STORAGE_KEY = appConfig.storage.redirectChainKey;
+const REDIRECT_CHAIN_TTL_MS = appConfig.storage.redirectChainTtlMs;
 
 interface RedirectChain {
   flows: string[];

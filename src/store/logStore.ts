@@ -12,8 +12,9 @@ import { getSupabase } from "../lib/supabase/client";
 import { handleError } from "../lib/errors";
 import { clearLogSinkDownFlag, getLogSinkDownAt } from "../lib/log-sink";
 import { useAuthStore } from "./authStore";
+import { appConfig } from "../config/app-config";
 
-const APP_SOURCE = "urinestrip";
+const APP_SOURCE = appConfig.telemetrySource;
 type SupabaseClient = NonNullable<ReturnType<typeof getSupabase>>;
 
 interface RpcResult<T> {

@@ -12,6 +12,7 @@
 
 import { createLogger } from "./logger";
 import { getBreadcrumbs } from "./breadcrumbs";
+import { appConfig } from "../config/app-config";
 import { getErrorContext, parseSourceLocation } from "./error-context";
 import { getFlowTrail } from "./flow-trail";
 import { scrubValue } from "./scrub";
@@ -282,7 +283,7 @@ export function persistError(input: PersistErrorInput): void {
     message: safeMessage,
     detail: safeDetail,
     context: scrubHits > 0 ? { ...safeContext, scrub_hits_total: scrubHits } : safeContext,
-    source: "urinestrip",
+    source: appConfig.telemetrySource,
     session_id: hashForTelemetry(SESSION_ID, "session") ?? "session_redacted",
     url: sanitizeRouteForTelemetry(`${window.location.pathname}${window.location.search}`),
     fingerprint,
@@ -316,7 +317,7 @@ export function persistTelemetry(input: PersistTelemetryInput): void {
     message: safeMessage,
     detail: null,
     context: safeContext,
-    source: "urinestrip",
+    source: appConfig.telemetrySource,
     session_id: hashForTelemetry(SESSION_ID, "session") ?? "session_redacted",
     url: sanitizeRouteForTelemetry(`${window.location.pathname}${window.location.search}`),
     fingerprint: fnv1a(`${input.module}|${input.message}`),
