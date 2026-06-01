@@ -70,7 +70,7 @@ import CultureSvg from "../components/CultureSvg.vue";
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, var(--landing-tile-size)));
+  grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)));
   gap: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
   justify-content: center;
   align-items: start;
@@ -87,8 +87,6 @@ import CultureSvg from "../components/CultureSvg.vue";
 @container landing (max-width: 44rem) {
   .grid {
     --landing-tile-size: clamp(13rem, 32vw, 17rem);
-
-    grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)));
   }
 }
 

@@ -62,6 +62,9 @@ describe("design tokens", () => {
     expect(landingPage).not.toContain("28vw");
     expect(landingPage).not.toContain("@container landing (max-width: 56.25rem)");
     expect(landingPage).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
+    expect(landingPage).toContain(
+      "grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)))",
+    );
     expect(landingPage).toContain("max-inline-size: var(--landing-tile-size)");
   });
 });
