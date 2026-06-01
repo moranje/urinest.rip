@@ -93,7 +93,7 @@ YAML/JSON naar strict manifest.
 
 Vue runtime en UI.
 
-- [ ] `createBeslismodelStore({ loadManifest, storage, contextProvider, telemetry, onError })`
+- [x] `createBeslismodelStore({ loadManifest, storage, contextProvider, telemetry, onError })`
 - [ ] `useQuestionnaireRunner`
 - [ ] `useResultResolver`
 - [ ] Route helpers
@@ -102,7 +102,7 @@ Vue runtime en UI.
 - [ ] `LandingMenuGrid`
 - [ ] Slot-based result sections
 - [ ] Consumer-owned labels/icons/taxonomy
-- [ ] Vue, Pinia, Router als peer dependencies
+- [x] Vue, Pinia, Router als peer dependencies
 
 ### `@beslismodel/testing`
 
@@ -134,10 +134,10 @@ App blijft eigenaar van domeindata en branding.
 - [ ] `QuestionnairePage.vue` splitsen in runner composable + page shell + organisms.
 - [ ] `ResultPage.vue` splitsen in renderer composable + `ResultSection` organisms.
 - [ ] `LandingPage.vue` genereren uit manifest/taxonomy, geen hard-coded flow links.
-- [ ] Store hard-coded `/main.json` vervangen door injectable loader.
+- [x] Store hard-coded `/main.json` vervangen door injectable loader.
 - [x] Storage keys app-configurabel maken.
 - [x] Hard-coded `urinestrip` telemetry source vervangen door app config.
-- [ ] Role injection `_role` vervangen door framework context provider.
+- [x] Role injection `_role` vervangen door framework context provider.
 - [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
 - [ ] Redirect-chain logic uit page naar core/runtime.
 - [x] Markdown renderer injectable maken met sanitizer contract.
@@ -226,10 +226,10 @@ App blijft eigenaar van domeindata en branding.
 - [x] Flow trail aanwezig.
 - [x] Global window/rejection handlers aanwezig.
 - [x] Dev persistence opt-in gemaakt.
-- [ ] Framework telemetry adapter interface.
-- [ ] App-specific source/config injecteerbaar.
-- [ ] No-op telemetry adapter voor packages.
-- [ ] Supabase adapter apart package/app-only houden.
+- [x] Framework telemetry adapter interface.
+- [x] App-specific source/config injecteerbaar.
+- [x] No-op telemetry adapter voor packages.
+- [x] Supabase adapter apart package/app-only houden.
 - [ ] Error classification delen tussen app en package.
 - [ ] Breadcrumb model typed maken.
 - [x] Log persistence tests voor 401/403/429/5xx/offline.
@@ -277,7 +277,7 @@ App blijft eigenaar van domeindata en branding.
 ## Performance Checklist
 
 - [x] Core package zero DOM/framework dependencies.
-- [ ] Vue package tree-shakeable exports.
+- [x] Vue package tree-shakeable exports.
 - [ ] Admin/Supabase lazy app-only.
 - [x] Markdown renderer lazy or injectable.
 - [ ] Manifest load cache strategy configurable.
@@ -292,7 +292,7 @@ App blijft eigenaar van domeindata en branding.
 Urinestrip wordt eerste end-to-end package fixture.
 
 - [x] Compile `flows/strip.yaml` via strict compiler.
-- [ ] Load manifest through injected loader.
+- [x] Load manifest through injected loader.
 - [ ] Render landing from manifest taxonomy.
 - [ ] Run questionnaire through framework runner.
 - [x] `nitrite == positive` gives typed redirect outcome `{ type: "redirect", target: "bacteriurie" }`.
@@ -320,7 +320,7 @@ Exit criteria:
 
 ### Ronde 2 — Vue Runtime
 
-- [ ] Store factory.
+- [x] Store factory.
 - [ ] Runner composable.
 - [ ] Questionnaire organism.
 - [ ] Result renderer organism.
@@ -335,7 +335,7 @@ Exit criteria:
 
 ### Ronde 4 — Telemetry/Security
 
-- [ ] Adapter interface.
+- [x] Adapter interface.
 - [ ] Supabase app adapter.
 - [ ] Error matrix tests.
 - [ ] Threat model doc.
