@@ -46,7 +46,6 @@ jobs:
 
       - name: Security — npm audit
         run: npm audit --omit=dev --audit-level=high
-        continue-on-error: true
 
       - name: Security — no secrets in code
         run: |
