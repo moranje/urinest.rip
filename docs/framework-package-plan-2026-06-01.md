@@ -99,11 +99,11 @@ Vue runtime en UI.
 
 Framework test tools.
 
-- [ ] Path enumeration
-- [ ] Dead-end coverage
-- [ ] Missing result checks
-- [ ] Redirect target checks
-- [ ] Role/context matrix runner
+- [x] Path enumeration
+- [x] Dead-end coverage
+- [x] Missing result checks
+- [x] Redirect target checks
+- [x] Role/context matrix runner
 - [ ] Snapshot helpers
 - [ ] Clinical safety fixtures
 - [ ] Urinestrip testcase template
@@ -267,7 +267,7 @@ App blijft eigenaar van domeindata en branding.
 
 ## Performance Checklist
 
-- [ ] Core package zero DOM/framework dependencies.
+- [x] Core package zero DOM/framework dependencies.
 - [ ] Vue package tree-shakeable exports.
 - [ ] Admin/Supabase lazy app-only.
 - [ ] Markdown renderer lazy or injectable.
@@ -282,16 +282,16 @@ App blijft eigenaar van domeindata en branding.
 
 Urinestrip wordt eerste end-to-end package fixture.
 
-- [ ] Compile `flows/strip.yaml` via strict compiler.
+- [x] Compile `flows/strip.yaml` via strict compiler.
 - [ ] Load manifest through injected loader.
 - [ ] Render landing from manifest taxonomy.
 - [ ] Run questionnaire through framework runner.
-- [ ] `nitrite == positive` gives typed redirect outcome `{ type: "redirect", target: "bacteriurie" }`.
-- [ ] `nitrite == negative`, `leukocytes == positive` redirects to `leukocyturie`.
-- [ ] `nitrite == negative`, `leukocytes == negative`, `erythrocytes == positive` redirects to `hematurie`.
-- [ ] All negative gives typed result outcome.
-- [ ] Progress indicator correct through all branches.
-- [ ] Telemetry records flow start, step, redirect/result without PHI.
+- [x] `nitrite == positive` gives typed redirect outcome `{ type: "redirect", target: "bacteriurie" }`.
+- [x] `nitrite == negative`, `leukocytes == positive` redirects to `leukocyturie`.
+- [x] `nitrite == negative`, `leukocytes == negative`, `erythrocytes == positive` redirects to `hematurie`.
+- [x] All negative gives typed result outcome.
+- [x] Progress indicator correct through all branches.
+- [x] Telemetry records flow start, step, redirect/result without PHI.
 - [ ] Accessibility: keyboard, screenreader label, focus order.
 
 ## Multi-Agent Rondes
@@ -304,7 +304,7 @@ Urinestrip wordt eerste end-to-end package fixture.
 - Agent D: telemetry/testing/security.
 
 Exit criteria:
-- [ ] `build:flows` strict.
+- [x] `build:flows` strict.
 - [x] `@beslismodel/core` scaffold.
 - [x] Typed outcome model.
 - [x] Urinestrip tests still green.
