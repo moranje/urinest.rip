@@ -7,7 +7,7 @@ Vue 3 + Vite SPA voor huisartsen. Klinische beslisbomen in YAML (`flows/`), geco
 ## Tech stack
 
 - Vue 3, Vue Router, Pinia
-- TypeScript, Vite 7
+- TypeScript 6, TypeScript Go native preview (`tsgo`), Vite 8/Rolldown
 - decision-engine-core (tarball: `decision-engine-core-1.0.0.tgz`)
 - Supabase (auth + structured logging)
 - PWA (vite-plugin-pwa)
@@ -17,6 +17,7 @@ Vue 3 + Vite SPA voor huisartsen. Klinische beslisbomen in YAML (`flows/`), geco
 - `npm run dev` — lokale dev server
 - `npm run build` — productie build
 - `npm run check` — vue-tsc type-check
+- `npm run check:tsgo` — TypeScript Go/native preview check voor TS-only lagen
 - `npm run lint` — oxlint
 - `npm run lint:eslint` — eslint (security rules)
 - `npm run lint:all` — oxlint + eslint
@@ -48,3 +49,6 @@ De app kent twee rollen (toggle in header):
 
 ### Environment variables
 `VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY` worden als GitHub secrets doorgegeven aan de build step. Lokaal via `.env`.
+
+### Design tokens
+Kleur-tokens gebruiken `light-dark(light, dark)` in `src/styles/tokens.css` met `@supports` fallback voor oudere browsers. `src/styles/themes.css` blijft bestaan voor expliciete `data-theme` overrides en FOUC-preventie.
