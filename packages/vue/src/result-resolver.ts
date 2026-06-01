@@ -73,15 +73,14 @@ export function useResultResolver<
       throw missingError;
     }
 
-    const answers = options.answers ?? store.getAllAnswersForQuestionnaire(questionnaireId);
-    const rawOutcome = store.determineOutcomeForPath(
-      questionnaireId,
-      answers,
-      questionnaire.resultsLogic,
-    );
-    const answeredQuestionIds = Object.keys(answers);
-
     try {
+      const answers = options.answers ?? store.getAllAnswersForQuestionnaire(questionnaireId);
+      const rawOutcome = store.determineOutcomeForPath(
+        questionnaireId,
+        answers,
+        questionnaire.resultsLogic,
+      );
+      const answeredQuestionIds = Object.keys(answers);
       const typedOutcome = parseOutcome(rawOutcome.outcome);
       const base = {
         answeredQuestionIds,

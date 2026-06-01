@@ -50,11 +50,7 @@
           />
           <p class="sr-only" aria-live="polite">{{ progressLabel }}: {{ currentQuestion.text }}</p>
           <div class="question-header">
-            <h1
-              :id="`q-title-${currentQuestion.id}`"
-              class="question-title"
-              style="view-transition-name: question-title"
-            >
+            <h1 :id="`q-title-${currentQuestion.id}`" class="question-title">
               {{ currentQuestion.text }}
             </h1>
             <p
@@ -181,7 +177,6 @@ import {
 import { createLogger } from "../lib/logger";
 import { renderMarkdown } from "../lib/markdown-renderer";
 import { appendStoredRedirectTrail, clearStoredRedirectTrail } from "../lib/redirect-trail";
-import { observeViewTransition } from "../lib/view-transition";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
 import type { QuestionOption as QuestionOptionData, AnswerValue } from "../types";
@@ -204,7 +199,6 @@ const {
   currentQuestionId,
   currentQuestion,
   currentStep,
-  findNextQuestionId,
   goBack: goBackQuestion,
   hasHistory,
   hasSelectedOptions,
@@ -394,56 +388,34 @@ const previousQuestionState = (): void => {
   goBackQuestion();
 };
 
-// View Transitions API helper — feature-detect + reduced-motion fallback
-type DocumentWithViewTransitions = Document & {
-  startViewTransition?: (cb: () => void | Promise<void>) => { finished: Promise<void> };
-};
-const withViewTransition = (mutate: () => void): void => {
-  const doc = document as DocumentWithViewTransitions;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (typeof doc.startViewTransition === "function" && !reduced) {
-    const transition = doc.startViewTransition(() => {
-      mutate();
-    });
-    observeViewTransition(transition, (error) =>
-      handleError(error, "questionnaire:view-transition"),
-    );
-  } else {
-    mutate();
-  }
-};
-
 const goToNextQuestion = (branch?: string): void => {
-  const nextId = findNextQuestionId(currentQuestionId.value);
-  if (nextId) {
-    withViewTransition(() => advanceQuestionState(branch));
-    return;
-  }
   advanceQuestionState(branch);
 };
 
 const goToPreviousQuestion = (): void => {
-  withViewTransition(previousQuestionState);
+  previousQuestionState();
 };
 
 const determineResult = (): void => {
   if (isNavigating.value) return;
   isNavigating.value = true;
 
-  const fullQuestionnaire = questionnaireStore.getFullQuestionnaire(props.id);
-  if (!fullQuestionnaire) {
-    router.replace("/error");
-    return;
-  }
-
-  const answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
-  const { outcome } = questionnaireStore.determineOutcomeForPath(
-    props.id,
-    answers,
-    fullQuestionnaire.resultsLogic,
-  );
-
+  let answers: ReturnType<typeof questionnaireStore.getAllAnswersForQuestionnaire> | null = null;
+  let outcome: string | null | undefined;
   try {
+    const fullQuestionnaire = questionnaireStore.getFullQuestionnaire(props.id);
+    if (!fullQuestionnaire) {
+      throw new Error(`Questionnaire not found: ${props.id}`);
+    }
+
+    answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
+    const resolvedOutcome = questionnaireStore.determineOutcomeForPath(
+      props.id,
+      answers,
+      fullQuestionnaire.resultsLogic,
+    );
+    outcome = resolvedOutcome.outcome;
+
     const typedOutcome = parseOutcome(outcome);
     if (typedOutcome.type === "redirect") {
       const value = typedOutcome.target;
@@ -470,7 +442,13 @@ const determineResult = (): void => {
         role: roleStore.role,
       });
       questionnaireStore.clearAnswers(props.id);
-      router.replace(`/questionnaire/${value}`);
+      void router.replace(`/questionnaire/${value}`).catch((error: unknown) => {
+        isNavigating.value = false;
+        handleError(error, "router:questionnaire-redirect", {
+          questionnaireId: props.id,
+          targetQuestionnaireId: value,
+        });
+      });
     } else if (typedOutcome.type === "result") {
       const value = typedOutcome.key;
       recordFlowResult({
@@ -480,25 +458,37 @@ const determineResult = (): void => {
         role: roleStore.role,
       });
       clearStoredRedirectTrail();
-      router.push(`/info/${value}`);
+      void router.push(`/info/${value}`).catch((error: unknown) => {
+        isNavigating.value = false;
+        handleError(error, "router:result", {
+          questionnaireId: props.id,
+          resultId: value,
+        });
+      });
     } else {
       handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
         questionnaireId: props.id,
         role: roleStore.role,
-        answeredQuestionIds: Object.keys(answers),
+        answeredQuestionIds: Object.keys(answers ?? {}),
       });
       clearStoredRedirectTrail();
-      router.push("/error");
+      void router.push("/error").catch((error: unknown) => {
+        isNavigating.value = false;
+        handleError(error, "router:error-navigation", { questionnaireId: props.id });
+      });
     }
   } catch (error) {
-    handleError(error, "decision-engine:typed-outcome", {
+    handleError(error, "decision-engine:resolve-result", {
       questionnaireId: props.id,
       outcome,
       role: roleStore.role,
-      answeredQuestionIds: Object.keys(answers),
+      answeredQuestionIds: Object.keys(answers ?? {}),
     });
     clearStoredRedirectTrail();
-    router.push("/error");
+    void router.push("/error").catch((navigationError: unknown) => {
+      isNavigating.value = false;
+      handleError(navigationError, "router:error-navigation", { questionnaireId: props.id });
+    });
   }
 };
 
@@ -764,10 +754,6 @@ watch(
   margin: 0 0 var(--spacing-sm) 0;
   text-wrap: balance;
 }
-
-/* View Transitions API — question title morphs across question changes.
-   Animation is declared in main.css (must be on root, not scoped).
-   Reduced-motion is respected by the wrapper in script (withViewTransition). */
 
 .question-step {
   font: var(--md-sys-typescale-body-small);

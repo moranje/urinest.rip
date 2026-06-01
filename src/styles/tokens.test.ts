@@ -88,4 +88,12 @@ describe("design tokens", () => {
     expect(flowCompiler).toContain("icon: flow.icon");
     expect(flowCompiler).toContain("metadata: flow.metadata");
   });
+
+  it("keeps questionnaire route switches inside the same component instance", () => {
+    const app = read("src/App.vue");
+
+    expect(app).toContain("routeViewKey(r)");
+    expect(app).toContain('viewRoute.name === "Questionnaire"');
+    expect(app).not.toContain(':key="r.fullPath"');
+  });
 });

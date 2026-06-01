@@ -9,7 +9,7 @@
         <Button @click="reloadApp">Opnieuw laden</Button>
       </section>
       <router-view v-else v-slot="{ Component, route: r }">
-        <component :is="Component" :key="r.fullPath" />
+        <component :is="Component" :key="routeViewKey(r)" />
       </router-view>
     </main>
     <OfflineBanner />
@@ -36,6 +36,10 @@ const themeStore = useThemeStore();
 
 const dropletAnimate = ref(false);
 const appError = ref<string | null>(null);
+
+const routeViewKey = (viewRoute: { readonly fullPath: string; readonly name?: unknown }): string =>
+  viewRoute.name === "Questionnaire" ? "questionnaire" : viewRoute.fullPath;
+
 watch(
   () => route.path,
   () => {

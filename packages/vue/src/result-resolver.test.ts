@@ -116,4 +116,19 @@ describe("useResultResolver", () => {
     expect(resolver.lastResult.value).toBeNull();
     expect(resolver.error.value?.message).toBe("Unsupported outcome type: unknown");
   });
+
+  it("throws and stores outcome resolver errors", () => {
+    const resolveError = new Error("outcome resolver failed");
+    const store = {
+      ...createStore({ outcome: "result:x", ruleId: "rule-1" }),
+      determineOutcomeForPath: vi.fn(() => {
+        throw resolveError;
+      }),
+    };
+    const resolver = useResultResolver(store);
+
+    expect(() => resolver.resolveResult("strip")).toThrow(resolveError);
+    expect(resolver.lastResult.value).toBeNull();
+    expect(resolver.error.value).toBe(resolveError);
+  });
 });
