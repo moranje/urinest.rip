@@ -63,9 +63,17 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Typed outcome resolver
 - [x] Redirect-cycle detector
 - [x] Role/context injection via pure `RuntimeContext`
-- [x] Domein-agnostisch calculator extensiecontract
-- [ ] CVRM/PREVENT calculators buiten core houden als consumer/domain package
+- [x] Domein-agnostisch calculator extensiecontract (`CalculatorDefinition` + `createCalculatorRegistry`)
+- [x] Geen CVRM/PREVENT-specifieke calculator-API, extensiepunt of implementatie in core
 - [x] Deterministic audit trail model
+
+### Consumer/domain packages
+
+Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buiten core. Core levert alleen generieke contracten.
+
+- [ ] CVRM/PREVENT calculatorpakket als consumer/domain package
+- [ ] COPD calculatorpakket als consumer/domain package
+- [ ] DM calculatorpakket als consumer/domain package
 
 ### `@beslismodel/compiler`
 
