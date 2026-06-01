@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createPinia, setActivePinia } from "pinia";
 import {
+  createBeslismodelDataReadyGuard,
   createBeslismodelStore,
   noopTelemetryAdapter,
   useResultResolver,
@@ -73,6 +74,19 @@ const resolver = useResultResolver({
 
 if (resolver.resolveResult("package-smoke").type !== "result") {
   throw new Error("vue package result resolver export failed");
+}
+
+const guard = createBeslismodelDataReadyGuard({
+  useStore: () => ({
+    dataReady: true,
+    isLoading: false,
+    loadingPromise: null,
+    loadInitialData: async () => undefined,
+  }),
+});
+
+if ((await guard({ name: "Questionnaire" }, { name: "Landing" })) !== true) {
+  throw new Error("vue package route helper export failed");
 }
 
 noopTelemetryAdapter.track({

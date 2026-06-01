@@ -18,5 +18,11 @@ export type {
   ResolveBeslismodelResultOptions,
 } from "./result-resolver";
 export { useResultResolver } from "./result-resolver";
+export type {
+  BeslismodelDataReadyGuardFailure,
+  BeslismodelRouteLoadStore,
+  CreateBeslismodelDataReadyGuardOptions,
+} from "./router";
+export { createBeslismodelDataReadyGuard } from "./router";
 export type { BeslismodelTelemetryAdapter, BeslismodelTelemetryEvent } from "./telemetry";
 export { noopTelemetryAdapter } from "./telemetry";
