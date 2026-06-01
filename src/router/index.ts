@@ -3,6 +3,7 @@ import { nextTick } from "vue";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { breadcrumbNav } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
+import { AUTH_SESSION_EXPIRED_EVENT } from "../lib/auth-events";
 import { observeViewTransition } from "../lib/view-transition";
 import { useAuthStore } from "../store/authStore";
 
@@ -103,6 +104,20 @@ router.beforeEach((to, _from, next) => {
   }
   next();
 });
+
+if (typeof window !== "undefined") {
+  window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, () => {
+    const current = router.currentRoute.value;
+    if (!current.path.startsWith("/admin") || current.name === "AdminLogin") return;
+
+    void router
+      .push({
+        name: "AdminLogin",
+        query: { expired: "1", redirect: current.fullPath },
+      })
+      .catch((error: unknown) => handleError(error, "router:auth-session-expired"));
+  });
+}
 
 // -- View Transitions for route changes --
 //

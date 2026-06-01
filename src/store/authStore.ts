@@ -6,6 +6,7 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import type { User } from "@supabase/supabase-js";
+import { emitAuthSessionExpired } from "../lib/auth-events";
 import { createLogger } from "../lib/logger";
 
 const log = createLogger("auth");
@@ -13,6 +14,8 @@ const log = createLogger("auth");
 export const useAuthStore = defineStore("auth", () => {
   const user = ref<User | null>(null);
   const loading = ref(false);
+  const initialized = ref(false);
+  let initPromise: Promise<void> | null = null;
 
   const isAuthenticated = computed(() => user.value !== null);
 
@@ -22,15 +25,31 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function init(): Promise<void> {
-    const supabase = await resolveSupabase();
-    if (!supabase) return;
+    if (initPromise) return initPromise;
 
-    const { data } = await supabase.auth.getSession();
-    user.value = data.session?.user ?? null;
+    initPromise = (async () => {
+      const supabase = await resolveSupabase();
+      if (!supabase) {
+        initialized.value = true;
+        return;
+      }
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      user.value = session?.user ?? null;
-    });
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        user.value = data.session?.user ?? null;
+
+        supabase.auth.onAuthStateChange((_event, session) => {
+          user.value = session?.user ?? null;
+        });
+      } catch (error) {
+        await expireSession("auth:init", error);
+      } finally {
+        initialized.value = true;
+      }
+    })();
+
+    return initPromise;
   }
 
   async function signIn(email: string, password: string): Promise<void> {
@@ -49,12 +68,35 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function signOut(): Promise<void> {
     const supabase = await resolveSupabase();
-    if (!supabase) return;
-
-    await supabase.auth.signOut();
+    if (supabase) {
+      const { error } = await supabase.auth.signOut();
+      if (error) log.warn("sign out failed", { error: error.message });
+    }
     user.value = null;
     log.info("signed out");
   }
 
-  return { user, loading, isAuthenticated, init, signIn, signOut };
+  async function expireSession(context: string, cause?: unknown): Promise<void> {
+    const supabase = await resolveSupabase();
+    if (supabase) {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) log.warn("expired session sign out failed", { context, error: error.message });
+      } catch (error) {
+        log.warn("expired session sign out failed", {
+          context,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    user.value = null;
+    log.warn("session expired", {
+      context,
+      cause: cause instanceof Error ? cause.message : String(cause ?? ""),
+    });
+    emitAuthSessionExpired({ context, message: "Sessie verlopen. Log opnieuw in." });
+  }
+
+  return { user, loading, initialized, isAuthenticated, init, signIn, signOut, expireSession };
 });

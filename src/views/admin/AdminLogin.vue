@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../../store/authStore";
 import { useToastStore } from "../../store/toastStore";
 import Button from "../../components/primitives/Button.vue";
 import Icon from "../../components/primitives/Icon.vue";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const toastStore = useToastStore();
 
@@ -22,6 +23,12 @@ const emailInvalid = computed(
   () => triedSubmit.value && (!email.value.trim() || !EMAIL_RE.test(email.value.trim())),
 );
 const passwordInvalid = computed(() => triedSubmit.value && !password.value);
+const sessionExpired = computed(() => route.query.expired === "1");
+const redirectTarget = computed(() =>
+  typeof route.query.redirect === "string" && route.query.redirect.startsWith("/admin")
+    ? route.query.redirect
+    : "/admin/logs",
+);
 
 async function handleSubmit() {
   triedSubmit.value = true;
@@ -34,7 +41,7 @@ async function handleSubmit() {
   submitting.value = true;
   try {
     await authStore.signIn(email.value.trim(), password.value);
-    router.push("/admin/logs");
+    router.push(redirectTarget.value);
   } catch (e) {
     toastStore.error(e instanceof Error ? e.message : "Inloggen mislukt");
   } finally {
@@ -47,6 +54,9 @@ async function handleSubmit() {
   <div class="login-page">
     <form class="login-card" novalidate @submit.prevent="handleSubmit">
       <h1>Admin Login</h1>
+      <p v-if="sessionExpired" class="session-expired" role="status">
+        Sessie verlopen. Log opnieuw in.
+      </p>
       <div class="field">
         <label for="email">E-mail</label>
         <input
@@ -131,6 +141,16 @@ h1 {
   color: var(--md-sys-color-on-surface);
   text-align: center;
   margin-bottom: var(--spacing-sm);
+}
+
+.session-expired {
+  margin: 0 0 var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--md-sys-color-warning);
+  border-radius: var(--md-sys-shape-corner-small);
+  color: var(--md-sys-color-on-warning-container);
+  background: var(--md-sys-color-warning-container);
+  font: var(--md-sys-typescale-body-medium);
 }
 
 .field {

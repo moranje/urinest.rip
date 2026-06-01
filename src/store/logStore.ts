@@ -11,6 +11,7 @@ import { defineStore } from "pinia";
 import { getSupabase } from "../lib/supabase/client";
 import { handleError } from "../lib/errors";
 import { clearLogSinkDownFlag, getLogSinkDownAt } from "../lib/log-sink";
+import { useAuthStore } from "./authStore";
 
 const APP_SOURCE = "urinestrip";
 type SupabaseClient = NonNullable<ReturnType<typeof getSupabase>>;
@@ -18,6 +19,10 @@ type SupabaseClient = NonNullable<ReturnType<typeof getSupabase>>;
 interface RpcResult<T> {
   data: T | null;
   error: unknown;
+}
+
+interface AuthRetryResult<T> extends RpcResult<T> {
+  sessionExpired: boolean;
 }
 
 // -- Types --
@@ -62,17 +67,19 @@ function isAuthRefreshable(error: unknown): boolean {
 async function withAuthRetry<T>(
   supabase: SupabaseClient,
   operation: () => Promise<RpcResult<T>>,
-  context: string,
-): Promise<RpcResult<T>> {
+  onRefreshFailure: (error: unknown) => Promise<void>,
+): Promise<AuthRetryResult<T>> {
   const first = await operation();
-  if (!first.error || !isAuthRefreshable(first.error)) return first;
+  if (!first.error || !isAuthRefreshable(first.error)) {
+    return { ...first, sessionExpired: false };
+  }
 
   const { error: refreshError } = await supabase.auth.refreshSession();
   if (refreshError) {
-    handleError(refreshError, `${context}:refresh-session`);
-    return first;
+    await onRefreshFailure(refreshError);
+    return { data: null, error: null, sessionExpired: true };
   }
-  return operation();
+  return { ...(await operation()), sessionExpired: false };
 }
 
 export const useLogStore = defineStore("logs", () => {
@@ -103,7 +110,11 @@ export const useLogStore = defineStore("logs", () => {
     error.value = "";
 
     try {
-      const { data, error: rpcError } = await withAuthRetry(
+      const {
+        data,
+        error: rpcError,
+        sessionExpired,
+      } = await withAuthRetry(
         supabase,
         async () =>
           await supabase.rpc("get_grouped_logs_by_source", {
@@ -112,9 +123,11 @@ export const useLogStore = defineStore("logs", () => {
             p_level: filters.value.level,
             p_status: filters.value.status,
           }),
-        "logs:load-groups",
+        async (refreshError) =>
+          await expireAdminSession("logs:load-groups:refresh-session", refreshError),
       );
 
+      if (sessionExpired) return;
       if (rpcError) throw rpcError;
       groups.value = (data ?? []) as LogGroup[];
     } catch (e) {
@@ -134,16 +147,22 @@ export const useLogStore = defineStore("logs", () => {
     loadingEvents.value = true;
 
     try {
-      const { data, error: rpcError } = await withAuthRetry(
+      const {
+        data,
+        error: rpcError,
+        sessionExpired,
+      } = await withAuthRetry(
         supabase,
         async () =>
           await supabase.rpc("get_recent_logs_by_source", {
             p_source: APP_SOURCE,
             p_fingerprint: fingerprint,
           }),
-        "logs:load-events",
+        async (refreshError) =>
+          await expireAdminSession("logs:load-events:refresh-session", refreshError),
       );
 
+      if (sessionExpired) return;
       if (rpcError) throw rpcError;
       events.value = (data ?? []) as LogEvent[];
     } catch (e) {
@@ -180,6 +199,15 @@ export const useLogStore = defineStore("logs", () => {
       clearInterval(refreshTimer);
       refreshTimer = null;
     }
+  }
+
+  async function expireAdminSession(context: string, cause: unknown): Promise<void> {
+    stopAutoRefresh();
+    groups.value = [];
+    events.value = [];
+    selectedFingerprint.value = null;
+    error.value = "Sessie verlopen. Log opnieuw in.";
+    await useAuthStore().expireSession(context, cause);
   }
 
   async function resolveGroup(fingerprint: string, version: string): Promise<void> {

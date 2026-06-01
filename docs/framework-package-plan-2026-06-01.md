@@ -44,7 +44,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 - [ ] Route params, result IDs, session IDs en flow trail entries hashen/redacten waar ze klinische state kunnen onthullen.
 - [x] Log-sink batch requeue bij thrown flush errors.
 - [x] Breaker flag bij reload lezen en persistence disabled houden.
-- [ ] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.
+- [x] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.
 - [x] `VITE_ENABLE_LOG_PERSISTENCE` typen en documenteren.
 - [x] `npm audit --omit=dev --audit-level=high` hard laten falen.
 - [x] CSP/HSTS/Permissions-Policy uitbreiden in `public/_headers`.
