@@ -27,6 +27,7 @@ export { createBeslismodelDataReadyGuard } from "./router";
 export type {
   BeslismodelFullRunnerQuestionnaire,
   BeslismodelQuestionnaireRunnerStore,
+  BeslismodelRunnerOptionAnswer,
   BeslismodelRunnerQuestionnaire,
   BeslismodelRunnerTransition,
   StartQuestionnaireRunnerOptions,
