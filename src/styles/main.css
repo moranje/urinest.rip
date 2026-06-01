@@ -1,6 +1,8 @@
-@import "./tokens.css";
-@import "./themes.css";
-@import "./components.css";
+@layer tokens, themes, components, base, utilities;
+
+@import "./tokens.css" layer(tokens);
+@import "./themes.css" layer(themes);
+@import "./components.css" layer(components);
 
 /* Loading indicator */
 .app-loading {
@@ -42,10 +44,10 @@
 
 @keyframes skeleton-shimmer {
   from {
-    opacity: 1;
+    transform: translateX(-100%);
   }
   to {
-    opacity: 0.4;
+    transform: translateX(100%);
   }
 }
 
@@ -151,6 +153,29 @@ p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .skeleton,
+  .skeleton-line,
+  .skeleton-option,
+  .skeleton::after {
+    animation: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+  }
+
+  .md-card,
+  .urgency-badge,
+  .option-item,
+  .option-selected,
+  .md-button,
+  .toast {
+    forced-color-adjust: none;
+    border: 2px solid CanvasText;
   }
 }
 

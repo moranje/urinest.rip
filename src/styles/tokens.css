@@ -1,13 +1,15 @@
 :root {
   /* Material Design 3 Design Tokens — Medical theme */
+  color-scheme: light dark;
+  accent-color: var(--md-sys-color-primary);
 
   /* --- Color System --- */
 
   /* Primary (Medical green) */
-  --md-sys-color-primary: #16a34a;
-  --md-sys-color-on-primary: #ffffff;
-  --md-sys-color-primary-container: #dcfce7;
-  --md-sys-color-on-primary-container: #052e16;
+  --md-sys-color-primary: light-dark(#16a34a, #86efac);
+  --md-sys-color-on-primary: light-dark(#ffffff, #003d1a);
+  --md-sys-color-primary-container: light-dark(#dcfce7, #005a2b);
+  --md-sys-color-on-primary-container: light-dark(#052e16, #dcfce7);
 
   /* Secondary */
   --md-sys-color-secondary: #535f70;
@@ -25,10 +27,10 @@
   --md-sys-color-indicator-positive: #a855f7;
 
   /* Error */
-  --md-sys-color-error: #ba1a1a;
-  --md-sys-color-on-error: #ffffff;
-  --md-sys-color-error-container: #ffdad6;
-  --md-sys-color-on-error-container: #410002;
+  --md-sys-color-error: light-dark(#ba1a1a, #ffb4ab);
+  --md-sys-color-on-error: light-dark(#ffffff, #690005);
+  --md-sys-color-error-container: light-dark(#ffdad6, #93000a);
+  --md-sys-color-on-error-container: light-dark(#410002, #ffdad6);
 
   /* Warning (for medical warnings) */
   --md-sys-color-warning: #ca8a04;
@@ -37,10 +39,10 @@
   --md-sys-color-on-warning-container: #713f12;
 
   /* Surface — cooler grays for clinical feel */
-  --md-sys-color-background: #fcfcff;
-  --md-sys-color-on-background: #1a1c1e;
-  --md-sys-color-surface: #fcfcff;
-  --md-sys-color-on-surface: #1a1c1e;
+  --md-sys-color-background: light-dark(#fcfcff, #1a1c1e);
+  --md-sys-color-on-background: light-dark(#1a1c1e, #e2e2e6);
+  --md-sys-color-surface: light-dark(#fcfcff, #1a1c1e);
+  --md-sys-color-on-surface: light-dark(#1a1c1e, #e2e2e6);
 
   /* Surface Variants */
   --md-sys-color-surface-variant: #dfe2eb;
@@ -176,4 +178,29 @@
   --bp-md: 600px;
   --bp-lg: 900px;
   --bp-xl: 1200px;
+}
+
+@supports not (color: light-dark(white, black)) {
+  :root {
+    --md-sys-color-primary: #16a34a;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #dcfce7;
+    --md-sys-color-on-primary-container: #052e16;
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-on-error: #ffffff;
+    --md-sys-color-error-container: #ffdad6;
+    --md-sys-color-on-error-container: #410002;
+    --md-sys-color-background: #fcfcff;
+    --md-sys-color-on-background: #1a1c1e;
+    --md-sys-color-surface: #fcfcff;
+    --md-sys-color-on-surface: #1a1c1e;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --md-sys-color-outline: light-dark(#3f444b, #d6dae2);
+    --md-sys-color-outline-variant: light-dark(#626872, #b8bdc8);
+    --md-sys-color-on-surface-variant: light-dark(#202327, #edf0f7);
+  }
 }

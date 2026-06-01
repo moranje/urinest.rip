@@ -52,3 +52,19 @@ export const QuestionPlaceholder: Story = {
     `,
   }),
 };
+
+export const ReducedMotion: Story = {
+  render: () => ({
+    components: { Skeleton },
+    template: `
+      <div data-reduced-motion="true" style="max-width:420px">
+        <style>
+          [data-reduced-motion="true"] .skeleton::after { animation: none !important; }
+        </style>
+        <Skeleton variant="title" />
+        <Skeleton variant="line" />
+        <Skeleton variant="option" />
+      </div>
+    `,
+  }),
+};

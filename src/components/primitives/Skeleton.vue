@@ -26,9 +26,24 @@ const customStyle = computed(() => {
 
 <style scoped>
 .skeleton {
+  position: relative;
+  overflow: hidden;
   background: var(--md-sys-color-surface-container-high);
   border-radius: var(--md-sys-shape-corner-extra-small);
-  animation: skeleton-shimmer var(--motion-duration-long) ease-in-out infinite alternate;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--md-sys-color-surface) 55%, transparent),
+    transparent
+  );
+  animation: skeleton-shimmer 1500ms var(--motion-easing-standard) infinite;
+  will-change: transform;
 }
 
 .skeleton--line {
@@ -62,5 +77,19 @@ const customStyle = computed(() => {
 /* Pause animation when tab is hidden — saves paint cost */
 :global(:where([data-tab-hidden="true"])) .skeleton {
   animation-play-state: paused;
+}
+
+:global(:where([data-tab-hidden="true"])) .skeleton::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    opacity: 0.75;
+  }
+
+  .skeleton::after {
+    animation: none;
+  }
 }
 </style>

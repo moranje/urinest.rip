@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
+import { readFileSync } from "node:fs";
 import Skeleton from "./Skeleton.vue";
 
 describe("Skeleton primitive", () => {
@@ -28,5 +29,29 @@ describe("Skeleton primitive", () => {
     const style = (wrapper.element as HTMLElement).style;
     expect(style.width).toBe("50%");
     expect(style.height).toBe("20px");
+  });
+
+  it("matches stable rendered markup", () => {
+    const wrapper = mount(Skeleton, { props: { variant: "badge", width: "80px" } });
+    expect({
+      classes: wrapper.classes(),
+      style: wrapper.attributes("style"),
+      hidden: wrapper.attributes("aria-hidden"),
+    }).toMatchInlineSnapshot(`
+      {
+        "classes": [
+          "skeleton",
+          "skeleton--badge",
+        ],
+        "hidden": "true",
+        "style": "width: 80px;",
+      }
+    `);
+  });
+
+  it("has an explicit reduced-motion hard stop", () => {
+    const source = readFileSync("src/components/primitives/Skeleton.vue", "utf8");
+    expect(source).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(source).toContain("animation: none");
   });
 });

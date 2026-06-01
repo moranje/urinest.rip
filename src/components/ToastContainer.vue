@@ -1,12 +1,12 @@
 <template>
-  <div v-if="toasts.length > 0" class="toast-container" aria-live="polite">
+  <div v-if="toasts.length > 0" class="toast-container">
     <TransitionGroup name="toast-fly">
       <div
         v-for="toast in toasts"
         :key="toast.id"
         class="toast"
         :class="'toast--' + toast.level"
-        role="alert"
+        :role="toast.level === 'error' ? 'alert' : 'status'"
       >
         <svg
           class="toast-icon"
