@@ -32,10 +32,10 @@
     <p>{{ result.testAfterTreatment }}</p>
   </div>
 
-  <div v-if="result.explainer" class="result-section explainer-section">
+  <Card v-if="result.explainer" class="result-section explainer-section" variant="plain">
     <h3 class="section-title">Leg uit aan patiënt</h3>
     <p>{{ result.explainer }}</p>
-  </div>
+  </Card>
 
   <slot />
 
@@ -54,6 +54,7 @@ import { computed } from "vue";
 import Notice from "../molecules/Notice.vue";
 import SourceChip from "../molecules/SourceChip.vue";
 import StatusBadge from "../molecules/StatusBadge.vue";
+import Card from "../primitives/Card.vue";
 import type { ResultData } from "../../types";
 
 type UrgencyVariant = "u1" | "u2" | "u3" | "info";
@@ -114,12 +115,6 @@ const urgencyVariant = computed<UrgencyVariant>(() => {
   line-height: 1.6;
 }
 
-.explainer-section {
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-  background-color: var(--md-sys-color-surface-container);
-}
-
 .explainer-section p {
   font: var(--md-sys-typescale-body-medium);
   line-height: 1.6;
@@ -138,10 +133,6 @@ const urgencyVariant = computed<UrgencyVariant>(() => {
 @media (max-width: 599.98px) {
   .result-heading {
     font: var(--md-sys-typescale-title-large);
-  }
-
-  .explainer-section {
-    padding: var(--spacing-sm);
   }
 }
 </style>

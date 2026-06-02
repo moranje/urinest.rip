@@ -77,6 +77,18 @@ describe("ResultSectionList", () => {
     expect(warningNotice).not.toContain("result-section");
   });
 
+  it("delegates patient explainer shell styling to Card", () => {
+    const source = readFileSync("src/components/organisms/ResultSectionList.vue", "utf8");
+    const explainerCss =
+      source.match(/\.explainer-section\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="plain"');
+    expect(explainerCss).not.toContain("padding:");
+    expect(explainerCss).not.toContain("background-color:");
+    expect(explainerCss).not.toContain("border-radius:");
+  });
+
   it("omits optional sections when data is absent", () => {
     const wrapper = mount(ResultSectionList, {
       props: {
