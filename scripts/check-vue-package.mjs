@@ -8,6 +8,8 @@ import {
   createBeslismodelStore,
   LandingMenuGrid,
   noopTelemetryAdapter,
+  QuestionnaireRunner,
+  ResultRenderer,
   useQuestionnaireRunner,
   useResultResolver,
 } from "../packages/vue/dist/index.js";
@@ -121,6 +123,9 @@ const runner = useQuestionnaireRunner(
 if (runner.start().type !== "question") {
   throw new Error("vue package questionnaire runner export failed");
 }
+if (QuestionnaireRunner.name !== "QuestionnaireRunner") {
+  throw new Error("vue package questionnaire runner component export failed");
+}
 
 const landingSections = createBeslismodelLandingMenuSections(
   [
@@ -138,6 +143,9 @@ if (
   LandingMenuGrid.name !== "LandingMenuGrid"
 ) {
   throw new Error("vue package landing menu export failed");
+}
+if (ResultRenderer.name !== "ResultRenderer") {
+  throw new Error("vue package result renderer export failed");
 }
 
 noopTelemetryAdapter.track({

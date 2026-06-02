@@ -97,10 +97,10 @@ Vue runtime en UI.
 - [x] `useQuestionnaireRunner`
 - [x] `useResultResolver`
 - [x] Route helpers
-- [ ] `QuestionnaireRunner`
-- [ ] `ResultRenderer`
+- [x] `QuestionnaireRunner`
+- [x] `ResultRenderer`
 - [x] `LandingMenuGrid`
-- [ ] Slot-based result sections
+- [x] Slot-based result sections
 - [x] Consumer-owned labels/icons/taxonomy
 - [x] Vue, Pinia, Router als peer dependencies
 
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 45 files, 225 tests.
+- [x] Current full suite groen: 45 files, 230 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -329,9 +329,9 @@ Exit criteria:
 
 - [x] Store factory.
 - [x] Runner composable.
-- [ ] Questionnaire organism.
+- [x] Questionnaire organism.
 - [x] Result resolver composable.
-- [ ] Result renderer organism.
+- [x] Result renderer organism.
 - [x] Landing generated from manifest.
 
 ### Ronde 3 — Design System

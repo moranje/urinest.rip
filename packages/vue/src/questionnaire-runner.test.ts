@@ -1,4 +1,6 @@
+import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { QuestionnaireRunner } from "./questionnaire-runner-component";
 import {
   useQuestionnaireRunner,
   type BeslismodelQuestionnaireRunnerStore,
@@ -179,6 +181,62 @@ describe("useQuestionnaireRunner", () => {
       type: "missing",
     });
     expect(runner.advance()).toEqual({
+      questionnaireId: "missing",
+      type: "missing",
+    });
+  });
+});
+
+describe("QuestionnaireRunner", () => {
+  it("renders question slots and emits transition events for consumer-owned UI", async () => {
+    const wrapper = mount(QuestionnaireRunner, {
+      props: {
+        store: createStore(),
+        questionnaireId: "example-flow",
+      },
+      slots: {
+        question: `
+          <template #question="{ question, progress, selectOption }">
+            <button class="question" @click="selectOption({ id: 'o_show', text: 'Show', value: 'show' })">
+              {{ question.text }} {{ progress.text }}
+            </button>
+          </template>
+        `,
+      },
+    });
+
+    expect(wrapper.text()).toContain("First Vraag 1/3");
+    expect(wrapper.emitted("question")?.[0]?.[0]).toEqual(
+      expect.objectContaining({
+        questionId: "q1",
+        type: "question",
+      }),
+    );
+
+    await wrapper.get("button").trigger("click");
+
+    expect(wrapper.text()).toContain("Conditional Vraag 2/3");
+    expect(wrapper.emitted("transition")?.at(-1)?.[0]).toEqual({
+      branch: "o_show",
+      previousQuestionId: "q1",
+      questionId: "q2",
+      type: "question",
+    });
+  });
+
+  it("renders missing slots without app-owned routing", () => {
+    const wrapper = mount(QuestionnaireRunner, {
+      props: {
+        store: createStore(),
+        questionnaireId: "missing",
+      },
+      slots: {
+        missing: `<template #missing="{ transition }">Missing {{ transition.questionnaireId }}</template>`,
+      },
+    });
+
+    expect(wrapper.text()).toBe("Missing missing");
+    expect(wrapper.emitted("missing")?.[0]?.[0]).toEqual({
       questionnaireId: "missing",
       type: "missing",
     });

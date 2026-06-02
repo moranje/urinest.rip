@@ -1,4 +1,6 @@
+import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { ResultRenderer } from "./result-renderer";
 import { useResultResolver, type BeslismodelResultResolverStore } from "./result-resolver";
 import type { BeslismodelOutcomeResult } from "./store";
 
@@ -130,5 +132,83 @@ describe("useResultResolver", () => {
     expect(() => resolver.resolveResult("strip")).toThrow(resolveError);
     expect(resolver.lastResult.value).toBeNull();
     expect(resolver.error.value).toBe(resolveError);
+  });
+});
+
+describe("ResultRenderer", () => {
+  it("renders result slots and emits resolved events", () => {
+    const wrapper = mount(ResultRenderer, {
+      props: {
+        store: createStore({ outcome: "result:bacteriurie.primary", ruleId: "rule-1" }),
+        questionnaireId: "strip",
+      },
+      slots: {
+        result: `<template #result="{ result }">Result {{ result.resultKey }}</template>`,
+      },
+    });
+
+    expect(wrapper.text()).toBe("Result bacteriurie.primary");
+    expect(wrapper.emitted("result")?.[0]?.[0]).toEqual(
+      expect.objectContaining({
+        resultKey: "bacteriurie.primary",
+        type: "result",
+      }),
+    );
+    expect(wrapper.emitted("resolved")?.[0]?.[0]).toEqual(
+      expect.objectContaining({
+        resultKey: "bacteriurie.primary",
+        type: "result",
+      }),
+    );
+  });
+
+  it("renders redirect and none slots", () => {
+    const redirectWrapper = mount(ResultRenderer, {
+      props: {
+        store: createStore({ outcome: "redirect:leukocyturie", ruleId: "rule-2" }),
+        questionnaireId: "strip",
+      },
+      slots: {
+        none: "None",
+        redirect: `<template #redirect="{ result }">Redirect {{ result.targetQuestionnaireId }}</template>`,
+      },
+    });
+
+    expect(redirectWrapper.text()).toBe("Redirect leukocyturie");
+
+    const noneWrapper = mount(ResultRenderer, {
+      props: {
+        store: createStore({ outcome: null, ruleId: null }),
+        questionnaireId: "strip",
+      },
+      slots: {
+        none: "None",
+        redirect: `<template #redirect="{ result }">Redirect {{ result.targetQuestionnaireId }}</template>`,
+      },
+    });
+
+    expect(noneWrapper.text()).toBe("None");
+    expect(noneWrapper.emitted("none")?.[0]?.[0]).toEqual(
+      expect.objectContaining({
+        type: "none",
+      }),
+    );
+  });
+
+  it("renders error slots without throwing into the app", () => {
+    const wrapper = mount(ResultRenderer, {
+      props: {
+        store: createStore({ outcome: "unknown:x", ruleId: "rule-1" }),
+        questionnaireId: "strip",
+      },
+      slots: {
+        error: `<template #error="{ error }">Error {{ error.message }}</template>`,
+      },
+    });
+
+    expect(wrapper.text()).toBe("Error Unsupported outcome type: unknown");
+    expect(wrapper.emitted("error")?.[0]?.[0]).toEqual(
+      new Error("Unsupported outcome type: unknown"),
+    );
   });
 });

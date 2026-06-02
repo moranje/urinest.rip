@@ -27,7 +27,7 @@ export interface ResolveBeslismodelResultOptions<Answer = unknown> {
   readonly answers?: BeslismodelAnswerMap<Answer>;
 }
 
-interface BaseResolvedResult<
+export interface BaseResolvedResult<
   Outcome extends BeslismodelOutcomeResult,
   TypedOutcome extends ReturnType<typeof parseOutcome>,
 > {

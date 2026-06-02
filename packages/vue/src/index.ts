@@ -49,5 +49,16 @@ export type {
   UseQuestionnaireRunnerOptions,
 } from "./questionnaire-runner";
 export { useQuestionnaireRunner } from "./questionnaire-runner";
+export type {
+  BeslismodelQuestionnaireRunnerInstance,
+  BeslismodelQuestionnaireRunnerSlotProps,
+  BeslismodelRunnerSelectableOption,
+} from "./questionnaire-runner-component";
+export { QuestionnaireRunner } from "./questionnaire-runner-component";
+export type {
+  BeslismodelResultRendererInstance,
+  BeslismodelResultRendererSlotProps,
+} from "./result-renderer";
+export { ResultRenderer } from "./result-renderer";
 export type { BeslismodelTelemetryAdapter, BeslismodelTelemetryEvent } from "./telemetry";
 export { noopTelemetryAdapter } from "./telemetry";
