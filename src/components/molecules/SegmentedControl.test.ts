@@ -108,12 +108,15 @@ describe("SegmentedControl", () => {
     expect(wrapper.attributes("style")).toContain("--segmented-control-index: 0");
   });
 
-  it("keeps the active indicator flat without glow", () => {
+  it("keeps the active indicator and selected label flat without glow", () => {
     const source = readFileSync("src/components/molecules/SegmentedControl.vue", "utf8");
     const indicatorCss = source.match(/\.segmented-control::before\s*\{(?<body>[\s\S]*?)\n\}/)
       ?.groups?.body;
     const activeCss = source.match(/\.segmented-control__option--active\s*\{(?<body>[\s\S]*?)\n\}/)
       ?.groups?.body;
+    const activeFocusCss = source.match(
+      /\.segmented-control__option--active:focus-visible\s*\{(?<body>[\s\S]*?)\n\}/,
+    )?.groups?.body;
 
     expect(indicatorCss).toBeDefined();
     expect(indicatorCss).not.toContain("box-shadow");
@@ -121,5 +124,8 @@ describe("SegmentedControl", () => {
     expect(indicatorCss).not.toContain("linear-gradient");
     expect(activeCss).toBeDefined();
     expect(activeCss).not.toContain("text-shadow");
+    expect(activeFocusCss).toBeDefined();
+    expect(activeFocusCss).not.toContain("--md-sys-color-primary");
+    expect(source).not.toContain("segmented-control-label-pop");
   });
 });

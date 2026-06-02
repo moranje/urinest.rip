@@ -255,8 +255,12 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
 }
 
 .segmented-control__option:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: -2px;
+  outline: 2px solid color-mix(in srgb, var(--md-sys-color-on-surface) 72%, transparent);
+  outline-offset: -3px;
+}
+
+.segmented-control__option--active:focus-visible {
+  outline-color: var(--md-sys-color-on-primary);
 }
 
 .segmented-control__text {
@@ -287,28 +291,12 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
   border: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .segmented-control__option--active .segmented-control__text {
-    animation: segmented-control-label-pop var(--motion-duration-enter) var(--motion-easing-spring);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .segmented-control::before,
   .segmented-control__option,
   .segmented-control__text {
     animation: none;
     transition-duration: 1ms;
-  }
-}
-
-@keyframes segmented-control-label-pop {
-  0% {
-    transform: translateY(1px) scale(0.96);
-  }
-
-  100% {
-    transform: translateY(0) scale(1);
   }
 }
 </style>
