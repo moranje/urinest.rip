@@ -68,6 +68,16 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
+  it("keeps runtime transitions explicit", () => {
+    const files = [...walk("src/components"), ...walk("src/views"), ...walk("src/styles")].filter(
+      (file) => !file.endsWith("src/styles/tokens.test.ts"),
+    );
+    const broadTransition = /transition(?:-property)?:\s*all\b/;
+    const offenders = files.filter((file) => broadTransition.test(read(file)));
+
+    expect(offenders).toEqual([]);
+  });
+
   it("keeps landing tiles bounded by component scale with a 2x3 desktop layout", () => {
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");
 

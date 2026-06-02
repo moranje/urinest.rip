@@ -124,10 +124,14 @@ function toastIcon(
 
 /* Transitions */
 .toast-fly-enter-active {
-  transition: all var(--motion-duration-enter) var(--motion-easing-out);
+  transition:
+    opacity var(--motion-duration-enter) var(--motion-easing-out),
+    transform var(--motion-duration-enter) var(--motion-easing-out);
 }
 .toast-fly-leave-active {
-  transition: all var(--motion-duration-exit) var(--motion-easing-standard);
+  transition:
+    opacity var(--motion-duration-exit) var(--motion-easing-standard),
+    transform var(--motion-duration-exit) var(--motion-easing-standard);
 }
 .toast-fly-enter-from {
   opacity: 0;

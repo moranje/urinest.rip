@@ -170,10 +170,14 @@ function handleDismiss() {
 }
 
 .sheet-fly-enter-active {
-  transition: all var(--motion-duration-enter) var(--motion-easing-out);
+  transition:
+    opacity var(--motion-duration-enter) var(--motion-easing-out),
+    transform var(--motion-duration-enter) var(--motion-easing-out);
 }
 .sheet-fly-leave-active {
-  transition: all var(--motion-duration-exit) var(--motion-easing-standard);
+  transition:
+    opacity var(--motion-duration-exit) var(--motion-easing-standard),
+    transform var(--motion-duration-exit) var(--motion-easing-standard);
 }
 .sheet-fly-enter-from {
   opacity: 0;
