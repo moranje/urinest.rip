@@ -1,6 +1,7 @@
 @layer tokens, base, utilities;
 
 @import "./tokens.css" layer(tokens);
+@import "./motion.css" layer(utilities);
 
 /* Loading indicator */
 .app-loading {
@@ -20,33 +21,6 @@
   border: 4px solid var(--md-sys-color-surface-variant);
   border-radius: 50%;
   border-top-color: var(--md-sys-color-primary);
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes skeleton-shimmer {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(100%);
-  }
 }
 
 /* Base styles */

@@ -1,0 +1,45 @@
+.motion-spin {
+  animation: motion-spin 0.8s linear infinite;
+}
+
+.motion-spin--slow {
+  animation-duration: 1.2s;
+}
+
+.motion-spin--page {
+  animation-duration: 1s;
+}
+
+.motion-shimmer-sweep::after {
+  animation: motion-shimmer-sweep 1500ms var(--motion-easing-standard) infinite;
+  will-change: transform;
+}
+
+@keyframes motion-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes motion-shimmer-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-spin,
+  .motion-spin--slow,
+  .motion-spin--page {
+    animation: none;
+  }
+
+  .motion-shimmer-sweep::after {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+}

@@ -35,7 +35,7 @@ function timeAgo(dateStr: string): string {
 
 <template>
   <div v-if="loading" class="loading-state">
-    <div class="spinner" />
+    <div class="spinner motion-spin" />
     <span>Logs laden...</span>
   </div>
 
@@ -100,13 +100,6 @@ function timeAgo(dateStr: string): string {
   border: 2px solid var(--md-sys-color-outline-variant);
   border-top-color: var(--md-sys-color-primary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .group-list {

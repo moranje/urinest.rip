@@ -1,7 +1,7 @@
 <template>
   <svg
     class="icon"
-    :class="{ 'icon--spin': spin }"
+    :class="{ 'icon--spin': spin, 'motion-spin': spin, 'motion-spin--slow': spin }"
     :style="{ width: sizePx, height: sizePx }"
     viewBox="0 0 24 24"
     :aria-hidden="title ? undefined : 'true'"
@@ -155,15 +155,5 @@ const sizePx = computed(() => (typeof props.size === "number" ? `${props.size}px
 .icon {
   display: inline-block;
   flex-shrink: 0;
-}
-
-.icon--spin {
-  animation: icon-spin 1.2s linear infinite;
-}
-
-@keyframes icon-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

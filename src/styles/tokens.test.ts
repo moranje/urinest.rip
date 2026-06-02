@@ -78,6 +78,25 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
+  it("keeps shared spinner and shimmer motion in motion utilities", () => {
+    const mainCss = read("src/styles/main.css");
+    const motionCss = read("src/styles/motion.css");
+    const button = read("src/components/primitives/Button.vue");
+    const icon = read("src/components/primitives/Icon.vue");
+    const skeleton = read("src/components/primitives/Skeleton.vue");
+
+    expect(mainCss).toContain('@import "./motion.css" layer(utilities)');
+    expect(motionCss).toContain(".motion-spin");
+    expect(motionCss).toContain(".motion-shimmer-sweep::after");
+    expect(motionCss).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(button).toContain("btn-spinner motion-spin");
+    expect(icon).toContain("'motion-spin': spin");
+    expect(skeleton).toContain("skeleton motion-shimmer-sweep");
+    expect(button).not.toContain("@keyframes btn-spin");
+    expect(icon).not.toContain("@keyframes icon-spin");
+    expect(mainCss).not.toContain("@keyframes spin");
+  });
+
   it("keeps landing tiles bounded by component scale with a 2x3 desktop layout", () => {
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");
 

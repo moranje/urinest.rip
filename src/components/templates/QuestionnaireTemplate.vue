@@ -45,7 +45,7 @@
           @confirm="emit('confirm')"
         />
         <div v-else class="questionnaire-template__pending">
-          <div class="questionnaire-template__spinner" />
+          <div class="questionnaire-template__spinner motion-spin" />
           Resultaat bepalen...
         </div>
       </Transition>
@@ -167,7 +167,6 @@ const emit = defineEmits<{
   border: 2px solid var(--md-sys-color-outline-variant);
   border-top-color: var(--md-sys-color-primary);
   border-radius: var(--md-sys-shape-corner-full);
-  animation: questionnaire-template-spin var(--motion-duration-long) linear infinite;
 }
 
 .question-fade-enter-active {
@@ -190,18 +189,6 @@ const emit = defineEmits<{
 .question-fade-leave-to {
   opacity: 0;
   transform: translateY(-8px);
-}
-
-@keyframes questionnaire-template-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .questionnaire-template__spinner {
-    animation: none;
-  }
 }
 
 @container questionnaire (max-width: 37.5rem) {

@@ -24,6 +24,7 @@ describe("Button primitive", () => {
     expect((wrapper.element as HTMLButtonElement).disabled).toBe(true);
     expect(wrapper.attributes("aria-busy")).toBe("true");
     expect(wrapper.find(".btn-spinner").exists()).toBe(true);
+    expect(wrapper.get(".btn-spinner").classes()).toContain("motion-spin");
   });
 
   it("emits click via native event", async () => {

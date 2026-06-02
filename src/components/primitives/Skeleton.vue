@@ -1,5 +1,10 @@
 <template>
-  <div class="skeleton" :class="[`skeleton--${variant}`]" :style="customStyle" aria-hidden="true" />
+  <div
+    class="skeleton motion-shimmer-sweep"
+    :class="[`skeleton--${variant}`]"
+    :style="customStyle"
+    aria-hidden="true"
+  />
 </template>
 
 <script setup lang="ts">
@@ -42,8 +47,6 @@ const customStyle = computed(() => {
     color-mix(in srgb, var(--md-sys-color-surface) 55%, transparent),
     transparent
   );
-  animation: skeleton-shimmer 1500ms var(--motion-easing-standard) infinite;
-  will-change: transform;
 }
 
 .skeleton--line {

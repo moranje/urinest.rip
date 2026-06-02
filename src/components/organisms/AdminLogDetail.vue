@@ -404,7 +404,7 @@ async function exportMarkdown() {
       <section class="detail-section">
         <h3>Events ({{ group.count }})</h3>
         <div v-if="loading" class="events-loading">
-          <div class="spinner" />
+          <div class="spinner motion-spin" />
         </div>
         <p v-else-if="events.length === 0" class="events-empty">Geen individuele events gevonden</p>
         <div v-else class="event-list">
@@ -645,13 +645,6 @@ h3 {
   border: 2px solid var(--md-sys-color-outline-variant);
   border-top-color: var(--md-sys-color-primary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .events-loading {

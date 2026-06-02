@@ -10,7 +10,7 @@
       { 'btn--loading': loading, 'btn--full': fullWidth },
     ]"
   >
-    <span v-if="loading" class="btn-spinner" aria-hidden="true" />
+    <span v-if="loading" class="btn-spinner motion-spin" aria-hidden="true" />
     <slot name="leading" />
     <span class="btn-label"><slot /></span>
     <slot name="trailing" />
@@ -124,12 +124,5 @@ withDefaults(
   border-radius: 50%;
   border: 2px solid currentColor;
   border-top-color: transparent;
-  animation: btn-spin 0.8s linear infinite;
-}
-
-@keyframes btn-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

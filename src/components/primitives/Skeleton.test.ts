@@ -41,6 +41,7 @@ describe("Skeleton primitive", () => {
       {
         "classes": [
           "skeleton",
+          "motion-shimmer-sweep",
           "skeleton--badge",
         ],
         "hidden": "true",

@@ -217,8 +217,8 @@ App blijft eigenaar van domeindata en branding.
 - [x] Header controls naar shared `SegmentedControl`.
 - [ ] Alle touch targets minimaal 44px/48dp.
 - [x] Geen `transition: all`.
-- [ ] Motion utilities in `motion.css`.
-- [ ] Reduced motion per utility, niet alleen global catch-all.
+- [x] Motion utilities in `motion.css`.
+- [x] Reduced motion per utility, niet alleen global catch-all.
 - [ ] Storybook voor atoms, molecules, organisms, templates.
 - [ ] Route-level visual regression voor landing/questionnaire/result/admin.
 
