@@ -13,24 +13,22 @@
       <nav class="header-actions" aria-label="Hoofdnavigatie">
         <RoleToggle />
         <ThemeToggle />
-        <router-link
+        <IconButton
           to="/over"
-          class="header-icon-link"
           :aria-current="isAboutActive ? 'page' : undefined"
+          icon="info-circle"
+          size="md"
           title="Over"
           aria-label="Over deze beslishulp"
-        >
-          <Icon name="info-circle" :size="24" />
-        </router-link>
-        <router-link
+        />
+        <IconButton
           :to="isAuthenticated ? '/admin/logs' : '/admin/login'"
-          class="header-icon-link"
           :aria-current="isAdminActive ? 'page' : undefined"
+          icon="settings"
+          size="md"
           title="Admin"
           aria-label="Admin"
-        >
-          <Icon name="settings" :size="22" />
-        </router-link>
+        />
       </nav>
     </div>
   </header>
@@ -43,7 +41,7 @@ import { useRoute } from "vue-router";
 import RoleToggle from "../RoleToggle.vue";
 import ThemeToggle from "../ThemeToggle.vue";
 import LogoSvg from "../LogoSvg.vue";
-import Icon from "../primitives/Icon.vue";
+import IconButton from "../primitives/IconButton.vue";
 import { useAuthStore } from "../../store/authStore";
 
 defineProps<{
@@ -106,35 +104,6 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
 .app-title-link:focus-visible {
   outline: 2px solid var(--md-sys-color-primary);
   outline-offset: var(--spacing-xs);
-}
-
-.header-icon-link {
-  width: 40px;
-  height: 40px;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--md-sys-shape-corner-full);
-  color: var(--md-sys-color-on-surface-variant);
-  transition:
-    background-color var(--motion-duration-short) var(--motion-easing-standard),
-    transform var(--motion-duration-short) var(--motion-easing-standard);
-}
-
-.header-icon-link:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
-}
-
-.header-icon-link:active {
-  transform: scale(0.9);
-  transition-duration: var(--motion-duration-press);
-}
-
-.header-icon-link[aria-current="page"] {
-  color: var(--md-sys-color-primary);
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
 }
 
 @media (max-width: 599.98px) {

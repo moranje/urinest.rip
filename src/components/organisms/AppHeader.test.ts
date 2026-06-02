@@ -12,9 +12,24 @@ vi.mock("vue-router", () => ({
 }));
 
 const routerLinkStub = {
-  props: ["to", "ariaCurrent", "ariaLabel", "title"],
+  props: {
+    to: { type: [String, Object], default: "" },
+    ariaCurrent: { type: String, default: undefined },
+    ariaLabel: { type: String, default: undefined },
+    title: { type: String, default: undefined },
+    custom: { type: Boolean, default: false },
+  },
+  methods: {
+    navigate() {},
+  },
   template: `
+    <slot
+      v-if="custom"
+      :href="typeof to === 'string' ? to : ''"
+      :navigate="navigate"
+    />
     <a
+      v-else
       class="router-link-stub"
       :href="typeof to === 'string' ? to : ''"
       :aria-current="ariaCurrent"
@@ -74,6 +89,13 @@ describe("AppHeader", () => {
     authStore.user = { id: "u1" } as never;
     const authenticated = mountHeader();
     expect(authenticated.get('[aria-label="Admin"]').attributes("href")).toBe("/admin/logs");
+  });
+
+  it("uses shared icon button links for header actions", () => {
+    const source = readFileSync("src/components/organisms/AppHeader.vue", "utf8");
+
+    expect(source).toContain("<IconButton");
+    expect(source).not.toContain("header-icon-link");
   });
 
   it("keeps the logo home link visually quiet", () => {

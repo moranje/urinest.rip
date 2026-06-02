@@ -35,6 +35,43 @@ describe("form primitives", () => {
     expect(wrapper.get("button").attributes("aria-pressed")).toBe("true");
   });
 
+  it("renders router links through the icon button primitive", () => {
+    const wrapper = mount(IconButton, {
+      props: {
+        "aria-label": "Over deze beslishulp",
+        "aria-current": "page",
+        icon: "info-circle",
+        title: "Over",
+        to: "/over",
+      },
+      global: {
+        stubs: {
+          RouterLink: {
+            props: {
+              to: { type: [String, Object], default: "" },
+              custom: { type: Boolean, default: false },
+            },
+            methods: {
+              navigate() {},
+            },
+            template: `
+              <slot
+                v-if="custom"
+                :href="typeof to === 'string' ? to : ''"
+                :navigate="navigate"
+              />
+            `,
+          },
+        },
+      },
+    });
+
+    expect(wrapper.get("a").attributes("href")).toBe("/over");
+    expect(wrapper.get("a").attributes("aria-label")).toBe("Over deze beslishulp");
+    expect(wrapper.get("a").attributes("aria-current")).toBe("page");
+    expect(wrapper.get("a").classes()).toContain("icon-button");
+  });
+
   it("keeps small icon buttons at the minimum touch target", () => {
     const source = readFileSync("src/components/primitives/IconButton.vue", "utf8");
     const smallCss =
