@@ -35,6 +35,10 @@ export interface CreateBeslismodelLandingMenuSectionsOptions {
   readonly iconKeys?: readonly string[];
 }
 
+export type BeslismodelLandingMenuPrefetcher<
+  Item extends BeslismodelLandingMenuSource = BeslismodelLandingMenuSource,
+> = (viewItem: BeslismodelLandingMenuViewItem<Item>) => void | Promise<void>;
+
 const metadataString = (item: BeslismodelLandingMenuSource, key: string): string | undefined => {
   const value = item.metadata?.[key];
   return typeof value === "string" ? value : undefined;
@@ -115,11 +119,34 @@ export const LandingMenuGrid = defineComponent({
       type: String,
       default: "",
     },
+    prefetchItem: {
+      type: Function as PropType<BeslismodelLandingMenuPrefetcher>,
+      default: undefined,
+    },
   },
-  setup(props, { slots }) {
+  emits: {
+    prefetchError: (_error: unknown, _viewItem: BeslismodelLandingMenuViewItem) => true,
+  },
+  setup(props, { emit, slots }) {
     const sections = computed(() =>
       createBeslismodelLandingMenuSections(props.items, { iconKeys: props.iconKeys }),
     );
+    const prefetchedIds = new Set<string>();
+
+    const prefetchOnIntent = (viewItem: BeslismodelLandingMenuViewItem): void => {
+      if (!props.prefetchItem || prefetchedIds.has(viewItem.id)) return;
+      prefetchedIds.add(viewItem.id);
+      Promise.resolve(props.prefetchItem(viewItem)).catch((error: unknown) => {
+        prefetchedIds.delete(viewItem.id);
+        emit("prefetchError", error, viewItem);
+      });
+    };
+
+    const intentListeners = (viewItem: BeslismodelLandingMenuViewItem) => ({
+      onFocusin: () => prefetchOnIntent(viewItem),
+      onMouseenter: () => prefetchOnIntent(viewItem),
+      onTouchstart: () => prefetchOnIntent(viewItem),
+    });
 
     const fallback = (viewItem: BeslismodelLandingMenuViewItem) =>
       h(
@@ -150,7 +177,11 @@ export const LandingMenuGrid = defineComponent({
             sections.value.primary.map((viewItem) =>
               h(
                 "div",
-                { key: viewItem.id, class: "bm-landing-menu-grid__primary-item" },
+                {
+                  key: viewItem.id,
+                  class: "bm-landing-menu-grid__primary-item",
+                  ...intentListeners(viewItem),
+                },
                 renderPrimary(viewItem),
               ),
             ),
@@ -170,7 +201,11 @@ export const LandingMenuGrid = defineComponent({
                   sections.value.secondary.map((viewItem) =>
                     h(
                       "div",
-                      { key: viewItem.id, class: "bm-landing-menu-grid__secondary-item" },
+                      {
+                        key: viewItem.id,
+                        class: "bm-landing-menu-grid__secondary-item",
+                        ...intentListeners(viewItem),
+                      },
                       renderSecondary(viewItem),
                     ),
                   ),

@@ -7,6 +7,8 @@
         :icon-keys="iconKeys"
         :label="label"
         :secondary-heading="secondaryHeading"
+        :prefetch-item="props.prefetchQuestionnaire ? prefetchItem : undefined"
+        @prefetch-error="handlePrefetchError"
       >
         <template #primary="{ viewItem }">
           <MenuItem
@@ -39,10 +41,14 @@
 
 <script setup lang="ts">
 import type { Component } from "vue";
-import { LandingMenuGrid, type BeslismodelLandingMenuSource } from "@beslismodel/vue";
+import {
+  LandingMenuGrid,
+  type BeslismodelLandingMenuSource,
+  type BeslismodelLandingMenuViewItem,
+} from "@beslismodel/vue";
 import MenuItem from "../MenuItem.vue";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     items: readonly BeslismodelLandingMenuSource[];
     iconKeys: readonly string[];
@@ -51,11 +57,24 @@ withDefaults(
     secondaryHeading?: string;
     questionnairePath: (id: string) => string;
     iconComponent: (icon: string | undefined) => Component | null;
+    prefetchQuestionnaire?: (id: string) => void | Promise<void>;
   }>(),
   {
     secondaryHeading: "",
+    prefetchQuestionnaire: undefined,
   },
 );
+
+const emit = defineEmits<{
+  prefetchError: [error: unknown, id: string];
+}>();
+
+const prefetchItem = (viewItem: BeslismodelLandingMenuViewItem): void | Promise<void> =>
+  props.prefetchQuestionnaire?.(viewItem.id);
+
+const handlePrefetchError = (error: unknown, viewItem: BeslismodelLandingMenuViewItem): void => {
+  emit("prefetchError", error, viewItem.id);
+};
 </script>
 
 <style scoped>

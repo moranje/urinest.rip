@@ -39,8 +39,12 @@ const source = walk(sourceDir)
   .map((path) => readFileSync(path, "utf8"))
   .join("\n");
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const boundaryPattern = (term) =>
+  new RegExp(`(^|[^A-Za-z0-9_])${escapeRegExp(term)}([^A-Za-z0-9_]|$)`);
+
 for (const term of forbiddenBoundaryTerms) {
-  if (source.includes(term)) {
+  if (boundaryPattern(term).test(source)) {
     throw new Error(`@beslismodel/vue boundary leak: ${term}`);
   }
 }

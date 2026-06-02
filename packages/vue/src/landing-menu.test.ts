@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
 import { createBeslismodelLandingMenuSections, LandingMenuGrid } from "./landing-menu";
 
 const items = [
@@ -79,5 +79,52 @@ describe("landing menu", () => {
     expect(wrapper.findAll(".secondary").map((node) => node.text())).toEqual([
       "Diagnose & behandeling",
     ]);
+  });
+
+  it("prefetches a landing item once on user intent", async () => {
+    const prefetchItem = vi.fn();
+    const wrapper = mount(LandingMenuGrid, {
+      props: {
+        items,
+        iconKeys: ["culture", "strip"],
+        prefetchItem,
+      },
+      slots: {
+        primary: `<template #primary="{ viewItem }"><a class="primary">{{ viewItem.label }}</a></template>`,
+      },
+    });
+
+    const firstTile = wrapper.get(".bm-landing-menu-grid__primary-item");
+    await firstTile.trigger("mouseenter");
+    await firstTile.trigger("focusin");
+    await firstTile.trigger("touchstart");
+
+    expect(prefetchItem).toHaveBeenCalledTimes(1);
+    expect(prefetchItem.mock.calls[0]?.[0]).toEqual(expect.objectContaining({ id: "strip" }));
+  });
+
+  it("emits prefetch errors with the matching view item", async () => {
+    const error = new Error("prefetch failed");
+    const prefetchItem = vi.fn(async () => {
+      throw error;
+    });
+    const wrapper = mount(LandingMenuGrid, {
+      props: {
+        items,
+        iconKeys: ["culture", "strip"],
+        prefetchItem,
+      },
+      slots: {
+        primary: `<template #primary="{ viewItem }"><a class="primary">{{ viewItem.label }}</a></template>`,
+      },
+    });
+
+    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("mouseenter");
+    await flushPromises();
+
+    expect(wrapper.emitted("prefetchError")?.[0]?.[0]).toBe(error);
+    expect(wrapper.emitted("prefetchError")?.[0]?.[1]).toEqual(
+      expect.objectContaining({ id: "strip" }),
+    );
   });
 });

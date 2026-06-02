@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
 import LandingTemplate from "./LandingTemplate.vue";
 import type { Component } from "vue";
 import type { BeslismodelLandingMenuSource } from "@beslismodel/vue";
@@ -50,7 +50,11 @@ const routerLinkStub = {
   template: `<a class="router-link-stub" :href="to"><slot /></a>`,
 };
 
-function mountTemplate() {
+function mountTemplate(
+  overrides: Partial<{
+    prefetchQuestionnaire: (id: string) => void | Promise<void>;
+  }> = {},
+) {
   return mount(LandingTemplate, {
     props: {
       items,
@@ -60,6 +64,7 @@ function mountTemplate() {
       secondaryHeading: "Urineweginfecties",
       questionnairePath: (id: string) => `/questionnaire/${id}`,
       iconComponent: (icon: string | undefined) => (icon ? iconStub : null),
+      ...overrides,
     },
     global: {
       stubs: {
@@ -112,5 +117,30 @@ describe("LandingTemplate", () => {
     expect(source).toContain("@container landing (max-width: 44rem)");
     expect(source).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(source).toContain("max-inline-size: var(--landing-tile-size)");
+  });
+
+  it("prefetches questionnaire routes through the package landing grid", async () => {
+    const prefetchQuestionnaire = vi.fn();
+    const wrapper = mountTemplate({ prefetchQuestionnaire });
+
+    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("mouseenter");
+    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("focusin");
+
+    expect(prefetchQuestionnaire).toHaveBeenCalledTimes(1);
+    expect(prefetchQuestionnaire).toHaveBeenCalledWith("strip");
+  });
+
+  it("emits questionnaire prefetch errors with the questionnaire id", async () => {
+    const error = new Error("prefetch failed");
+    const wrapper = mountTemplate({
+      prefetchQuestionnaire: async () => {
+        throw error;
+      },
+    });
+
+    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("mouseenter");
+    await flushPromises();
+
+    expect(wrapper.emitted("prefetchError")?.[0]).toEqual([error, "strip"]);
   });
 });
