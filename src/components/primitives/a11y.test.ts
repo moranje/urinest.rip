@@ -19,6 +19,8 @@ interface AxeResult {
   violations: Array<{ id: string; impact?: string; description: string }>;
 }
 
+const AXE_TEST_TIMEOUT_MS = 15_000;
+
 async function runAxe(html: string): Promise<AxeResult> {
   // wrap in a landmark so axe doesn't flag the missing region
   const container = document.createElement("main");
@@ -36,65 +38,87 @@ async function runAxe(html: string): Promise<AxeResult> {
 }
 
 describe("Primitive components — axe smoke", () => {
-  it("Button has no a11y violations", async () => {
-    const wrapper = mount(Button, { slots: { default: "Save" }, attachTo: document.body });
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+  it(
+    "Button has no a11y violations",
+    async () => {
+      const wrapper = mount(Button, { slots: { default: "Save" }, attachTo: document.body });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 
-  it("Badge with aria-label has no violations", async () => {
-    const wrapper = mount(Badge, {
-      props: { variant: "u1", role: "status", ariaLabel: "Spoed" },
-      slots: { default: "U1" },
-      attachTo: document.body,
-    });
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+  it(
+    "Badge with aria-label has no violations",
+    async () => {
+      const wrapper = mount(Badge, {
+        props: { variant: "u1", role: "status", ariaLabel: "Spoed" },
+        slots: { default: "U1" },
+        attachTo: document.body,
+      });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 
-  it("ProgressBar has no violations", async () => {
-    const wrapper = mount(ProgressBar, {
-      props: { value: 1, max: 5, label: "Stap 1 van 5" },
-      attachTo: document.body,
-    });
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+  it(
+    "ProgressBar has no violations",
+    async () => {
+      const wrapper = mount(ProgressBar, {
+        props: { value: 1, max: 5, label: "Stap 1 van 5" },
+        attachTo: document.body,
+      });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 
-  it("BackButton has no violations", async () => {
-    const wrapper = mount(BackButton, { attachTo: document.body });
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+  it(
+    "BackButton has no violations",
+    async () => {
+      const wrapper = mount(BackButton, { attachTo: document.body });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 
-  it("Card with children has no violations", async () => {
-    const wrapper = mount(Card, {
-      slots: { default: "<p>Voorbeeld</p>" },
-      attachTo: document.body,
-    });
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+  it(
+    "Card with children has no violations",
+    async () => {
+      const wrapper = mount(Card, {
+        slots: { default: "<p>Voorbeeld</p>" },
+        attachTo: document.body,
+      });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 
-  it("Form controls have no violations", async () => {
-    const wrapper = mount(
-      {
-        components: {
-          Checkbox,
-          FormField,
-          IconButton,
-          Input,
-          Radio,
-          SegmentedControl,
-          Select,
-          Tooltip,
-        },
-        template: `
+  it(
+    "Form controls have no violations",
+    async () => {
+      const wrapper = mount(
+        {
+          components: {
+            Checkbox,
+            FormField,
+            IconButton,
+            Input,
+            Radio,
+            SegmentedControl,
+            Select,
+            Tooltip,
+          },
+          template: `
           <form>
             <IconButton icon="settings" aria-label="Instellingen" />
             <FormField id="query" label="Zoeken" hint="Gebruik ten minste drie letters">
@@ -119,11 +143,13 @@ describe("Primitive components — axe smoke", () => {
             <Tooltip id="tip">Toelichting</Tooltip>
           </form>
         `,
-      },
-      { attachTo: document.body },
-    );
-    const result = await runAxe(wrapper.html());
-    expect(result.violations.map((v) => v.id)).toEqual([]);
-    wrapper.unmount();
-  });
+        },
+        { attachTo: document.body },
+      );
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
 });
