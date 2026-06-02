@@ -84,6 +84,49 @@ describe("log-sink", () => {
     });
   });
 
+  it("scrubs PHI from persisted error payloads", async () => {
+    rpcMock.mockResolvedValue({ error: null });
+
+    persistError({
+      context: "test:scrub",
+      devDetail: "Bearer secret-token voor arts@example.org op 2026-06-02",
+      errorClass: "Error",
+      extraContext: {
+        bsn: "123456782",
+        email: "arts@example.org",
+        tokenUrl: "https://example.test/log?access_token=secret-token",
+      },
+      level: "error",
+      stack: "Error: arts@example.org\n    at test (2026-06-02)",
+      userMessage: "Fout voor arts@example.org met BSN 123456782",
+    });
+    await flushLogs();
+
+    const payload = rpcMock.mock.calls[0]?.[1]?.p_logs?.[0] as
+      | {
+          context: Record<string, unknown>;
+          detail: Record<string, unknown>;
+          message: string;
+        }
+      | undefined;
+    expect(payload).toBeDefined();
+    const serialized = JSON.stringify({
+      context: payload?.context,
+      detail: payload?.detail,
+      message: payload?.message,
+    });
+
+    expect(serialized).not.toContain("arts@example.org");
+    expect(serialized).not.toContain("123456782");
+    expect(serialized).not.toContain("2026-06-02");
+    expect(serialized).not.toContain("secret-token");
+    expect(payload?.message).toContain("***SCRUBBED-EMAIL***");
+    expect(payload?.message).toContain("***SCRUBBED-BSN***");
+    expect(payload?.detail.devDetail).toContain("Bearer ***SCRUBBED-TOKEN***");
+    expect(payload?.context.tokenUrl).toContain("access_token=***SCRUBBED-TOKEN***");
+    expect(Number(payload?.context.scrub_hits_total)).toBeGreaterThanOrEqual(6);
+  });
+
   it("sets a circuit-breaker flag after repeated transient failures", async () => {
     rpcMock.mockResolvedValue({ error: { message: "network", code: "503" } });
 

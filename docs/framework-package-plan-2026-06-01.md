@@ -345,7 +345,7 @@ Exit criteria:
 
 - [x] Adapter interface.
 - [x] Supabase app adapter.
-- [ ] Error matrix tests.
+- [x] Error matrix tests.
 - [x] Threat model doc.
 
 ### Ronde 5 — Package Build
