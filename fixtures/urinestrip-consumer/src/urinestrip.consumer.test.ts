@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
+import { createCalculatorRegistry, type CalculatorDefinition } from "@beslismodel/core";
 import { compileFlowFiles, type CompiledDecisionManifest } from "@beslismodel/compiler";
 import {
   createBeslismodelDataReadyGuard,
@@ -10,6 +11,17 @@ import { createUrinestripConsumerStore, type ConsumerAnswer } from "./consumer-s
 let manifest: CompiledDecisionManifest;
 
 const answer = (value: string, text = value): ConsumerAnswer => ({ text, value });
+
+interface ConsumerScoreInput {
+  readonly values: readonly number[];
+}
+
+const isConsumerScoreInput = (input: unknown): input is ConsumerScoreInput =>
+  typeof input === "object" &&
+  input !== null &&
+  "values" in input &&
+  Array.isArray((input as ConsumerScoreInput).values) &&
+  (input as ConsumerScoreInput).values.every((value) => typeof value === "number");
 
 const resolveStrip = async (answers: Record<string, ConsumerAnswer>) => {
   const { store } = createUrinestripConsumerStore(manifest);
@@ -41,6 +53,29 @@ describe("urinestrip package consumer", () => {
 
     await expect(runGuard({ fullPath: "/questionnaire/strip" }, {})).resolves.toBe(true);
     expect(store.getQuestionnaireById("strip")?.title).toBe("Urinestrip");
+  });
+
+  it("registers consumer-owned calculators without putting domain logic in core", async () => {
+    const registry = createCalculatorRegistry([
+      {
+        id: "fixture.consumer-score",
+        version: "fixture-1",
+        label: "Consumer score",
+        validateInput: isConsumerScoreInput,
+        calculate: (input, context) => ({
+          score: input.values.reduce((sum, value) => sum + value, 0),
+          role: context.role,
+        }),
+      } satisfies CalculatorDefinition<ConsumerScoreInput, { score: number; role?: string }>,
+    ]);
+
+    await expect(
+      registry.run<{ score: number; role?: string }>(
+        "fixture.consumer-score",
+        { values: [1, 2, 3] },
+        { role: "triagist", locale: "nl-NL" },
+      ),
+    ).resolves.toEqual({ score: 6, role: "triagist" });
   });
 
   it("navigates strip questions with the package runner", async () => {

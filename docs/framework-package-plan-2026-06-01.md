@@ -72,6 +72,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 
 Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buiten core. Core levert alleen generieke contracten.
 
+- [x] Urinestrip consumer fixture bewijst dat een consumer lokaal calculators kan registreren via publieke core exports
 - [ ] CVRM/PREVENT calculatorpakket als consumer/domain package
 - [ ] COPD calculatorpakket als consumer/domain package
 - [ ] DM calculatorpakket als consumer/domain package
