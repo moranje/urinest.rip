@@ -341,7 +341,7 @@ Exit criteria:
 - [x] Atoms/molecules completed.
 - [x] Legacy `.md-*` removed from app pages.
 - [x] Storybook expanded.
-- [ ] Motion system centralized.
+- [x] Motion system centralized.
 
 ### Ronde 4 — Telemetry/Security
 
