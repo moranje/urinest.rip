@@ -28,9 +28,11 @@
       </span>
     </button>
     <div v-if="option.description" class="choice-option__info option-info-wrapper">
-      <button
-        class="choice-option__info-button info-icon"
-        type="button"
+      <IconButton
+        class="choice-option__info-action info-icon"
+        data-testid="choice-option-info"
+        icon="info-circle"
+        size="sm"
         :aria-expanded="popoverOpen"
         :aria-controls="popoverId"
         :aria-describedby="popoverOpen ? popoverId : undefined"
@@ -41,16 +43,14 @@
         @mouseleave.stop="emit('schedulePopoverClose')"
         @focus.stop="emit('showPopover', option, $event)"
         @blur.stop="emit('closePopover')"
-      >
-        <Icon name="info-circle" :size="18" />
-      </button>
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import Icon from "../primitives/Icon.vue";
+import IconButton from "../primitives/IconButton.vue";
 import type { QuestionOption } from "../../types";
 
 const props = defineProps<{
@@ -196,30 +196,6 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   padding-inline: var(--spacing-sm);
-}
-
-.choice-option__info-button {
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: none;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: help;
-  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
-}
-
-.choice-option__info-button svg {
-  width: 18px;
-  height: 18px;
-}
-
-.choice-option__info:hover .choice-option__info-button {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
 
 @media (max-width: 599.98px) {

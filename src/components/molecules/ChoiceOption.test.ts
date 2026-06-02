@@ -53,7 +53,7 @@ describe("ChoiceOption", () => {
 
   it("keeps info-button interaction separate from choosing the option", async () => {
     const wrapper = mount(ChoiceOption, { props: baseProps });
-    const info = wrapper.get(".choice-option__info-button");
+    const info = wrapper.get('[data-testid="choice-option-info"]');
 
     await info.trigger("click");
     await info.trigger("mouseenter");
@@ -69,15 +69,15 @@ describe("ChoiceOption", () => {
     const wrapper = mount(ChoiceOption, { props: baseProps });
     const source = readFileSync("src/components/molecules/ChoiceOption.vue", "utf8");
     const cardCss = source.match(/\.choice-option\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
-    const infoButtonCss = source.match(/\.choice-option__info-button\s*\{(?<body>[\s\S]*?)\n\}/)
-      ?.groups?.body;
 
     expect(wrapper.get(".choice-option__info").element.parentElement).toBe(
       wrapper.get(".choice-option").element,
     );
+    expect(source).toContain("<IconButton");
+    expect(source).not.toContain('class="choice-option__info-button');
+    expect(source).not.toContain(".choice-option__info-button");
     expect(cardCss).toContain("display: grid");
     expect(cardCss).toContain("grid-template-columns: minmax(0, 1fr) auto");
-    expect(infoButtonCss).not.toContain("margin: -");
   });
 
   it("keeps answer card states free of full-frame accent borders", () => {
