@@ -150,6 +150,17 @@ describe("QuestionPanel", () => {
     expect(titleFocusCss).toContain("outline: none");
   });
 
+  it("delegates question panel shell styling to Card", () => {
+    const source = readFileSync("src/components/organisms/QuestionPanel.vue", "utf8");
+    const panelCss = source.match(/\.question-panel\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="elevated"');
+    expect(panelCss).not.toContain("border-radius:");
+    expect(panelCss).not.toContain("box-shadow:");
+    expect(panelCss).not.toContain("background:");
+  });
+
   it("passes accessibility and selection state to the choice group", () => {
     const wrapper = mountPanel();
     const choiceGroup = wrapper.get(".choice-group-stub");

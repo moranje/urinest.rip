@@ -1,5 +1,5 @@
 <template>
-  <div class="question-panel">
+  <Card class="question-panel" variant="elevated">
     <QuestionToolbar :has-history="hasHistory" @restart="emit('restart')" />
     <ProgressBar
       :value="progressValue"
@@ -41,12 +41,13 @@
       v-html="descriptionHtml"
     />
     <!-- eslint-enable vue/no-v-html -->
-  </div>
+  </Card>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import ChoiceGroup from "../molecules/ChoiceGroup.vue";
+import Card from "../primitives/Card.vue";
 import ProgressBar from "../primitives/ProgressBar.vue";
 import QuestionToolbar from "./QuestionToolbar.vue";
 import type { Question, QuestionOption } from "../../types";
@@ -115,8 +116,6 @@ watch(
   box-sizing: border-box;
   margin: var(--spacing-md);
   padding: var(--spacing-lg);
-  border-radius: var(--md-sys-shape-corner-large);
-  box-shadow: var(--md-sys-elevation-1);
 }
 
 .question-panel__header {
