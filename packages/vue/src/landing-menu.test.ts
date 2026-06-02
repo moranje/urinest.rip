@@ -127,4 +127,31 @@ describe("landing menu", () => {
       expect.objectContaining({ id: "strip" }),
     );
   });
+
+  it("emits sync prefetch errors and allows retry", async () => {
+    const error = new Error("sync prefetch failed");
+    const prefetchItem = vi.fn(() => {
+      throw error;
+    });
+    const wrapper = mount(LandingMenuGrid, {
+      props: {
+        items,
+        iconKeys: ["culture", "strip"],
+        prefetchItem,
+      },
+      slots: {
+        primary: `<template #primary="{ viewItem }"><a class="primary">{{ viewItem.label }}</a></template>`,
+      },
+    });
+
+    const firstTile = wrapper.get(".bm-landing-menu-grid__primary-item");
+    await firstTile.trigger("mouseenter");
+    await firstTile.trigger("focusin");
+
+    expect(prefetchItem).toHaveBeenCalledTimes(2);
+    expect(wrapper.emitted("prefetchError")?.[0]?.[0]).toBe(error);
+    expect(wrapper.emitted("prefetchError")?.[0]?.[1]).toEqual(
+      expect.objectContaining({ id: "strip" }),
+    );
+  });
 });

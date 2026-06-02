@@ -133,13 +133,24 @@ export const LandingMenuGrid = defineComponent({
     );
     const prefetchedIds = new Set<string>();
 
+    const handlePrefetchFailure = (
+      error: unknown,
+      viewItem: BeslismodelLandingMenuViewItem,
+    ): void => {
+      prefetchedIds.delete(viewItem.id);
+      emit("prefetchError", error, viewItem);
+    };
+
     const prefetchOnIntent = (viewItem: BeslismodelLandingMenuViewItem): void => {
       if (!props.prefetchItem || prefetchedIds.has(viewItem.id)) return;
       prefetchedIds.add(viewItem.id);
-      Promise.resolve(props.prefetchItem(viewItem)).catch((error: unknown) => {
-        prefetchedIds.delete(viewItem.id);
-        emit("prefetchError", error, viewItem);
-      });
+      try {
+        Promise.resolve(props.prefetchItem(viewItem)).catch((error: unknown) =>
+          handlePrefetchFailure(error, viewItem),
+        );
+      } catch (error: unknown) {
+        handlePrefetchFailure(error, viewItem);
+      }
     };
 
     const intentListeners = (viewItem: BeslismodelLandingMenuViewItem) => ({
