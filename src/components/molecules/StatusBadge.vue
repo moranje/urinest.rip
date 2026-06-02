@@ -1,7 +1,11 @@
 <template>
   <span
     class="status-badge"
-    :class="[`status-badge--${variant}`, `status-badge--${size}`, { 'status-badge--pulse': pulse }]"
+    :class="[
+      `status-badge--${variant}`,
+      `status-badge--${size}`,
+      { 'status-badge--pulse': pulse, 'motion-pulse-emphasis': pulse },
+    ]"
     :role="role"
     :aria-label="ariaLabel"
     :title="title"
@@ -95,25 +99,5 @@ withDefaults(
 .status-badge--suppressed {
   color: var(--md-sys-color-outline);
   background: var(--md-sys-color-surface-container);
-}
-
-.status-badge--pulse {
-  animation: status-badge-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes status-badge-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-sys-color-error) 60%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-error) 0%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .status-badge--pulse {
-    animation: none;
-  }
 }
 </style>

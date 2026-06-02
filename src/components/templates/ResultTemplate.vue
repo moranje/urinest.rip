@@ -123,7 +123,7 @@ const emit = defineEmits<{
 
 .result-template__content > * {
   opacity: 0;
-  animation: result-template-enter var(--motion-duration-enter) var(--motion-easing-out) forwards;
+  animation: motion-enter-up var(--motion-duration-enter) var(--motion-easing-out) forwards;
 }
 
 .result-template__content > *:nth-child(1) {
@@ -156,18 +156,6 @@ const emit = defineEmits<{
 
 .result-template__content > *:nth-child(8) {
   animation-delay: 240ms;
-}
-
-@keyframes result-template-enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

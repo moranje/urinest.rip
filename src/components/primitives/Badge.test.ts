@@ -38,5 +38,6 @@ describe("Badge primitive", () => {
       slots: { default: "U1" },
     });
     expect(wrapper.classes()).toContain("badge--pulse");
+    expect(wrapper.classes()).toContain("motion-pulse-emphasis");
   });
 });

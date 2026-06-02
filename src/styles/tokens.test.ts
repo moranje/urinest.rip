@@ -78,22 +78,33 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("keeps shared spinner and shimmer motion in motion utilities", () => {
+  it("keeps shared motion in motion utilities", () => {
     const mainCss = read("src/styles/main.css");
     const motionCss = read("src/styles/motion.css");
+    const badge = read("src/components/primitives/Badge.vue");
     const button = read("src/components/primitives/Button.vue");
     const icon = read("src/components/primitives/Icon.vue");
+    const resultTemplate = read("src/components/templates/ResultTemplate.vue");
     const skeleton = read("src/components/primitives/Skeleton.vue");
+    const statusBadge = read("src/components/molecules/StatusBadge.vue");
 
     expect(mainCss).toContain('@import "./motion.css" layer(utilities)');
     expect(motionCss).toContain(".motion-spin");
     expect(motionCss).toContain(".motion-shimmer-sweep::after");
+    expect(motionCss).toContain(".motion-pulse-emphasis");
+    expect(motionCss).toContain("@keyframes motion-enter-up");
     expect(motionCss).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(badge).toContain("motion-pulse-emphasis");
     expect(button).toContain("btn-spinner motion-spin");
     expect(icon).toContain("'motion-spin': spin");
+    expect(resultTemplate).toContain("animation: motion-enter-up");
     expect(skeleton).toContain("skeleton motion-shimmer-sweep");
+    expect(statusBadge).toContain("motion-pulse-emphasis");
+    expect(badge).not.toContain("@keyframes badge-pulse");
     expect(button).not.toContain("@keyframes btn-spin");
     expect(icon).not.toContain("@keyframes icon-spin");
+    expect(resultTemplate).not.toContain("@keyframes result-template-enter");
+    expect(statusBadge).not.toContain("@keyframes status-badge-pulse");
     expect(mainCss).not.toContain("@keyframes spin");
   });
 

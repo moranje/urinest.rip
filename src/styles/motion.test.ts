@@ -22,18 +22,25 @@ describe("motion utilities", () => {
 
     expect(motionCss).toContain(".motion-spin");
     expect(motionCss).toContain(".motion-shimmer-sweep::after");
+    expect(motionCss).toContain(".motion-pulse-emphasis");
+    expect(motionCss).toContain(".motion-enter-up");
     expect(reducedBlock).toBeDefined();
     expect(reducedBlock).toContain(".motion-spin");
     expect(reducedBlock).toContain("animation: none");
     expect(reducedBlock).toContain(".motion-shimmer-sweep::after");
     expect(reducedBlock).toContain("will-change: auto");
+    expect(reducedBlock).toContain(".motion-pulse-emphasis");
+    expect(reducedBlock).toContain(".motion-enter-up");
   });
 
-  it("keeps spinner and shimmer keyframes out of scoped consumers", () => {
+  it("keeps reusable motion keyframes out of scoped consumers", () => {
     const files = [
       "src/components/primitives/Button.vue",
+      "src/components/primitives/Badge.vue",
       "src/components/primitives/Icon.vue",
       "src/components/primitives/Skeleton.vue",
+      "src/components/molecules/StatusBadge.vue",
+      "src/components/templates/ResultTemplate.vue",
       "src/components/templates/QuestionnaireTemplate.vue",
       "src/components/organisms/AdminLogList.vue",
       "src/components/organisms/AdminLogDetail.vue",
@@ -42,7 +49,7 @@ describe("motion utilities", () => {
 
     const offenders = files.filter((file) => {
       const source = read(file);
-      return /@keyframes\s+(spin|btn-spin|icon-spin|questionnaire-template-spin|skeleton-shimmer)\b/.test(
+      return /@keyframes\s+(spin|btn-spin|icon-spin|questionnaire-template-spin|skeleton-shimmer|badge-pulse|status-badge-pulse|result-template-enter)\b/.test(
         source,
       );
     });

@@ -21,6 +21,7 @@ describe("StatusBadge", () => {
     expect(wrapper.attributes("aria-label")).toBe("Urgentie U1 — spoed");
     expect(wrapper.classes()).toContain("status-badge--u1");
     expect(wrapper.classes()).toContain("status-badge--pulse");
+    expect(wrapper.classes()).toContain("motion-pulse-emphasis");
   });
 
   it("supports log level and resolution variants", () => {
@@ -39,8 +40,9 @@ describe("StatusBadge", () => {
   });
 
   it("keeps pulsing badges quiet when reduced motion is preferred", () => {
-    const source = readFileSync("src/components/molecules/StatusBadge.vue", "utf8");
+    const source = readFileSync("src/styles/motion.css", "utf8");
     expect(source).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(source).toContain(".motion-pulse-emphasis");
     expect(source).toContain("animation: none");
   });
 });

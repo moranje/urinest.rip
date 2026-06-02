@@ -1,7 +1,7 @@
 <template>
   <span
     class="badge"
-    :class="[`badge--${variant}`, { 'badge--pulse': pulse }]"
+    :class="[`badge--${variant}`, { 'badge--pulse': pulse, 'motion-pulse-emphasis': pulse }]"
     :role="role"
     :aria-label="ariaLabel"
   >
@@ -53,25 +53,5 @@ withDefaults(
 .badge--success {
   background-color: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-}
-
-.badge--pulse {
-  animation: badge-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes badge-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-sys-color-error) 60%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-error) 0%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .badge--pulse {
-    animation: none;
-  }
 }
 </style>

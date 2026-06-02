@@ -15,6 +15,15 @@
   will-change: transform;
 }
 
+.motion-pulse-emphasis {
+  animation: motion-pulse-emphasis 1.5s var(--motion-easing-standard) infinite;
+}
+
+.motion-enter-up {
+  opacity: 0;
+  animation: motion-enter-up var(--motion-duration-enter) var(--motion-easing-out) forwards;
+}
+
 @keyframes motion-spin {
   to {
     transform: rotate(360deg);
@@ -30,6 +39,28 @@
   }
 }
 
+@keyframes motion-pulse-emphasis {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-sys-color-error) 60%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-error) 0%, transparent);
+  }
+}
+
+@keyframes motion-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .motion-spin,
   .motion-spin--slow,
@@ -41,5 +72,15 @@
     animation: none;
     transform: none;
     will-change: auto;
+  }
+
+  .motion-pulse-emphasis,
+  .motion-enter-up {
+    animation: none;
+  }
+
+  .motion-enter-up {
+    opacity: 1;
+    transform: none;
   }
 }
