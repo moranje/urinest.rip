@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",
-    "decision-engine-core": "file:decision-engine-core-1.0.0.tgz",
     "dompurify": "^3.4.7",
     "marked": "^17.0.3",
     "pinia": "^3.0.4",
