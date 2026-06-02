@@ -8,6 +8,7 @@ import {
   createBreadcrumb,
   createMarkdownRenderer,
   createRuntimeContext,
+  determineOutcome,
   detectRedirectCycle,
   findNextQuestionId,
   getErrorClass,
@@ -28,6 +29,18 @@ if (redirect.type !== "redirect" || redirect.target !== "bacteriurie") {
 const result = parseOutcome("result:uti.local.healthy.0");
 if (result.type !== "result" || toLegacyOutcome(result) !== "result:uti.local.healthy.0") {
   throw new Error("parseOutcome result export failed");
+}
+
+const outcome = determineOutcome({ nitrite: { value: "positive" } }, [
+  {
+    id: "nitrite-positive",
+    actionType: "redirectToQuestionnaire",
+    conditions: [{ questionId: "nitrite", operator: "equals", value: "positive" }],
+    redirectToQuestionnaire: "bacteriurie",
+  },
+]);
+if (outcome.outcome !== "redirect:bacteriurie" || outcome.ruleId !== "nitrite-positive") {
+  throw new Error("determineOutcome export failed");
 }
 
 const progress = getQuestionProgress({

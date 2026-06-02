@@ -2,9 +2,25 @@
   "name": "@beslismodel/core",
   "version": "0.1.0",
   "private": false,
+  "description": "Pure TypeScript runtime contracts, graph traversal, outcomes, progress, calculators and audit helpers for beslismodel flows.",
+  "keywords": [
+    "clinical-decision-support",
+    "decision-engine",
+    "guidelines",
+    "typescript"
+  ],
+  "homepage": "https://urinest.rip",
+  "bugs": {
+    "url": "https://github.com/moranje/urinestrip/issues"
+  },
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moranje/urinestrip.git",
+    "directory": "packages/core"
+  },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
@@ -15,5 +31,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "prepack": "npm --prefix ../.. run build:core"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

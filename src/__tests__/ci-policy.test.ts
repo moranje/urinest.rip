@@ -6,30 +6,51 @@ const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
+  engines?: Record<string, string>;
 };
 const corePackage = JSON.parse(readFileSync(resolve("packages/core/package.json"), "utf8")) as {
   name: string;
   version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
   dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  scripts?: Record<string, string>;
 };
 const compilerPackage = JSON.parse(
   readFileSync(resolve("packages/compiler/package.json"), "utf8"),
 ) as {
   name: string;
   version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
   dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  scripts?: Record<string, string>;
 };
 const testingPackage = JSON.parse(
   readFileSync(resolve("packages/testing/package.json"), "utf8"),
 ) as {
   name: string;
   version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
   dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  scripts?: Record<string, string>;
 };
 const vuePackage = JSON.parse(readFileSync(resolve("packages/vue/package.json"), "utf8")) as {
   name: string;
   version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
   dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  scripts?: Record<string, string>;
 };
 
 describe("CI policy", () => {
@@ -44,6 +65,7 @@ describe("CI policy", () => {
     expect(workflow).toContain("node-version: ${{ matrix.node-version }}");
     expect(workflow).toContain("npm run format:check");
     expect(workflow).toContain("npm run check:tsgo");
+    expect(packageJson.engines?.node).toBe(">=20.19.0");
     expect(packageJson.scripts["check:consumer-imports"]).toBe(
       "node scripts/check-consumer-package-imports.mjs",
     );
@@ -68,6 +90,13 @@ describe("CI policy", () => {
     expect(versions.size).toBe(1);
     expect(testingPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(vuePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
+    for (const manifest of packages) {
+      expect(manifest.description).toBeTruthy();
+      expect(manifest.license).toBe("GPL-3.0-only");
+      expect(manifest.files).toEqual(["dist"]);
+      expect(manifest.engines?.node).toBe(">=20.19.0");
+      expect(manifest.scripts?.prepack).toContain("run build:");
+    }
     expect(releaseStrategy).toContain("All four packages use same version");
     expect(releaseStrategy).toContain("publishConfig.registry");
     expect(releaseStrategy).toContain("dist-tag `next`");

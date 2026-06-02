@@ -87,5 +87,8 @@
       "eslint"
     ],
     "*.{ts,vue,json,css}": "oxfmt --check"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

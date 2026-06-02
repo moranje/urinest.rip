@@ -2,9 +2,25 @@
   "name": "@beslismodel/testing",
   "version": "0.1.0",
   "private": false,
+  "description": "Testing utilities for beslismodel flow coverage, path enumeration and clinical consumer fixtures.",
+  "keywords": [
+    "clinical-decision-support",
+    "decision-engine",
+    "guidelines",
+    "testing"
+  ],
+  "homepage": "https://urinest.rip",
+  "bugs": {
+    "url": "https://github.com/moranje/urinestrip/issues"
+  },
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moranje/urinestrip.git",
+    "directory": "packages/testing"
+  },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
@@ -16,7 +32,13 @@
       "import": "./dist/index.js"
     }
   },
+  "scripts": {
+    "prepack": "npm --prefix ../.. run build:testing"
+  },
   "dependencies": {
     "@beslismodel/core": "0.1.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

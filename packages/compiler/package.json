@@ -2,12 +2,28 @@
   "name": "@beslismodel/compiler",
   "version": "0.1.0",
   "private": false,
+  "description": "YAML and JSON compiler, schema validator, CLI and Vite/Rolldown plugin for beslismodel flow manifests.",
+  "keywords": [
+    "clinical-decision-support",
+    "decision-engine",
+    "guidelines",
+    "vite-plugin"
+  ],
+  "homepage": "https://urinest.rip",
+  "bugs": {
+    "url": "https://github.com/moranje/urinestrip/issues"
+  },
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moranje/urinestrip.git",
+    "directory": "packages/compiler"
+  },
   "bin": {
     "beslismodel": "./dist/cli.js"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
@@ -18,6 +34,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "prepack": "npm --prefix ../.. run build:compiler"
   },
   "dependencies": {
     "ajv": "^8.17.1",
@@ -33,5 +52,8 @@
     "vite": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

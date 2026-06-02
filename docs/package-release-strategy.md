@@ -13,6 +13,13 @@ Initial lockstep set:
 
 All four packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
 
+Package manifests must include:
+
+- `engines.node >=20.19.0`
+- `files: ["dist"]`
+- description, license, repository, homepage, bugs and keywords
+- `prepack` build hook so stale `dist` cannot be packed
+
 ## Semver
 
 - `patch`: bug fixes, test utilities, docs, non-breaking validation improvements.
