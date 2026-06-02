@@ -245,4 +245,69 @@ describe("createBeslismodelStore", () => {
     expect(loadManifest).toHaveBeenCalledTimes(2);
     expect(store.getQuestionnaireById("example-flow")?.title).toBe("Example 2");
   });
+
+  it("keeps the previous manifest usable when forced reload fails", async () => {
+    let version = 0;
+    let failNextLoad = false;
+    const reloadError = new MissingManifestError("remote manifest unavailable");
+    const loadManifest = vi.fn(async () => {
+      if (failNextLoad) throw reloadError;
+      return {
+        questionnaires: [
+          {
+            id: "example-flow",
+            title: `Example ${++version}`,
+            questions: [],
+            steps: [],
+            results: {},
+            resultsLogic: [],
+          },
+        ],
+      };
+    });
+    const useStore = createBeslismodelStore({ loadManifest });
+    const store = useStore();
+
+    await store.loadInitialData();
+    failNextLoad = true;
+    await expect(store.loadInitialData({ force: true })).rejects.toThrow(reloadError);
+
+    expect(loadManifest).toHaveBeenCalledTimes(2);
+    expect(store.dataReady).toBe(true);
+    expect(store.error).toBe(reloadError);
+    expect(store.getQuestionnaireById("example-flow")?.title).toBe("Example 1");
+  });
+
+  it("preserves valid in-memory answers across manifest reloads", async () => {
+    let includeSecondQuestion = true;
+    const loadManifest = vi.fn(async () => ({
+      questionnaires: [
+        {
+          id: "example-flow",
+          title: "Example",
+          questions: [
+            { id: "q1", text: "Question 1", type: "select", options: [] },
+            ...(includeSecondQuestion
+              ? [{ id: "q2", text: "Question 2", type: "select", options: [] } as const]
+              : []),
+          ],
+          steps: [],
+          results: {},
+          resultsLogic: [],
+        },
+      ],
+    }));
+    const useStore = createBeslismodelStore({ loadManifest });
+    const store = useStore();
+
+    await store.loadInitialData();
+    store.setAnswer("example-flow", "q1", { value: "yes", text: "Yes" });
+    store.setAnswer("example-flow", "q2", { value: "no", text: "No" });
+
+    includeSecondQuestion = false;
+    await store.loadInitialData({ force: true });
+
+    expect(store.getAnswer("example-flow", "q1")).toEqual({ value: "yes", text: "Yes" });
+    expect(store.getAnswer("example-flow", "q2")).toBeUndefined();
+  });
 });

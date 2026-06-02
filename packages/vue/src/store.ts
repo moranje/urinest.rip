@@ -295,8 +295,11 @@ export function createBeslismodelStore<
         return loadingPromise.value;
       }
 
+      const preserveReadyState = dataReady.value && manifest.value !== null;
       isLoading.value = true;
-      dataReady.value = false;
+      if (!preserveReadyState) {
+        dataReady.value = false;
+      }
       error.value = null;
 
       loadingPromise.value = (async () => {
@@ -316,7 +319,12 @@ export function createBeslismodelStore<
               stepIds: [...questionnaire.stepIds],
               resultsLogicIds: [...questionnaire.resultsLogicIds],
             } as QuestionnaireMeta;
-            newAnswers[id] = {};
+            const allowedQuestionIds = new Set(questionnaire.questionIds);
+            newAnswers[id] = Object.fromEntries(
+              Object.entries(answers.value[id] ?? {}).filter(([questionId]) =>
+                allowedQuestionIds.has(questionId),
+              ),
+            ) as BeslismodelAnswerMap<Answer>;
           }
 
           questionnaires.value = newQuestionnaires;
