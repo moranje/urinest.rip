@@ -10,7 +10,7 @@
     />
     <p class="sr-only" aria-live="polite">{{ progressLabel }}: {{ question.text }}</p>
     <div class="question-panel__header">
-      <h1 :id="titleId" class="question-panel__title">
+      <h1 :id="titleId" ref="titleRef" class="question-panel__title" tabindex="-1">
         {{ question.text }}
       </h1>
       <p v-if="stepDescription" :id="stepId" class="question-panel__step">
@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import ChoiceGroup from "../molecules/ChoiceGroup.vue";
 import ProgressBar from "../primitives/ProgressBar.vue";
 import QuestionToolbar from "./QuestionToolbar.vue";
@@ -88,8 +88,24 @@ const emit = defineEmits<{
   confirm: [];
 }>();
 
+const titleRef = ref<HTMLHeadingElement | null>(null);
 const titleId = computed(() => `q-title-${props.question.id}`);
 const stepId = computed(() => `q-step-${props.question.id}`);
+
+function focusTitle(): void {
+  titleRef.value?.focus({ preventScroll: true });
+}
+
+onMounted(() => {
+  void nextTick(focusTitle);
+});
+
+watch(
+  () => props.question.id,
+  () => {
+    void nextTick(focusTitle);
+  },
+);
 </script>
 
 <style scoped>

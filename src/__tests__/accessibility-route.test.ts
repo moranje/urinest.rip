@@ -3,6 +3,7 @@ import axe from "axe-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter, type Router } from "vue-router";
+import { nextTick } from "vue";
 import LandingPage from "../views/LandingPage.vue";
 import QuestionnairePage from "../views/QuestionnairePage.vue";
 import ResultPage from "../views/ResultPage.vue";
@@ -55,6 +56,12 @@ async function runAxe(wrapper: VueWrapper): Promise<AxeResult> {
   }
 }
 
+async function settleRouteUi(): Promise<void> {
+  await flushPromises();
+  await nextTick();
+  await flushPromises();
+}
+
 async function mountRouteView(
   component: typeof LandingPage | typeof QuestionnairePage | typeof ResultPage | typeof ErrorPage,
   routePath: string,
@@ -73,7 +80,7 @@ async function mountRouteView(
       plugins: [pinia, router],
     },
   });
-  await flushPromises();
+  await settleRouteUi();
   return wrapper;
 }
 
@@ -119,6 +126,51 @@ describe("route accessibility smoke", () => {
       const result = await runAxe(wrapper);
 
       expect(result.violations.map((violation) => violation.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "urinestrip route supports keyboard flow, labels, and focus order",
+    async () => {
+      const wrapper = await mountRouteView(QuestionnairePage, "/questionnaire/strip", {
+        id: "strip",
+      });
+
+      const title = wrapper.get("h1");
+      expect(title.text()).toBe("Nitriet test");
+      expect(title.attributes("tabindex")).toBe("-1");
+      expect(document.activeElement).toBe(title.element);
+
+      const group = wrapper.get('[role="radiogroup"]');
+      expect(group.attributes("aria-labelledby")).toBe(title.attributes("id"));
+      expect(group.attributes("aria-describedby")).toBeUndefined();
+
+      const nitriteOptions = wrapper.findAll<HTMLButtonElement>('[role="radio"]');
+      expect(nitriteOptions.map((option) => option.attributes("aria-checked"))).toEqual([
+        "false",
+        "false",
+      ]);
+      expect(nitriteOptions.map((option) => option.attributes("tabindex"))).toEqual(["0", "-1"]);
+
+      nitriteOptions[0]?.element.focus();
+      await nitriteOptions[0]?.trigger("keydown.right");
+      expect(document.activeElement).toBe(nitriteOptions[1]?.element);
+
+      await nitriteOptions[1]?.trigger("keydown.space");
+      await settleRouteUi();
+
+      const nextTitle = wrapper.get("h1");
+      expect(nextTitle.text()).toBe("Leukocyten test");
+      expect(document.activeElement).toBe(nextTitle.element);
+      expect(wrapper.get('[role="radiogroup"]').attributes("aria-labelledby")).toBe(
+        nextTitle.attributes("id"),
+      );
+      expect(
+        wrapper.findAll('[role="radio"]').map((option) => option.attributes("tabindex")),
+      ).toEqual(["0", "-1", "-1", "-1"]);
+
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,

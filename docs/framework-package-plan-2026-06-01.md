@@ -308,7 +308,7 @@ Urinestrip wordt eerste end-to-end package fixture.
 - [x] All negative gives typed result outcome.
 - [x] Progress indicator correct through all branches.
 - [x] Telemetry records flow start, step, redirect/result without PHI.
-- [ ] Accessibility: keyboard, screenreader label, focus order.
+- [x] Accessibility: keyboard, screenreader label, focus order.
 
 ## Multi-Agent Rondes
 
