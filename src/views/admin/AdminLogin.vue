@@ -4,7 +4,8 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../../store/authStore";
 import { useToastStore } from "../../store/toastStore";
 import Button from "../../components/primitives/Button.vue";
-import Icon from "../../components/primitives/Icon.vue";
+import IconButton from "../../components/primitives/IconButton.vue";
+import Input from "../../components/primitives/Input.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -57,49 +58,38 @@ async function handleSubmit() {
       <p v-if="sessionExpired" class="session-expired" role="status">
         Sessie verlopen. Log opnieuw in.
       </p>
-      <div class="field">
-        <label for="email">E-mail</label>
-        <input
-          id="email"
-          v-model="email"
-          type="email"
-          autocomplete="email"
-          inputmode="email"
-          enterkeyhint="next"
+      <Input
+        id="email"
+        v-model="email"
+        label="E-mail"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        enterkeyhint="next"
+        required
+        error-role="alert"
+        :error="emailInvalid ? 'Voer een geldig e-mailadres in' : ''"
+      />
+      <div class="password-field">
+        <Input
+          id="password"
+          v-model="password"
+          class="password-field__input"
+          label="Wachtwoord"
+          :type="showPassword ? 'text' : 'password'"
+          autocomplete="current-password"
+          enterkeyhint="go"
           required
-          :aria-invalid="emailInvalid || undefined"
-          :aria-describedby="emailInvalid ? 'email-error' : undefined"
+          error-role="alert"
+          :error="passwordInvalid ? 'Wachtwoord is verplicht' : ''"
         />
-        <p v-if="emailInvalid" id="email-error" class="field-error" role="alert">
-          Voer een geldig e-mailadres in
-        </p>
-      </div>
-      <div class="field">
-        <label for="password">Wachtwoord</label>
-        <div class="password-wrapper">
-          <input
-            id="password"
-            v-model="password"
-            :type="showPassword ? 'text' : 'password'"
-            autocomplete="current-password"
-            enterkeyhint="go"
-            required
-            :aria-invalid="passwordInvalid || undefined"
-            :aria-describedby="passwordInvalid ? 'password-error' : undefined"
-          />
-          <button
-            type="button"
-            class="show-password-toggle"
-            :aria-label="showPassword ? 'Wachtwoord verbergen' : 'Wachtwoord tonen'"
-            :aria-pressed="showPassword"
-            @click="showPassword = !showPassword"
-          >
-            <Icon :name="showPassword ? 'eye-off' : 'eye'" :size="18" />
-          </button>
-        </div>
-        <p v-if="passwordInvalid" id="password-error" class="field-error" role="alert">
-          Wachtwoord is verplicht
-        </p>
+        <IconButton
+          class="password-field__toggle"
+          :icon="showPassword ? 'eye-off' : 'eye'"
+          :aria-label="showPassword ? 'Wachtwoord verbergen' : 'Wachtwoord tonen'"
+          :aria-pressed="showPassword"
+          @click="showPassword = !showPassword"
+        />
       </div>
       <Button
         type="submit"
@@ -153,102 +143,26 @@ h1 {
   font: var(--md-sys-typescale-body-medium);
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-label {
-  font: var(--md-sys-typescale-label-medium);
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-input {
-  box-sizing: border-box;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font: var(--md-sys-typescale-body-medium);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  transition:
-    border-color var(--motion-duration-short) var(--motion-easing-standard),
-    box-shadow var(--motion-duration-short) var(--motion-easing-standard);
-}
-
-input:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
-  border-color: var(--md-sys-color-primary);
-}
-
-input:focus {
-  border-color: var(--md-sys-color-primary);
-}
-
-input[aria-invalid="true"] {
-  border-color: var(--md-sys-color-error);
-}
-input[aria-invalid="true"]:focus-visible {
-  outline-color: var(--md-sys-color-error);
-}
-
-.login-btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  font: var(--md-sys-typescale-label-large);
-  font-weight: 600;
-  color: var(--md-sys-color-on-primary);
-  background: var(--md-sys-color-primary);
-  border: none;
-  border-radius: var(--md-sys-shape-corner-small);
-  cursor: pointer;
-  transition: opacity var(--motion-duration-short) var(--motion-easing-standard);
-  margin-top: var(--spacing-sm);
-}
-
-.login-btn:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.login-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.field-error {
-  font: var(--md-sys-typescale-label-small);
-  color: var(--md-sys-color-error);
-  margin: 0;
-}
-
-.password-wrapper {
+.password-field {
   position: relative;
-  display: flex;
-  align-items: center;
 }
-.password-wrapper input {
-  flex: 1;
+
+.password-field__input {
+  width: 100%;
+}
+
+.password-field :deep(.input-field__control) {
+  width: 100%;
+}
+
+.password-field__input :deep(.input-field__control) {
   padding-right: calc(var(--min-touch-target) + var(--spacing-xs));
 }
-.show-password-toggle {
+
+.password-field__toggle {
   position: absolute;
   right: var(--spacing-xs);
-  top: 50%;
+  top: calc(1.45em + var(--spacing-xs) + (var(--min-touch-target) / 2));
   transform: translateY(-50%);
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  border-radius: var(--md-sys-shape-corner-full);
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-}
-.show-password-toggle:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
 </style>

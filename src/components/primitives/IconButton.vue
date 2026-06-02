@@ -3,6 +3,7 @@
     :type="type"
     :disabled="disabled"
     :aria-label="buttonAriaLabel"
+    :aria-pressed="ariaPressed"
     class="icon-button"
     :class="[`icon-button--${variant}`, `icon-button--${size}`]"
   >
@@ -28,6 +29,7 @@ const props = withDefaults(
     size?: Size;
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
+    ariaPressed?: boolean | "true" | "false" | "mixed";
   }>(),
   {
     variant: "standard",
@@ -36,6 +38,7 @@ const props = withDefaults(
     disabled: false,
     ariaLabel: undefined,
     "aria-label": undefined,
+    ariaPressed: undefined,
   },
 );
 

@@ -10,12 +10,19 @@
       :disabled="disabled"
       :required="required"
       :autocomplete="autocomplete"
+      :inputmode="inputmode"
+      :enterkeyhint="enterkeyhint"
       :aria-invalid="error ? 'true' : undefined"
       :aria-describedby="describedBy"
       class="input-field__control"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
-    <span v-if="error" :id="errorId" class="input-field__support input-field__support--error">
+    <span
+      v-if="error"
+      :id="errorId"
+      :role="errorRole"
+      class="input-field__support input-field__support--error"
+    >
       {{ error }}
     </span>
     <span v-else-if="hint" :id="hintId" class="input-field__support">{{ hint }}</span>
@@ -35,7 +42,10 @@ const props = withDefaults(
     placeholder?: string;
     hint?: string;
     error?: string;
+    errorRole?: string;
     autocomplete?: string;
+    inputmode?: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
+    enterkeyhint?: "enter" | "done" | "go" | "next" | "previous" | "search" | "send";
     disabled?: boolean;
     required?: boolean;
   }>(),
@@ -48,7 +58,10 @@ const props = withDefaults(
     placeholder: "",
     hint: "",
     error: "",
+    errorRole: undefined,
     autocomplete: undefined,
+    inputmode: undefined,
+    enterkeyhint: undefined,
     disabled: false,
     required: false,
   },

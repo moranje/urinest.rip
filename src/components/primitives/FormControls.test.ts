@@ -22,6 +22,19 @@ describe("form primitives", () => {
     expect(wrapper.get("button").classes()).toContain("icon-button--outlined");
   });
 
+  it("supports template-style aria labels and pressed state on icon buttons", () => {
+    const wrapper = mount(IconButton, {
+      props: {
+        "aria-label": "Wachtwoord tonen",
+        ariaPressed: true,
+        icon: "eye",
+      },
+    });
+
+    expect(wrapper.get("button").attributes("aria-label")).toBe("Wachtwoord tonen");
+    expect(wrapper.get("button").attributes("aria-pressed")).toBe("true");
+  });
+
   it("keeps small icon buttons at the minimum touch target", () => {
     const source = readFileSync("src/components/primitives/IconButton.vue", "utf8");
     const smallCss =
@@ -39,15 +52,34 @@ describe("form primitives", () => {
         label: "E-mail",
         hint: "Gebruik werkmail",
         modelValue: "",
+        inputmode: "email",
+        enterkeyhint: "next",
       },
     });
 
     expect(wrapper.get("label").attributes("for")).toBe("field-email");
     expect(wrapper.get("input").attributes("aria-describedby")).toBe("field-email-hint");
+    expect(wrapper.get("input").attributes("inputmode")).toBe("email");
+    expect(wrapper.get("input").attributes("enterkeyhint")).toBe("next");
 
     await wrapper.get("input").setValue("arts@example.test");
 
     expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["arts@example.test"]);
+  });
+
+  it("links input errors with optional alert role", () => {
+    const wrapper = mount(Input, {
+      props: {
+        id: "field-password",
+        label: "Wachtwoord",
+        error: "Wachtwoord is verplicht",
+        errorRole: "alert",
+      },
+    });
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("field-password-error");
+    expect(wrapper.get("#field-password-error").attributes("role")).toBe("alert");
   });
 
   it("renders select options and emits selected value", async () => {

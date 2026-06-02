@@ -21,7 +21,6 @@ const toastContainer = readFileSync("src/components/ToastContainer.vue", "utf8")
 const sourceChip = readFileSync("src/components/molecules/SourceChip.vue", "utf8");
 const adminLogList = readFileSync("src/components/organisms/AdminLogList.vue", "utf8");
 const adminLogDetail = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
-const adminLogin = readFileSync("src/views/admin/AdminLogin.vue", "utf8");
 
 const appSpecificTargets: TouchTargetCase[] = [
   { file: "src/components/MenuItem.vue", source: menuItem, selector: ".menu-item" },
@@ -60,7 +59,6 @@ const appSpecificTargets: TouchTargetCase[] = [
     source: adminLogDetail,
     selector: ".resolve-version-input",
   },
-  { file: "src/views/admin/AdminLogin.vue", source: adminLogin, selector: "input" },
 ];
 
 describe("touch target design rules", () => {
