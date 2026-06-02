@@ -98,4 +98,16 @@ describe("ContraindicationGate", () => {
     expect(noticeAttrs).toBeDefined();
     expect(noticeAttrs).not.toContain("result-section");
   });
+
+  it("delegates treatment card styling to Card", () => {
+    const source = readFileSync("src/components/organisms/ContraindicationGate.vue", "utf8");
+    const treatmentCss =
+      source.match(/\.treatment-section\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="accent"');
+    expect(treatmentCss).not.toContain("border:");
+    expect(treatmentCss).not.toContain("background:");
+    expect(treatmentCss).not.toContain("border-radius:");
+  });
 });

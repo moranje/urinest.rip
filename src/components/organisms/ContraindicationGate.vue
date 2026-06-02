@@ -18,14 +18,15 @@
     </div>
   </div>
 
-  <div
+  <Card
     v-if="allChecked && treatmentText"
     class="result-section treatment-section"
+    variant="accent"
     aria-live="polite"
   >
     <h3 class="section-title">Behandeling</h3>
     <p>{{ treatmentText }}</p>
-  </div>
+  </Card>
   <Notice
     v-else-if="!allChecked && treatmentText"
     class="contraindication-notice"
@@ -41,6 +42,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Notice from "../molecules/Notice.vue";
+import Card from "../primitives/Card.vue";
 import Checkbox from "../primitives/Checkbox.vue";
 import type { Contraindication } from "../../types";
 
@@ -157,19 +159,5 @@ watch(
 .checklist-item--checked :deep(.checkbox-field__label) {
   color: var(--md-sys-color-on-surface-variant);
   text-decoration-color: currentColor;
-}
-
-.treatment-section {
-  padding: var(--spacing-md);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-left: 3px solid var(--md-sys-color-primary);
-  border-radius: var(--md-sys-shape-corner-medium);
-  background: var(--md-sys-color-surface-container-low);
-}
-
-@media (max-width: 599.98px) {
-  .treatment-section {
-    padding: var(--spacing-sm);
-  }
 }
 </style>
