@@ -1,20 +1,13 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createPinia, setActivePinia } from "pinia";
-import {
-  createBeslismodelDataReadyGuard,
-  createBeslismodelLandingMenuSections,
-  createBeslismodelStore,
-  LandingMenuGrid,
-  noopTelemetryAdapter,
-  QuestionnaireRunner,
-  ResultRenderer,
-  useQuestionnaireRunner,
-  useResultResolver,
-} from "../packages/vue/dist/index.js";
 
 const sourceDir = fileURLToPath(new URL("../packages/vue/src", import.meta.url));
+const distSource = readFileSync(
+  fileURLToPath(new URL("../packages/vue/dist/index.js", import.meta.url)),
+  "utf8",
+);
 const forbiddenBoundaryTerms = [
   "supabase",
   "log-sink",
@@ -48,6 +41,33 @@ for (const term of forbiddenBoundaryTerms) {
     throw new Error(`@beslismodel/vue boundary leak: ${term}`);
   }
 }
+
+if (!distSource.includes("@beslismodel/core")) {
+  throw new Error("@beslismodel/vue must keep @beslismodel/core external in dist");
+}
+
+const coreDistUrl = new URL("../packages/core/dist/index.js", import.meta.url).href;
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
+const smokeDir = mkdtempSync(join(repoRoot, ".beslismodel-vue-smoke-"));
+const smokeFile = join(smokeDir, "index.mjs");
+writeFileSync(
+  smokeFile,
+  distSource
+    .replaceAll('"@beslismodel/core"', JSON.stringify(coreDistUrl))
+    .replaceAll("'@beslismodel/core'", JSON.stringify(coreDistUrl)),
+);
+const {
+  createBeslismodelDataReadyGuard,
+  createBeslismodelLandingMenuSections,
+  createBeslismodelStore,
+  LandingMenuGrid,
+  noopTelemetryAdapter,
+  QuestionnaireRunner,
+  ResultRenderer,
+  useQuestionnaireRunner,
+  useResultResolver,
+} = await import(pathToFileURL(smokeFile).href);
+rmSync(smokeDir, { recursive: true, force: true });
 
 setActivePinia(createPinia());
 

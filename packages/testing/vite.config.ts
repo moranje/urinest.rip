@@ -2,11 +2,6 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   publicDir: false,
-  resolve: {
-    alias: {
-      "@beslismodel/core": new URL("../core/src/index.ts", import.meta.url).pathname,
-    },
-  },
   build: {
     emptyOutDir: true,
     lib: {
@@ -15,6 +10,9 @@ export default defineConfig({
       fileName: () => "index.js",
     },
     outDir: new URL("./dist", import.meta.url).pathname,
+    rollupOptions: {
+      external: ["@beslismodel/core"],
+    },
     sourcemap: true,
   },
 });
