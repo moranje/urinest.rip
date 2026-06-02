@@ -7,30 +7,30 @@ Dit contract geldt voor `@beslismodel/core`, `@beslismodel/compiler`, `@beslismo
 
 ## Boundaries
 
-| Laag | Mag wel | Mag niet |
-| --- | --- | --- |
-| `@beslismodel/core` | Pure beslislogica, runtime context, calculatorcontracten, audit trail modellen | Vue, DOM, fetch, storage, Supabase, appnamen, CVRM/PREVENT-specifieke API |
-| `@beslismodel/compiler` | Flowvalidatie, schema, manifestgeneratie, Vite/Rolldown plugin | Runtime storage, telemetry sink, app-adminbeleid |
-| `@beslismodel/vue` | Headless UI, Pinia store factory, route helpers, telemetry adapter interface | Supabase client, admin dashboard, hard-coded app source, direct browser storage buiten adapter |
-| `@beslismodel/testing` | Snapshot helpers, fixture runners, clinical safety checks | Productie-telemetry, Supabase, patientdata |
-| Consumer app | Branding, flows, icons, Supabase adapter, admin routes, deployment headers | Package-contracten breken of PHI naar package telemetry/storage sturen |
+| Laag                    | Mag wel                                                                        | Mag niet                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `@beslismodel/core`     | Pure beslislogica, runtime context, calculatorcontracten, audit trail modellen | Vue, DOM, fetch, storage, Supabase, appnamen, CVRM/PREVENT-specifieke API                      |
+| `@beslismodel/compiler` | Flowvalidatie, schema, manifestgeneratie, Vite/Rolldown plugin                 | Runtime storage, telemetry sink, app-adminbeleid                                               |
+| `@beslismodel/vue`      | Headless UI, Pinia store factory, route helpers, telemetry adapter interface   | Supabase client, admin dashboard, hard-coded app source, direct browser storage buiten adapter |
+| `@beslismodel/testing`  | Snapshot helpers, fixture runners, clinical safety checks                      | Productie-telemetry, Supabase, patientdata                                                     |
+| Consumer app            | Branding, flows, icons, Supabase adapter, admin routes, deployment headers     | Package-contracten breken of PHI naar package telemetry/storage sturen                         |
 
 Admin- en RLS-logica blijft app-only. Framework packages mogen geen admin route, Supabase import,
 RLS-policy, service-keygebruik of logdashboard bevatten.
 
 ## Threat Model
 
-| Dreiging | Impact | Mitigatie | Eigenaar |
-| --- | --- | --- | --- |
-| XSS wijzigt klinische UI-copy of resultaatadvies | Kritiek | Sanitizer contract voor markdown/html, CSP, geen user HTML in flows | Consumer app + compiler |
-| Malicious flow metadata injecteert links, HTML of vreemde velden | Hoog | Strict schema, sanitizer, security tests voor metadata, source allowlist waar nodig | Compiler + consumer app |
-| PHI/PII lekt via telemetry | Hoog | No-PHI telemetry contract, scrubber, forbidden fields, adapter tests | Consumer app |
-| PHI/PII lekt via storage | Hoog | No-PHI storage contract, TTL, key scoping, geen vrije tekst | Consumer app + Vue store adapter |
-| Source maps publiek deployen | Hoog | Upload naar private Supabase Storage, daarna `.map` uit `dist` verwijderen | CI/CD |
-| Admin logs toegankelijk voor niet-admin users | Hoog | RLS met admin claim/email allowlist, app-only admin routes, auth guard | Consumer app |
-| Consumer app gebruikt te brede CSP | Midden | CSP guidance hieronder, route smoke tests, security headers test | Consumer app |
-| Calculator gebruikt verkeerde formuleversie | Hoog | Domeinpackage met versie, bron, testvectors, geen calculatorimplementatie in core | Domain package |
-| Richtlijn veroudert zonder signaal | Hoog | Reviewdatums, traceability gate, release notes, max review age | Consumer app |
+| Dreiging                                                         | Impact  | Mitigatie                                                                           | Eigenaar                         |
+| ---------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- | -------------------------------- |
+| XSS wijzigt klinische UI-copy of resultaatadvies                 | Kritiek | Sanitizer contract voor markdown/html, CSP, geen user HTML in flows                 | Consumer app + compiler          |
+| Malicious flow metadata injecteert links, HTML of vreemde velden | Hoog    | Strict schema, sanitizer, security tests voor metadata, source allowlist waar nodig | Compiler + consumer app          |
+| PHI/PII lekt via telemetry                                       | Hoog    | No-PHI telemetry contract, scrubber, forbidden fields, adapter tests                | Consumer app                     |
+| PHI/PII lekt via storage                                         | Hoog    | No-PHI storage contract, TTL, key scoping, geen vrije tekst                         | Consumer app + Vue store adapter |
+| Source maps publiek deployen                                     | Hoog    | Upload naar private Supabase Storage, daarna `.map` uit `dist` verwijderen          | CI/CD                            |
+| Admin logs toegankelijk voor niet-admin users                    | Hoog    | RLS met admin claim/email allowlist, app-only admin routes, auth guard              | Consumer app                     |
+| Consumer app gebruikt te brede CSP                               | Midden  | CSP guidance hieronder, route smoke tests, security headers test                    | Consumer app                     |
+| Calculator gebruikt verkeerde formuleversie                      | Hoog    | Domeinpackage met versie, bron, testvectors, geen calculatorimplementatie in core   | Domain package                   |
+| Richtlijn veroudert zonder signaal                               | Hoog    | Reviewdatums, traceability gate, release notes, max review age                      | Consumer app                     |
 
 ## No-PHI Telemetry Contract
 
@@ -154,7 +154,7 @@ Eisen voor consumer apps:
 
 ## Consumer Release Checklist
 
-- [ ] Framework packages bevatten geen Supabase/admin/storage hardcoding.
+- [x] Framework packages bevatten geen Supabase/admin/storage hardcoding (`npm run check:framework-boundaries`).
 - [ ] Telemetry adapter is no-op zonder consumer config.
 - [ ] No-PHI telemetry contract is getest.
 - [ ] No-PHI storage contract is getest.

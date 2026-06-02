@@ -69,7 +69,11 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:consumer-imports"]).toBe(
       "node scripts/check-consumer-package-imports.mjs",
     );
+    expect(packageJson.scripts["check:framework-boundaries"]).toBe(
+      "node scripts/check-framework-security-boundaries.mjs",
+    );
     expect(packageJson.scripts["check:packages"]).toContain("check:consumer-imports");
+    expect(packageJson.scripts["check:packages"]).toContain("check:framework-boundaries");
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
     expect(packageJson.scripts["budget:packages"]).toBe(
