@@ -13,7 +13,7 @@ const routeTransitionPolicyTest = readFileSync(
   "utf8",
 );
 const viewTransitionTest = readFileSync(resolve("src/lib/view-transition.test.ts"), "utf8");
-const progressTest = readFileSync(resolve("packages/core/src/progress.test.ts"), "utf8");
+const progressTest = readFileSync(resolve("packages", "core", "src", "progress.test.ts"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
   engines?: Record<string, string>;
