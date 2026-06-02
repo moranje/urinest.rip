@@ -344,7 +344,7 @@ Exit criteria:
 ### Ronde 4 — Telemetry/Security
 
 - [x] Adapter interface.
-- [ ] Supabase app adapter.
+- [x] Supabase app adapter.
 - [ ] Error matrix tests.
 - [x] Threat model doc.
 

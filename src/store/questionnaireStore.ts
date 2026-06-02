@@ -4,12 +4,11 @@ import {
   type BeslismodelManifestInput,
   type BeslismodelStorageAdapter,
   type BeslismodelStoreErrorContext,
-  type BeslismodelTelemetryAdapter,
 } from "@beslismodel/vue";
 import { breadcrumbApi } from "../lib/breadcrumbs";
 import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
+import { createSupabaseTelemetryAdapter } from "../lib/framework-telemetry";
 import { guidelineReviews } from "../lib/guidelines";
-import { persistTelemetry } from "../lib/log-sink";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { appConfig } from "../config/app-config";
 import { useRoleStore } from "./roleStore";
@@ -62,15 +61,7 @@ const answersStorage: BeslismodelStorageAdapter = {
   },
 };
 
-const questionnaireTelemetry: BeslismodelTelemetryAdapter = {
-  track: (event): void => {
-    persistTelemetry({
-      module: "questionnaire-store",
-      message: event.type,
-      context: event,
-    });
-  },
-};
+const questionnaireTelemetry = createSupabaseTelemetryAdapter({ module: "questionnaire-store" });
 
 const fetchManifest = async (): Promise<BeslismodelManifestInput<ResultData>> => {
   const started = performance.now();
