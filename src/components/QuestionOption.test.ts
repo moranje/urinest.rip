@@ -47,7 +47,7 @@ describe("QuestionOption", () => {
 
     expect(item.attributes("role")).toBe("checkbox");
     expect(item.attributes("aria-checked")).toBe("true");
-    expect(item.classes()).toContain("option-selected");
+    expect(wrapper.get(".choice-option").classes()).toContain("option-selected");
     expect(wrapper.text()).not.toContain("A.");
   });
 
