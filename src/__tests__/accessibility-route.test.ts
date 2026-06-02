@@ -317,7 +317,7 @@ describe("route accessibility smoke", () => {
   );
 
   it(
-    "toolbar back uses routed history instead of replacing the current entry",
+    "questionnaire relies on browser history instead of a synthetic back button",
     async () => {
       const { router, wrapper } = await mountQuestionnaireRoute("/questionnaire/strip", "strip");
 
@@ -325,17 +325,17 @@ describe("route accessibility smoke", () => {
       await settleRouteUi();
 
       expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
-      await wrapper.get(".question-toolbar__back").trigger("click");
-      await settleRouteUi();
-
-      expect(router.currentRoute.value.query.q).toBe("q_strip_nitrite");
-      expect(wrapper.get("h1").text()).toBe("Nitriet test");
+      expect(wrapper.find(".question-toolbar__back").exists()).toBe(false);
+      expect(wrapper.find(".back-button").exists()).toBe(false);
+      expect(wrapper.get(".question-toolbar__restart").attributes("aria-label")).toBe(
+        "Opnieuw beginnen",
+      );
 
       router.back();
       await settleRouteUi();
 
-      expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
-      expect(wrapper.get("h1").text()).toBe("Leukocyten test");
+      expect(router.currentRoute.value.query.q).toBe("q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,
@@ -373,17 +373,14 @@ describe("route accessibility smoke", () => {
   );
 
   it(
-    "result back button returns to the routed questionnaire question",
+    "result route relies on browser history instead of a synthetic back button",
     async () => {
-      const { router, wrapper } = await mountResultRoute(
+      const { wrapper } = await mountResultRoute(
         "/info/other.noConclusiveAbnormality?from=/questionnaire/strip%3Fq%3Dq_strip_nitrite",
         "other.noConclusiveAbnormality",
       );
 
-      await wrapper.get(".back-button").trigger("click");
-      await settleRouteUi();
-
-      expect(router.currentRoute.value.fullPath).toBe("/questionnaire/strip?q=q_strip_nitrite");
+      expect(wrapper.find(".back-button").exists()).toBe(false);
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,

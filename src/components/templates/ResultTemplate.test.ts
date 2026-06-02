@@ -14,11 +14,6 @@ const result: ResultData = {
   sources: [{ name: "NHG-Standaard", url: "https://example.test/nhg" }],
 };
 
-const backButtonStub = {
-  emits: ["click"],
-  template: `<button class="back-button-stub" type="button" @click="$emit('click')"><slot /></button>`,
-};
-
 const skeletonStub = {
   props: ["variant", "width"],
   template: `<span class="skeleton-stub" :data-variant="variant" :data-width="width" />`,
@@ -69,7 +64,6 @@ function mountTemplate(overrides: Partial<InstanceType<typeof ResultTemplate>["$
     },
     global: {
       stubs: {
-        BackButton: backButtonStub,
         ContraindicationGate: contraindicationGateStub,
         DocumentationCopyPanel: documentationCopyPanelStub,
         ResultSectionList: resultSectionListStub,
@@ -108,7 +102,7 @@ describe("ResultTemplate", () => {
     const wrapper = mountTemplate();
 
     expect(wrapper.get("section").attributes("aria-label")).toBe("Resultaat");
-    expect(wrapper.get("nav").attributes("aria-label")).toBe("Resultaat navigatie");
+    expect(wrapper.find(".back-button").exists()).toBe(false);
     expect(wrapper.get(".result-section-list-stub").attributes("data-title")).toBe(
       "Beleid bij bacteriurie",
     );
@@ -121,14 +115,12 @@ describe("ResultTemplate", () => {
     );
   });
 
-  it("relays navigation and documentation copy events", async () => {
+  it("relays documentation copy events", async () => {
     const wrapper = mountTemplate();
 
-    await wrapper.get(".back-button-stub").trigger("click");
     await wrapper.get(".copy").trigger("click");
     await wrapper.get(".copy-error").trigger("click");
 
-    expect(wrapper.emitted("back")).toHaveLength(1);
     expect(wrapper.emitted("documentationCopied")).toHaveLength(1);
     expect(wrapper.emitted("documentationError")?.[0]).toEqual(["copy failed"]);
   });

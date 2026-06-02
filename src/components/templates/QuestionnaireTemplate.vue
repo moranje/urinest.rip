@@ -35,7 +35,6 @@
           :multi-select="multiSelect"
           :non-touch="nonTouch"
           :active-popover-option-id="activePopoverOptionId"
-          @back="emit('back')"
           @restart="emit('restart')"
           @choose="emit('choose', $event)"
           @show-popover="(option, event) => emit('showPopover', option, event)"
@@ -99,7 +98,6 @@ withDefaults(
 );
 
 const emit = defineEmits<{
-  back: [];
   restart: [];
   choose: [option: QuestionOption];
   showPopover: [option: QuestionOption, event: MouseEvent | FocusEvent];

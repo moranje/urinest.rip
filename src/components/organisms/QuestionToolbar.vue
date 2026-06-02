@@ -1,13 +1,5 @@
 <template>
   <div class="question-toolbar">
-    <BackButton
-      v-if="hasHistory"
-      class="question-toolbar__back"
-      aria-label="Vorige vraag (Esc of Backspace)"
-      @click="emit('back')"
-    >
-      Terug
-    </BackButton>
     <span class="question-toolbar__spacer" />
     <IconButton
       v-if="hasHistory"
@@ -20,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import BackButton from "../primitives/BackButton.vue";
 import IconButton from "../primitives/IconButton.vue";
 
 defineProps<{
@@ -28,7 +19,6 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  back: [];
   restart: [];
 }>();
 </script>

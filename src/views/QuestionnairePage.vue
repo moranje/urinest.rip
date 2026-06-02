@@ -17,7 +17,6 @@
     :active-popover-option-id="activePopoverOptionId"
     :popover-html="compiledMarkdown(popoverDescription)"
     :popover-style="popoverStyle"
-    @back="goToPreviousQuestion"
     @restart="restartQuestionnaire"
     @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
     @show-popover="showPopover"
@@ -76,7 +75,6 @@ const {
   currentQuestionId,
   currentQuestion,
   currentStep,
-  goBack: goBackQuestion,
   hasHistory,
   hasSelectedOptions,
   isMultiSelect,
@@ -300,54 +298,8 @@ const advanceQuestionState = (branch?: string): void => {
   }
 };
 
-const previousQuestionState = (routeMode: QuestionRouteMode = "replace"): boolean => {
-  if (!hasHistory.value) return false;
-  const transition = goBackQuestion();
-  if (transition.type === "question") {
-    syncQuestionRoute(transition.questionId, routeMode);
-    return true;
-  }
-  if (transition.type === "missing") {
-    handleError(
-      new Error(`Questionnaire not found: ${transition.questionnaireId}`),
-      "questionnaire:not-found",
-      {
-        questionnaireId: transition.questionnaireId,
-      },
-    );
-    router.replace({ name: "Error", query: { message: "Vragenlijst niet gevonden" } });
-  }
-  return false;
-};
-
-const browserBackTargetsPreviousQuestion = (): boolean => {
-  if (!hasHistory.value) return false;
-  const routerBackTarget = router.options.history.state.back;
-  const windowBackTarget =
-    typeof window === "undefined"
-      ? null
-      : (window.history.state as { readonly back?: unknown } | null)?.back;
-  const backTarget = typeof routerBackTarget === "string" ? routerBackTarget : windowBackTarget;
-  if (typeof backTarget !== "string") return false;
-
-  const resolvedBackTarget = router.resolve(backTarget);
-  if (resolvedBackTarget.name !== "Questionnaire") return false;
-  if (String(resolvedBackTarget.params.id ?? "") !== props.id) return false;
-
-  const backQuestionId = readQuestionRouteQuery(resolvedBackTarget.query);
-  return !!backQuestionId && questionHistory.value.includes(backQuestionId);
-};
-
 const goToNextQuestion = (branch?: string): void => {
   advanceQuestionState(branch);
-};
-
-const goToPreviousQuestion = (): void => {
-  if (browserBackTargetsPreviousQuestion()) {
-    router.back();
-    return;
-  }
-  previousQuestionState("push");
 };
 
 const determineResult = (options: { backTarget?: string } = {}): void => {
@@ -521,26 +473,12 @@ const isOptionSelected = (option: QuestionOptionData): boolean => {
 const handleKeyDown = (e: KeyboardEvent): void => {
   if (isLoading.value) return;
 
-  // Global Escape / Backspace → goToPreviousQuestion (if not focused on input)
-  const target = e.target as HTMLElement | null;
-  const isFormField = !!target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
-
   if (e.key === "Escape") {
     if (activePopoverOptionId.value) {
       closePopover();
       e.preventDefault();
       return;
     }
-    if (hasHistory.value) {
-      goToPreviousQuestion();
-      e.preventDefault();
-      return;
-    }
-  }
-  if (e.key === "Backspace" && !isFormField && hasHistory.value) {
-    goToPreviousQuestion();
-    e.preventDefault();
-    return;
   }
 
   if (!currentQuestion.value?.options) return;

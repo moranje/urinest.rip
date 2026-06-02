@@ -1,6 +1,6 @@
 <template>
   <div class="question-panel">
-    <QuestionToolbar :has-history="hasHistory" @back="emit('back')" @restart="emit('restart')" />
+    <QuestionToolbar :has-history="hasHistory" @restart="emit('restart')" />
     <ProgressBar
       :value="progressValue"
       :max="progressMax"
@@ -76,7 +76,6 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  back: [];
   restart: [];
   choose: [option: QuestionOption];
   showPopover: [option: QuestionOption, event: MouseEvent | FocusEvent];

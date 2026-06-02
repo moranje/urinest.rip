@@ -4,7 +4,6 @@
     :error="error"
     :result="resultData"
     :documentation="planDocumentation"
-    @back="goBack"
     @documentation-copied="handleDocumentationCopied"
     @documentation-error="handleDocumentationCopyError"
   />
@@ -12,9 +11,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import { handleError } from "../lib/errors";
-import { readResultBackTarget } from "../lib/question-route";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import ResultTemplate from "../components/templates/ResultTemplate.vue";
@@ -24,8 +21,6 @@ const props = defineProps<{
   resultKey: string;
 }>();
 
-const router = useRouter();
-const route = useRoute();
 const toast = useToastStore();
 const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
@@ -58,12 +53,6 @@ const fetchResultData = (key: string): void => {
   }
 
   isLoading.value = false;
-};
-
-const goBack = (): void => {
-  void router.push(readResultBackTarget(route.query)).catch((navigationError: unknown) => {
-    handleError(navigationError, "result-page:back", { resultKey: props.resultKey });
-  });
 };
 
 const handleDocumentationCopied = (): void => {

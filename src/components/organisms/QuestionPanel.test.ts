@@ -28,10 +28,9 @@ const question: Question = {
 
 const toolbarStub = {
   props: ["hasHistory"],
-  emits: ["back", "restart"],
+  emits: ["restart"],
   template: `
     <nav class="question-toolbar-stub" :data-has-history="String(hasHistory)">
-      <button type="button" class="back" @click="$emit('back')">Terug</button>
       <button type="button" class="restart" @click="$emit('restart')">Opnieuw</button>
     </nav>
   `,
@@ -167,7 +166,6 @@ describe("QuestionPanel", () => {
   it("relays toolbar and choice events without mutating payloads", async () => {
     const wrapper = mountPanel();
 
-    await wrapper.get(".back").trigger("click");
     await wrapper.get(".restart").trigger("click");
     await wrapper.get(".choose").trigger("click");
     await wrapper.get(".show").trigger("mouseenter");
@@ -176,7 +174,6 @@ describe("QuestionPanel", () => {
     await wrapper.get(".close").trigger("click");
     await wrapper.get(".confirm").trigger("click");
 
-    expect(wrapper.emitted("back")).toHaveLength(1);
     expect(wrapper.emitted("restart")).toHaveLength(1);
     expect(wrapper.emitted("choose")?.[0]).toEqual([options[0]]);
     expect(wrapper.emitted("showPopover")?.[0]?.[0]).toEqual(options[0]);

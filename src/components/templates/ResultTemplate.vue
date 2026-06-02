@@ -1,10 +1,6 @@
 <template>
   <div class="result-template">
     <section class="result-template__main" aria-label="Resultaat">
-      <nav class="result-template__nav" aria-label="Resultaat navigatie">
-        <BackButton @click="emit('back')">Terug</BackButton>
-      </nav>
-
       <div
         v-if="isLoading"
         class="result-template__content"
@@ -54,7 +50,6 @@
 import ContraindicationGate from "../organisms/ContraindicationGate.vue";
 import DocumentationCopyPanel from "../organisms/DocumentationCopyPanel.vue";
 import ResultSectionList from "../organisms/ResultSectionList.vue";
-import BackButton from "../primitives/BackButton.vue";
 import Skeleton from "../primitives/Skeleton.vue";
 import type { ResultData } from "../../types";
 
@@ -73,7 +68,6 @@ withDefaults(
 );
 
 const emit = defineEmits<{
-  back: [];
   documentationCopied: [];
   documentationError: [error: unknown];
 }>();
@@ -95,11 +89,6 @@ const emit = defineEmits<{
   contain: layout style paint;
   container-type: inline-size;
   container-name: result-main;
-}
-
-.result-template__nav {
-  width: 100%;
-  padding: 0 0 var(--spacing-sm);
 }
 
 .result-template__content {

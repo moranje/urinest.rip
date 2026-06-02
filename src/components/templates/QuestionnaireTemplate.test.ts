@@ -48,7 +48,6 @@ const questionPanelStub = {
     "activePopoverOptionId",
   ],
   emits: [
-    "back",
     "restart",
     "choose",
     "showPopover",
@@ -75,7 +74,6 @@ const questionPanelStub = {
       :data-non-touch="String(nonTouch)"
       :data-active-popover-option-id="activePopoverOptionId"
     >
-      <button class="back" type="button" @click="$emit('back')">Terug</button>
       <button class="restart" type="button" @click="$emit('restart')">Opnieuw</button>
       <button class="choose" type="button" @click="$emit('choose', question.options[0])">
         Kies
@@ -189,7 +187,6 @@ describe("QuestionnaireTemplate", () => {
   it("relays panel and popover events", async () => {
     const wrapper = mountTemplate();
 
-    await wrapper.get(".back").trigger("click");
     await wrapper.get(".restart").trigger("click");
     await wrapper.get(".choose").trigger("click");
     await wrapper.get(".show").trigger("mouseenter");
@@ -201,7 +198,6 @@ describe("QuestionnaireTemplate", () => {
     await wrapper.get(".close-popover").trigger("click");
     await wrapper.get(".confirm").trigger("click");
 
-    expect(wrapper.emitted("back")).toHaveLength(1);
     expect(wrapper.emitted("restart")).toHaveLength(1);
     expect(wrapper.emitted("choose")?.[0]).toEqual([options[0]]);
     expect(wrapper.emitted("showPopover")?.[0]?.[0]).toEqual(options[0]);
