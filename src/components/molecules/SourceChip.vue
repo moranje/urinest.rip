@@ -29,7 +29,9 @@ defineProps<{
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
+  box-sizing: border-box;
   max-width: 100%;
+  min-height: var(--min-touch-target);
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--md-sys-color-outline);
   border-radius: var(--md-sys-shape-corner-full);

@@ -106,6 +106,9 @@ function toastIcon(
 
 .toast-close {
   flex-shrink: 0;
+  box-sizing: border-box;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
   background: none;
   border: none;
   padding: 4px;

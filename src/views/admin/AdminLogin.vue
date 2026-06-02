@@ -165,6 +165,8 @@ label {
 }
 
 input {
+  box-sizing: border-box;
+  min-height: var(--min-touch-target);
   padding: var(--spacing-sm) var(--spacing-md);
   font: var(--md-sys-typescale-body-medium);
   border: 1px solid var(--md-sys-color-outline-variant);

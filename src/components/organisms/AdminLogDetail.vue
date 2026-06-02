@@ -444,6 +444,9 @@ async function exportMarkdown() {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
+  box-sizing: border-box;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
   background: none;
   border: none;
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -462,6 +465,9 @@ async function exportMarkdown() {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
+  box-sizing: border-box;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
   background: none;
   border: 1px solid var(--md-sys-color-outline-variant);
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -493,6 +499,9 @@ async function exportMarkdown() {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
+  box-sizing: border-box;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
   padding: var(--spacing-xs) var(--spacing-md);
   font: var(--md-sys-typescale-body-small);
   font-weight: 500;
@@ -528,7 +537,9 @@ async function exportMarkdown() {
 }
 
 .resolve-version-input {
+  box-sizing: border-box;
   width: 140px;
+  min-height: var(--min-touch-target);
   padding: var(--spacing-xs) var(--spacing-sm);
   font: var(--md-sys-typescale-body-small);
   border: 1px solid var(--md-sys-color-outline-variant);

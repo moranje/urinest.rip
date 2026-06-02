@@ -46,6 +46,8 @@ function tap(): void {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  box-sizing: border-box;
+  min-height: var(--min-touch-target);
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;

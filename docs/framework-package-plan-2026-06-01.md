@@ -215,7 +215,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Legacy `.md-button`, `.md-card`, `.md-tile` verwijderen of quarantainen.
 - [ ] Page-local badge/button/form styles vervangen door primitives.
 - [x] Header controls naar shared `SegmentedControl`.
-- [ ] Alle touch targets minimaal 44px/48dp.
+- [x] Alle touch targets minimaal 44px/48dp.
 - [x] Geen `transition: all`.
 - [x] Motion utilities in `motion.css`.
 - [x] Reduced motion per utility, niet alleen global catch-all.
@@ -360,20 +360,27 @@ Exit criteria:
 
 Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen naar lokale Gitea npm registry, en `urinest.rip` als consumer draaiend houden.
 
+- [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [ ] Nieuwe package-map/repo maken voor framework, bijv. `beslismodel-framework/`.
+- [ ] Package-map starten met dezelfde package boundaries als deze repo: core, compiler, vue en testing; geen tijdelijke bundeling van app-only code.
 - [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
+- [ ] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [ ] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
-- [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, `.npmrc` voor publish en install, en package `publishConfig.registry`.
+- [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, en package `publishConfig.registry`.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
+- [ ] Registry smoke consumer maken die de packages via Gitea npm installeert in een schone temp-map en een minimale manifest-runner compileert.
 - [ ] Package CI in nieuwe repo meenemen: lint, typecheck, tests, package smoke checks, consumer fixture, npm audit, secret scan.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
+- [ ] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden.
 - [ ] `urinest.rip` build scripts aanpassen: package-build scripts verwijderen uit app-only CI, maar `check:packages` vervangen door registry smoke checks zolang extractie loopt.
 - [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [ ] Migratievolgorde: publish prerelease packages naar lokale registry, install in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
-- [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke en Urinestrip end-to-end fixture.
+- [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke, landing-grid regressie en Urinestrip end-to-end fixture.
+- [ ] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
+- [ ] Package release-notes in Gitea taggen met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
 - [ ] Rollback-plan: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 
 ## Commit Discipline

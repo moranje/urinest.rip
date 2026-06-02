@@ -111,7 +111,9 @@ function timeAgo(dateStr: string): string {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  box-sizing: border-box;
   width: 100%;
+  min-height: var(--min-touch-target);
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
