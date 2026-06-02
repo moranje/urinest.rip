@@ -52,20 +52,30 @@ const ariaLive = computed(() => {
 
 <style scoped>
 .notice {
+  --notice-accent: var(--md-sys-color-primary);
+  --notice-bg: var(--md-sys-color-surface-container-low);
+  --notice-fg: var(--md-sys-color-on-surface);
+  --notice-border: color-mix(
+    in srgb,
+    var(--notice-accent) 28%,
+    var(--md-sys-color-outline-variant)
+  );
+
   display: grid;
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
   border-radius: var(--md-sys-shape-corner-medium);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-left-width: 3px;
-  color: var(--md-sys-color-on-surface);
-  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--notice-border);
+  border-left-width: 4px;
+  color: var(--notice-fg);
+  background: var(--notice-bg);
 }
 
 .notice__header {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  color: var(--notice-accent);
 }
 
 .notice__title {
@@ -74,6 +84,7 @@ const ariaLive = computed(() => {
 }
 
 .notice__body {
+  color: var(--notice-fg);
   font: var(--md-sys-typescale-body-large);
   line-height: 1.6;
 }
@@ -89,23 +100,40 @@ const ariaLive = computed(() => {
 }
 
 .notice--info {
-  border-left-color: var(--md-sys-color-primary);
+  --notice-accent: var(--md-sys-color-primary);
+  --notice-bg: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 18%,
+    var(--md-sys-color-surface-container-low)
+  );
 }
 
 .notice--warning {
-  border-left-color: var(--md-sys-color-warning);
-  color: var(--md-sys-color-on-warning-container);
-  background: var(--md-sys-color-warning-container);
+  --notice-accent: var(--md-sys-color-warning);
+  --notice-bg: color-mix(
+    in srgb,
+    var(--md-sys-color-warning-container) 22%,
+    var(--md-sys-color-surface-container-low)
+  );
+  --notice-fg: var(--md-sys-color-on-surface);
 }
 
 .notice--error {
-  border-left-color: var(--md-sys-color-error);
-  color: var(--md-sys-color-on-error-container);
-  background: var(--md-sys-color-error-container);
+  --notice-accent: var(--md-sys-color-error);
+  --notice-bg: color-mix(
+    in srgb,
+    var(--md-sys-color-error-container) 24%,
+    var(--md-sys-color-surface-container-low)
+  );
+  --notice-fg: var(--md-sys-color-on-surface);
 }
 
 .notice--success {
-  border-left-color: var(--md-sys-color-primary);
-  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+  --notice-accent: var(--md-sys-color-primary);
+  --notice-bg: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 28%,
+    var(--md-sys-color-surface-container-low)
+  );
 }
 </style>

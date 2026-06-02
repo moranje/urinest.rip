@@ -1,9 +1,12 @@
 <template>
-  <div class="choice-option option-row">
+  <div
+    class="choice-option option-row"
+    :class="{ 'choice-option--selected': selected, 'option-selected': selected }"
+  >
     <button
       :ref="(el) => emit('optionRef', option.id, el)"
       class="choice-option__button option-item"
-      :class="{ 'choice-option__button--selected': selected, 'option-selected': selected }"
+      :class="{ 'choice-option__button--selected': selected }"
       type="button"
       :role="multiSelect ? 'checkbox' : 'radio'"
       :aria-checked="selected"
@@ -75,10 +78,45 @@ const emit = defineEmits<{
 
 <style scoped>
 .choice-option {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: stretch;
-  gap: var(--spacing-sm);
   width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small);
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  transition:
+    background-color var(--motion-duration-medium) var(--motion-easing-standard),
+    border-color var(--motion-duration-medium) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-medium) var(--motion-easing-standard),
+    transform var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.choice-option:hover {
+  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 4%,
+    var(--md-sys-color-surface-container-lowest)
+  );
+}
+
+.choice-option:focus-within {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.choice-option--selected {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 8%,
+    var(--md-sys-color-surface-container-lowest)
+  );
+  color: var(--md-sys-color-primary);
 }
 
 .choice-option__button {
@@ -88,21 +126,20 @@ const emit = defineEmits<{
   box-sizing: border-box;
   min-height: 56px;
   padding: var(--spacing-md);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
-  background-color: var(--md-sys-color-surface-container-lowest);
-  color: var(--md-sys-color-on-surface);
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   font: inherit;
   cursor: pointer;
   overflow: hidden;
   position: relative;
   text-align: left;
   touch-action: manipulation;
-  transition:
-    background-color var(--motion-duration-medium) var(--motion-easing-standard),
-    border-color var(--motion-duration-medium) var(--motion-easing-standard),
-    box-shadow var(--motion-duration-medium) var(--motion-easing-standard),
-    transform var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.choice-option__button:focus-visible {
+  outline: none;
 }
 
 .choice-option__button::before {
@@ -115,32 +152,12 @@ const emit = defineEmits<{
   pointer-events: none;
 }
 
-.choice-option__button:hover {
-  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 4%,
-    var(--md-sys-color-surface-container-lowest)
-  );
-}
-
 .choice-option__button:active::before {
   opacity: var(--md-sys-state-pressed-state-layer-opacity);
   transition-duration: var(--motion-duration-press);
 }
 
-.choice-option__button--selected {
-  border-color: var(--md-sys-color-primary);
-  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 8%,
-    var(--md-sys-color-surface-container-lowest)
-  );
-  color: var(--md-sys-color-primary);
-}
-
-.choice-option__button--selected .choice-option__prefix {
+.choice-option--selected .choice-option__prefix {
   color: var(--md-sys-color-on-primary);
   background-color: var(--md-sys-color-primary);
 }
@@ -176,6 +193,7 @@ const emit = defineEmits<{
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  padding-inline: var(--spacing-sm);
 }
 
 .choice-option__info-button {
@@ -184,10 +202,9 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: -13px;
-  padding: 13px;
+  padding: 0;
   border: none;
-  border-radius: 50%;
+  border-radius: var(--md-sys-shape-corner-full);
   background: none;
   color: var(--md-sys-color-on-surface-variant);
   cursor: help;

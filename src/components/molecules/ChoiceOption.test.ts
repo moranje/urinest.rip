@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import ChoiceOption from "./ChoiceOption.vue";
@@ -62,5 +63,20 @@ describe("ChoiceOption", () => {
     expect(wrapper.emitted("showPopover")?.[0]).toEqual([option, expect.any(MouseEvent)]);
     expect(wrapper.emitted("schedulePopoverClose")).toHaveLength(1);
     expect(wrapper.emitted("choose")).toBeUndefined();
+  });
+
+  it("keeps info controls integrated inside the option card", () => {
+    const wrapper = mount(ChoiceOption, { props: baseProps });
+    const source = readFileSync("src/components/molecules/ChoiceOption.vue", "utf8");
+    const cardCss = source.match(/\.choice-option\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+    const infoButtonCss = source.match(/\.choice-option__info-button\s*\{(?<body>[\s\S]*?)\n\}/)
+      ?.groups?.body;
+
+    expect(wrapper.get(".choice-option__info").element.parentElement).toBe(
+      wrapper.get(".choice-option").element,
+    );
+    expect(cardCss).toContain("display: grid");
+    expect(cardCss).toContain("grid-template-columns: minmax(0, 1fr) auto");
+    expect(infoButtonCss).not.toContain("margin: -");
   });
 });

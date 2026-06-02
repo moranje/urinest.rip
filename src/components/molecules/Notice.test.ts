@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import Notice from "./Notice.vue";
@@ -43,5 +44,15 @@ describe("Notice", () => {
     });
 
     expect(wrapper.get(".notice__action button").text()).toBe("Vernieuw");
+  });
+
+  it("keeps warning styling low-emphasis and tokenized", () => {
+    const source = readFileSync("src/components/molecules/Notice.vue", "utf8");
+    const warningCss = source.match(/\.notice--warning\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+
+    expect(warningCss).toBeDefined();
+    expect(warningCss).toContain("--notice-bg");
+    expect(warningCss).toContain("color-mix");
+    expect(warningCss).not.toContain("background: var(--md-sys-color-warning-container)");
   });
 });

@@ -19,8 +19,9 @@ describe("ContraindicationGate", () => {
 
     expect(wrapper.get(".section-title").text()).toBe("Controleer Contra-indicaties");
     expect(wrapper.find(".treatment-section").exists()).toBe(false);
+    expect(wrapper.get(".notice__title").text()).toBe("Controle nodig");
     expect(wrapper.get(".notice").text()).toContain(
-      "Behandeling wordt getoond na controle van contra-indicaties.",
+      "Controleer alle contra-indicaties voordat behandeling wordt getoond.",
     );
     expect(wrapper.get(".sr-only").text()).toBe(
       "Behandeling verborgen tot alle contra-indicaties zijn gecontroleerd.",
@@ -67,7 +68,9 @@ describe("ContraindicationGate", () => {
       contraindications: [{ id: "pregnancy", text: "Controleer zwangerschap" }],
     });
 
-    expect(wrapper.get(".notice").text()).toContain("Behandeling wordt getoond");
+    expect(wrapper.get(".notice").text()).toContain(
+      "Controleer alle contra-indicaties voordat behandeling wordt getoond.",
+    );
     expect(wrapper.get<HTMLInputElement>(".checkbox-field__control").element.checked).toBe(false);
   });
 

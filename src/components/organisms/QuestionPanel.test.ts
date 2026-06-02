@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import QuestionPanel from "./QuestionPanel.vue";
@@ -45,7 +46,7 @@ const progressStub = {
       :data-max="max"
       :data-label="label"
       :data-text="text"
-      :data-show-text="String(showText)"
+      :data-show-text="showText === true ? 'true' : 'false'"
     />
   `,
 };
@@ -130,11 +131,24 @@ describe("QuestionPanel", () => {
     const wrapper = mountPanel();
 
     expect(wrapper.get("h1").attributes("id")).toBe("q-title-q-klachten");
+    expect(wrapper.get("h1").attributes("tabindex")).toBe("-1");
     expect(wrapper.get("h1").text()).toBe("Zijn er plasklachten?");
-    expect(wrapper.get(".sr-only").text()).toBe("Vraag 2 van 5: Zijn er plasklachten?");
+    expect(wrapper.get(".sr-only").text()).toBe("Nieuwe vraag: Zijn er plasklachten?");
     expect(wrapper.get(".question-panel__step").attributes("id")).toBe("q-step-q-klachten");
     expect(wrapper.get(".question-panel__description").html()).toContain("<strong>Bron</strong>");
-    expect(wrapper.get(".progress-bar-stub").attributes("data-label")).toBe("Vraag 2 van 5");
+    expect(wrapper.get(".progress-bar-stub").attributes("data-label")).toBe(
+      "Indicatieve voortgang door vragenlijst",
+    );
+    expect(wrapper.get(".progress-bar-stub").attributes("data-show-text")).toBe("false");
+  });
+
+  it("keeps programmatic title focus visually quiet", () => {
+    const source = readFileSync("src/components/organisms/QuestionPanel.vue", "utf8");
+    const titleFocusCss = source.match(/\.question-panel__title:focus\s*\{(?<body>[\s\S]*?)\n\}/)
+      ?.groups?.body;
+
+    expect(titleFocusCss).toBeDefined();
+    expect(titleFocusCss).toContain("outline: none");
   });
 
   it("passes accessibility and selection state to the choice group", () => {

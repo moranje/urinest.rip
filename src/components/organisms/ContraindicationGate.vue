@@ -28,11 +28,12 @@
   </div>
   <Notice
     v-else-if="!allChecked && treatmentText"
-    class="result-section"
+    class="result-section contraindication-notice"
     variant="info"
+    title="Controle nodig"
     role="status"
   >
-    <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
+    <p>Controleer alle contra-indicaties voordat behandeling wordt getoond.</p>
   </Notice>
   <p v-if="treatmentText" class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
 </template>

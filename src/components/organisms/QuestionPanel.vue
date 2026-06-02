@@ -4,11 +4,9 @@
     <ProgressBar
       :value="progressValue"
       :max="progressMax"
-      :label="progressLabel"
-      :text="progressText"
-      show-text
+      label="Indicatieve voortgang door vragenlijst"
     />
-    <p class="sr-only" aria-live="polite">{{ progressLabel }}: {{ question.text }}</p>
+    <p class="sr-only" aria-live="polite">Nieuwe vraag: {{ question.text }}</p>
     <div class="question-panel__header">
       <h1 :id="titleId" ref="titleRef" class="question-panel__title" tabindex="-1">
         {{ question.text }}
@@ -131,6 +129,10 @@ watch(
   color: var(--md-sys-color-on-surface);
   font: var(--md-sys-typescale-headline-small);
   text-wrap: balance;
+}
+
+.question-panel__title:focus {
+  outline: none;
 }
 
 .question-panel__step {
