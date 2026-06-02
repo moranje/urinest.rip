@@ -167,12 +167,14 @@ App blijft eigenaar van domeindata en branding.
 ### Atoms
 
 - [x] `Button`
+- [x] `ActionRow`
 - [x] `Card`
 - [x] `Badge`
+- [x] `Chip`
 - [x] `Icon`
 - [x] `Skeleton`
 - [x] `ProgressBar`
-- [x] `BackButton`
+- [x] Back-navigation controls via `Button` + `Icon`; dedicated `BackButton` removed as duplicate primitive.
 - [x] `IconButton`
 - [x] `Input`
 - [x] `Select`

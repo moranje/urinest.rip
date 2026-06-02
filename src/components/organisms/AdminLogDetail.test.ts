@@ -100,9 +100,9 @@ describe("AdminLogDetail", () => {
   it("delegates controls to shared primitives instead of page-local button styles", () => {
     const source = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
 
-    expect(source).toContain("<BackButton");
     expect(source).toContain("<Button");
     expect(source).toContain("<Input");
+    expect(source).not.toContain("<BackButton");
     expect(source).not.toContain('class="back-btn"');
     expect(source).not.toContain('class="export-btn"');
     expect(source).not.toContain('class="action-btn');

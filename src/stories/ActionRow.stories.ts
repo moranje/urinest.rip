@@ -1,23 +1,31 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import ActionRow from "../components/primitives/ActionRow.vue";
-import Badge from "../components/primitives/Badge.vue";
+import StatusBadge from "../components/molecules/StatusBadge.vue";
 
 const meta = {
   title: "Primitives/ActionRow",
   component: ActionRow,
   tags: ["autodocs"],
+  argTypes: {
+    disabled: { control: "boolean" },
+  },
+  args: {
+    disabled: false,
+  },
   render: (args) => ({
-    components: { ActionRow, Badge },
+    components: { ActionRow, StatusBadge },
     setup: () => ({ args }),
     template: `
-      <ActionRow v-bind="args">
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <Badge variant="error" size="sm">ERROR</Badge>
-          <strong>Transition was skipped</strong>
-          <span style="margin-left:auto;">x3</span>
-        </div>
-        <small>Laatst: 1 min geleden · Eerst: 1 uur geleden</small>
-      </ActionRow>
+      <div style="max-width:680px;">
+        <ActionRow v-bind="args">
+          <span style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <StatusBadge variant="error">ERROR</StatusBadge>
+            <strong>Transition was skipped</strong>
+            <span style="color:var(--md-sys-color-on-surface-variant);">questionnaire</span>
+          </span>
+          <span style="color:var(--md-sys-color-outline);">Laatst: 2 min geleden</span>
+        </ActionRow>
+      </div>
     `,
   }),
 } satisfies Meta<typeof ActionRow>;
@@ -35,16 +43,22 @@ export const Disabled: Story = {
 
 export const LongText: Story = {
   render: (args) => ({
-    components: { ActionRow, Badge },
+    components: { ActionRow, StatusBadge },
     setup: () => ({ args }),
     template: `
-      <ActionRow v-bind="args">
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <Badge variant="warn" size="sm">WARN</Badge>
-          <strong>Log persistence disabled after repeated unauthorized responses</strong>
-        </div>
-        <small>Deze rij blijft leesbaar bij langere meldingen en kleinere containers.</small>
-      </ActionRow>
+      <div style="max-width:420px;">
+        <ActionRow v-bind="args">
+          <span style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <StatusBadge variant="warn">WARN</StatusBadge>
+            <strong>
+              Langere administratieve rijtitel met module, fingerprint en duidelijke context
+            </strong>
+          </span>
+          <span style="color:var(--md-sys-color-outline);">
+            Eerst gezien gisteren, laatst bijgewerkt zojuist
+          </span>
+        </ActionRow>
+      </div>
     `,
   }),
 };

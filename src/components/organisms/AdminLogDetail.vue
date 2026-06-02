@@ -4,7 +4,6 @@ import { ref, computed } from "vue";
 import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
-import BackButton from "../primitives/BackButton.vue";
 import Button from "../primitives/Button.vue";
 import Icon from "../primitives/Icon.vue";
 import Input from "../primitives/Input.vue";
@@ -236,13 +235,18 @@ async function exportMarkdown() {
 <template>
   <div class="log-detail">
     <div class="detail-toolbar">
-      <BackButton
+      <Button
+        variant="text"
+        size="sm"
         data-testid="log-detail-back"
         aria-label="Terug naar logoverzicht"
         @click="emit('back')"
       >
+        <template #leading>
+          <Icon name="arrow-left" :size="16" />
+        </template>
         Terug
-      </BackButton>
+      </Button>
       <Button
         variant="outlined"
         size="sm"

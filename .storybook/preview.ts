@@ -23,7 +23,16 @@ const preview: Preview = {
         order: [
           "Tokens",
           "Primitives",
-          ["Button", "Card", "Badge", "Skeleton", "BackButton", "ProgressBar", "FormControls"],
+          [
+            "ActionRow",
+            "Button",
+            "Card",
+            "Badge",
+            "Chip",
+            "Skeleton",
+            "ProgressBar",
+            "FormControls",
+          ],
           "Molecules",
           ["SegmentedControl", "ChoiceOption", "Notice"],
           "Organisms",

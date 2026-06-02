@@ -16,9 +16,11 @@ function cssBlock(source: string, selector: string): string {
 }
 
 const tokensCss = readFileSync("src/styles/tokens.css", "utf8");
+const actionRow = readFileSync("src/components/primitives/ActionRow.vue", "utf8");
 const menuItem = readFileSync("src/components/MenuItem.vue", "utf8");
 
-const appSpecificTargets: TouchTargetCase[] = [
+const interactiveSurfaceTargets: TouchTargetCase[] = [
+  { file: "src/components/primitives/ActionRow.vue", source: actionRow, selector: ".action-row" },
   { file: "src/components/MenuItem.vue", source: menuItem, selector: ".menu-item" },
 ];
 
@@ -27,8 +29,8 @@ describe("touch target design rules", () => {
     expect(tokensCss).toContain("--min-touch-target: 44px");
   });
 
-  it("uses the shared token for app-specific interactive surfaces", () => {
-    for (const target of appSpecificTargets) {
+  it("uses the shared token for interactive surfaces", () => {
+    for (const target of interactiveSurfaceTargets) {
       const block = cssBlock(target.source, target.selector);
 
       expect(block, `${target.file} ${target.selector}`).toContain(

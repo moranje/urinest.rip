@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import axe from "axe-core";
+import ActionRow from "./ActionRow.vue";
 import Button from "./Button.vue";
 import Badge from "./Badge.vue";
 import ProgressBar from "./ProgressBar.vue";
-import BackButton from "./BackButton.vue";
 import Card from "./Card.vue";
 import Checkbox from "./Checkbox.vue";
 import IconButton from "./IconButton.vue";
@@ -39,6 +39,20 @@ async function runAxe(html: string): Promise<AxeResult> {
 
 describe("Primitive components — axe smoke", () => {
   it(
+    "ActionRow has no violations",
+    async () => {
+      const wrapper = mount(ActionRow, {
+        slots: { default: "Open loggroep" },
+        attachTo: document.body,
+      });
+      const result = await runAxe(wrapper.html());
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
     "Button has no a11y violations",
     async () => {
       const wrapper = mount(Button, { slots: { default: "Save" }, attachTo: document.body });
@@ -71,17 +85,6 @@ describe("Primitive components — axe smoke", () => {
         props: { value: 1, max: 5, label: "Stap 1 van 5" },
         attachTo: document.body,
       });
-      const result = await runAxe(wrapper.html());
-      expect(result.violations.map((v) => v.id)).toEqual([]);
-      wrapper.unmount();
-    },
-    AXE_TEST_TIMEOUT_MS,
-  );
-
-  it(
-    "BackButton has no violations",
-    async () => {
-      const wrapper = mount(BackButton, { attachTo: document.body });
       const result = await runAxe(wrapper.html());
       expect(result.violations.map((v) => v.id)).toEqual([]);
       wrapper.unmount();
