@@ -62,49 +62,23 @@
             </p>
           </div>
 
-          <div
-            class="question-options"
-            :role="isMultiSelect ? 'group' : 'radiogroup'"
-            :aria-labelledby="`q-title-${currentQuestion.id}`"
-            :aria-describedby="
-              currentStep?.description ? `q-step-${currentQuestion.id}` : undefined
-            "
-          >
-            <QuestionOption
-              v-for="(option, index) in currentQuestion.options"
-              :key="option.id"
-              :option="option"
-              :index="index"
-              :selected="isOptionSelected(option)"
-              :multi-select="isMultiSelect"
-              :non-touch="isNonTouchDevice"
-              :tab-index="getOptionTabIndex(option, index)"
-              :popover-open="activePopoverOptionId === option.id"
-              @choose="isMultiSelect ? toggleOption(option) : selectOption(option)"
-              @option-ref="setOptionRef"
-              @focus-sibling="focusSiblingOption"
-              @show-popover="showPopover"
-              @toggle-popover="togglePopover"
-              @schedule-popover-close="schedulePopoverClose"
-              @close-popover="closePopover"
-            />
-
-            <p v-if="isMultiSelect" class="multi-counter" :aria-live="'polite'">
-              <span v-if="selectedCount === 0">Geen geselecteerd</span>
-              <span v-else>{{ selectedCount }} geselecteerd</span>
-            </p>
-
-            <Button
-              v-if="isMultiSelect"
-              class="confirm-button"
-              :disabled="!hasSelectedOptions"
-              full-width
-              size="lg"
-              @click="confirmMultipleChoice"
-            >
-              Bevestigen<span v-if="selectedCount > 0"> ({{ selectedCount }})</span>
-            </Button>
-          </div>
+          <ChoiceGroup
+            :options="currentQuestion.options"
+            :selected-option-ids="selectedOptionIds"
+            :selected-count="selectedCount"
+            :has-selected-options="hasSelectedOptions"
+            :multi-select="isMultiSelect"
+            :non-touch="isNonTouchDevice"
+            :labelled-by="`q-title-${currentQuestion.id}`"
+            :described-by="currentStep?.description ? `q-step-${currentQuestion.id}` : undefined"
+            :active-popover-option-id="activePopoverOptionId"
+            @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
+            @show-popover="showPopover"
+            @toggle-popover="togglePopover"
+            @schedule-popover-close="schedulePopoverClose"
+            @close-popover="closePopover"
+            @confirm="confirmMultipleChoice"
+          />
 
           <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
           <div
@@ -159,8 +133,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useRoute, useRouter } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
-import QuestionOption from "../components/QuestionOption.vue";
-import Button from "../components/primitives/Button.vue";
+import ChoiceGroup from "../components/molecules/ChoiceGroup.vue";
 import Icon from "../components/primitives/Icon.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
@@ -211,12 +184,6 @@ const {
   advance: advanceQuestion,
 } = runner;
 
-// Option refs (for keyboard focus navigation in single-select radiogroup)
-const optionRefs = ref<Record<string, HTMLElement | null>>({});
-const setOptionRef = (optionId: string, el: Element | unknown): void => {
-  optionRefs.value[optionId] = (el as HTMLElement) ?? null;
-};
-
 const {
   activePopoverOptionId,
   popoverDescription,
@@ -235,24 +202,12 @@ const progressMax = computed((): number => progress.value.max);
 const progressLabel = computed((): string => progress.value.label);
 const progressText = computed((): string => progress.value.text);
 
-const getOptionTabIndex = (option: QuestionOptionData, index: number): number => {
-  if (isMultiSelect.value) return 0;
-  // For radiogroup: only the selected option (or the first if none selected) is in the tab order
-  if (isOptionSelected(option)) return 0;
-  const anySelected = currentQuestion.value?.options?.some((o) => isOptionSelected(o));
-  if (!anySelected && index === 0) return 0;
-  return -1;
-};
-
-const focusSiblingOption = (currentIndex: number, delta: number): void => {
-  if (!currentQuestion.value?.options?.length) return;
-  const len = currentQuestion.value.options.length;
-  const nextIndex = (currentIndex + delta + len) % len;
-  const nextOption = currentQuestion.value.options[nextIndex];
-  if (!nextOption) return;
-  const el = optionRefs.value[nextOption.id];
-  if (el && typeof el.focus === "function") el.focus();
-};
+const selectedOptionIds = computed(
+  () =>
+    currentQuestion.value?.options
+      .filter((option) => isOptionSelected(option))
+      .map((option) => option.id) ?? [],
+);
 
 // --- Lifecycle Hooks ---
 
@@ -737,13 +692,6 @@ watch(
   color: var(--md-sys-color-on-surface);
 }
 
-.multi-counter {
-  font: var(--md-sys-typescale-label-medium);
-  color: var(--md-sys-color-on-surface-variant);
-  margin: var(--spacing-sm) 0 0;
-  text-align: right;
-}
-
 .question-header {
   margin-bottom: var(--spacing-xl);
 }
@@ -759,14 +707,6 @@ watch(
   font: var(--md-sys-typescale-body-small);
   color: var(--md-sys-color-on-surface-variant);
   margin: 0;
-}
-
-.question-options {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-  flex: 1;
 }
 
 .info-popover {
@@ -814,12 +754,6 @@ watch(
   border-top: 1px solid var(--md-sys-color-outline-variant);
   font: var(--md-sys-typescale-body-medium);
   color: var(--md-sys-color-on-surface-variant);
-}
-
-.confirm-button {
-  margin-top: var(--spacing-lg);
-  width: 100%;
-  min-height: 56px;
 }
 
 /* Animations */
@@ -880,18 +814,6 @@ watch(
   }
   .question-header {
     margin-bottom: var(--spacing-lg);
-  }
-  .question-options {
-    gap: var(--spacing-sm);
-  }
-  .option-item {
-    padding: var(--spacing-sm) var(--spacing-md);
-    min-height: 56px;
-  }
-  .option-prefix {
-    min-width: 1.6em;
-    height: 1.6em;
-    font-size: 0.85em;
   }
 }
 

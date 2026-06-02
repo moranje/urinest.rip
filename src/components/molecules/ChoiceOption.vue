@@ -202,4 +202,17 @@ const emit = defineEmits<{
 .choice-option__info:hover .choice-option__info-button {
   background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
+
+@media (max-width: 599.98px) {
+  .choice-option__button {
+    min-height: 56px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .choice-option__prefix {
+    min-width: 1.6em;
+    height: 1.6em;
+    font-size: 0.85em;
+  }
+}
 </style>
