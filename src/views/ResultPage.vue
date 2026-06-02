@@ -121,20 +121,11 @@
           <p>{{ resultData.explainer }}</p>
         </div>
 
-        <!-- Documentation (copy to clipboard for EPD) -->
-        <div v-if="planDocumentation" class="result-section documentation-section">
-          <h3 class="section-title">Documenteer (voor EPD)</h3>
-          <div class="documentation-content">
-            <pre class="documentation-text">{{ planDocumentation }}</pre>
-            <CopyAction
-              class="documentation-copy-action"
-              :text="planDocumentation"
-              label="Kopieer"
-              @copied="handleDocumentationCopied"
-              @error="handleDocumentationCopyError"
-            />
-          </div>
-        </div>
+        <DocumentationCopyPanel
+          :text="planDocumentation"
+          @copied="handleDocumentationCopied"
+          @error="handleDocumentationCopyError"
+        />
 
         <!-- Sources -->
         <div v-if="resultData.sources && resultData.sources.length > 0" class="result-section">
@@ -157,10 +148,10 @@ import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
-import CopyAction from "../components/molecules/CopyAction.vue";
 import Notice from "../components/molecules/Notice.vue";
 import SourceChip from "../components/molecules/SourceChip.vue";
 import StatusBadge from "../components/molecules/StatusBadge.vue";
+import DocumentationCopyPanel from "../components/organisms/DocumentationCopyPanel.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
 
@@ -463,31 +454,6 @@ watch(
   white-space: pre-wrap;
 }
 
-/* Documentation */
-.documentation-content {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  background-color: var(--md-sys-color-surface-container);
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-small);
-  border: 1px solid var(--md-sys-color-outline-variant);
-}
-
-.documentation-text {
-  font-family: "SF Mono", "Menlo", "Consolas", monospace;
-  font-size: 13px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
-  color: var(--md-sys-color-on-surface-variant);
-  flex-grow: 1;
-}
-
-.documentation-copy-action {
-  flex-shrink: 0;
-}
-
 /* Sources */
 .sources-list {
   list-style: none;
@@ -568,19 +534,6 @@ watch(
   .treatment-section,
   .explainer-section {
     padding: var(--spacing-sm);
-  }
-}
-
-/* Container query — documentation lays out side-by-side only when result-main
-     has room. Below 30rem container width, stack vertically. */
-@container result-main (max-width: 30rem) {
-  .documentation-content {
-    flex-direction: column;
-    padding: var(--spacing-sm);
-    gap: var(--spacing-sm);
-  }
-  .documentation-copy-action {
-    width: 100%;
   }
 }
 </style>

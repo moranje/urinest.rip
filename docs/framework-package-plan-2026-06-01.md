@@ -197,7 +197,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] `QuestionPanel`
 - [x] `QuestionToolbar`
 - [ ] `ResultSectionList`
-- [ ] `DocumentationCopyPanel`
+- [x] `DocumentationCopyPanel`
 - [ ] `ContraindicationGate`
 - [ ] `AdminLogList`
 - [ ] `AdminLogDetail`
