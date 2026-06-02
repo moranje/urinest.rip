@@ -11,7 +11,7 @@
       </router-link>
 
       <nav class="header-actions" aria-label="Hoofdnavigatie">
-        <role-toggle />
+        <RoleToggle />
         <ThemeToggle />
         <router-link
           to="/over"
@@ -40,11 +40,11 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import RoleToggle from "./RoleToggle.vue";
-import ThemeToggle from "./ThemeToggle.vue";
-import LogoSvg from "./LogoSvg.vue";
-import Icon from "./primitives/Icon.vue";
-import { useAuthStore } from "../store/authStore";
+import RoleToggle from "../RoleToggle.vue";
+import ThemeToggle from "../ThemeToggle.vue";
+import LogoSvg from "../LogoSvg.vue";
+import Icon from "../primitives/Icon.vue";
+import { useAuthStore } from "../../store/authStore";
 
 defineProps<{
   dropletAnimate?: boolean;
@@ -60,25 +60,25 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
 
 <style scoped>
 .app-header {
-  background-color: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  padding: 0 var(--spacing-md);
-  box-shadow: var(--md-sys-elevation-1);
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
   height: var(--layout-header-height);
   display: flex;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  padding: 0 var(--spacing-md);
+  background-color: var(--md-sys-color-surface);
+  box-shadow: var(--md-sys-elevation-1);
+  color: var(--md-sys-color-on-surface);
 }
 
 .header-content {
-  max-width: var(--layout-content-max-width);
-  margin: 0 auto;
   width: 100%;
+  max-width: var(--layout-content-max-width);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
 }
 
 .header-actions {
@@ -88,13 +88,13 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
 }
 
 .app-title-link {
-  text-decoration: none;
-  color: inherit;
   display: flex;
   align-items: center;
-  padding: 0 var(--spacing-sm);
   margin: 0 calc(-1 * var(--spacing-sm));
+  padding: 0 var(--spacing-sm);
   border-radius: var(--md-sys-shape-corner-small);
+  color: inherit;
+  text-decoration: none;
   transition: background-color var(--motion-duration-short) var(--motion-easing-standard);
 }
 
@@ -107,10 +107,10 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
   height: 40px;
   min-width: var(--min-touch-target);
   min-height: var(--min-touch-target);
-  border-radius: var(--md-sys-shape-corner-full);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--md-sys-shape-corner-full);
   color: var(--md-sys-color-on-surface-variant);
   transition:
     background-color var(--motion-duration-short) var(--motion-easing-standard),
@@ -131,7 +131,6 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
   background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
 }
 
-/* bp-md: 600px */
 @media (max-width: 599.98px) {
   .app-header {
     padding: 0 var(--spacing-sm);

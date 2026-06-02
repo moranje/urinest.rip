@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onErrorCaptured } from "vue";
 import { useRoute } from "vue-router";
-import AppHeader from "./components/AppHeader.vue";
+import AppHeader from "./components/organisms/AppHeader.vue";
 import ToastContainer from "./components/ToastContainer.vue";
 import UpdatePrompt from "./components/UpdatePrompt.vue";
 import OfflineBanner from "./components/OfflineBanner.vue";
