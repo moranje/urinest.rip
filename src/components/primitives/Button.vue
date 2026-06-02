@@ -66,11 +66,9 @@ withDefaults(
 }
 .btn--sm {
   padding: 0 var(--spacing-md);
-  min-height: 36px;
 }
 .btn--md {
   padding: 0 var(--spacing-lg);
-  min-height: 40px;
 }
 .btn--lg {
   padding: 0 var(--spacing-xl);

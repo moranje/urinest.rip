@@ -1,4 +1,5 @@
 import { mount } from "@vue/test-utils";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import Checkbox from "./Checkbox.vue";
 import IconButton from "./IconButton.vue";
@@ -19,6 +20,16 @@ describe("form primitives", () => {
 
     expect(wrapper.get("button").attributes("aria-label")).toBe("Instellingen");
     expect(wrapper.get("button").classes()).toContain("icon-button--outlined");
+  });
+
+  it("keeps small icon buttons at the minimum touch target", () => {
+    const source = readFileSync("src/components/primitives/IconButton.vue", "utf8");
+    const smallCss =
+      source.match(/\.icon-button--sm\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(smallCss).toContain("min-width: var(--min-touch-target)");
+    expect(smallCss).toContain("min-height: var(--min-touch-target)");
+    expect(smallCss).not.toMatch(/min-(?:width|height):\s*(3[0-9]|4[0-3])px/);
   });
 
   it("emits input value updates and links support text", async () => {

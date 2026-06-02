@@ -59,8 +59,8 @@ const iconSize = computed(() => (props.size === "sm" ? 18 : props.size === "lg" 
 }
 
 .icon-button--sm {
-  min-width: 36px;
-  min-height: 36px;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
 }
 
 .icon-button--lg {
