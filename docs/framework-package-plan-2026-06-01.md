@@ -182,7 +182,7 @@ App blijft eigenaar van domeindata en branding.
 
 - [x] `SegmentedControl` voor role/theme/admin filters
 - [x] `FormField`
-- [ ] `ChoiceOption`
+- [x] `ChoiceOption`
 - [ ] `ChoiceGroup`
 - [ ] `InfoPopover`
 - [x] `Notice`
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 54 files, 260 tests.
+- [x] Current full suite groen: 55 files, 263 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
