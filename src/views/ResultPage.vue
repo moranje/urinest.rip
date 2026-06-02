@@ -32,18 +32,16 @@
       <div v-else-if="resultData" class="result-content">
         <!-- Title & Description -->
         <div class="result-section result-section--title">
-          <span
+          <StatusBadge
             v-if="resultData.urgency"
-            class="urgency-badge"
-            :class="[
-              'urgency-badge--' + resultData.urgency.toLowerCase(),
-              { 'urgency-badge--pulse': resultData.urgency.toLowerCase() === 'u1' },
-            ]"
+            :variant="urgencyVariant"
+            size="md"
+            :pulse="urgencyVariant === 'u1'"
             :role="resultData.urgency.toLowerCase() === 'u1' ? 'status' : undefined"
             :aria-label="urgencyAriaLabel"
           >
             {{ resultData.urgency }}
-          </span>
+          </StatusBadge>
           <h1 class="result-heading">{{ resultData.title }}</h1>
           <p v-if="resultData.description" class="result-description">
             {{ resultData.description }}
@@ -162,6 +160,7 @@ import BackButton from "../components/primitives/BackButton.vue";
 import CopyAction from "../components/molecules/CopyAction.vue";
 import Notice from "../components/molecules/Notice.vue";
 import SourceChip from "../components/molecules/SourceChip.vue";
+import StatusBadge from "../components/molecules/StatusBadge.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
 
@@ -194,6 +193,12 @@ const urgencyAriaLabel = computed(() => {
   if (u === "u2") return "Urgentie U2 — binnen 24 uur";
   if (u === "u3") return "Urgentie U3 — niet-spoedeisend";
   return resultData.value?.urgency ?? "";
+});
+
+const urgencyVariant = computed(() => {
+  const u = resultData.value?.urgency?.toLowerCase();
+  if (u === "u1" || u === "u2" || u === "u3") return u;
+  return "info";
 });
 
 watch(allContraindicationsChecked, (isChecked) => {
@@ -356,42 +361,6 @@ watch(
   color: var(--md-sys-color-primary);
   margin-top: 0;
   margin-bottom: var(--spacing-sm);
-}
-
-/* Urgency badge */
-.urgency-badge {
-  display: inline-block;
-  font: var(--md-sys-typescale-label-large);
-  font-weight: 700;
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-full);
-  margin-bottom: var(--spacing-sm);
-}
-.urgency-badge--u1 {
-  background-color: var(--md-sys-color-error);
-  color: var(--md-sys-color-on-error);
-}
-.urgency-badge--u2 {
-  background-color: var(--md-sys-color-error);
-  color: var(--md-sys-color-on-error);
-}
-.urgency-badge--u3 {
-  background-color: var(--md-sys-color-warning);
-  color: var(--md-sys-color-on-warning-container);
-}
-
-.urgency-badge--pulse {
-  animation: urgency-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes urgency-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-sys-color-error) 60%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--md-sys-color-error) 0%, transparent);
-  }
 }
 
 .result-heading {

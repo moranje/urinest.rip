@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Icon from "../primitives/Icon.vue";
+import StatusBadge from "../molecules/StatusBadge.vue";
 import type { LogGroup } from "../../store/logStore";
 
 defineProps<{
@@ -11,10 +12,10 @@ const emit = defineEmits<{
   select: [fingerprint: string];
 }>();
 
-function levelBadgeClass(level: string): string {
-  if (level === "error") return "badge-error";
-  if (level === "info") return "badge-info";
-  return "badge-warn";
+function levelBadgeVariant(level: string): "error" | "info" | "warn" {
+  if (level === "error") return "error";
+  if (level === "info") return "info";
+  return "warn";
 }
 
 function timeAgo(dateStr: string): string {
@@ -51,18 +52,19 @@ function timeAgo(dateStr: string): string {
       @click="emit('select', group.fingerprint)"
     >
       <div class="group-header">
-        <span :class="['level-badge', levelBadgeClass(group.level)]">{{
-          group.level.toUpperCase()
-        }}</span>
-        <span
+        <StatusBadge :variant="levelBadgeVariant(group.level)">
+          {{ group.level.toUpperCase() }}
+        </StatusBadge>
+        <StatusBadge
           v-if="group.status === 'resolved'"
-          class="status-badge status-resolved"
+          variant="resolved"
           :title="`Opgelost in ${group.resolved_in_version ?? '?'}`"
-          >Opgelost</span
         >
-        <span v-else-if="group.status === 'suppressed'" class="status-badge status-suppressed"
-          >Onderdrukt</span
-        >
+          Opgelost
+        </StatusBadge>
+        <StatusBadge v-else-if="group.status === 'suppressed'" variant="suppressed">
+          Onderdrukt
+        </StatusBadge>
         <span class="group-module">{{ group.module }}</span>
         <span class="group-message">{{ group.message }}</span>
         <span class="group-count" :title="`${group.count} events`">&times;{{ group.count }}</span>
@@ -148,48 +150,6 @@ function timeAgo(dateStr: string): string {
   align-items: center;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
-}
-
-.level-badge {
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 2px var(--spacing-xs);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  flex-shrink: 0;
-}
-
-.badge-error {
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-error);
-}
-
-.badge-warn {
-  background: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
-}
-
-.badge-info {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-}
-
-.status-badge {
-  font-size: 0.625rem;
-  font-weight: 600;
-  padding: 1px var(--spacing-xs);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  flex-shrink: 0;
-}
-
-.status-resolved {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-primary);
-}
-
-.status-suppressed {
-  background: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-outline);
 }
 
 .group-module {

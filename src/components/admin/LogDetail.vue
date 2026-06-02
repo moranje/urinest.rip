@@ -4,6 +4,7 @@ import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
 import Icon from "../primitives/Icon.vue";
+import StatusBadge from "../molecules/StatusBadge.vue";
 import StackTrace from "./StackTrace.vue";
 
 const props = defineProps<{
@@ -101,9 +102,10 @@ async function handleUnresolve() {
   }
 }
 
-function levelBadgeClass(level: string): string {
-  if (level === "error") return "badge-error";
-  return "badge-warn";
+function levelBadgeVariant(level: string): "error" | "info" | "warn" {
+  if (level === "error") return "error";
+  if (level === "info") return "info";
+  return "warn";
 }
 
 function formatTimestamp(dateStr: string): string {
@@ -252,9 +254,9 @@ async function exportMarkdown() {
     </div>
 
     <div class="detail-header">
-      <span :class="['level-badge', levelBadgeClass(group.level)]">{{
-        group.level.toUpperCase()
-      }}</span>
+      <StatusBadge class="detail-level-badge" :variant="levelBadgeVariant(group.level)">
+        {{ group.level.toUpperCase() }}
+      </StatusBadge>
       <h2>{{ group.message }}</h2>
     </div>
 
@@ -367,9 +369,9 @@ async function exportMarkdown() {
             <span class="context-label">Versie</span>
             <span class="context-value code">
               {{ appVersion }}
-              <span v-if="env" :class="['env-badge', env === 'dev' ? 'env-dev' : 'env-prod']">{{
-                env
-              }}</span>
+              <StatusBadge v-if="env" class="detail-env-badge" :variant="env">
+                {{ env }}
+              </StatusBadge>
             </span>
           </div>
           <div v-if="sourceLocation" class="context-item">
@@ -552,23 +554,8 @@ h2 {
   word-break: break-word;
 }
 
-.level-badge {
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 2px var(--spacing-xs);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  flex-shrink: 0;
+.detail-level-badge {
   margin-top: 3px;
-}
-
-.badge-error {
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-error);
-}
-.badge-warn {
-  background: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
 }
 
 .detail-meta {
@@ -653,23 +640,9 @@ h3 {
   font-size: 0.75rem;
 }
 
-.env-badge {
-  font-size: 0.625rem;
-  font-weight: 600;
-  padding: 1px 4px;
-  border-radius: var(--md-sys-shape-corner-extra-small);
+.detail-env-badge {
   margin-left: var(--spacing-xs);
   vertical-align: middle;
-}
-
-.env-dev {
-  background: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
-}
-
-.env-prod {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-primary);
 }
 
 .spinner {
