@@ -113,8 +113,8 @@ Framework test tools.
 - [x] Missing result checks
 - [x] Redirect target checks
 - [x] Role/context matrix runner
-- [ ] Snapshot helpers
-- [ ] Clinical safety fixtures
+- [x] Snapshot helpers
+- [x] Clinical safety fixtures
 - [x] Urinestrip testcase template
 
 ### `urinest.rip` app
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 45 files, 230 tests.
+- [x] Current full suite groen: 46 files, 235 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
