@@ -1,9 +1,10 @@
 <template>
   <div class="questionnaire-template">
     <section class="questionnaire-template__content" aria-label="Vragenlijst">
-      <div
+      <Card
         v-if="isLoading"
         class="questionnaire-template__loading"
+        variant="elevated"
         aria-busy="true"
         aria-label="Vragenlijst laden"
       >
@@ -16,7 +17,7 @@
           <Skeleton variant="option" />
           <Skeleton variant="option" />
         </div>
-      </div>
+      </Card>
       <Transition v-else name="question-fade" mode="out-in">
         <QuestionPanel
           v-if="question"
@@ -64,6 +65,7 @@
 <script setup lang="ts">
 import InfoPopover from "../molecules/InfoPopover.vue";
 import QuestionPanel from "../organisms/QuestionPanel.vue";
+import Card from "../primitives/Card.vue";
 import Skeleton from "../primitives/Skeleton.vue";
 import type { PopoverStyle, Question, QuestionOption } from "../../types";
 
@@ -136,9 +138,6 @@ const emit = defineEmits<{
   box-sizing: border-box;
   padding: var(--spacing-lg);
   margin: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-large);
-  background: var(--md-sys-color-surface-container-low);
-  box-shadow: var(--md-sys-elevation-1);
 }
 
 .questionnaire-template__loading-header {

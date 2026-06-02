@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import QuestionnaireTemplate from "./QuestionnaireTemplate.vue";
@@ -152,10 +153,23 @@ describe("QuestionnaireTemplate", () => {
     const loading = wrapper.get(".questionnaire-template__loading");
     expect(loading.attributes("aria-busy")).toBe("true");
     expect(loading.attributes("aria-label")).toBe("Vragenlijst laden");
+    expect(loading.classes()).toContain("card--elevated");
     expect(
       wrapper.findAll(".skeleton-stub").map((item) => item.attributes("data-variant")),
     ).toEqual(["title", "short", "option", "option", "option"]);
     expect(wrapper.find(".question-panel-stub").exists()).toBe(false);
+  });
+
+  it("delegates loading shell styling to Card", () => {
+    const source = readFileSync("src/components/templates/QuestionnaireTemplate.vue", "utf8");
+    const loadingCss = source.match(/\.questionnaire-template__loading\s*\{(?<body>[\s\S]*?)\n\}/)
+      ?.groups?.body;
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="elevated"');
+    expect(loadingCss).not.toContain("border-radius:");
+    expect(loadingCss).not.toContain("background:");
+    expect(loadingCss).not.toContain("box-shadow:");
   });
 
   it("passes question state to panel and popover", () => {
