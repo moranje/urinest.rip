@@ -56,16 +56,16 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("keeps landing tiles bounded by component scale", () => {
+  it("keeps landing tiles bounded by component scale with a 2x3 desktop layout", () => {
     const landingPage = read("src/views/LandingPage.vue");
 
     expect(landingPage).not.toContain("28vw");
     expect(landingPage).not.toContain("@container landing (max-width: 56.25rem)");
     expect(landingPage).toContain("bm-landing-menu-grid__primary");
     expect(landingPage).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
-    expect(landingPage).toContain(
-      "grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)))",
-    );
+    expect(landingPage).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(landingPage).toContain("@container landing (max-width: 44rem)");
+    expect(landingPage).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(landingPage).toContain("max-inline-size: var(--landing-tile-size)");
   });
 

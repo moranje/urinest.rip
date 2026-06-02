@@ -86,7 +86,7 @@ onMounted(async () => {
 
 :deep(.bm-landing-menu-grid__primary) {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, var(--landing-tile-size)));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
   justify-content: center;
   align-items: start;
@@ -108,6 +108,7 @@ onMounted(async () => {
 @container landing (max-width: 44rem) {
   :deep(.bm-landing-menu-grid__primary) {
     --landing-tile-size: clamp(13rem, 32vw, 17rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
