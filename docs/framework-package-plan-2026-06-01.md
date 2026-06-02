@@ -123,12 +123,12 @@ Framework test tools.
 
 App blijft eigenaar van domeindata en branding.
 
-- [ ] YAML flows
+- [x] YAML flows
 - [x] Urinest icons/taxonomy
 - [x] Guideline traceability
-- [ ] About page
-- [ ] PWA branding
-- [ ] Supabase admin/log dashboard
+- [x] About page
+- [x] PWA branding
+- [x] Supabase admin/log dashboard
 - [ ] Clinical Dutch copy
 
 ## Architectuur Checklist
@@ -382,14 +382,17 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
-- [ ] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
+- [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
 - [ ] `urinest.rip` build scripts aanpassen: package-build scripts verwijderen uit app-only CI, maar `check:packages` vervangen door registry smoke checks zolang extractie loopt.
 - [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
-- [ ] Migratievolgorde: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
+- [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
+- [ ] Migratievolgorde uitvoeren met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`.
 - [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke, landing-grid regressie, questionnaire-switch regressie en Urinestrip end-to-end fixture.
 - [ ] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
-- [ ] Package release-notes in Gitea taggen met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
-- [ ] Rollback-plan: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
+- [x] Package release-notes format gedocumenteerd met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
+- [ ] Package release-notes in Gitea taggen zodra de prerelease packages bestaan.
+- [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
+- [ ] Rollback-plan uitvoeren en bewijzen met een echte registry-versie en Gitea tag.
 
 ## Commit Discipline
 
