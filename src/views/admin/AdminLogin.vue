@@ -6,6 +6,7 @@ import { useToastStore } from "../../store/toastStore";
 import Button from "../../components/primitives/Button.vue";
 import IconButton from "../../components/primitives/IconButton.vue";
 import Input from "../../components/primitives/Input.vue";
+import Notice from "../../components/molecules/Notice.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -55,9 +56,9 @@ async function handleSubmit() {
   <div class="login-page">
     <form class="login-card" novalidate @submit.prevent="handleSubmit">
       <h1>Admin Login</h1>
-      <p v-if="sessionExpired" class="session-expired" role="status">
+      <Notice v-if="sessionExpired" variant="warning" role="status">
         Sessie verlopen. Log opnieuw in.
-      </p>
+      </Notice>
       <Input
         id="email"
         v-model="email"
@@ -131,16 +132,6 @@ h1 {
   color: var(--md-sys-color-on-surface);
   text-align: center;
   margin-bottom: var(--spacing-sm);
-}
-
-.session-expired {
-  margin: 0 0 var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--md-sys-color-warning);
-  border-radius: var(--md-sys-shape-corner-small);
-  color: var(--md-sys-color-on-warning-container);
-  background: var(--md-sys-color-warning-container);
-  font: var(--md-sys-typescale-body-medium);
 }
 
 .password-field {

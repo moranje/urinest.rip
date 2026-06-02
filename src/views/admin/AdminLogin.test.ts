@@ -34,8 +34,10 @@ describe("AdminLogin", () => {
 
     expect(source).toContain("<Input");
     expect(source).toContain("<IconButton");
+    expect(source).toContain("<Notice");
     expect(source).not.toContain("<input");
     expect(source).not.toContain("show-password-toggle");
+    expect(source).not.toContain(".session-expired");
     expect(source).not.toContain(".login-btn");
     expect(source).not.toContain(".field {");
   });
