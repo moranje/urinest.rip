@@ -118,13 +118,13 @@ function timeAgo(dateStr: string): string {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   background: var(--md-sys-color-surface-container-lowest);
   cursor: pointer;
   text-align: left;
-  width: 100%;
   transition: background var(--motion-duration-short) var(--motion-easing-standard);
 }
 
@@ -147,46 +147,45 @@ function timeAgo(dateStr: string): string {
 
 .group-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-sm);
-  flex-wrap: wrap;
 }
 
 .group-module {
-  font: var(--md-sys-typescale-label-small);
   color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-small);
 }
 
 .group-message {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--md-sys-color-on-surface);
   font: var(--md-sys-typescale-body-small);
   font-weight: 500;
-  color: var(--md-sys-color-on-surface);
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  min-width: 0;
-  flex: 1;
 }
 
 .group-count {
-  font: var(--md-sys-typescale-body-small);
-  font-weight: 600;
-  color: var(--md-sys-color-on-surface-variant);
-  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-small);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
 
 .group-meta {
-  font: var(--md-sys-typescale-label-small);
-  color: var(--md-sys-color-outline);
   padding-left: calc(var(--spacing-sm) + 3ch + var(--spacing-xs) + var(--spacing-sm));
+  color: var(--md-sys-color-outline);
+  font: var(--md-sys-typescale-label-small);
 }
 
 .meta-dot {
   margin: 0 var(--spacing-xs);
 }
 
-/* bp-md: 600px */
 @media (max-width: 599.98px) {
   .group-row {
     padding: var(--spacing-sm) var(--spacing-md);

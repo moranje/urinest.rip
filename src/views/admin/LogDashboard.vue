@@ -3,9 +3,9 @@ import { onMounted, onUnmounted, watch } from "vue";
 import { useLogStore } from "../../store/logStore";
 import { useAuthStore } from "../../store/authStore";
 import { useRouter } from "vue-router";
-import LogGroupList from "../../components/admin/LogGroupList.vue";
 import LogDetail from "../../components/admin/LogDetail.vue";
 import LogFilters from "../../components/admin/LogFilters.vue";
+import AdminLogList from "../../components/organisms/AdminLogList.vue";
 import type { LogFilters as LogFiltersType } from "../../store/logStore";
 
 const logStore = useLogStore();
@@ -89,7 +89,7 @@ watch(
         {{ logStore.error }}
       </div>
 
-      <LogGroupList
+      <AdminLogList
         :groups="logStore.groups"
         :loading="logStore.loading"
         @select="handleSelectGroup"
