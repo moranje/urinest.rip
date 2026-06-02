@@ -155,13 +155,13 @@ Eisen voor consumer apps:
 ## Consumer Release Checklist
 
 - [x] Framework packages bevatten geen Supabase/admin/storage hardcoding (`npm run check:framework-boundaries`).
-- [ ] Telemetry adapter is no-op zonder consumer config.
-- [ ] No-PHI telemetry contract is getest.
-- [ ] No-PHI storage contract is getest.
-- [ ] CSP headers zijn enforcing en getest.
-- [ ] Source maps worden prive geupload en uit deploy artifact verwijderd.
-- [ ] Admin routes zijn app-only, lazy en auth-gated.
-- [ ] RLS/admin policies zijn getest met admin en niet-admin user.
-- [ ] Malicious flow metadata tests zijn groen.
+- [x] Telemetry adapter is no-op zonder consumer config (`packages/vue/src/telemetry.ts`, `npm run check:vue-package`).
+- [x] No-PHI telemetry contract is getest (`telemetry-privacy`, `log-sink`, `error-matrix`).
+- [x] No-PHI storage contract is getest (`storage`, `redirect-trail`, package boundary checks).
+- [x] CSP headers zijn enforcing en getest (`security-headers`).
+- [x] Source maps worden prive geupload en uit deploy artifact verwijderd (`.github/workflows/ci.yml`).
+- [x] Admin routes zijn app-only, lazy en auth-gated (`router/index.ts`, package boundary checks).
+- [x] RLS/admin policies zijn getest met admin en niet-admin user (`supabase-migrations`).
+- [x] Malicious flow metadata tests zijn groen (`flow-compiler`, `compiler`).
 - [ ] Calculatorformules zitten in domain packages met testvectors.
-- [ ] Traceability en reviewdatums zijn actueel.
+- [x] Traceability en reviewdatums zijn actueel (`npm run check:guidelines`).
