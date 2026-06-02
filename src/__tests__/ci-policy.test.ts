@@ -3,8 +3,33 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
+const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
+};
+const corePackage = JSON.parse(readFileSync(resolve("packages/core/package.json"), "utf8")) as {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
+};
+const compilerPackage = JSON.parse(
+  readFileSync(resolve("packages/compiler/package.json"), "utf8"),
+) as {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
+};
+const testingPackage = JSON.parse(
+  readFileSync(resolve("packages/testing/package.json"), "utf8"),
+) as {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
+};
+const vuePackage = JSON.parse(readFileSync(resolve("packages/vue/package.json"), "utf8")) as {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
 };
 
 describe("CI policy", () => {
@@ -15,6 +40,10 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:packages");
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain("npm run build-storybook");
+    expect(workflow).toContain("node-version: [20, 22, 24]");
+    expect(workflow).toContain("node-version: ${{ matrix.node-version }}");
+    expect(workflow).toContain("npm run format:check");
+    expect(workflow).toContain("npm run check:tsgo");
     expect(packageJson.scripts["check:consumer-imports"]).toBe(
       "node scripts/check-consumer-package-imports.mjs",
     );
@@ -24,5 +53,26 @@ describe("CI policy", () => {
     expect(packageJson.scripts["budget:packages"]).toBe(
       "node scripts/check-package-bundle-budget.mjs",
     );
+  });
+
+  it("keeps framework package release policy explicit and lockstep", () => {
+    const packages = [corePackage, compilerPackage, testingPackage, vuePackage];
+    const versions = new Set(packages.map((manifest) => manifest.version));
+
+    expect(packages.map((manifest) => manifest.name).sort()).toEqual([
+      "@beslismodel/compiler",
+      "@beslismodel/core",
+      "@beslismodel/testing",
+      "@beslismodel/vue",
+    ]);
+    expect(versions.size).toBe(1);
+    expect(testingPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
+    expect(vuePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
+    expect(releaseStrategy).toContain("All four packages use same version");
+    expect(releaseStrategy).toContain("publishConfig.registry");
+    expect(releaseStrategy).toContain("dist-tag `next`");
+    expect(releaseStrategy).toContain("Registry Smoke");
+    expect(releaseStrategy).toContain("Rollback");
+    expect(releaseStrategy).toContain("Node `20`, `22` and `24`");
   });
 });

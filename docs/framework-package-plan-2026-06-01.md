@@ -355,8 +355,8 @@ Exit criteria:
 - [x] Exports/files/declarations.
 - [x] Library build via Rolldown/Vite.
 - [x] Consumer fixture app.
-- [ ] CI matrix.
-- [ ] Versioning strategy.
+- [x] CI matrix.
+- [x] Versioning strategy.
 
 ### Ronde 6 — Extractie Naar Gitea En Lokale NPM
 

@@ -9,16 +9,20 @@ on:
 
 jobs:
   ci:
-    name: Lint, Type-check & Test
+    name: CI (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -28,19 +32,25 @@ jobs:
 
       - name: Lint + Type-check + Tests (parallel)
         run: |
+          npm run format:check &
+          PID_FORMAT=$!
           npm run lint &
           PID_LINT=$!
           npm run lint:eslint &
           PID_ESLINT=$!
           npm run check &
           PID_CHECK=$!
+          npm run check:tsgo &
+          PID_TSGO=$!
           npm run test &
           PID_TEST=$!
 
           FAIL=0
+          wait $PID_FORMAT || FAIL=1
           wait $PID_LINT   || FAIL=1
           wait $PID_ESLINT || FAIL=1
           wait $PID_CHECK  || FAIL=1
+          wait $PID_TSGO   || FAIL=1
           wait $PID_TEST   || FAIL=1
           exit $FAIL
 
@@ -82,7 +92,7 @@ jobs:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
-      HUSKY: '0'
+      HUSKY: "0"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,7 +101,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -174,11 +184,11 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
         with:
-          publish-dir: './dist'
+          publish-dir: "./dist"
           production-branch: master
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy ${{ steps.release.outputs.version || github.sha }}'
+          deploy-message: "Deploy ${{ steps.release.outputs.version || github.sha }}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
