@@ -29,6 +29,7 @@ const preview: Preview = {
             "Card",
             "Badge",
             "Chip",
+            "TextLink",
             "Skeleton",
             "ProgressBar",
             "FormControls",

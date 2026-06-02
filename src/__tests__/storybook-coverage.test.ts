@@ -33,6 +33,11 @@ const requiredStoryContracts = [
     exports: ["Filled", "ExternalLink", "LongText"],
   },
   {
+    file: "src/stories/TextLink.stories.ts",
+    title: 'title: "Primitives/TextLink"',
+    exports: ["External", "Internal", "LongText"],
+  },
+  {
     file: "src/stories/ChoiceOption.stories.ts",
     title: 'title: "Molecules/ChoiceOption"',
     exports: ["LongText", "WithoutKeyboardPrefix"],
@@ -69,6 +74,7 @@ describe("storybook coverage", () => {
         "Button.stories.ts",
         "Card.stories.ts",
         "Chip.stories.ts",
+        "TextLink.stories.ts",
         "FormControls.stories.ts",
       ]),
     );

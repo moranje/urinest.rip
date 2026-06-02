@@ -5,24 +5,19 @@
       <p>
         Deze website is gemaakt als beslishulp bij urineonderzoek in de huisartsenpraktijk. De
         website is gebaseerd op de
-        <a
-          href="https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst"
-          target="_blank"
-          >NHG-standaard Urineweginfecties</a
+        <TextLink href="https://richtlijnen.nhg.org/standaarden/urineweginfecties#volledige-tekst"
+          >NHG-standaard Urineweginfecties</TextLink
         >, de
-        <a href="https://www.nvkc.nl/kwaliteit/richtlijnen/normen-en-richtlijnen" target="_blank"
-          >NVKC richtlijn</a
+        <TextLink href="https://www.nvkc.nl/kwaliteit/richtlijnen/normen-en-richtlijnen"
+          >NVKC richtlijn</TextLink
         >, de
-        <a
-          href="https://www.nvu.nl/kwaliteitsbeleid/richtlijnen/actuele-richtlijnen/"
-          target="_blank"
-          >NVU richtlijn Hematurie</a
+        <TextLink href="https://www.nvu.nl/kwaliteitsbeleid/richtlijnen/actuele-richtlijnen/"
+          >NVU richtlijn Hematurie</TextLink
         >
         en de
-        <a
+        <TextLink
           href="https://www.verenso.nl/richtlijnen-en-praktijkvoering/richtlijnendatabase/urineweginfecties"
-          target="_blank"
-          >Verenso richtlijn</a
+          >Verenso richtlijn</TextLink
         >.
       </p>
 
@@ -37,7 +32,7 @@
         <tbody>
           <tr v-for="g in guidelines" :key="g.name">
             <td>
-              <a v-if="g.url" :href="g.url" target="_blank">{{ g.name }}</a
+              <TextLink v-if="g.url" :href="g.url">{{ g.name }}</TextLink
               ><span v-else>{{ g.name }}</span>
             </td>
             <td>{{ g.reviewed }}</td>
@@ -48,8 +43,8 @@
       <h3>Gebruik</h3>
       <p>
         Gebruik is gratis. Feedback kan via
-        <a href="https://github.com/moranje/urinest.rip" target="_blank">Github</a> of via
-        <a href="https://web.siilo.com/#/signin" target="_blank">Siilo</a>.
+        <TextLink href="https://github.com/moranje/urinest.rip">Github</TextLink> of via
+        <TextLink href="https://web.siilo.com/#/signin">Siilo</TextLink>.
       </p>
       <h3>Features</h3>
       <ul>
@@ -57,10 +52,10 @@
         <li>Statusvoering kopieerbaar naar het EPD</li>
         <li>Werkt offline</li>
         <li>Transparante bronvermeldingen</li>
-        <li><a href="https://github.com/moranje/urinest.rip" target="_blank">Open source</a></li>
+        <li><TextLink href="https://github.com/moranje/urinest.rip">Open source</TextLink></li>
       </ul>
       <h3>Auteur</h3>
-      <p><a href="https://www.linkedin.com/in/martienoranje" target="_blank">Martien Oranje</a></p>
+      <p><TextLink href="https://www.linkedin.com/in/martienoranje">Martien Oranje</TextLink></p>
 
       <p class="build-info">v{{ version }} · bijgewerkt {{ buildDate }}</p>
     </div>
@@ -68,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import TextLink from "../components/primitives/TextLink.vue";
 import { guidelineReviews } from "../lib/guidelines";
 
 const version = __APP_VERSION__;
