@@ -4,12 +4,18 @@ import { useQuestionnaireStore } from "./questionnaireStore";
 import { useRoleStore } from "./roleStore";
 
 vi.mock("../lib/log-sink", () => ({
+  persistError: vi.fn(),
   persistTelemetry: vi.fn(),
+}));
+
+vi.mock("../lib/framework-telemetry", () => ({
+  createSupabaseTelemetryAdapter: () => ({ track: vi.fn() }),
 }));
 
 vi.mock("../lib/breadcrumbs", () => ({
   breadcrumbApi: vi.fn(),
   breadcrumbClick: vi.fn(),
+  breadcrumbLog: vi.fn(),
 }));
 
 const manifest = {
