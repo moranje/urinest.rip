@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
+import Badge from "../primitives/Badge.vue";
 import Button from "../primitives/Button.vue";
 import Card from "../primitives/Card.vue";
 import Icon from "../primitives/Icon.vue";
@@ -57,6 +58,13 @@ function eventDetail(event: LogEvent): Record<string, unknown> {
 }
 
 const breadcrumbs = computed(() => (latestDetail.value.breadcrumbs ?? []) as Breadcrumb[]);
+
+function breadcrumbBadgeVariant(type: Breadcrumb["type"]): "info" | "warn" | "suppressed" | "dev" {
+  if (type === "api") return "warn";
+  if (type === "log") return "suppressed";
+  if (type === "flow") return "dev";
+  return "info";
+}
 
 async function handleResolve() {
   resolving.value = true;
@@ -426,12 +434,19 @@ async function exportMarkdown() {
         <h3>Breadcrumbs ({{ breadcrumbs.length }})</h3>
         <div class="breadcrumb-list">
           <div v-for="(crumb, i) in breadcrumbs" :key="i" class="breadcrumb-row">
-            <span :class="['breadcrumb-type', `bc-${crumb.type}`]">{{ crumb.type }}</span>
+            <Badge class="breadcrumb-type" :variant="breadcrumbBadgeVariant(crumb.type)" size="sm">
+              {{ crumb.type }}
+            </Badge>
             <span class="breadcrumb-message">
               {{ crumb.message }}
-              <span v-if="crumb.count && crumb.count > 1" class="breadcrumb-count"
-                >&times;{{ crumb.count }}</span
+              <Badge
+                v-if="crumb.count && crumb.count > 1"
+                class="breadcrumb-count"
+                variant="suppressed"
+                size="sm"
               >
+                &times;{{ crumb.count }}
+              </Badge>
             </span>
             <span class="breadcrumb-time">{{ formatBreadcrumbTime(crumb.timestamp) }}</span>
           </div>
@@ -642,29 +657,6 @@ h3 {
   border-bottom: none;
 }
 
-.breadcrumb-type {
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.bc-navigation {
-  color: var(--md-sys-color-primary);
-}
-.bc-click {
-  color: var(--md-sys-color-primary);
-}
-.bc-api {
-  color: var(--md-sys-color-warning);
-}
-.bc-log {
-  color: var(--md-sys-color-outline);
-}
-.bc-flow {
-  color: var(--md-sys-color-tertiary);
-}
-
 .breadcrumb-message {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -672,12 +664,6 @@ h3 {
 }
 
 .breadcrumb-count {
-  font-size: 0.625rem;
-  font-weight: 600;
-  color: var(--md-sys-color-outline);
-  background: var(--md-sys-color-surface-container);
-  padding: 0 4px;
-  border-radius: var(--md-sys-shape-corner-extra-small);
   margin-left: var(--spacing-xs);
 }
 

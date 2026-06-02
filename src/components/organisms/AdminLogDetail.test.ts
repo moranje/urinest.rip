@@ -102,6 +102,7 @@ describe("AdminLogDetail", () => {
 
     expect(source).toContain("<Button");
     expect(source).toContain("<Card");
+    expect(source).toContain("<Badge");
     expect(source).toContain("<Input");
     expect(source).not.toContain("<BackButton");
     expect(source).not.toContain('class="back-btn"');
@@ -140,11 +141,27 @@ describe("AdminLogDetail", () => {
     expect(wrapper.text()).toContain("src/router.ts:10:5");
     expect(wrapper.get(".stack-trace-stub").text()).toContain("Transition was skipped");
     expect(wrapper.text()).toContain("Breadcrumbs (1)");
+    expect(wrapper.get(".breadcrumb-type").classes()).toContain("badge--dev");
+    expect(wrapper.get(".breadcrumb-count").classes()).toContain("badge--suppressed");
     expect(wrapper.text()).toContain("Events (2)");
 
     await wrapper.get('[data-testid="log-detail-back"]').trigger("click");
 
     expect(wrapper.emitted("back")).toHaveLength(1);
+  });
+
+  it("delegates breadcrumb labels to Badge", () => {
+    const source = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
+    const countCss =
+      source.match(/\.breadcrumb-count\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("breadcrumbBadgeVariant");
+    expect(source).not.toContain("bc-navigation");
+    expect(source).not.toContain("bc-click");
+    expect(source).not.toContain("bc-api");
+    expect(countCss).not.toContain("background:");
+    expect(countCss).not.toContain("border-radius:");
+    expect(countCss).not.toContain("padding:");
   });
 
   it("resolves an open group with a required version", async () => {
