@@ -122,10 +122,13 @@ describe("SegmentedControl", () => {
     expect(indicatorCss).not.toContain("box-shadow");
     expect(indicatorCss).not.toContain("filter");
     expect(indicatorCss).not.toContain("linear-gradient");
+    expect(indicatorCss).not.toContain("background: var(--md-sys-color-primary)");
+    expect(indicatorCss).toContain("--segmented-control-indicator-color");
     expect(activeCss).toBeDefined();
     expect(activeCss).not.toContain("text-shadow");
     expect(activeFocusCss).toBeDefined();
     expect(activeFocusCss).not.toContain("--md-sys-color-primary");
+    expect(activeFocusCss).not.toContain("--md-sys-color-on-primary");
     expect(source).not.toContain("segmented-control-label-pop");
   });
 });

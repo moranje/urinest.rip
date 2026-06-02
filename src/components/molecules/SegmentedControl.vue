@@ -165,6 +165,17 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
   --segmented-control-count: 1;
   --segmented-control-index: 0;
   --segmented-control-segment-min: max(var(--min-touch-target), 4.75rem);
+  --segmented-control-indicator-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 82%,
+    var(--md-sys-color-surface-container-high)
+  );
+  --segmented-control-indicator-border-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 32%,
+    var(--md-sys-color-outline-variant)
+  );
+  --segmented-control-active-color: var(--md-sys-color-on-primary-container);
 
   position: relative;
   isolation: isolate;
@@ -190,9 +201,9 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
   z-index: 0;
   width: calc((100% - (2 * var(--spacing-xs))) / var(--segmented-control-count));
   box-sizing: border-box;
-  border: 1px solid transparent;
+  border: 1px solid var(--segmented-control-indicator-border-color);
   border-radius: var(--md-sys-shape-corner-full);
-  background: var(--md-sys-color-primary);
+  background: var(--segmented-control-indicator-color);
   transform: translateX(calc(var(--segmented-control-index) * 100%));
   transition:
     transform var(--motion-duration-enter) var(--motion-easing-spring),
@@ -242,7 +253,7 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
 }
 
 .segmented-control__option--active {
-  color: var(--md-sys-color-on-primary);
+  color: var(--segmented-control-active-color);
 }
 
 .segmented-control__option:disabled {
@@ -260,7 +271,7 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
 }
 
 .segmented-control__option--active:focus-visible {
-  outline-color: var(--md-sys-color-on-primary);
+  outline-color: color-mix(in srgb, var(--md-sys-color-outline) 80%, transparent);
 }
 
 .segmented-control__text {
