@@ -2,7 +2,7 @@ import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createMemoryHistory, createRouter, type Router } from "vue-router";
+import { createMemoryHistory, createRouter, RouterView, type Router } from "vue-router";
 import { nextTick } from "vue";
 import LandingPage from "../views/LandingPage.vue";
 import QuestionnairePage from "../views/QuestionnairePage.vue";
@@ -144,6 +144,29 @@ async function mountResultRoute(routePath: string, resultKey: string) {
   return { router, wrapper };
 }
 
+async function mountRouterViewRoute(routePath: string) {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const router = createTestRouter();
+  router.push(routePath);
+  await router.isReady();
+
+  const wrapper = mount(
+    {
+      components: { RouterView },
+      template: "<RouterView />",
+    },
+    {
+      attachTo: document.body,
+      global: {
+        plugins: [pinia, router],
+      },
+    },
+  );
+  await settleRouteUi();
+  return { router, wrapper };
+}
+
 describe("route accessibility smoke", () => {
   beforeEach(() => {
     sessionStorage.clear?.();
@@ -262,6 +285,32 @@ describe("route accessibility smoke", () => {
         wrapper.findAll('[role="radio"]').map((option) => option.attributes("aria-checked")),
       ).toEqual(["false", "true"]);
 
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "questionnaire redirect preserves the source flow in browser history",
+    async () => {
+      const { router, wrapper } = await mountRouterViewRoute("/questionnaire/strip");
+
+      expect(router.currentRoute.value.fullPath).toBe("/questionnaire/strip?q=q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
+
+      await wrapper.findAll<HTMLButtonElement>('[role="radio"]')[0]?.trigger("keydown.space");
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.name).toBe("Questionnaire");
+      expect(router.currentRoute.value.params.id).toBe("bacteriurie");
+      expect(router.currentRoute.value.query.q).toBe("q_bac_tissue");
+      expect(wrapper.get("h1").text()).toBe("Is er sprake van weefselinvasie?");
+
+      router.back();
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.fullPath).toBe("/questionnaire/strip?q=q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,

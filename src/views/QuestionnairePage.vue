@@ -396,7 +396,7 @@ const determineResult = (options: { backTarget?: string } = {}): void => {
         role: roleStore.role,
       });
       questionnaireStore.clearAnswers(props.id);
-      void router.replace(`/questionnaire/${value}`).catch((error: unknown) => {
+      void router.push(`/questionnaire/${value}`).catch((error: unknown) => {
         isNavigating.value = false;
         handleError(error, "router:questionnaire-redirect", {
           questionnaireId: props.id,
