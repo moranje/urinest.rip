@@ -97,34 +97,14 @@
       </Transition>
     </section>
 
-    <teleport to="body">
-      <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-      <div
-        v-if="activePopoverOptionId"
-        class="info-popover md-card"
-        :id="activePopoverOptionId ? `option-info-${activePopoverOptionId}` : undefined"
-        :style="popoverStyle"
-        role="dialog"
-        aria-label="Meer informatie"
-        tabindex="-1"
-        @mouseenter="cancelPopoverClose"
-        @mouseleave="schedulePopoverClose"
-        @focusin="cancelPopoverClose"
-        @focusout="schedulePopoverClose"
-      >
-        <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
-        <div v-html="compiledMarkdown(popoverDescription)" />
-        <!-- eslint-enable vue/no-v-html -->
-        <button
-          class="info-popover-close"
-          type="button"
-          aria-label="Informatie sluiten"
-          @click="closePopover"
-        >
-          <Icon name="x" :size="16" />
-        </button>
-      </div>
-    </teleport>
+    <InfoPopover
+      :active-option-id="activePopoverOptionId"
+      :html="compiledMarkdown(popoverDescription)"
+      :popover-style="popoverStyle"
+      @cancel-close="cancelPopoverClose"
+      @schedule-close="schedulePopoverClose"
+      @close="closePopover"
+    />
   </div>
 </template>
 
@@ -134,6 +114,7 @@ import { useRoute, useRouter } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
 import ChoiceGroup from "../components/molecules/ChoiceGroup.vue";
+import InfoPopover from "../components/molecules/InfoPopover.vue";
 import Icon from "../components/primitives/Icon.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
@@ -707,45 +688,6 @@ watch(
   font: var(--md-sys-typescale-body-small);
   color: var(--md-sys-color-on-surface-variant);
   margin: 0;
-}
-
-.info-popover {
-  width: max-content;
-  max-width: 300px;
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-  box-shadow: var(--md-sys-elevation-3);
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity var(--motion-duration-medium) var(--motion-easing-standard);
-  font: var(--md-sys-typescale-body-small);
-  text-align: left;
-  color: var(--md-sys-color-on-surface);
-  background-color: var(--md-sys-color-surface);
-  overflow-y: auto;
-  max-height: 300px;
-}
-
-.info-popover-close {
-  position: absolute;
-  top: var(--spacing-xs);
-  right: var(--spacing-xs);
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.info-popover-close:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
 
 .question-description {

@@ -184,7 +184,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `FormField`
 - [x] `ChoiceOption`
 - [x] `ChoiceGroup`
-- [ ] `InfoPopover`
+- [x] `InfoPopover`
 - [x] `Notice`
 - [x] `StatusBadge`
 - [x] `SourceChip`
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 56 files, 266 tests.
+- [x] Current full suite groen: 57 files, 269 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
