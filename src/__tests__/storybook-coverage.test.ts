@@ -20,11 +20,6 @@ const requiredStoryContracts = [
   {
     file: "src/stories/FormControls.stories.ts",
     title: 'title: "Primitives/FormControls"',
-    exports: ["Inputs", "SelectionControls", "IconButtonsAndTooltip"],
-  },
-  {
-    file: "src/stories/FormControls.stories.ts",
-    title: 'title: "Primitives/FormControls"',
     exports: ["Inputs", "SelectionControls", "IconButtonsAndTooltip", "AllControls"],
   },
   {
