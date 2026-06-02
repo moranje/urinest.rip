@@ -11,6 +11,7 @@ describe("Badge primitive", () => {
   it("defaults to info variant", () => {
     const wrapper = mount(Badge, { slots: { default: "X" } });
     expect(wrapper.classes()).toContain("badge--info");
+    expect(wrapper.classes()).toContain("badge--md");
   });
 
   it("applies u1 variant (spoed)", () => {
@@ -21,6 +22,17 @@ describe("Badge primitive", () => {
   it("applies u3 variant (warning)", () => {
     const wrapper = mount(Badge, { props: { variant: "u3" }, slots: { default: "U3" } });
     expect(wrapper.classes()).toContain("badge--u3");
+  });
+
+  it("supports compact status variants", () => {
+    const wrapper = mount(Badge, {
+      props: { variant: "resolved", size: "sm", title: "Opgelost" },
+      slots: { default: "OK" },
+    });
+
+    expect(wrapper.classes()).toContain("badge--resolved");
+    expect(wrapper.classes()).toContain("badge--sm");
+    expect(wrapper.attributes("title")).toBe("Opgelost");
   });
 
   it("forwards aria-label and role", () => {

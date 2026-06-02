@@ -19,8 +19,11 @@ describe("StatusBadge", () => {
     expect(wrapper.text()).toBe("U1");
     expect(wrapper.attributes("role")).toBe("status");
     expect(wrapper.attributes("aria-label")).toBe("Urgentie U1 — spoed");
-    expect(wrapper.classes()).toContain("status-badge--u1");
-    expect(wrapper.classes()).toContain("status-badge--pulse");
+    expect(wrapper.classes()).toContain("status-badge");
+    expect(wrapper.classes()).toContain("badge");
+    expect(wrapper.classes()).toContain("badge--u1");
+    expect(wrapper.classes()).toContain("badge--md");
+    expect(wrapper.classes()).toContain("badge--pulse");
     expect(wrapper.classes()).toContain("motion-pulse-emphasis");
   });
 
@@ -34,9 +37,18 @@ describe("StatusBadge", () => {
       slots: { default: "Opgelost" },
     });
 
-    expect(error.classes()).toContain("status-badge--error");
-    expect(resolved.classes()).toContain("status-badge--resolved");
+    expect(error.classes()).toContain("badge--error");
+    expect(resolved.classes()).toContain("badge--resolved");
     expect(resolved.attributes("title")).toBe("Opgelost in 1.2.3");
+  });
+
+  it("delegates status styling to the Badge primitive", () => {
+    const source = readFileSync("src/components/molecules/StatusBadge.vue", "utf8");
+
+    expect(source).toContain("<Badge");
+    expect(source).not.toContain(".status-badge--u1");
+    expect(source).not.toContain(".status-badge--error");
+    expect(source).not.toContain(".status-badge--resolved");
   });
 
   it("keeps pulsing badges quiet when reduced motion is preferred", () => {

@@ -30,7 +30,7 @@ describe("ResultSectionList", () => {
 
     expect(wrapper.get("h1").text()).toBe("Behandeladvies");
     expect(wrapper.get(".result-description").text()).toBe("Korte samenvatting voor de gebruiker.");
-    expect(wrapper.get(".status-badge").classes()).toContain("status-badge--u1");
+    expect(wrapper.get(".status-badge").classes()).toContain("badge--u1");
     expect(wrapper.get(".status-badge").attributes("role")).toBe("status");
     expect(wrapper.get(".status-badge").attributes("aria-label")).toBe("Urgentie U1 - spoed");
     expect(wrapper.text()).toContain("Verricht urinekweek.");

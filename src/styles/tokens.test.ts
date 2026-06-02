@@ -86,7 +86,6 @@ describe("design tokens", () => {
     const icon = read("src/components/primitives/Icon.vue");
     const resultTemplate = read("src/components/templates/ResultTemplate.vue");
     const skeleton = read("src/components/primitives/Skeleton.vue");
-    const statusBadge = read("src/components/molecules/StatusBadge.vue");
 
     expect(mainCss).toContain('@import "./motion.css" layer(utilities)');
     expect(motionCss).toContain(".motion-spin");
@@ -99,12 +98,10 @@ describe("design tokens", () => {
     expect(icon).toContain("'motion-spin': spin");
     expect(resultTemplate).toContain("animation: motion-enter-up");
     expect(skeleton).toContain("skeleton motion-shimmer-sweep");
-    expect(statusBadge).toContain("motion-pulse-emphasis");
     expect(badge).not.toContain("@keyframes badge-pulse");
     expect(button).not.toContain("@keyframes btn-spin");
     expect(icon).not.toContain("@keyframes icon-spin");
     expect(resultTemplate).not.toContain("@keyframes result-template-enter");
-    expect(statusBadge).not.toContain("@keyframes status-badge-pulse");
     expect(mainCss).not.toContain("@keyframes spin");
   });
 
