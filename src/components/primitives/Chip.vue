@@ -63,7 +63,7 @@ const computedRel = computed(
     color var(--motion-duration-medium) var(--motion-easing-standard);
 }
 
-.chip svg {
+.chip :deep(svg) {
   flex-shrink: 0;
 }
 

@@ -39,4 +39,11 @@ describe("Chip primitive", () => {
     expect(chipCss).toContain("min-height: var(--min-touch-target)");
     expect(chipCss).not.toMatch(/min-height:\s*(?:3[0-9]|4[0-3])px/);
   });
+
+  it("styles slotted icon svg through scoped component boundaries", () => {
+    const source = readFileSync("src/components/primitives/Chip.vue", "utf8");
+
+    expect(source).toContain(".chip :deep(svg)");
+    expect(source).not.toContain(".chip svg {");
+  });
 });
