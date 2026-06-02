@@ -1,19 +1,25 @@
 <template>
   <div class="error-page">
-    <div class="error-content">
-      <h1>Er is iets misgegaan</h1>
+    <Notice
+      class="error-content"
+      variant="error"
+      title="Er is iets misgegaan"
+      title-tag="h1"
+      role="alert"
+    >
       <p>{{ message || "Een onverwachte fout is opgetreden." }}</p>
-      <div class="error-actions">
+      <template #action>
         <Button v-if="retryTarget" @click="retry">Probeer opnieuw</Button>
         <Button variant="outlined" @click="goHome">Naar home</Button>
-      </div>
-    </div>
+      </template>
+    </Notice>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Notice from "../components/molecules/Notice.vue";
 import Button from "../components/primitives/Button.vue";
 
 const route = useRoute();
@@ -42,21 +48,10 @@ const goHome = (): void => {
   min-height: 60vh;
 }
 .error-content {
-  text-align: center;
-}
-.error-content h2 {
-  color: var(--md-sys-color-error);
-  margin-bottom: var(--spacing-md);
-}
-.error-content p {
-  margin-bottom: var(--spacing-lg);
-  color: var(--md-sys-color-on-surface-variant);
+  width: min(100%, 42rem);
 }
 
-.error-actions {
-  display: flex;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
+.error-content p {
+  margin: 0;
 }
 </style>

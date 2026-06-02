@@ -397,6 +397,8 @@ describe("route accessibility smoke", () => {
       const result = await runAxe(wrapper);
 
       expect(result.violations.map((violation) => violation.id)).toEqual([]);
+      expect(wrapper.get(".error-content").classes()).toContain("notice--error");
+      expect(wrapper.get("h1").text()).toBe("Er is iets misgegaan");
       expect(wrapper.text()).not.toContain("Terug");
       wrapper.unmount();
     },
