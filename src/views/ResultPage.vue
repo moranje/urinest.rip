@@ -126,19 +126,13 @@
           <h3 class="section-title">Documenteer (voor EPD)</h3>
           <div class="documentation-content">
             <pre class="documentation-text">{{ planDocumentation }}</pre>
-            <Button
-              variant="outlined"
-              class="copy-button"
-              :class="`copy-button--${copyState}`"
-              :disabled="copyState === 'copying'"
-              :loading="copyState === 'copying'"
-              @click="copyDocumentation"
-            >
-              <template #leading>
-                <Icon name="copy" :size="16" />
-              </template>
-              {{ copyLabel }}
-            </Button>
+            <CopyAction
+              class="documentation-copy-action"
+              :text="planDocumentation"
+              label="Kopieer"
+              @copied="handleDocumentationCopied"
+              @error="handleDocumentationCopyError"
+            />
           </div>
         </div>
 
@@ -163,8 +157,8 @@ import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
-import Button from "../components/primitives/Button.vue";
 import Icon from "../components/primitives/Icon.vue";
+import CopyAction from "../components/molecules/CopyAction.vue";
 import SourceChip from "../components/molecules/SourceChip.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
@@ -178,7 +172,6 @@ const toast = useToastStore();
 const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const copyState = ref<"idle" | "copying" | "copied" | "error">("idle");
 const treatmentStatusMessage = ref("");
 
 const contraindicationsState = reactive<Array<Contraindication & { checked: boolean }>>([]);
@@ -199,13 +192,6 @@ const urgencyAriaLabel = computed(() => {
   if (u === "u2") return "Urgentie U2 — binnen 24 uur";
   if (u === "u3") return "Urgentie U3 — niet-spoedeisend";
   return resultData.value?.urgency ?? "";
-});
-
-const copyLabel = computed(() => {
-  if (copyState.value === "copying") return "Kopiëren...";
-  if (copyState.value === "copied") return "Gekopieerd";
-  if (copyState.value === "error") return "Niet gekopieerd";
-  return "Kopieer";
 });
 
 watch(allContraindicationsChecked, (isChecked) => {
@@ -255,30 +241,14 @@ const goBack = (): void => {
   }
 };
 
-let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
+const handleDocumentationCopied = (): void => {
+  navigator.vibrate?.(10);
+  toast.success("Gekopieerd naar klembord");
+};
 
-const copyDocumentation = async (): Promise<void> => {
-  const textToCopy = planDocumentation.value;
-  if (!textToCopy) return;
-  copyState.value = "copying";
-  try {
-    await navigator.clipboard.writeText(textToCopy);
-    navigator.vibrate?.(10);
-    toast.success("Gekopieerd naar klembord");
-    copyState.value = "copied";
-    if (copyResetTimer) clearTimeout(copyResetTimer);
-    copyResetTimer = setTimeout(() => {
-      copyState.value = "idle";
-    }, 1500);
-  } catch (copyError) {
-    handleError(copyError, "result-page:copy-documentation", { resultKey: props.resultKey });
-    copyState.value = "error";
-    toast.error("Kopiëren mislukt");
-    if (copyResetTimer) clearTimeout(copyResetTimer);
-    copyResetTimer = setTimeout(() => {
-      copyState.value = "idle";
-    }, 1500);
-  }
+const handleDocumentationCopyError = (copyError: unknown): void => {
+  handleError(copyError, "result-page:copy-documentation", { resultKey: props.resultKey });
+  toast.error("Kopiëren mislukt");
 };
 
 onMounted(async () => {
@@ -572,25 +542,8 @@ watch(
   flex-grow: 1;
 }
 
-.copy-button {
+.documentation-copy-action {
   flex-shrink: 0;
-  min-height: var(--min-touch-target);
-  padding: 0 var(--spacing-md);
-  font: var(--md-sys-typescale-label-large);
-}
-.copy-button--copying {
-  cursor: progress;
-}
-.copy-button--copied {
-  border-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-primary);
-}
-.copy-button--error {
-  border-color: var(--md-sys-color-error);
-  color: var(--md-sys-color-error);
-}
-.copy-button svg {
-  margin-right: var(--spacing-xs);
 }
 
 /* Sources */
@@ -685,7 +638,7 @@ watch(
     padding: var(--spacing-sm);
     gap: var(--spacing-sm);
   }
-  .copy-button {
+  .documentation-copy-action {
     width: 100%;
   }
 }

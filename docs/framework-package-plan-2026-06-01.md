@@ -188,7 +188,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] `Notice`
 - [ ] `StatusBadge`
 - [x] `SourceChip`
-- [ ] `CopyAction`
+- [x] `CopyAction`
 
 ### Organisms
 
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 51 files, 251 tests.
+- [x] Current full suite groen: 52 files, 254 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
