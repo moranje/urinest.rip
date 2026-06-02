@@ -2,6 +2,9 @@
 
 Status: gereconcilieerd op 2026-06-01.
 
+Framework-brede security- en privacycontracten staan in `docs/framework-security-privacy.md`.
+Die contracten zijn leidend voor consumer apps, nieuwe domeinpakketten en package boundaries.
+
 ## Stack
 
 De app gebruikt bewust de lokale telemetry-stack in plaats van `@oranje/telemetry`.

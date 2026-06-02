@@ -239,20 +239,20 @@ App blijft eigenaar van domeindata en branding.
 - [x] Breaker reload behavior test.
 - [x] Explicit dev persistence enable test.
 - [ ] User-facing errorcopy per domein configureerbaar.
-- [ ] Sourcemap/upload docs voor consumers.
+- [x] Sourcemap/upload docs voor consumers.
 
 ## Security En Privacy Checklist
 
-- [ ] Threat model voor framework package.
-- [ ] No PHI in telemetry contract.
-- [ ] No PHI in storage contract.
+- [x] Threat model voor framework package.
+- [x] No PHI in telemetry contract.
+- [x] No PHI in storage contract.
 - [ ] Storage TTL en keys configureerbaar.
-- [ ] CSP guidance voor consumer apps.
+- [x] CSP guidance voor consumer apps.
 - [x] Sanitizer contract verplicht voor markdown/html.
 - [ ] Dependency audit in package CI.
 - [ ] Secret scanning in CI.
 - [x] Package consumer fixture in CI.
-- [ ] RLS/admin dashboard blijft app-only.
+- [x] RLS/admin dashboard blijft app-only.
 - [x] Admin RLS gebruikt claim/email allowlist.
 - [x] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
 - [x] `.map` files niet publiek deployen.
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 46 files, 235 tests.
+- [x] Current full suite groen: 47 files, 236 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -346,7 +346,7 @@ Exit criteria:
 - [x] Adapter interface.
 - [ ] Supabase app adapter.
 - [ ] Error matrix tests.
-- [ ] Threat model doc.
+- [x] Threat model doc.
 
 ### Ronde 5 — Package Build
 
