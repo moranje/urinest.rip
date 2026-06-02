@@ -147,20 +147,7 @@
           <h3 class="section-title">Bronnen</h3>
           <ul class="sources-list">
             <li v-for="(source, index) in resultData.sources" :key="index">
-              <a
-                v-if="source.url"
-                :href="source.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="source-item source-link"
-              >
-                <Icon name="file-text" :size="14" />
-                {{ source.name }}
-              </a>
-              <span v-else class="source-item source-text">
-                <Icon name="file-text" :size="14" />
-                {{ source.name }}
-              </span>
+              <SourceChip :name="source.name" :url="source.url" />
             </li>
           </ul>
         </div>
@@ -178,6 +165,7 @@ import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
 import Button from "../components/primitives/Button.vue";
 import Icon from "../components/primitives/Icon.vue";
+import SourceChip from "../components/molecules/SourceChip.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
 
@@ -613,39 +601,6 @@ watch(
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
-}
-
-.source-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font: var(--md-sys-typescale-label-small);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 1px solid var(--md-sys-color-outline);
-  background-color: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-on-surface-variant);
-  transition:
-    background-color var(--motion-duration-medium) var(--motion-easing-standard),
-    border-color var(--motion-duration-medium) var(--motion-easing-standard);
-}
-.source-item svg {
-  flex-shrink: 0;
-}
-
-.source-link {
-  color: var(--md-sys-color-primary);
-  text-decoration: none;
-  border-color: var(--md-sys-color-primary);
-  background-color: transparent;
-}
-
-.source-link:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
-}
-
-.source-text {
-  color: var(--md-sys-color-on-surface-variant);
 }
 
 .error-message {
