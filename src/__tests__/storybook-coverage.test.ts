@@ -8,6 +8,11 @@ function read(path: string): string {
 
 const requiredStoryContracts = [
   {
+    file: "src/stories/ActionRow.stories.ts",
+    title: 'title: "Primitives/ActionRow"',
+    exports: ["Default", "Disabled", "LongText"],
+  },
+  {
     file: "src/stories/Button.stories.ts",
     title: 'title: "Primitives/Button"',
     exports: ["Primary", "AllVariants"],
@@ -60,6 +65,7 @@ describe("storybook coverage", () => {
 
     expect(stories).toEqual(
       expect.arrayContaining([
+        "ActionRow.stories.ts",
         "Button.stories.ts",
         "Card.stories.ts",
         "Chip.stories.ts",

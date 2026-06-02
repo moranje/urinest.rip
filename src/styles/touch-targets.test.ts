@@ -17,15 +17,9 @@ function cssBlock(source: string, selector: string): string {
 
 const tokensCss = readFileSync("src/styles/tokens.css", "utf8");
 const menuItem = readFileSync("src/components/MenuItem.vue", "utf8");
-const adminLogList = readFileSync("src/components/organisms/AdminLogList.vue", "utf8");
 
 const appSpecificTargets: TouchTargetCase[] = [
   { file: "src/components/MenuItem.vue", source: menuItem, selector: ".menu-item" },
-  {
-    file: "src/components/organisms/AdminLogList.vue",
-    source: adminLogList,
-    selector: ".group-row",
-  },
 ];
 
 describe("touch target design rules", () => {

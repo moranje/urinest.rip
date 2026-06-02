@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AdminLogList from "./AdminLogList.vue";
@@ -35,6 +36,18 @@ afterEach(() => {
 });
 
 describe("AdminLogList", () => {
+  it("delegates row button styling to the ActionRow primitive", () => {
+    const source = readFileSync("src/components/organisms/AdminLogList.vue", "utf8");
+    const firstChildCss =
+      source.match(/\.group-row:first-child\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("<ActionRow");
+    expect(firstChildCss).toContain("border-radius");
+    expect(source).not.toContain("min-height: var(--min-touch-target)");
+    expect(source).not.toContain("background: var(--md-sys-color-surface-container-lowest)");
+    expect(source).not.toContain(".group-row:hover");
+  });
+
   it("renders loading and empty states", () => {
     const loading = mount(AdminLogList, {
       props: { groups: [], loading: true },

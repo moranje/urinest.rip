@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Icon from "../primitives/Icon.vue";
+import ActionRow from "../primitives/ActionRow.vue";
 import StatusBadge from "../molecules/StatusBadge.vue";
 import type { LogGroup } from "../../store/logStore";
 
@@ -45,7 +46,7 @@ function timeAgo(dateStr: string): string {
   </div>
 
   <div v-else class="group-list">
-    <button
+    <ActionRow
       v-for="group in groups"
       :key="group.fingerprint"
       class="group-row"
@@ -74,7 +75,7 @@ function timeAgo(dateStr: string): string {
         <span class="meta-dot">&middot;</span>
         <span>Eerst: {{ timeAgo(group.first_seen) }}</span>
       </div>
-    </button>
+    </ActionRow>
   </div>
 </template>
 
@@ -107,22 +108,6 @@ function timeAgo(dateStr: string): string {
   flex-direction: column;
 }
 
-.group-row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  box-sizing: border-box;
-  width: 100%;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-md) var(--spacing-lg);
-  border: none;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-lowest);
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--motion-duration-short) var(--motion-easing-standard);
-}
-
 .group-row:first-child {
   border-radius: var(--md-sys-shape-corner-small) var(--md-sys-shape-corner-small) 0 0;
 }
@@ -134,10 +119,6 @@ function timeAgo(dateStr: string): string {
 
 .group-row:only-child {
   border-radius: var(--md-sys-shape-corner-small);
-}
-
-.group-row:hover {
-  background: var(--md-sys-color-surface-container);
 }
 
 .group-header {
@@ -182,10 +163,6 @@ function timeAgo(dateStr: string): string {
 }
 
 @media (max-width: 599.98px) {
-  .group-row {
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-
   .group-meta {
     padding-left: 0;
   }
