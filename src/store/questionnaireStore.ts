@@ -9,6 +9,7 @@ import { breadcrumbApi } from "../lib/breadcrumbs";
 import { handleError, HttpStatusError, TimeoutError } from "../lib/errors";
 import { createSupabaseTelemetryAdapter } from "../lib/framework-telemetry";
 import { guidelineReviews } from "../lib/guidelines";
+import { persistTelemetry } from "../lib/log-sink";
 import { readStorage, removeStorage, writeStorage } from "../lib/storage";
 import { appConfig } from "../config/app-config";
 import { useRoleStore } from "./roleStore";
