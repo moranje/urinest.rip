@@ -81,11 +81,19 @@ export { createMarkdownRenderer } from "./markdown";
 export type {
   LegacyOutcomeString,
   NoneOutcome,
+  OutcomeLogicRule,
+  OutcomeResolution,
   RedirectOutcome,
   ResultOutcome,
   TypedOutcome,
 } from "./outcome";
-export { isRedirectOutcome, isResultOutcome, parseOutcome, toLegacyOutcome } from "./outcome";
+export {
+  determineOutcome,
+  isRedirectOutcome,
+  isResultOutcome,
+  parseOutcome,
+  toLegacyOutcome,
+} from "./outcome";
 export type {
   ProgressCondition,
   ProgressQuestion,

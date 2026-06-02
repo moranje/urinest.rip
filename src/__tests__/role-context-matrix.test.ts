@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { determineOutcome } from "decision-engine-core";
-import { parseOutcome, type TypedOutcome } from "@beslismodel/core";
+import { determineOutcome, parseOutcome, type TypedOutcome } from "@beslismodel/core";
 import { assertRoleContextMatrix, type RoleContextMatrixCase } from "@beslismodel/testing";
 import mainData from "../../public/main.json";
 

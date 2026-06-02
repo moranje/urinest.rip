@@ -1,4 +1,20 @@
+import type { ManifestCondition, ManifestId } from "./manifest";
+import { validateConditions, type ConditionAnswers } from "./conditions";
+
 export type LegacyOutcomeString = `redirect:${string}` | `result:${string}`;
+
+export interface OutcomeLogicRule {
+  readonly id?: ManifestId;
+  readonly conditions?: readonly ManifestCondition[] | null;
+  readonly actionType: string;
+  readonly resultKey?: ManifestId;
+  readonly redirectToQuestionnaire?: ManifestId;
+}
+
+export interface OutcomeResolution {
+  readonly outcome: LegacyOutcomeString | null;
+  readonly ruleId: ManifestId | null;
+}
 
 export interface RedirectOutcome {
   type: "redirect";
@@ -49,4 +65,52 @@ export function isRedirectOutcome(outcome: TypedOutcome): outcome is RedirectOut
 
 export function isResultOutcome(outcome: TypedOutcome): outcome is ResultOutcome {
   return outcome.type === "result";
+}
+
+const toOutcomeString = (rule: OutcomeLogicRule): LegacyOutcomeString | null => {
+  if (
+    (rule.actionType === "redirectToQuestionnaire" || rule.actionType === "redirect") &&
+    rule.redirectToQuestionnaire
+  ) {
+    return `redirect:${rule.redirectToQuestionnaire}`;
+  }
+
+  if (rule.resultKey) {
+    return `result:${rule.resultKey}`;
+  }
+
+  return null;
+};
+
+export function determineOutcome(
+  answers: ConditionAnswers = {},
+  resultsLogic: readonly OutcomeLogicRule[] | null | undefined,
+): OutcomeResolution {
+  if (!resultsLogic || resultsLogic.length === 0) {
+    return { outcome: null, ruleId: null };
+  }
+
+  let bestMatch: OutcomeLogicRule | null = null;
+  let highestMatchedCount = -1;
+
+  for (const rule of resultsLogic) {
+    const { isValid, matchedCount } = validateConditions(answers, rule.conditions);
+
+    if (isValid && matchedCount > highestMatchedCount) {
+      bestMatch = rule;
+      highestMatchedCount = matchedCount;
+    }
+  }
+
+  bestMatch ??=
+    resultsLogic.find((rule) => !rule.conditions || rule.conditions.length === 0) ?? null;
+
+  if (!bestMatch) {
+    return { outcome: null, ruleId: null };
+  }
+
+  return {
+    outcome: toOutcomeString(bestMatch),
+    ruleId: bestMatch.id ?? null,
+  };
 }

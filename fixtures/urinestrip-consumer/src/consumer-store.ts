@@ -1,4 +1,4 @@
-import { determineOutcome } from "decision-engine-core";
+import { determineOutcome } from "@beslismodel/core";
 import { createPinia, setActivePinia } from "pinia";
 import type { CompiledDecisionManifest } from "@beslismodel/compiler";
 import {

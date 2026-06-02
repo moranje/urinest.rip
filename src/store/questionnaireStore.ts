@@ -1,4 +1,4 @@
-import { determineOutcome } from "decision-engine-core";
+import { determineOutcome } from "@beslismodel/core";
 import {
   createBeslismodelStore,
   type BeslismodelManifestInput,

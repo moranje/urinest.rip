@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { determineOutcome, validateConditions } from "decision-engine-core";
-import { parseOutcome, toLegacyOutcome, type TypedOutcome } from "@beslismodel/core";
+import {
+  determineOutcome,
+  parseOutcome,
+  toLegacyOutcome,
+  validateConditions,
+  type TypedOutcome,
+} from "@beslismodel/core";
 import mainData from "../../public/main.json";
 
 type Option = { id: string; value: string; text: string };
