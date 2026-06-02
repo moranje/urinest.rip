@@ -90,16 +90,22 @@ const isAdminActive = computed(() => route.path.startsWith("/admin"));
 .app-title-link {
   display: flex;
   align-items: center;
-  margin: 0 calc(-1 * var(--spacing-sm));
-  padding: 0 var(--spacing-sm);
-  border-radius: var(--md-sys-shape-corner-small);
+  min-height: var(--min-touch-target);
+  padding: 0;
   color: inherit;
   text-decoration: none;
-  transition: background-color var(--motion-duration-short) var(--motion-easing-standard);
+  text-underline-offset: 0.35em;
 }
 
 .app-title-link:hover {
-  background-color: var(--md-sys-color-surface-variant);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--md-sys-color-primary);
+}
+
+.app-title-link:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: var(--spacing-xs);
 }
 
 .header-icon-link {
