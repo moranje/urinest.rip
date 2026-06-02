@@ -21,10 +21,16 @@
         </div>
       </div>
 
-      <div v-else-if="error" class="result-template__error" role="alert">
-        <h1>Resultaat niet gevonden</h1>
+      <Notice
+        v-else-if="error"
+        class="result-template__error"
+        variant="error"
+        title="Resultaat niet gevonden"
+        title-tag="h1"
+        role="alert"
+      >
         <p>{{ error }}</p>
-      </div>
+      </Notice>
 
       <div v-else-if="result" class="result-template__content">
         <ResultSectionList :result="result">
@@ -50,6 +56,7 @@
 import ContraindicationGate from "../organisms/ContraindicationGate.vue";
 import DocumentationCopyPanel from "../organisms/DocumentationCopyPanel.vue";
 import ResultSectionList from "../organisms/ResultSectionList.vue";
+import Notice from "../molecules/Notice.vue";
 import Skeleton from "../primitives/Skeleton.vue";
 import type { ResultData } from "../../types";
 
@@ -106,8 +113,6 @@ const emit = defineEmits<{
 
 .result-template__error {
   width: 100%;
-  padding: var(--spacing-xl);
-  text-align: center;
 }
 
 .result-template__content > * {

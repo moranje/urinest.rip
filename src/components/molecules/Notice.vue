@@ -2,7 +2,7 @@
   <section class="notice" :class="`notice--${variant}`" :role="role" :aria-live="ariaLive">
     <div v-if="title" class="notice__header">
       <Icon :name="iconName" :size="20" />
-      <h3 class="notice__title">{{ title }}</h3>
+      <component :is="titleTag" class="notice__title">{{ title }}</component>
     </div>
     <div class="notice__body">
       <slot />
@@ -23,16 +23,19 @@ defineOptions({
 
 type NoticeVariant = "info" | "warning" | "error" | "success";
 type NoticeRole = "alert" | "status" | "note";
+type NoticeTitleTag = "h1" | "h2" | "h3";
 
 const props = withDefaults(
   defineProps<{
     variant?: NoticeVariant;
     title?: string;
+    titleTag?: NoticeTitleTag;
     role?: NoticeRole;
   }>(),
   {
     variant: "info",
     title: "",
+    titleTag: "h3",
     role: "status",
   },
 );

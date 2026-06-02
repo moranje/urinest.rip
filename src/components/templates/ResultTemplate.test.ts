@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import ResultTemplate from "./ResultTemplate.vue";
@@ -93,9 +94,23 @@ describe("ResultTemplate", () => {
     });
 
     expect(wrapper.get(".result-template__error").attributes("role")).toBe("alert");
+    expect(wrapper.get(".result-template__error").classes()).toContain("notice--error");
     expect(wrapper.get("h1").text()).toBe("Resultaat niet gevonden");
     expect(wrapper.text()).toContain("Resultaat niet beschikbaar.");
     expect(wrapper.find(".result-section-list-stub").exists()).toBe(false);
+  });
+
+  it("delegates result error shell styling to Notice", () => {
+    const source = readFileSync("src/components/templates/ResultTemplate.vue", "utf8");
+    const errorCss = source.match(/\.result-template__error\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
+      ?.body;
+
+    expect(source).toContain("<Notice");
+    expect(source).toContain('variant="error"');
+    expect(source).toContain('title-tag="h1"');
+    expect(errorCss).not.toContain("padding:");
+    expect(errorCss).not.toContain("background:");
+    expect(errorCss).not.toContain("border:");
   });
 
   it("renders result content with contraindication and documentation slots", () => {

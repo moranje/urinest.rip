@@ -23,6 +23,21 @@ describe("Notice", () => {
     expect(wrapper.text()).toContain("Controleer alarmsymptomen.");
   });
 
+  it("supports page-level notice headings when needed", () => {
+    const wrapper = mount(Notice, {
+      props: {
+        title: "Resultaat niet gevonden",
+        titleTag: "h1",
+        role: "alert",
+      },
+      slots: {
+        default: "<p>Resultaat niet beschikbaar.</p>",
+      },
+    });
+
+    expect(wrapper.get("h1.notice__title").text()).toBe("Resultaat niet gevonden");
+  });
+
   it("renders status notices politely by default", () => {
     const wrapper = mount(Notice, {
       slots: {
