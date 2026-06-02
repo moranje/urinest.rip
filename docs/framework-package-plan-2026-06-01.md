@@ -204,7 +204,7 @@ App blijft eigenaar van domeindata en branding.
 
 ### Templates
 
-- [ ] `PageShell`
+- [x] `PageShell`
 - [ ] `QuestionnaireTemplate`
 - [ ] `ResultTemplate`
 - [ ] `AdminTemplate`
