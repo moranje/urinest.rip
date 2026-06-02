@@ -26,7 +26,7 @@ describe("ContraindicationGate", () => {
       "Behandeling verborgen tot alle contra-indicaties zijn gecontroleerd.",
     );
 
-    const checkboxes = wrapper.findAll<HTMLInputElement>(".md-checkbox");
+    const checkboxes = wrapper.findAll<HTMLInputElement>(".checkbox-field__control");
     await checkboxes[0]?.setValue(true);
     expect(wrapper.find(".treatment-section").exists()).toBe(false);
 
@@ -58,7 +58,7 @@ describe("ContraindicationGate", () => {
       },
     });
 
-    for (const checkbox of wrapper.findAll<HTMLInputElement>(".md-checkbox")) {
+    for (const checkbox of wrapper.findAll<HTMLInputElement>(".checkbox-field__control")) {
       await checkbox.setValue(true);
     }
     expect(wrapper.find(".notice").exists()).toBe(false);
@@ -68,7 +68,7 @@ describe("ContraindicationGate", () => {
     });
 
     expect(wrapper.get(".notice").text()).toContain("Behandeling wordt getoond");
-    expect(wrapper.get<HTMLInputElement>(".md-checkbox").element.checked).toBe(false);
+    expect(wrapper.get<HTMLInputElement>(".checkbox-field__control").element.checked).toBe(false);
   });
 
   it("renders checklist without treatment messaging when treatment is absent", () => {
@@ -78,7 +78,7 @@ describe("ContraindicationGate", () => {
       },
     });
 
-    expect(wrapper.findAll(".md-checkbox")).toHaveLength(2);
+    expect(wrapper.findAll(".checkbox-field__control")).toHaveLength(2);
     expect(wrapper.find(".notice").exists()).toBe(false);
     expect(wrapper.find(".treatment-section").exists()).toBe(false);
     expect(wrapper.find(".sr-only").exists()).toBe(false);

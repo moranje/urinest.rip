@@ -2,17 +2,18 @@
   <div v-if="checklistItems.length > 0" class="result-section contraindications-section">
     <h3 class="section-title">Controleer Contra-indicaties</h3>
     <div class="checklist">
-      <div v-for="item in checklistItems" :key="item.key" class="checklist-item">
-        <input
+      <div
+        v-for="item in checklistItems"
+        :key="item.key"
+        class="checklist-item"
+        :class="{ 'checklist-item--checked': isChecked(item.key) }"
+      >
+        <Checkbox
           :id="item.inputId"
-          type="checkbox"
-          class="md-checkbox"
-          :checked="isChecked(item.key)"
-          @change="setChecked(item.key, ($event.target as HTMLInputElement).checked)"
+          :model-value="isChecked(item.key)"
+          :label="item.text"
+          @update:model-value="setChecked(item.key, $event)"
         />
-        <label :for="item.inputId" class="checklist-label">
-          {{ item.text }}
-        </label>
       </div>
     </div>
   </div>
@@ -39,6 +40,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Notice from "../molecules/Notice.vue";
+import Checkbox from "../primitives/Checkbox.vue";
 import type { Contraindication } from "../../types";
 
 type ChecklistItem = Contraindication & {
@@ -139,50 +141,21 @@ watch(
 }
 
 .checklist-item {
-  display: flex;
   min-height: var(--min-touch-target);
-  align-items: center;
-  gap: var(--spacing-md);
   padding: var(--spacing-xs) 0;
-  cursor: pointer;
 }
 
-.md-checkbox {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  margin: 0;
-  accent-color: var(--md-sys-color-primary);
-  cursor: pointer;
-  font-size: 16px;
+.checklist-item :deep(.checkbox-field__label) {
+  transition:
+    color var(--motion-duration-long) var(--motion-easing-standard),
+    text-decoration-color var(--motion-duration-long) var(--motion-easing-standard);
+  text-decoration: line-through;
+  text-decoration-color: transparent;
 }
 
-.checklist-label {
-  position: relative;
-  color: var(--md-sys-color-on-surface);
-  font: var(--md-sys-typescale-body-medium);
-  transition: color var(--motion-duration-long) var(--motion-easing-standard);
-}
-
-.checklist-label::after {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: var(--md-sys-color-on-surface-variant);
-  content: "";
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--motion-duration-long) var(--motion-easing-standard);
-}
-
-.md-checkbox:checked + .checklist-label {
+.checklist-item--checked :deep(.checkbox-field__label) {
   color: var(--md-sys-color-on-surface-variant);
-}
-
-.md-checkbox:checked + .checklist-label::after {
-  transform: scaleX(1);
+  text-decoration-color: currentColor;
 }
 
 .treatment-section {

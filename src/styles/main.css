@@ -1,7 +1,6 @@
-@layer tokens, components, base, utilities;
+@layer tokens, base, utilities;
 
 @import "./tokens.css" layer(tokens);
-@import "./components.css" layer(components);
 
 /* Loading indicator */
 .app-loading {
@@ -167,12 +166,10 @@ p {
     outline: 2px solid CanvasText;
   }
 
-  .md-card,
   .urgency-badge,
   .option-item,
   .option-selected,
   .btn,
-  .md-button,
   .toast {
     forced-color-adjust: none;
     border: 2px solid CanvasText;

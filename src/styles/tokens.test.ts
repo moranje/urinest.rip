@@ -56,6 +56,18 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
+  it("keeps legacy md component classes out of runtime UI", () => {
+    const files = [...walk("src/components"), ...walk("src/views"), ...walk("src/styles")].filter(
+      (file) => !file.endsWith("src/styles/tokens.test.ts"),
+    );
+    const legacyClass = /\bmd-(button|card|tile|checkbox)\b/;
+    const offenders = files.filter((file) => legacyClass.test(read(file)));
+
+    expect(read("src/styles/main.css")).not.toContain("components.css");
+    expect(existsSync(resolve(repoRoot, "src/styles/components.css"))).toBe(false);
+    expect(offenders).toEqual([]);
+  });
+
   it("keeps landing tiles bounded by component scale with a 2x3 desktop layout", () => {
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="question-panel md-card">
+  <div class="question-panel">
     <QuestionToolbar :has-history="hasHistory" @back="emit('back')" @restart="emit('restart')" />
     <ProgressBar
       :value="progressValue"

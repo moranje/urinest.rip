@@ -212,7 +212,7 @@ App blijft eigenaar van domeindata en branding.
 
 ### Design System Rules
 
-- [ ] Legacy `.md-button`, `.md-card`, `.md-tile` verwijderen of quarantainen.
+- [x] Legacy `.md-button`, `.md-card`, `.md-tile` verwijderen of quarantainen.
 - [ ] Page-local badge/button/form styles vervangen door primitives.
 - [x] Header controls naar shared `SegmentedControl`.
 - [ ] Alle touch targets minimaal 44px/48dp.
