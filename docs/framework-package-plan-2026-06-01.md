@@ -336,7 +336,7 @@ Exit criteria:
 
 ### Ronde 3 — Design System
 
-- [ ] Atoms/molecules completed.
+- [x] Atoms/molecules completed.
 - [ ] Legacy `.md-*` removed from app pages.
 - [ ] Storybook expanded.
 - [ ] Motion system centralized.
