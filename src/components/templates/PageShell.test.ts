@@ -1,4 +1,5 @@
 import { mount } from "@vue/test-utils";
+import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import PageShell from "./PageShell.vue";
 
@@ -63,6 +64,7 @@ describe("PageShell", () => {
 
     expect(wrapper.get(".app-error").attributes("role")).toBe("alert");
     expect(wrapper.get(".app-error").attributes("aria-live")).toBe("assertive");
+    expect(wrapper.get(".notice__title").text()).toBe("Er ging iets mis");
     expect(wrapper.get(".app-error").text()).toContain(
       "De applicatie kon dit onderdeel niet tonen.",
     );
@@ -71,5 +73,16 @@ describe("PageShell", () => {
     await wrapper.get(".button-stub").trigger("click");
 
     expect(wrapper.emitted("reload")).toHaveLength(1);
+  });
+
+  it("delegates app error styling to Notice", () => {
+    const source = readFileSync("src/components/templates/PageShell.vue", "utf8");
+    const errorCss = source.match(/\.app-error\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("<Notice");
+    expect(source).toContain('variant="error"');
+    expect(errorCss).not.toContain("padding:");
+    expect(errorCss).not.toContain("border:");
+    expect(errorCss).not.toContain("background:");
   });
 });

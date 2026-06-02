@@ -3,11 +3,18 @@
     <a href="#main-content" class="skip-link">Naar inhoud springen</a>
     <AppHeader :droplet-animate="dropletAnimate" />
     <main id="main-content" class="app-content" tabindex="-1">
-      <section v-if="appError" class="app-error" role="alert" aria-live="assertive">
-        <h1>Er ging iets mis</h1>
+      <Notice
+        v-if="appError"
+        class="app-error"
+        variant="error"
+        title="Er ging iets mis"
+        role="alert"
+      >
         <p>{{ appError }}</p>
-        <Button @click="emit('reload')">Opnieuw laden</Button>
-      </section>
+        <template #action>
+          <Button @click="emit('reload')">Opnieuw laden</Button>
+        </template>
+      </Notice>
       <slot v-else />
     </main>
     <OfflineBanner />
@@ -18,6 +25,7 @@
 
 <script setup lang="ts">
 import AppHeader from "../organisms/AppHeader.vue";
+import Notice from "../molecules/Notice.vue";
 import Button from "../primitives/Button.vue";
 import OfflineBanner from "../OfflineBanner.vue";
 import ToastContainer from "../ToastContainer.vue";
@@ -90,11 +98,6 @@ body {
 
 .app-error {
   width: min(100% - var(--spacing-lg), 42rem);
-  padding: var(--spacing-lg);
   margin: var(--spacing-xl) auto;
-  border: 1px solid var(--md-sys-color-error);
-  border-radius: var(--md-sys-shape-corner-medium);
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
 }
 </style>
