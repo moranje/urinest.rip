@@ -1,7 +1,7 @@
 <template>
   <section v-if="trimmedText" class="result-section documentation-section">
     <h3 class="section-title">Documenteer (voor EPD)</h3>
-    <div class="documentation-content">
+    <Card class="documentation-content" variant="outlined">
       <pre class="documentation-text">{{ trimmedText }}</pre>
       <CopyAction
         class="documentation-copy-action"
@@ -10,13 +10,14 @@
         @copied="emit('copied')"
         @error="emit('error', $event)"
       />
-    </div>
+    </Card>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import CopyAction from "../molecules/CopyAction.vue";
+import Card from "../primitives/Card.vue";
 
 const props = defineProps<{
   text: string;
@@ -42,10 +43,6 @@ const trimmedText = computed(() => props.text.trim());
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
-  background-color: var(--md-sys-color-surface-container);
 }
 
 .documentation-text {

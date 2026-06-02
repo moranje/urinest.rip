@@ -1,4 +1,5 @@
 import { mount } from "@vue/test-utils";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import DocumentationCopyPanel from "./DocumentationCopyPanel.vue";
 
@@ -19,6 +20,17 @@ const copyActionStub = {
 };
 
 describe("DocumentationCopyPanel", () => {
+  it("delegates framed documentation styling to Card", () => {
+    const source = readFileSync("src/components/organisms/DocumentationCopyPanel.vue", "utf8");
+    const contentCss =
+      source.match(/\.documentation-content\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain("<Card");
+    expect(contentCss).not.toContain("border:");
+    expect(contentCss).not.toContain("background-color:");
+    expect(contentCss).not.toContain("border-radius:");
+  });
+
   it("renders trimmed documentation and delegates copy text", () => {
     const wrapper = mount(DocumentationCopyPanel, {
       props: {
