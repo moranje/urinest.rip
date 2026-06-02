@@ -1,25 +1,27 @@
 <template>
   <div v-if="toasts.length > 0" class="toast-container">
     <TransitionGroup name="toast-fly">
-      <div
+      <Notice
         v-for="toast in toasts"
         :key="toast.id"
         class="toast"
-        :class="'toast--' + toast.level"
+        :variant="toastNoticeVariant(toast.level)"
         :role="toast.level === 'error' ? 'alert' : 'status'"
       >
-        <Icon class="toast-icon" :name="toastIcon(toast.level)" :size="16" />
-        <span class="toast-message">{{ toast.message }}</span>
-        <IconButton
-          v-if="toast.dismissible"
-          class="toast-close-action"
-          data-testid="toast-close"
-          icon="x"
-          size="sm"
-          aria-label="Sluiten"
-          @click="dismiss(toast.id)"
-        />
-      </div>
+        <div class="toast-content">
+          <Icon class="toast-icon" :name="toastIcon(toast.level)" :size="16" />
+          <span class="toast-message">{{ toast.message }}</span>
+          <IconButton
+            v-if="toast.dismissible"
+            class="toast-close-action"
+            data-testid="toast-close"
+            icon="x"
+            size="sm"
+            aria-label="Sluiten"
+            @click="dismiss(toast.id)"
+          />
+        </div>
+      </Notice>
     </TransitionGroup>
   </div>
 </template>
@@ -27,6 +29,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useToastStore } from "../store/toastStore";
+import Notice from "./molecules/Notice.vue";
 import Icon from "./primitives/Icon.vue";
 import IconButton from "./primitives/IconButton.vue";
 import type { ToastLevel } from "../types";
@@ -46,6 +49,10 @@ function toastIcon(
   if (level === "warning") return "warning-triangle";
   return "info-circle";
 }
+
+function toastNoticeVariant(level: ToastLevel): "success" | "error" | "warning" | "info" {
+  return level === "warning" ? "warning" : level;
+}
 </script>
 
 <style scoped>
@@ -64,38 +71,18 @@ function toastIcon(
 }
 
 .toast {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-  font: var(--md-sys-typescale-body-medium);
   pointer-events: auto;
   box-shadow: var(--md-sys-elevation-3);
 }
 
-.toast--success {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  border: 1px solid var(--md-sys-color-primary);
+.toast :deep(.notice__body) {
+  font: var(--md-sys-typescale-body-medium);
 }
 
-.toast--error {
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-  border: 1px solid var(--md-sys-color-error);
-}
-
-.toast--warning {
-  background: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
-  border: 1px solid var(--md-sys-color-warning);
-}
-
-.toast--info {
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-  border: 1px solid var(--md-sys-color-outline-variant);
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .toast-icon {

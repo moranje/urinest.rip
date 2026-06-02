@@ -15,7 +15,12 @@ describe("ToastContainer", () => {
   it("uses the IconButton primitive for dismiss controls", () => {
     const source = readFileSync("src/components/ToastContainer.vue", "utf8");
 
+    expect(source).toContain("<Notice");
     expect(source).toContain("<IconButton");
+    expect(source).not.toContain("toast--success");
+    expect(source).not.toContain("toast--error");
+    expect(source).not.toContain("toast--warning");
+    expect(source).not.toContain("toast--info");
     expect(source).not.toContain('class="toast-close"');
     expect(source).not.toContain(".toast-close {");
     expect(source).not.toContain(".toast-close:hover");
