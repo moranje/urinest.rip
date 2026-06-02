@@ -90,24 +90,26 @@
           <h3 class="section-title">Behandeling</h3>
           <p>{{ resultData.treatment }}</p>
         </div>
-        <div
+        <Notice
           v-else-if="!allContraindicationsChecked && resultData.treatment"
-          class="result-section treatment-section treatment-section--hidden"
+          class="result-section"
+          variant="info"
+          role="status"
         >
-          <p>
-            <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
-          </p>
-        </div>
+          <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
+        </Notice>
         <p class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
 
         <!-- Warnings -->
-        <div v-if="resultData.warnings" class="result-section warning-section">
-          <h3 class="section-title warning-title">
-            <Icon name="warning" :size="20" />
-            Waarschuwing
-          </h3>
+        <Notice
+          v-if="resultData.warnings"
+          class="result-section"
+          variant="warning"
+          title="Waarschuwing"
+          role="alert"
+        >
           <p>{{ resultData.warnings }}</p>
-        </div>
+        </Notice>
 
         <!-- Test After Treatment -->
         <div v-if="resultData.testAfterTreatment" class="result-section">
@@ -157,8 +159,8 @@ import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
-import Icon from "../components/primitives/Icon.vue";
 import CopyAction from "../components/molecules/CopyAction.vue";
+import Notice from "../components/molecules/Notice.vue";
 import SourceChip from "../components/molecules/SourceChip.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
@@ -480,35 +482,6 @@ watch(
   border-radius: var(--md-sys-shape-corner-medium);
 }
 
-.treatment-section--hidden {
-  background: none;
-  border: none;
-  border-left: 3px solid var(--md-sys-color-outline-variant);
-}
-.treatment-section--hidden p {
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-/* Warning section — colored banner */
-.warning-section {
-  background-color: var(--md-sys-color-warning-container);
-  border-left: 3px solid var(--md-sys-color-warning);
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-}
-.warning-section .section-title {
-  color: var(--md-sys-color-on-warning-container);
-  border-bottom-color: var(--md-sys-color-warning);
-}
-.warning-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-.warning-section p {
-  color: var(--md-sys-color-on-warning-container);
-}
-
 /* Explainer section — soft background */
 .explainer-section {
   background-color: var(--md-sys-color-surface-container);
@@ -624,7 +597,6 @@ watch(
     font: var(--md-sys-typescale-title-large);
   }
   .treatment-section,
-  .warning-section,
   .explainer-section {
     padding: var(--spacing-sm);
   }
