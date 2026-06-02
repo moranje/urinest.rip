@@ -50,6 +50,33 @@ npm publish packages/testing --tag next
 
 Use `latest` only after registry smoke, `urinest.rip` smoke and rollback tag exist.
 
+## Extraction Staging
+
+For now extraction is a planned round, not an in-place source move. The framework moves only after the current app and package gates are green and a registry consumer proves the published packages work.
+
+Target shape:
+
+- Create a separate package directory/repository, for example sibling folder `beslismodel-framework/`.
+- Keep the initial package boundaries identical: `core`, `compiler`, `vue` and `testing`.
+- Copy only framework package source, package tests, package build scripts, release docs and package CI.
+- Leave app-owned material in `urinest.rip`: YAML flows, Supabase logging/admin UI, Urinest taxonomy/icons, PWA branding, clinical Dutch copy and app config.
+- Preserve public exports exactly on the first move; export changes happen in later minor/major releases.
+
+Local npm setup:
+
+- User-level `.npmrc` stores the Gitea auth token and is never committed.
+- Project `.npmrc` may define the scope registry but must not contain a token.
+- Package manifests get `publishConfig.registry` only after the local Gitea registry URL is known.
+- Prereleases publish with `--tag next`; `latest` waits until registry smoke and app smoke pass.
+
+`urinest.rip` stays runnable during the move:
+
+- The app switches from workspace packages to exact registry versions in one atomic dependency commit.
+- Vite and TypeScript aliases to `packages/*/src` are removed or narrowed to app-only code.
+- No import path may change to a private package source path; consumers use public `@beslismodel/*` exports only.
+- During the transition, source packages and registry packages may be selected only through package manager configuration, not divergent application imports.
+- The old package source is removed from the app repository only after the registry-installed app passes `check:packages`, tests, build, budget, PWA smoke, telemetry smoke, landing-grid regression and the Urinestrip end-to-end fixture.
+
 ## CI Matrix
 
 Package CI must pass on Node `20`, `22` and `24`.

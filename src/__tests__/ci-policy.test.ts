@@ -103,5 +103,11 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("Registry Smoke");
     expect(releaseStrategy).toContain("Rollback");
     expect(releaseStrategy).toContain("Node `20`, `22` and `24`");
+    expect(releaseStrategy).toContain("sibling folder `beslismodel-framework/`");
+    expect(releaseStrategy).toContain("Project `.npmrc` may define the scope registry");
+    expect(releaseStrategy).toContain("must not contain a token");
+    expect(releaseStrategy).toContain("exact registry versions");
+    expect(releaseStrategy).toContain("landing-grid regression");
+    expect(releaseStrategy).toContain("Urinestrip end-to-end fixture");
   });
 });
