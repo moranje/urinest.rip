@@ -15,6 +15,14 @@ export {
   toAuditBreadcrumbData,
 } from "./audit-trail";
 export type {
+  AppendBreadcrumbOptions,
+  Breadcrumb,
+  BreadcrumbInput,
+  BreadcrumbType,
+  CreateBreadcrumbOptions,
+} from "./breadcrumbs";
+export { appendBreadcrumb, cloneBreadcrumbs, createBreadcrumb } from "./breadcrumbs";
+export type {
   CalculatorDefinition,
   CalculatorExecutionContext,
   CalculatorId,

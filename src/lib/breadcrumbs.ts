@@ -5,52 +5,39 @@
  * Consecutive identical messages are collapsed with a count.
  */
 
+import {
+  appendBreadcrumb,
+  cloneBreadcrumbs,
+  type Breadcrumb,
+  type BreadcrumbInput,
+} from "@beslismodel/core";
 import { scrubText, scrubValue } from "./scrub";
 import { sanitizeRouteForTelemetry } from "./telemetry-privacy";
-
-export interface Breadcrumb {
-  type: "navigation" | "click" | "api" | "log" | "flow";
-  message: string;
-  timestamp: string;
-  count?: number;
-  data?: Record<string, unknown>;
-}
 
 const MAX_BREADCRUMBS = 25;
 const buffer: Breadcrumb[] = [];
 
-export function addBreadcrumb(crumb: Omit<Breadcrumb, "timestamp" | "count">): void {
+export function addBreadcrumb(crumb: BreadcrumbInput): void {
   const messageStats = { hits: 0 };
   const safeMessage = scrubText(crumb.message, messageStats);
   const safeData = crumb.data ? scrubValue(crumb.data) : undefined;
   const scrubHits = messageStats.hits + (safeData?.stats.hits ?? 0);
-  const safeCrumb: Omit<Breadcrumb, "timestamp" | "count"> = {
+  const safeDataValue = safeData?.value as Record<string, unknown> | undefined;
+  const data = scrubHits > 0 ? { ...safeDataValue, scrub_hits_total: scrubHits } : safeDataValue;
+  const safeCrumb: BreadcrumbInput = {
     ...crumb,
     message: safeMessage,
-    data: safeData?.value,
+    data,
   };
-  if (scrubHits > 0) {
-    safeCrumb.data = { ...safeCrumb.data, scrub_hits_total: scrubHits };
-  }
 
-  const last = buffer[buffer.length - 1];
-  if (last && last.type === safeCrumb.type && last.message === safeCrumb.message) {
-    last.count = (last.count ?? 1) + 1;
-    last.timestamp = new Date().toISOString();
-    return;
-  }
-
-  buffer.push({
-    ...safeCrumb,
-    timestamp: new Date().toISOString(),
+  const nextBreadcrumbs = appendBreadcrumb(buffer, safeCrumb, {
+    maxLength: MAX_BREADCRUMBS,
   });
-  if (buffer.length > MAX_BREADCRUMBS) {
-    buffer.shift();
-  }
+  buffer.splice(0, buffer.length, ...nextBreadcrumbs);
 }
 
 export function getBreadcrumbs(): Breadcrumb[] {
-  return buffer.map((b) => ({ ...b }));
+  return cloneBreadcrumbs(buffer);
 }
 
 export function clearBreadcrumbs(): void {

@@ -1,8 +1,11 @@
 import {
   appendAuditTrailEvent,
+  appendBreadcrumb,
   classifyBeslismodelError,
+  cloneBreadcrumbs,
   createCalculatorRegistry,
   createAuditTrailEvent,
+  createBreadcrumb,
   createMarkdownRenderer,
   createRuntimeContext,
   detectRedirectCycle,
@@ -112,6 +115,15 @@ if (
   getErrorClass(new Error("hidden detail")) !== "Error"
 ) {
   throw new Error("error classification export failed");
+}
+
+const breadcrumb = createBreadcrumb(
+  { type: "click", message: "role-change" },
+  { timestamp: "2026-06-01T00:00:00.000Z" },
+);
+const breadcrumbs = appendBreadcrumb([breadcrumb], { type: "click", message: "role-change" });
+if (breadcrumbs[0]?.count !== 2 || cloneBreadcrumbs(breadcrumbs)[0]?.message !== "role-change") {
+  throw new Error("breadcrumb export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

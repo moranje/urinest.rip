@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Breadcrumb } from "@beslismodel/core";
 import { ref, computed } from "vue";
 import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
@@ -50,13 +51,6 @@ const sourceLocation = computed(
 // out of `{{ }}`-expressions where oxfmt's HTML-parser otherwise trips on the `<` character.
 function eventDetail(event: LogEvent): Record<string, unknown> {
   return (event.detail ?? {}) as Record<string, unknown>;
-}
-
-interface Breadcrumb {
-  type: string;
-  message: string;
-  timestamp: string;
-  count?: number;
 }
 
 const breadcrumbs = computed(() => (latestDetail.value.breadcrumbs ?? []) as Breadcrumb[]);
