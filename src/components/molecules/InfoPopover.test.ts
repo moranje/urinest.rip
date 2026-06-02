@@ -1,8 +1,18 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import InfoPopover from "./InfoPopover.vue";
 
 describe("InfoPopover", () => {
+  it("uses the IconButton primitive for close control styling", () => {
+    const source = readFileSync("src/components/molecules/InfoPopover.vue", "utf8");
+
+    expect(source).toContain("<IconButton");
+    expect(source).not.toContain('class="info-popover__close"');
+    expect(source).not.toContain(".info-popover__close {");
+    expect(source).not.toContain(".info-popover__close:hover");
+  });
+
   it("renders a dialog with sanitized html and stable option id", () => {
     const wrapper = mount(InfoPopover, {
       props: {
@@ -39,7 +49,7 @@ describe("InfoPopover", () => {
     await wrapper.get(".info-popover").trigger("mouseleave");
     await wrapper.get(".info-popover").trigger("focusin");
     await wrapper.get(".info-popover").trigger("focusout");
-    await wrapper.get(".info-popover__close").trigger("click");
+    await wrapper.get('[data-testid="info-popover-close"]').trigger("click");
 
     expect(wrapper.emitted("cancelClose")).toHaveLength(2);
     expect(wrapper.emitted("scheduleClose")).toHaveLength(2);

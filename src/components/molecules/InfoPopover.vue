@@ -17,21 +17,21 @@
       <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
       <div v-html="html" />
       <!-- eslint-enable vue/no-v-html -->
-      <button
-        class="info-popover__close"
-        type="button"
+      <IconButton
+        class="info-popover__close-action"
+        data-testid="info-popover-close"
+        icon="x"
+        size="sm"
         aria-label="Informatie sluiten"
         @click="emit('close')"
-      >
-        <Icon name="x" :size="16" />
-      </button>
+      />
     </div>
   </teleport>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import Icon from "../primitives/Icon.vue";
+import IconButton from "../primitives/IconButton.vue";
 import type { PopoverStyle } from "../../types";
 import type { StyleValue } from "vue";
 
@@ -55,7 +55,8 @@ const normalizedStyle = computed(() => props.popoverStyle as StyleValue);
   width: max-content;
   max-width: 300px;
   max-height: 300px;
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) calc(var(--spacing-md) + var(--min-touch-target)) var(--spacing-md)
+    var(--spacing-md);
   border-radius: var(--md-sys-shape-corner-medium);
   background-color: var(--md-sys-color-surface);
   box-shadow: var(--md-sys-elevation-3);
@@ -70,23 +71,9 @@ const normalizedStyle = computed(() => props.popoverStyle as StyleValue);
   z-index: 1000;
 }
 
-.info-popover__close {
+.info-popover__close-action {
   position: absolute;
   top: var(--spacing-xs);
   right: var(--spacing-xs);
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-}
-
-.info-popover__close:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
 }
 </style>
