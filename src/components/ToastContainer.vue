@@ -10,14 +10,15 @@
       >
         <Icon class="toast-icon" :name="toastIcon(toast.level)" :size="16" />
         <span class="toast-message">{{ toast.message }}</span>
-        <button
+        <IconButton
           v-if="toast.dismissible"
-          class="toast-close"
-          @click="dismiss(toast.id)"
+          class="toast-close-action"
+          data-testid="toast-close"
+          icon="x"
+          size="sm"
           aria-label="Sluiten"
-        >
-          <Icon name="x" :size="14" />
-        </button>
+          @click="dismiss(toast.id)"
+        />
       </div>
     </TransitionGroup>
   </div>
@@ -27,6 +28,7 @@
 import { computed } from "vue";
 import { useToastStore } from "../store/toastStore";
 import Icon from "./primitives/Icon.vue";
+import IconButton from "./primitives/IconButton.vue";
 import type { ToastLevel } from "../types";
 
 const toastStore = useToastStore();
@@ -104,25 +106,9 @@ function toastIcon(
   flex: 1;
 }
 
-.toast-close {
+.toast-close-action {
   flex-shrink: 0;
-  box-sizing: border-box;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
   color: inherit;
-  opacity: 0.7;
-  border-radius: var(--md-sys-shape-corner-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity var(--motion-duration-short) var(--motion-easing-standard);
-}
-.toast-close:hover {
-  opacity: 1;
 }
 
 /* Transitions */
