@@ -288,7 +288,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Admin/Supabase lazy app-only.
 - [x] Markdown renderer lazy or injectable.
 - [x] Manifest load cache strategy configurable.
-- [ ] Route prefetch opt-in.
+- [x] Route prefetch opt-in.
 - [x] Bundle budget package en app.
 - [ ] Lighthouse CI landing/questionnaire/result.
 - [ ] No layout shift from SVG/menu tiles.
@@ -364,12 +364,16 @@ Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen n
 - [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
 - [ ] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
-- [ ] `.npmrc` en package `publishConfig.registry` instellen voor lokale Gitea npm registry.
+- [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, `.npmrc` voor publish en install, en package `publishConfig.registry`.
+- [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [ ] Package CI in nieuwe repo meenemen: lint, typecheck, tests, package smoke checks, consumer fixture, npm audit, secret scan.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
+- [ ] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
+- [ ] `urinest.rip` build scripts aanpassen: package-build scripts verwijderen uit app-only CI, maar `check:packages` vervangen door registry smoke checks zolang extractie loopt.
 - [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [ ] Migratievolgorde: publish prerelease packages naar lokale registry, install in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
+- [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke en Urinestrip end-to-end fixture.
 - [ ] Rollback-plan: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 
 ## Commit Discipline
