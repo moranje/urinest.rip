@@ -397,6 +397,7 @@ describe("route accessibility smoke", () => {
       const result = await runAxe(wrapper);
 
       expect(result.violations.map((violation) => violation.id)).toEqual([]);
+      expect(wrapper.text()).not.toContain("Terug");
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,

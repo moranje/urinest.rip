@@ -5,7 +5,7 @@
       <p>{{ message || "Een onverwachte fout is opgetreden." }}</p>
       <div class="error-actions">
         <Button v-if="retryTarget" @click="retry">Probeer opnieuw</Button>
-        <Button variant="outlined" @click="goHome">Terug naar home</Button>
+        <Button variant="outlined" @click="goHome">Naar home</Button>
       </div>
     </div>
   </div>

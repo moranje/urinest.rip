@@ -109,6 +109,8 @@ describe("AdminLogDetail", () => {
     expect(source).not.toContain('class="export-btn"');
     expect(source).not.toContain('class="action-btn');
     expect(source).not.toContain('class="resolve-version-input"');
+    expect(source).not.toContain("Terug");
+    expect(source).not.toContain('aria-label="Terug');
     expect(source).not.toContain(".back-btn");
     expect(source).not.toContain(".export-btn");
     expect(source).not.toContain(".action-btn");
@@ -144,6 +146,10 @@ describe("AdminLogDetail", () => {
     expect(wrapper.get(".breadcrumb-type").classes()).toContain("badge--dev");
     expect(wrapper.get(".breadcrumb-count").classes()).toContain("badge--suppressed");
     expect(wrapper.text()).toContain("Events (2)");
+    expect(wrapper.get('[data-testid="log-detail-back"]').text()).toBe("Logoverzicht");
+    expect(wrapper.get('[data-testid="log-detail-back"]').attributes("aria-label")).toBe(
+      "Logoverzicht openen",
+    );
 
     await wrapper.get('[data-testid="log-detail-back"]').trigger("click");
 

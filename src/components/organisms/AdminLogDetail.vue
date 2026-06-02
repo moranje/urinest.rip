@@ -248,13 +248,13 @@ async function exportMarkdown() {
         variant="text"
         size="sm"
         data-testid="log-detail-back"
-        aria-label="Terug naar logoverzicht"
+        aria-label="Logoverzicht openen"
         @click="emit('back')"
       >
         <template #leading>
           <Icon name="arrow-left" :size="16" />
         </template>
-        Terug
+        Logoverzicht
       </Button>
       <Button
         variant="outlined"
