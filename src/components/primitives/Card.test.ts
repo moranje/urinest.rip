@@ -22,4 +22,14 @@ describe("Card primitive", () => {
     const wrapper = mount(Card, { props: { variant: "outlined" }, slots: { default: "x" } });
     expect(wrapper.classes()).toContain("card--outlined");
   });
+
+  it("supports semantic card tags", () => {
+    const wrapper = mount(Card, {
+      props: { tag: "section", variant: "outlined" },
+      slots: { default: "Logdetail" },
+    });
+
+    expect(wrapper.element.tagName).toBe("SECTION");
+    expect(wrapper.classes()).toContain("card--outlined");
+  });
 });

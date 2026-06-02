@@ -101,6 +101,7 @@ describe("AdminLogDetail", () => {
     const source = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
 
     expect(source).toContain("<Button");
+    expect(source).toContain("<Card");
     expect(source).toContain("<Input");
     expect(source).not.toContain("<BackButton");
     expect(source).not.toContain('class="back-btn"');
@@ -111,6 +112,23 @@ describe("AdminLogDetail", () => {
     expect(source).not.toContain(".export-btn");
     expect(source).not.toContain(".action-btn");
     expect(source).not.toContain(".resolve-version-input");
+  });
+
+  it("delegates admin panel shells to Card", () => {
+    const source = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
+    const detailMetaCss =
+      source.match(/\.detail-meta\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+    const detailSectionCss =
+      source.match(/\.detail-section\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(source).toContain('class="detail-meta" variant="outlined"');
+    expect(source).toContain('class="detail-section" tag="section" variant="outlined"');
+    for (const css of [detailMetaCss, detailSectionCss]) {
+      expect(css).not.toContain("background:");
+      expect(css).not.toContain("border:");
+      expect(css).not.toContain("border-radius:");
+      expect(css).not.toContain("padding:");
+    }
   });
 
   it("renders log context and emits back navigation", async () => {

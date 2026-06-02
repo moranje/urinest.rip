@@ -5,6 +5,7 @@ import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
 import Button from "../primitives/Button.vue";
+import Card from "../primitives/Card.vue";
 import Icon from "../primitives/Icon.vue";
 import Input from "../primitives/Input.vue";
 import StatusBadge from "../molecules/StatusBadge.vue";
@@ -268,7 +269,7 @@ async function exportMarkdown() {
       <h2>{{ group.message }}</h2>
     </div>
 
-    <div class="detail-meta">
+    <Card class="detail-meta" variant="outlined">
       <div class="meta-row">
         <span class="meta-label">Module</span>
         <span class="meta-value">{{ group.module }}</span>
@@ -285,7 +286,7 @@ async function exportMarkdown() {
         <span class="meta-label">Laatste keer</span>
         <span class="meta-value">{{ timeAgo(group.last_seen) }}</span>
       </div>
-    </div>
+    </Card>
 
     <div class="detail-actions">
       <template v-if="group.status === 'resolved' || group.status === 'suppressed'">
@@ -369,7 +370,7 @@ async function exportMarkdown() {
 
     <div class="detail-sections">
       <!-- Context info -->
-      <section class="detail-section">
+      <Card class="detail-section" tag="section" variant="outlined">
         <h3>Context</h3>
         <div class="context-grid">
           <div v-if="context" class="context-item">
@@ -412,16 +413,16 @@ async function exportMarkdown() {
             >
           </div>
         </div>
-      </section>
+      </Card>
 
       <!-- Stack trace -->
-      <section v-if="stack" class="detail-section">
+      <Card v-if="stack" class="detail-section" tag="section" variant="outlined">
         <h3>Stack trace</h3>
         <StackTrace :stack="stack" />
-      </section>
+      </Card>
 
       <!-- Breadcrumbs -->
-      <section v-if="breadcrumbs.length > 0" class="detail-section">
+      <Card v-if="breadcrumbs.length > 0" class="detail-section" tag="section" variant="outlined">
         <h3>Breadcrumbs ({{ breadcrumbs.length }})</h3>
         <div class="breadcrumb-list">
           <div v-for="(crumb, i) in breadcrumbs" :key="i" class="breadcrumb-row">
@@ -435,10 +436,10 @@ async function exportMarkdown() {
             <span class="breadcrumb-time">{{ formatBreadcrumbTime(crumb.timestamp) }}</span>
           </div>
         </div>
-      </section>
+      </Card>
 
       <!-- Event timeline -->
-      <section class="detail-section">
+      <Card class="detail-section" tag="section" variant="outlined">
         <h3>Events ({{ group.count }})</h3>
         <div v-if="loading" class="events-loading">
           <div class="spinner motion-spin" />
@@ -460,7 +461,7 @@ async function exportMarkdown() {
             <span class="event-url">{{ event.url ?? "-" }}</span>
           </div>
         </div>
-      </section>
+      </Card>
     </div>
   </div>
 </template>
@@ -523,10 +524,6 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md) var(--spacing-xl);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--md-sys-color-surface-container-lowest);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -555,13 +552,6 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-}
-
-.detail-section {
-  background: var(--md-sys-color-surface-container-lowest);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
-  padding: var(--spacing-lg);
 }
 
 h3 {
@@ -739,14 +729,6 @@ h3 {
 
 /* bp-md: 600px */
 @media (max-width: 599.98px) {
-  .detail-meta {
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-
-  .detail-section {
-    padding: var(--spacing-md);
-  }
-
   .event-header-row,
   .event-row {
     grid-template-columns: 120px 60px 1fr;

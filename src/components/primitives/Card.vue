@@ -1,17 +1,19 @@
 <template>
-  <div class="card" :class="[`card--${variant}`]">
+  <component :is="tag" class="card" :class="[`card--${variant}`]">
     <slot />
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
 type Variant = "plain" | "elevated" | "outlined" | "accent";
+type CardTag = "div" | "section" | "article";
 
 withDefaults(
   defineProps<{
     variant?: Variant;
+    tag?: CardTag;
   }>(),
-  { variant: "plain" },
+  { variant: "plain", tag: "div" },
 );
 </script>
 
