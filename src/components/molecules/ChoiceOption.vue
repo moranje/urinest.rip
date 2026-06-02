@@ -83,7 +83,7 @@ const emit = defineEmits<{
   align-items: stretch;
   width: 100%;
   overflow: hidden;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid transparent;
   border-radius: var(--md-sys-shape-corner-small);
   background-color: var(--md-sys-color-surface-container-lowest);
   color: var(--md-sys-color-on-surface);
@@ -95,7 +95,6 @@ const emit = defineEmits<{
 }
 
 .choice-option:hover {
-  box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
   background-color: color-mix(
     in srgb,
     var(--md-sys-color-primary) 4%,
@@ -104,12 +103,17 @@ const emit = defineEmits<{
 }
 
 .choice-option:focus-within {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: inset 4px 0 0 var(--md-sys-color-primary);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 6%,
+    var(--md-sys-color-surface-container-lowest)
+  );
 }
 
 .choice-option--selected {
-  border-color: var(--md-sys-color-primary);
+  border-color: transparent;
   box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
   background-color: color-mix(
     in srgb,

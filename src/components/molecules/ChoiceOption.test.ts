@@ -79,4 +79,20 @@ describe("ChoiceOption", () => {
     expect(cardCss).toContain("grid-template-columns: minmax(0, 1fr) auto");
     expect(infoButtonCss).not.toContain("margin: -");
   });
+
+  it("keeps answer card states free of full-frame accent borders", () => {
+    const source = readFileSync("src/components/molecules/ChoiceOption.vue", "utf8");
+    const cardCss = source.match(/\.choice-option\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+    const focusCss = source.match(/\.choice-option:focus-within\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
+      ?.body;
+    const selectedCss = source.match(/\.choice-option--selected\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
+      ?.body;
+
+    expect(cardCss).toContain("border: 1px solid transparent");
+    expect(focusCss).toContain("outline: none");
+    expect(focusCss).toContain("box-shadow: inset 4px 0 0 var(--md-sys-color-primary)");
+    expect(focusCss).not.toContain("outline: 2px solid");
+    expect(selectedCss).toContain("border-color: transparent");
+    expect(selectedCss).not.toContain("border-color: var(--md-sys-color-primary)");
+  });
 });
