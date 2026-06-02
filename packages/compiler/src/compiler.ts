@@ -21,6 +21,7 @@ interface RawOption {
   readonly id?: string;
   readonly text?: string;
   readonly value?: unknown;
+  readonly metadata?: Readonly<Record<string, unknown>>;
   readonly [key: string]: unknown;
 }
 
@@ -28,6 +29,7 @@ interface RawQuestion {
   readonly id?: string;
   readonly options?: readonly RawOption[];
   readonly conditions?: readonly { readonly if: string }[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
   readonly [key: string]: unknown;
 }
 
@@ -253,6 +255,8 @@ function assertResultSources(flow: RawFlow): void {
 
 const LANDING_SECTIONS = new Set(["primary", "secondary"]);
 const URL_METADATA_KEY = /(url|uri|href|link)$/i;
+const STRICT_AUTHORING_CONTRACT = "guideline-v1";
+const SAFE_OPTION_VALUES = new Set(["unknown", "needs_review", "not_applicable"]);
 
 function hasControlCharacter(value: string): boolean {
   return [...value].some((character) => character.charCodeAt(0) < 32);
@@ -280,6 +284,12 @@ function assertSafeFlowMetadata(flow: RawFlow): void {
   if (!flow.metadata) return;
 
   for (const [key, value] of Object.entries(flow.metadata)) {
+    if (key === "authoringContract") {
+      if (value !== STRICT_AUTHORING_CONTRACT) {
+        throw new Error(`Metadata "authoringContract" must be "${STRICT_AUTHORING_CONTRACT}".`);
+      }
+      continue;
+    }
     if (key === "landingOrder") {
       if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
         throw new Error('Metadata "landingOrder" must be a finite non-negative number.');
@@ -292,6 +302,10 @@ function assertSafeFlowMetadata(flow: RawFlow): void {
       }
       continue;
     }
+    if (key === "sourceIds") {
+      assertSourceIds(value, 'Metadata "sourceIds"');
+      continue;
+    }
     if (typeof value === "string") {
       assertSafeMetadataString(key, value);
       continue;
@@ -302,12 +316,124 @@ function assertSafeFlowMetadata(flow: RawFlow): void {
   }
 }
 
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function assertSourceIds(value: unknown, path: string): void {
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    !value.every((sourceId) => isNonEmptyString(sourceId))
+  ) {
+    throw new Error(`${path} must define non-empty sourceIds.`);
+  }
+}
+
+function assertMetadataString(
+  metadata: Readonly<Record<string, unknown>>,
+  key: string,
+  path: string,
+): void {
+  if (!isNonEmptyString(metadata[key])) {
+    throw new Error(`${path}.${key} must be a non-empty string.`);
+  }
+}
+
+function assertInfoButtonDefense(metadata: Readonly<Record<string, unknown>>, path: string): void {
+  const infoButton = metadata.infoButton;
+  if (!isRecord(infoButton)) {
+    throw new Error(`${path}.infoButton must document whether explanatory UI is needed.`);
+  }
+  if (typeof infoButton.needed !== "boolean") {
+    throw new Error(`${path}.infoButton.needed must be boolean.`);
+  }
+  if (infoButton.needed) {
+    if (!isNonEmptyString(infoButton.text)) {
+      throw new Error(`${path}.infoButton.text must be a non-empty string when needed is true.`);
+    }
+    assertSourceIds(infoButton.sourceIds, `${path}.infoButton.sourceIds`);
+    return;
+  }
+  if (!isNonEmptyString(infoButton.reason)) {
+    throw new Error(`${path}.infoButton.reason must explain why no info button is needed.`);
+  }
+}
+
+function assertRoleVisibility(value: unknown, path: string): void {
+  if (!isRecord(value) || Object.keys(value).length === 0) {
+    throw new Error(`${path}.roleVisibility must define role-specific visibility rationale.`);
+  }
+  for (const [role, rationale] of Object.entries(value)) {
+    if (!isNonEmptyString(rationale)) {
+      throw new Error(`${path}.roleVisibility.${role} must be a non-empty string.`);
+    }
+  }
+}
+
+function assertQuestionDefense(questionAlias: string, question: RawQuestion): void {
+  const metadataPath = `Question "${questionAlias}" metadata`;
+  const metadata = question.metadata;
+  if (!isRecord(metadata)) {
+    throw new Error(`${metadataPath} must define question defense metadata.`);
+  }
+  assertSourceIds(metadata.sourceIds, `${metadataPath}.sourceIds`);
+  assertMetadataString(metadata, "questionPurpose", metadataPath);
+  assertMetadataString(metadata, "placementReason", metadataPath);
+  assertRoleVisibility(metadata.roleVisibility, metadataPath);
+  assertMetadataString(metadata, "omissionRisk", metadataPath);
+  if (!isRecord(metadata.answerModel)) {
+    throw new Error(`${metadataPath}.answerModel must describe type, values and invalid states.`);
+  }
+  assertMetadataString(metadata, "copyRationale", metadataPath);
+  assertMetadataString(metadata, "privacyClass", metadataPath);
+  if (metadata.privacyClass === "forbidden") {
+    throw new Error(`${metadataPath}.privacyClass must not be "forbidden".`);
+  }
+  assertInfoButtonDefense(metadata, metadataPath);
+}
+
+function assertOptionDefense(questionAlias: string, option: RawOption): void {
+  const optionName = option.text ?? option.id ?? JSON.stringify(option.value);
+  const metadataPath = `Question "${questionAlias}" option "${optionName}" metadata`;
+  const metadata = option.metadata;
+  if (!isRecord(metadata)) {
+    throw new Error(`${metadataPath} must define option defense metadata.`);
+  }
+  if (metadata.localWorkflow === true) {
+    assertMetadataString(metadata, "localWorkflowReason", metadataPath);
+  } else {
+    assertSourceIds(metadata.sourceIds, `${metadataPath}.sourceIds`);
+  }
+  assertMetadataString(metadata, "optionDefense", metadataPath);
+  assertInfoButtonDefense(metadata, metadataPath);
+
+  if (typeof option.value === "string" && SAFE_OPTION_VALUES.has(option.value)) {
+    assertMetadataString(metadata, "safeRoute", metadataPath);
+  }
+}
+
+function assertStrictAuthoringDefenses(flow: RawFlow): void {
+  if (flow.metadata?.authoringContract !== STRICT_AUTHORING_CONTRACT) return;
+  for (const [questionAlias, question] of Object.entries(flow.questions)) {
+    assertQuestionDefense(questionAlias, question);
+    for (const option of question.options ?? []) {
+      assertOptionDefense(questionAlias, option);
+    }
+  }
+}
+
 function compileFlow(flow: RawFlow): CompiledQuestionnaire {
   assertUniqueOptionValues(flow);
   assertNoOrphanQuestions(flow);
   assertNoUnreachableResults(flow);
   assertResultSources(flow);
   assertSafeFlowMetadata(flow);
+  assertStrictAuthoringDefenses(flow);
 
   const questionAliasMap: Record<string, string> = {};
   const resultAliasMap = new Set(Object.keys(flow.results));

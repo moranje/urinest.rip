@@ -16,9 +16,93 @@ async function createFixture(flowYaml) {
   return { flowsDir, outputFile };
 }
 
+const strictAuthoringFlow = `
+id: strict-domain-flow
+version: "1"
+title: Strict domain flow
+category: chronic-care
+audience: [arts, poh]
+domain: cvrm
+recommendedStart: true
+metadata:
+  authoringContract: guideline-v1
+  sourceIds: [nhg-cvrm]
+questions:
+  answer:
+    text: Rookt de patient?
+    type: select
+    metadata:
+      sourceIds: [nhg-cvrm]
+      questionPurpose: "Rookstatus beinvloedt risicoberekening en advies."
+      placementReason: "Vroeg nodig voor cardiovasculaire risicoschatting."
+      roleVisibility:
+        arts: "Mag beleid bepalen op basis van risicoprofiel."
+        poh: "Mag intake voorbereiden binnen protocol."
+      omissionRisk: "Risico kan te laag worden ingeschat."
+      answerModel:
+        type: select
+        values: [yes, no, unknown]
+      copyRationale: "Korte vraag zonder calculatorjargon."
+      privacyClass: indirect-clinical
+      infoButton:
+        needed: false
+        reason: "Vraagtekst is eenduidig genoeg."
+    options:
+      - text: Ja
+        value: yes
+        metadata:
+          sourceIds: [nhg-cvrm]
+          optionDefense: "Ja activeert rookstatus als risicofactor."
+          infoButton:
+            needed: false
+            reason: "Optietekst is eenduidig."
+      - text: Onbekend
+        value: unknown
+        metadata:
+          sourceIds: [nhg-cvrm]
+          optionDefense: "Onbekend voorkomt valse precisie."
+          safeRoute: "Vraag aanvullen voordat definitieve risicoberekening wordt gebruikt."
+          infoButton:
+            needed: false
+            reason: "Onbekend is gewone veilige fallback."
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+    sources:
+      - name: NHG CVRM
+        url: https://example.test/nhg-cvrm
+logic:
+  - when: ["answer == yes"]
+    show: ok
+  - when: ["answer == unknown"]
+    show: ok
+`;
+
 describe("flow compiler", () => {
   afterEach(async () => {
     await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+  });
+
+  it("accepts strict authoring defenses for new domain flows", async () => {
+    const { flowsDir, outputFile } = await createFixture(strictAuthoringFlow);
+
+    await expect(buildFlows(flowsDir, outputFile)).resolves.toBeUndefined();
+  });
+
+  it("rejects strict authoring flows without option defenses", async () => {
+    const { flowsDir, outputFile } = await createFixture(
+      strictAuthoringFlow.replace(
+        '          optionDefense: "Ja activeert rookstatus als risicofactor."\n',
+        "",
+      ),
+    );
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Question "answer" option "Ja" metadata.optionDefense must be a non-empty string.',
+    );
   });
 
   it("rejects duplicate option values per question", async () => {

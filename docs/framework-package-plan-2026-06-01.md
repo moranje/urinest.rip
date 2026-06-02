@@ -158,7 +158,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Schema controleert duplicate option values.
 - [x] Schema controleert missing guideline/source metadata waar verplicht.
 - [x] AI authoring-guide voor bronverdediging, vraagverdediging, info-knoppen, rolmatrix, telemetry/privacy en validatie.
-- [ ] Strict schema/gate voor question-, option- en info-button-defenses in nieuwe domeinen.
+- [x] Strict schema/gate voor question-, option- en info-button-defenses in nieuwe domeinen.
 
 ## UI/UX En Atomic Design Checklist
 

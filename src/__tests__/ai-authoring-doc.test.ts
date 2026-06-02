@@ -8,6 +8,7 @@ describe("AI guideline authoring documentation", () => {
     for (const requiredPhrase of [
       "Geen klinische claim komt in de UI zonder bronverdediging.",
       "Question Defense Matrix",
+      "authoringContract: guideline-v1",
       "Role Responsibility Matrix",
       "`arts`",
       "`triagist`",

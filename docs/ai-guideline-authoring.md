@@ -280,10 +280,12 @@ id: cvrm-risk-intake
 version: "1.0.0"
 title: CVRM risicoprofiel
 description: Gestructureerde intake voor cardiovasculair risico.
+category: chronische-zorg
+audience: [arts, poh, verpleegkundige]
+domain: cvrm
+recommendedStart: true
 metadata:
-  domain: cvrm
-  category: chronische-zorg
-  audience: [arts, poh, verpleegkundige]
+  authoringContract: guideline-v1
   reviewed: "2026-06-02"
   sourceIds: [nhg-cvrm, prevent-equations]
   owner: "clinical-owner-id"
@@ -300,10 +302,21 @@ questions:
     description: Nodig voor risicoberekening en leefstijladvies.
     metadata:
       sourceIds: [nhg-cvrm]
-      roles: [arts, poh, verpleegkundige]
       questionPurpose: "Risicofactor voor CVRM-risico en behandeladvies."
+      placementReason: "Vroeg nodig omdat PREVENT en leefstijladvies rookstatus gebruiken."
+      roleVisibility:
+        arts: "Mag diagnose en beleid bepalen."
+        poh: "Mag intake en leefstijladvies voorbereiden binnen protocol."
+        verpleegkundige: "Mag protocolintake uitvoeren wanneer lokaal gedelegeerd."
       omissionRisk: "Risico kan te laag worden ingeschat."
+      answerModel:
+        type: select
+        values: [yes, no, unknown]
+        invalidStates: [missing]
+      copyRationale: "Korte concrete taal zonder calculatorjargon."
+      privacyClass: indirect-clinical
       infoButton:
+        needed: true
         text: "Gebruik de actuele rookstatus. Ex-roken hoort bij 'nee' tenzij de calculator anders vraagt."
         sourceIds: [nhg-cvrm, prevent-equations]
     options:
@@ -311,15 +324,27 @@ questions:
         label: Ja
         metadata:
           sourceIds: [nhg-cvrm]
+          optionDefense: "Ja activeert roken als risicofactor."
+          infoButton:
+            needed: false
+            reason: "Optietekst is eenduidig."
       - value: no
         label: Nee
         metadata:
           sourceIds: [nhg-cvrm]
+          optionDefense: "Nee laat niet-rokenroute toe wanneer bron dit toestaat."
+          infoButton:
+            needed: false
+            reason: "Optietekst is eenduidig."
       - value: unknown
         label: Onbekend
         metadata:
           sourceIds: [nhg-cvrm]
+          optionDefense: "Onbekend voorkomt valse precisie bij ontbrekende informatie."
           safeRoute: "Vraag aanvullen voordat risicoberekening definitief wordt."
+          infoButton:
+            needed: false
+            reason: "Onbekend is gewone veilige fallback."
 ```
 
 Resultaatvoorbeeld:

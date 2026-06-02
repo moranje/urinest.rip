@@ -51,6 +51,86 @@ logic:
     show: ok
 `;
 
+const strictAuthoringFlow = `
+id: strict-domain-flow
+version: "1"
+title: Strict domain flow
+category: chronic-care
+audience: [arts, poh]
+domain: cvrm
+recommendedStart: true
+metadata:
+  authoringContract: guideline-v1
+  sourceIds: [nhg-cvrm]
+  reviewed: "2026-06-02"
+  owner: clinical-owner
+  privacyClass: no-free-text
+questions:
+  answer:
+    text: Rookt de patient?
+    type: select
+    metadata:
+      sourceIds: [nhg-cvrm]
+      questionPurpose: "Rookstatus beinvloedt risicoberekening en advies."
+      placementReason: "Vroeg nodig voor cardiovasculaire risicoschatting."
+      roleVisibility:
+        arts: "Mag beleid bepalen op basis van risicoprofiel."
+        poh: "Mag intake voorbereiden binnen protocol."
+      omissionRisk: "Risico kan te laag worden ingeschat."
+      answerModel:
+        type: select
+        values: [yes, no, unknown]
+        invalidStates: [missing]
+      copyRationale: "Korte vraag zonder calculatorjargon."
+      privacyClass: indirect-clinical
+      infoButton:
+        needed: true
+        text: "Gebruik actuele rookstatus; ex-roken alleen als nee wanneer bron dat toestaat."
+        sourceIds: [nhg-cvrm]
+    options:
+      - text: Ja
+        value: yes
+        metadata:
+          sourceIds: [nhg-cvrm]
+          optionDefense: "Ja activeert rookstatus als risicofactor."
+          infoButton:
+            needed: false
+            reason: "Optietekst is eenduidig."
+      - text: Nee
+        value: no
+        metadata:
+          sourceIds: [nhg-cvrm]
+          optionDefense: "Nee laat niet-roken route toe."
+          infoButton:
+            needed: false
+            reason: "Optietekst is eenduidig."
+      - text: Onbekend
+        value: unknown
+        metadata:
+          sourceIds: [nhg-cvrm]
+          optionDefense: "Onbekend voorkomt valse precisie."
+          safeRoute: "Vraag aanvullen voordat definitieve risicoberekening wordt gebruikt."
+          infoButton:
+            needed: false
+            reason: "Onbekend is gewone veilige fallback."
+steps:
+  - title: Start
+    questions: [answer]
+results:
+  ok:
+    title: Ok
+    sources:
+      - name: NHG CVRM
+        url: https://example.test/nhg-cvrm
+logic:
+  - when: ["answer == yes"]
+    show: ok
+  - when: ["answer == no"]
+    show: ok
+  - when: ["answer == unknown"]
+    show: ok
+`;
+
 describe("compiler package", () => {
   afterEach(async () => {
     await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
@@ -77,6 +157,61 @@ describe("compiler package", () => {
         ],
       }),
     );
+  });
+
+  it("accepts strict authoring defenses for new domain flows", async () => {
+    const { flowsDir, outputFile } = await createFixture(strictAuthoringFlow);
+
+    const manifest = await buildFlows(flowsDir, outputFile);
+
+    expect(manifest.questionnaires[0]).toEqual(
+      expect.objectContaining({
+        id: "strict-domain-flow",
+        metadata: expect.objectContaining({
+          authoringContract: "guideline-v1",
+          sourceIds: ["nhg-cvrm"],
+        }),
+        questions: [
+          expect.objectContaining({
+            metadata: expect.objectContaining({
+              questionPurpose: expect.any(String),
+              roleVisibility: expect.objectContaining({
+                arts: expect.any(String),
+              }),
+            }),
+            options: expect.arrayContaining([
+              expect.objectContaining({
+                metadata: expect.objectContaining({
+                  optionDefense: expect.any(String),
+                }),
+              }),
+            ]),
+          }),
+        ],
+      }),
+    );
+  });
+
+  it.each([
+    [
+      "question purpose",
+      '      questionPurpose: "Rookstatus beinvloedt risicoberekening en advies."\n',
+      'Question "answer" metadata.questionPurpose must be a non-empty string.',
+    ],
+    [
+      "option defense",
+      '          optionDefense: "Ja activeert rookstatus als risicofactor."\n',
+      'Question "answer" option "Ja" metadata.optionDefense must be a non-empty string.',
+    ],
+    [
+      "info button defense",
+      '      infoButton:\n        needed: true\n        text: "Gebruik actuele rookstatus; ex-roken alleen als nee wanneer bron dat toestaat."\n        sourceIds: [nhg-cvrm]\n',
+      'Question "answer" metadata.infoButton must document whether explanatory UI is needed.',
+    ],
+  ])("rejects strict authoring flows without %s", async (_name, snippet, expectedError) => {
+    const { flowsDir, outputFile } = await createFixture(strictAuthoringFlow.replace(snippet, ""));
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(expectedError);
   });
 
   it("rejects duplicate option values", async () => {
