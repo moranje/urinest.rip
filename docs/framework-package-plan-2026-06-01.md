@@ -200,7 +200,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `DocumentationCopyPanel`
 - [x] `ContraindicationGate`
 - [x] `AdminLogList`
-- [ ] `AdminLogDetail`
+- [x] `AdminLogDetail`
 
 ### Templates
 
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 64 files, 290 tests.
+- [x] Current full suite groen: 65 files, 294 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.

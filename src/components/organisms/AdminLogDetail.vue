@@ -5,7 +5,7 @@ import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
 import Icon from "../primitives/Icon.vue";
 import StatusBadge from "../molecules/StatusBadge.vue";
-import StackTrace from "./StackTrace.vue";
+import StackTrace from "../admin/StackTrace.vue";
 
 const props = defineProps<{
   group: LogGroup;
