@@ -1,67 +1,32 @@
 <template>
-  <div class="questionnaire-page">
-    <section class="page-content" aria-label="Vragenlijst">
-      <div
-        v-if="isLoading"
-        class="md-card question-card"
-        aria-busy="true"
-        aria-label="Vragenlijst laden"
-      >
-        <div class="question-loading-header">
-          <Skeleton variant="title" />
-          <Skeleton variant="short" />
-        </div>
-        <div class="question-loading-options">
-          <Skeleton variant="option" />
-          <Skeleton variant="option" />
-          <Skeleton variant="option" />
-        </div>
-      </div>
-      <Transition v-else name="question-fade" mode="out-in">
-        <QuestionPanel
-          v-if="currentQuestion"
-          :key="currentQuestion.id"
-          :question="currentQuestion"
-          :step-description="currentStep?.description"
-          :description-html="compiledMarkdown(currentQuestion.description)"
-          :has-history="hasHistory"
-          :progress-value="progressValue"
-          :progress-max="progressMax"
-          :progress-label="progressLabel"
-          :progress-text="progressText"
-          :selected-option-ids="selectedOptionIds"
-          :selected-count="selectedCount"
-          :has-selected-options="hasSelectedOptions"
-          :multi-select="isMultiSelect"
-          :non-touch="isNonTouchDevice"
-          :active-popover-option-id="activePopoverOptionId"
-          @back="goToPreviousQuestion"
-          @restart="restartQuestionnaire"
-          @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
-          @show-popover="showPopover"
-          @toggle-popover="togglePopover"
-          @schedule-popover-close="schedulePopoverClose"
-          @close-popover="closePopover"
-          @confirm="confirmMultipleChoice"
-        />
-        <div v-else-if="!isLoading && !currentQuestion">
-          <div class="loading-message">
-            <div class="loading-spinner" />
-            Resultaat bepalen...
-          </div>
-        </div>
-      </Transition>
-    </section>
-
-    <InfoPopover
-      :active-option-id="activePopoverOptionId"
-      :html="compiledMarkdown(popoverDescription)"
-      :popover-style="popoverStyle"
-      @cancel-close="cancelPopoverClose"
-      @schedule-close="schedulePopoverClose"
-      @close="closePopover"
-    />
-  </div>
+  <QuestionnaireTemplate
+    :is-loading="isLoading"
+    :question="currentQuestion"
+    :step-description="currentStep?.description"
+    :description-html="compiledMarkdown(currentQuestion?.description)"
+    :has-history="hasHistory"
+    :progress-value="progressValue"
+    :progress-max="progressMax"
+    :progress-label="progressLabel"
+    :progress-text="progressText"
+    :selected-option-ids="selectedOptionIds"
+    :selected-count="selectedCount"
+    :has-selected-options="hasSelectedOptions"
+    :multi-select="isMultiSelect"
+    :non-touch="isNonTouchDevice"
+    :active-popover-option-id="activePopoverOptionId"
+    :popover-html="compiledMarkdown(popoverDescription)"
+    :popover-style="popoverStyle"
+    @back="goToPreviousQuestion"
+    @restart="restartQuestionnaire"
+    @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
+    @show-popover="showPopover"
+    @toggle-popover="togglePopover"
+    @schedule-popover-close="schedulePopoverClose"
+    @cancel-popover-close="cancelPopoverClose"
+    @close-popover="closePopover"
+    @confirm="confirmMultipleChoice"
+  />
 </template>
 
 <script setup lang="ts">
@@ -69,9 +34,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useRoute, useRouter } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
-import InfoPopover from "../components/molecules/InfoPopover.vue";
-import QuestionPanel from "../components/organisms/QuestionPanel.vue";
-import Skeleton from "../components/primitives/Skeleton.vue";
+import QuestionnaireTemplate from "../components/templates/QuestionnaireTemplate.vue";
 import { usePopover } from "../composables/usePopover";
 import { breadcrumbClick } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
@@ -545,126 +508,3 @@ watch(
   },
 );
 </script>
-
-<style scoped>
-.questionnaire-page {
-  display: flex;
-  flex-direction: column;
-  container-type: inline-size;
-  container-name: questionnaire;
-}
-
-.page-content {
-  flex: 1;
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  max-width: var(--layout-content-max-width);
-  margin: 0 auto;
-  width: 100%;
-}
-
-.question-card {
-  border-radius: var(--md-sys-shape-corner-large);
-  padding: var(--spacing-lg);
-  box-shadow: var(--md-sys-elevation-1);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin: var(--spacing-md);
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Animations */
-.question-fade-enter-active {
-  transition:
-    opacity var(--motion-duration-enter) var(--motion-easing-out),
-    transform var(--motion-duration-enter) var(--motion-easing-out);
-}
-.question-fade-leave-active {
-  transition:
-    opacity var(--motion-duration-exit) var(--motion-easing-standard),
-    transform var(--motion-duration-exit) var(--motion-easing-standard);
-}
-.question-fade-enter-from {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.question-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-
-/* Skeleton loading */
-.skeleton-line {
-  height: 14px;
-  background: var(--md-sys-color-surface-container-high);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  animation: skeleton-shimmer var(--motion-duration-long) ease-in-out infinite alternate;
-}
-.skeleton-line--title {
-  height: 24px;
-  width: 70%;
-  margin-bottom: var(--spacing-md);
-}
-.skeleton-line--short {
-  width: 40%;
-}
-.skeleton-option {
-  height: 56px;
-  background: var(--md-sys-color-surface-container-high);
-  border-radius: var(--md-sys-shape-corner-small);
-  animation: skeleton-shimmer var(--motion-duration-long) ease-in-out infinite alternate;
-}
-.skeleton-option:nth-child(2) {
-  animation-delay: 100ms;
-}
-.skeleton-option:nth-child(3) {
-  animation-delay: 200ms;
-}
-
-.question-loading-header {
-  margin-bottom: var(--spacing-xl);
-}
-
-.question-loading-options {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-@container questionnaire (max-width: 37.5rem) {
-  .page-content {
-    padding: var(--spacing-sm);
-  }
-  .question-card {
-    padding: var(--spacing-md);
-    margin: var(--spacing-sm) 0;
-  }
-  .question-loading-header {
-    margin-bottom: var(--spacing-lg);
-  }
-}
-
-@container questionnaire (min-width: 37.5rem) {
-  .page-content {
-    padding: var(--spacing-md) 0;
-  }
-  .question-card {
-    padding: var(--spacing-xl);
-    margin: var(--spacing-lg) auto;
-  }
-}
-
-@container questionnaire (min-width: 56.25rem) {
-  .page-content {
-    padding: var(--spacing-md);
-  }
-  .question-card {
-    max-width: var(--layout-content-max-width);
-    margin: var(--spacing-xl) auto;
-  }
-}
-</style>
