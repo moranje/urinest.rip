@@ -180,7 +180,7 @@ App blijft eigenaar van domeindata en branding.
 
 ### Molecules
 
-- [ ] `SegmentedControl` voor role/theme/admin filters
+- [x] `SegmentedControl` voor role/theme/admin filters
 - [ ] `FormField`
 - [ ] `ChoiceOption`
 - [ ] `ChoiceGroup`
@@ -214,7 +214,7 @@ App blijft eigenaar van domeindata en branding.
 
 - [ ] Legacy `.md-button`, `.md-card`, `.md-tile` verwijderen of quarantainen.
 - [ ] Page-local badge/button/form styles vervangen door primitives.
-- [ ] Header controls naar shared `SegmentedControl`.
+- [x] Header controls naar shared `SegmentedControl`.
 - [ ] Alle touch targets minimaal 44px/48dp.
 - [ ] Geen `transition: all`.
 - [ ] Motion utilities in `motion.css`.
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 48 files, 243 tests.
+- [x] Current full suite groen: 49 files, 246 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.

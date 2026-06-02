@@ -12,6 +12,7 @@ import Input from "./Input.vue";
 import Radio from "./Radio.vue";
 import Select from "./Select.vue";
 import Tooltip from "./Tooltip.vue";
+import SegmentedControl from "../molecules/SegmentedControl.vue";
 
 interface AxeResult {
   violations: Array<{ id: string; impact?: string; description: string }>;
@@ -82,10 +83,15 @@ describe("Primitive components — axe smoke", () => {
   it("Form controls have no violations", async () => {
     const wrapper = mount(
       {
-        components: { Checkbox, IconButton, Input, Radio, Select, Tooltip },
+        components: { Checkbox, IconButton, Input, Radio, SegmentedControl, Select, Tooltip },
         template: `
           <form>
             <IconButton icon="settings" aria-label="Instellingen" />
+            <SegmentedControl
+              label="Rol"
+              model-value="arts"
+              :options="[{ value: 'arts', label: 'Arts' }, { value: 'triage', label: 'Triage' }]"
+            />
             <Input id="email" label="E-mail" model-value="" autocomplete="email" />
             <Select
               id="role"
