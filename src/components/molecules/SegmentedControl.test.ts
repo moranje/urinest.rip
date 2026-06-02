@@ -117,6 +117,8 @@ describe("SegmentedControl", () => {
 
     expect(indicatorCss).toBeDefined();
     expect(indicatorCss).not.toContain("box-shadow");
+    expect(indicatorCss).not.toContain("filter");
+    expect(indicatorCss).not.toContain("linear-gradient");
     expect(activeCss).toBeDefined();
     expect(activeCss).not.toContain("text-shadow");
   });

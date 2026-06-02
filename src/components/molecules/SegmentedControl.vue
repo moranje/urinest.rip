@@ -190,13 +190,9 @@ const handleKeyDown = (event: KeyboardEvent, index: number): void => {
   z-index: 0;
   width: calc((100% - (2 * var(--spacing-xs))) / var(--segmented-control-count));
   box-sizing: border-box;
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  border: 1px solid transparent;
   border-radius: var(--md-sys-shape-corner-full);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--md-sys-color-primary) 92%, var(--md-sys-color-on-primary)),
-    var(--md-sys-color-primary)
-  );
+  background: var(--md-sys-color-primary);
   transform: translateX(calc(var(--segmented-control-index) * 100%));
   transition:
     transform var(--motion-duration-enter) var(--motion-easing-spring),
