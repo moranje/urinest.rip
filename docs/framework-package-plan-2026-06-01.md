@@ -397,5 +397,6 @@ Examples:
 - [x] CI bouwt flows vóór tests.
 - [x] Geen unhandled benign browser transitions.
 - [x] Geen dev Supabase 401 noise zonder opt-in.
+- [x] Route-level axe smoke voor landing, questionnaire, result en error route.
 - [ ] Landing/questionnaire/result/admin a11y pass.
 - [x] Package exports bruikbaar in extern project.
