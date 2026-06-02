@@ -23,6 +23,11 @@ const requiredStoryContracts = [
     exports: ["Inputs", "SelectionControls", "IconButtonsAndTooltip", "AllControls"],
   },
   {
+    file: "src/stories/Chip.stories.ts",
+    title: 'title: "Primitives/Chip"',
+    exports: ["Filled", "ExternalLink", "LongText"],
+  },
+  {
     file: "src/stories/ChoiceOption.stories.ts",
     title: 'title: "Molecules/ChoiceOption"',
     exports: ["LongText", "WithoutKeyboardPrefix"],
@@ -54,7 +59,12 @@ describe("storybook coverage", () => {
     const stories = readdirSync("src/stories").filter((file) => file.endsWith(".stories.ts"));
 
     expect(stories).toEqual(
-      expect.arrayContaining(["Button.stories.ts", "Card.stories.ts", "FormControls.stories.ts"]),
+      expect.arrayContaining([
+        "Button.stories.ts",
+        "Card.stories.ts",
+        "Chip.stories.ts",
+        "FormControls.stories.ts",
+      ]),
     );
     expect(stories).toEqual(
       expect.arrayContaining([

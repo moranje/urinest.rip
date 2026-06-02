@@ -1,8 +1,18 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import SourceChip from "./SourceChip.vue";
 
 describe("SourceChip", () => {
+  it("delegates chip styling to the Chip primitive", () => {
+    const source = readFileSync("src/components/molecules/SourceChip.vue", "utf8");
+
+    expect(source).toContain("<Chip");
+    expect(source).not.toContain(".source-chip {");
+    expect(source).not.toContain(".source-chip--link {");
+    expect(source).not.toContain(".source-chip--link:hover");
+  });
+
   it("renders an external source link safely", () => {
     const wrapper = mount(SourceChip, {
       props: {
