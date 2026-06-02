@@ -181,7 +181,7 @@ App blijft eigenaar van domeindata en branding.
 ### Molecules
 
 - [x] `SegmentedControl` voor role/theme/admin filters
-- [ ] `FormField`
+- [x] `FormField`
 - [ ] `ChoiceOption`
 - [ ] `ChoiceGroup`
 - [ ] `InfoPopover`
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 49 files, 246 tests.
+- [x] Current full suite groen: 50 files, 249 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
