@@ -16,23 +16,25 @@
         tabindex="-1"
         @keydown.esc.stop.prevent="handleDismiss"
       >
-        <div class="drag-indicator" />
-        <div class="update-icon">
-          <Icon v-if="!updating" name="download" :size="28" />
-          <Icon v-else name="spinner" :size="28" spin />
-        </div>
-        <h3 id="update-title" class="update-title">
-          {{ updating ? "Bijwerken..." : "Update beschikbaar" }}
-        </h3>
-        <p id="update-text" class="update-text">
-          {{ updating ? "Even geduld..." : "Er is een nieuwe versie beschikbaar." }}
-        </p>
-        <div class="update-actions">
-          <Button :loading="updating" @click="handleUpdate">
-            {{ updating ? "Bijwerken..." : "Nu bijwerken" }}
-          </Button>
-          <Button v-if="!updating" variant="text" @click="handleDismiss"> Later </Button>
-        </div>
+        <Card class="update-sheet__surface" variant="elevated">
+          <div class="drag-indicator" />
+          <div class="update-icon">
+            <Icon v-if="!updating" name="download" :size="28" />
+            <Icon v-else name="spinner" :size="28" spin />
+          </div>
+          <h3 id="update-title" class="update-title">
+            {{ updating ? "Bijwerken..." : "Update beschikbaar" }}
+          </h3>
+          <p id="update-text" class="update-text">
+            {{ updating ? "Even geduld..." : "Er is een nieuwe versie beschikbaar." }}
+          </p>
+          <div class="update-actions">
+            <Button :loading="updating" @click="handleUpdate">
+              {{ updating ? "Bijwerken..." : "Nu bijwerken" }}
+            </Button>
+            <Button v-if="!updating" variant="text" @click="handleDismiss"> Later </Button>
+          </div>
+        </Card>
       </div>
     </Transition>
   </Teleport>
@@ -43,6 +45,7 @@ import { nextTick, onMounted, ref, watch } from "vue";
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { handleError } from "../lib/errors";
 import Button from "./primitives/Button.vue";
+import Card from "./primitives/Card.vue";
 import Icon from "./primitives/Icon.vue";
 
 const UPDATE_CHECK_INTERVAL = 60 * 60 * 1000;
@@ -115,16 +118,19 @@ function handleDismiss() {
   left: 0;
   right: 0;
   z-index: var(--z-update-banner);
-  background: var(--md-sys-color-surface-container-low);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.update-sheet__surface {
+  box-sizing: border-box;
+  width: 100%;
   border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
   padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-xl);
-  box-shadow: var(--md-sys-elevation-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 480px;
-  margin: 0 auto;
 }
 
 .drag-indicator {
