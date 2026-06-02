@@ -4,7 +4,10 @@ import { ref, computed } from "vue";
 import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";
 import { useToastStore } from "../../store/toastStore";
+import BackButton from "../primitives/BackButton.vue";
+import Button from "../primitives/Button.vue";
 import Icon from "../primitives/Icon.vue";
+import Input from "../primitives/Input.vue";
 import StatusBadge from "../molecules/StatusBadge.vue";
 import StackTrace from "../admin/StackTrace.vue";
 
@@ -233,18 +236,25 @@ async function exportMarkdown() {
 <template>
   <div class="log-detail">
     <div class="detail-toolbar">
-      <button class="back-btn" @click="emit('back')">
-        <Icon name="chevron-left" :size="16" />
+      <BackButton
+        data-testid="log-detail-back"
+        aria-label="Terug naar logoverzicht"
+        @click="emit('back')"
+      >
         Terug
-      </button>
-      <button
-        class="export-btn"
-        :title="'Kopieer als markdown voor LLM-prompt'"
+      </BackButton>
+      <Button
+        variant="outlined"
+        size="sm"
+        data-testid="log-detail-export"
+        title="Kopieer als markdown voor LLM-prompt"
         @click="exportMarkdown"
       >
-        <Icon name="copy" :size="14" />
+        <template #leading>
+          <Icon name="copy" :size="14" />
+        </template>
         {{ copyLabel }}
-      </button>
+      </Button>
     </div>
 
     <div class="detail-header">
@@ -279,54 +289,77 @@ async function exportMarkdown() {
           {{ group.status === "resolved" ? "Opgelost" : "Onderdrukt" }}
           <template v-if="group.resolved_in_version"> in v{{ group.resolved_in_version }}</template>
         </span>
-        <button class="action-btn" :disabled="resolving" @click="handleUnresolve">
+        <Button
+          variant="outlined"
+          size="sm"
+          data-testid="log-detail-unresolve"
+          :disabled="resolving"
+          @click="handleUnresolve"
+        >
           Markering opheffen
-        </button>
+        </Button>
       </template>
       <template v-else>
         <template v-if="showResolveInput">
           <div class="resolve-input-row">
-            <label for="resolve-version-input" class="sr-only">Versie van fix</label>
-            <input
+            <Input
               id="resolve-version-input"
               v-model="resolveVersion"
               type="text"
+              label="Versie van fix"
               placeholder="Versie (bijv. 0.5.1)"
-              class="resolve-version-input"
-              aria-label="Versie van fix"
+              class="resolve-version-field"
+              autocomplete="off"
+              enterkeyhint="go"
             />
-            <button
-              class="action-btn action-resolve"
+            <Button
+              variant="primary"
+              size="sm"
+              data-testid="log-detail-resolve-confirm"
               :disabled="resolving || !resolveVersion.trim()"
               @click="handleResolve"
             >
               Bevestig
-            </button>
-            <button
-              class="action-btn"
+            </Button>
+            <Button
+              variant="text"
+              size="sm"
+              data-testid="log-detail-resolve-cancel"
               @click="
                 showResolveInput = false;
                 resolveVersion = '';
               "
             >
               Annuleer
-            </button>
+            </Button>
           </div>
         </template>
         <template v-else>
-          <button
-            class="action-btn action-resolve"
+          <Button
+            variant="outlined"
+            size="sm"
+            data-testid="log-detail-resolve-open"
             :disabled="resolving"
             @click="showResolveInput = true"
           >
-            <Icon name="check-circle" :size="14" />
+            <template #leading>
+              <Icon name="check-circle" :size="14" />
+            </template>
             Opgelost
-          </button>
+          </Button>
         </template>
-        <button class="action-btn action-suppress" :disabled="resolving" @click="handleSuppress">
-          <Icon name="eye-off" :size="14" />
+        <Button
+          variant="outlined"
+          size="sm"
+          data-testid="log-detail-suppress"
+          :disabled="resolving"
+          @click="handleSuppress"
+        >
+          <template #leading>
+            <Icon name="eye-off" :size="14" />
+          </template>
           Onderdrukken
-        </button>
+        </Button>
       </template>
     </div>
 
@@ -437,54 +470,14 @@ async function exportMarkdown() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  box-sizing: border-box;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  background: none;
-  border: none;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font: var(--md-sys-typescale-body-small);
-  color: var(--md-sys-color-outline);
-  cursor: pointer;
-  border-radius: var(--md-sys-shape-corner-extra-small);
-}
-
-.back-btn:hover {
-  color: var(--md-sys-color-on-surface);
-  background: var(--md-sys-color-surface-container);
-}
-
-.export-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  box-sizing: border-box;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  background: none;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font: var(--md-sys-typescale-body-small);
-  color: var(--md-sys-color-outline);
-  cursor: pointer;
-  border-radius: var(--md-sys-shape-corner-extra-small);
-}
-
-.export-btn:hover {
-  color: var(--md-sys-color-on-surface);
-  background: var(--md-sys-color-surface-container);
 }
 
 .detail-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
 }
@@ -495,56 +488,15 @@ async function exportMarkdown() {
   font-weight: 500;
 }
 
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  box-sizing: border-box;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-xs) var(--spacing-md);
-  font: var(--md-sys-typescale-body-small);
-  font-weight: 500;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
-  background: var(--md-sys-color-surface-container-lowest);
-  cursor: pointer;
-  transition: background var(--motion-duration-short) var(--motion-easing-standard);
-}
-
-.action-btn:hover:not(:disabled) {
-  background: var(--md-sys-color-surface-container);
-}
-
-.action-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.action-resolve {
-  color: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
-}
-
-.action-suppress {
-  color: var(--md-sys-color-outline);
-}
-
 .resolve-input-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
 }
 
-.resolve-version-input {
-  box-sizing: border-box;
-  width: 140px;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font: var(--md-sys-typescale-body-small);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface-container-lowest);
+.resolve-version-field {
+  width: min(16rem, 100%);
 }
 
 .detail-header {

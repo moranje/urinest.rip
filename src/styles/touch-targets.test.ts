@@ -20,7 +20,6 @@ const menuItem = readFileSync("src/components/MenuItem.vue", "utf8");
 const toastContainer = readFileSync("src/components/ToastContainer.vue", "utf8");
 const sourceChip = readFileSync("src/components/molecules/SourceChip.vue", "utf8");
 const adminLogList = readFileSync("src/components/organisms/AdminLogList.vue", "utf8");
-const adminLogDetail = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
 
 const appSpecificTargets: TouchTargetCase[] = [
   { file: "src/components/MenuItem.vue", source: menuItem, selector: ".menu-item" },
@@ -35,29 +34,6 @@ const appSpecificTargets: TouchTargetCase[] = [
     file: "src/components/organisms/AdminLogList.vue",
     source: adminLogList,
     selector: ".group-row",
-  },
-  {
-    file: "src/components/organisms/AdminLogDetail.vue",
-    source: adminLogDetail,
-    selector: ".back-btn",
-    minWidth: true,
-  },
-  {
-    file: "src/components/organisms/AdminLogDetail.vue",
-    source: adminLogDetail,
-    selector: ".export-btn",
-    minWidth: true,
-  },
-  {
-    file: "src/components/organisms/AdminLogDetail.vue",
-    source: adminLogDetail,
-    selector: ".action-btn",
-    minWidth: true,
-  },
-  {
-    file: "src/components/organisms/AdminLogDetail.vue",
-    source: adminLogDetail,
-    selector: ".resolve-version-input",
   },
 ];
 

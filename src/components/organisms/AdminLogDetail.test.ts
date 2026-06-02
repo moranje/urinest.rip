@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { createPinia, setActivePinia } from "pinia";
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -96,6 +97,22 @@ afterEach(() => {
 });
 
 describe("AdminLogDetail", () => {
+  it("delegates controls to shared primitives instead of page-local button styles", () => {
+    const source = readFileSync("src/components/organisms/AdminLogDetail.vue", "utf8");
+
+    expect(source).toContain("<BackButton");
+    expect(source).toContain("<Button");
+    expect(source).toContain("<Input");
+    expect(source).not.toContain('class="back-btn"');
+    expect(source).not.toContain('class="export-btn"');
+    expect(source).not.toContain('class="action-btn');
+    expect(source).not.toContain('class="resolve-version-input"');
+    expect(source).not.toContain(".back-btn");
+    expect(source).not.toContain(".export-btn");
+    expect(source).not.toContain(".action-btn");
+    expect(source).not.toContain(".resolve-version-input");
+  });
+
   it("renders log context and emits back navigation", async () => {
     const { wrapper } = mountDetail();
 
@@ -107,7 +124,7 @@ describe("AdminLogDetail", () => {
     expect(wrapper.text()).toContain("Breadcrumbs (1)");
     expect(wrapper.text()).toContain("Events (2)");
 
-    await wrapper.get(".back-btn").trigger("click");
+    await wrapper.get('[data-testid="log-detail-back"]').trigger("click");
 
     expect(wrapper.emitted("back")).toHaveLength(1);
   });
@@ -115,8 +132,8 @@ describe("AdminLogDetail", () => {
   it("resolves an open group with a required version", async () => {
     const { wrapper, resolveGroup, toastSuccess } = mountDetail();
 
-    await wrapper.get(".action-resolve").trigger("click");
-    const confirm = wrapper.get(".resolve-input-row .action-resolve");
+    await wrapper.get('[data-testid="log-detail-resolve-open"]').trigger("click");
+    const confirm = wrapper.get('[data-testid="log-detail-resolve-confirm"]');
     expect(confirm.attributes("disabled")).toBeDefined();
 
     await wrapper.get("#resolve-version-input").setValue("3.3.2");
@@ -129,7 +146,7 @@ describe("AdminLogDetail", () => {
 
   it("suppresses open groups and unmarks resolved groups", async () => {
     const open = mountDetail();
-    await open.wrapper.get(".action-suppress").trigger("click");
+    await open.wrapper.get('[data-testid="log-detail-suppress"]').trigger("click");
 
     expect(open.suppressGroup).toHaveBeenCalledWith("fp-1");
     expect(open.toastSuccess).toHaveBeenCalledWith("Error onderdrukt");
@@ -138,7 +155,7 @@ describe("AdminLogDetail", () => {
     const resolved = mountDetail({
       group: { ...group, status: "resolved", resolved_in_version: "3.3.1" },
     });
-    await resolved.wrapper.get(".action-btn").trigger("click");
+    await resolved.wrapper.get('[data-testid="log-detail-unresolve"]').trigger("click");
 
     expect(resolved.unresolveGroup).toHaveBeenCalledWith("fp-1");
     expect(resolved.toastSuccess).toHaveBeenCalledWith("Markering opgeheven");
@@ -149,7 +166,7 @@ describe("AdminLogDetail", () => {
     vi.useFakeTimers();
     const { wrapper } = mountDetail();
 
-    await wrapper.get(".export-btn").trigger("click");
+    await wrapper.get('[data-testid="log-detail-export"]').trigger("click");
     await Promise.resolve();
 
     const writeText = navigator.clipboard.writeText as ReturnType<typeof vi.fn>;
@@ -161,9 +178,11 @@ describe("AdminLogDetail", () => {
     expect(markdown).toContain("## Stack trace");
     expect(markdown).toContain("## Breadcrumbs (1)");
     expect(markdown).toContain("## Recente events (1 van 1)");
-    expect(wrapper.get(".export-btn").text()).toContain("Gekopieerd!");
+    expect(wrapper.get('[data-testid="log-detail-export"]').text()).toContain("Gekopieerd!");
 
     await vi.advanceTimersByTimeAsync(2000);
-    expect(wrapper.get(".export-btn").text()).toContain("Kopieer als markdown");
+    expect(wrapper.get('[data-testid="log-detail-export"]').text()).toContain(
+      "Kopieer als markdown",
+    );
   });
 });
