@@ -207,30 +207,31 @@ logic:
   });
 
   it.each([
-    [
-      "negative landing order",
-      "  landingOrder: -1",
-      'Metadata "landingOrder" must be a finite non-negative number.',
-    ],
+    ["negative landing order", "  landingOrder: -1", "/metadata/landingOrder: must be >= 0"],
     [
       "unknown landing section",
       "  landingOrder: 10\n  landingSection: tertiary",
-      'Metadata "landingSection" must be "primary" or "secondary".',
+      "/metadata/landingSection: must be equal to one of the allowed values",
     ],
     [
       "HTML landing description",
       '  landingOrder: 10\n  landingDescription: "<script>alert(1)</script>"',
-      'Metadata "landingDescription" must not contain HTML or control characters.',
+      "/metadata/landingDescription: must match pattern",
     ],
     [
       "unsafe metadata URL",
       '  landingOrder: 10\n  landingUrl: "https://example.test/<script>"',
+      'Metadata "landingUrl" must not contain HTML or control characters.',
+    ],
+    [
+      "unsafe metadata URL protocol",
+      '  landingOrder: 10\n  landingUrl: "javascript:alert(1)"',
       'Metadata "landingUrl" must define an https url.',
     ],
     [
       "nested metadata object",
       '  landingOrder: 10\n  unsafe:\n    html: "<b>bad</b>"',
-      'Metadata "unsafe" must be a string, number, boolean or null.',
+      "/metadata/unsafe: must match a schema in anyOf",
     ],
   ])("rejects malicious flow metadata: %s", async (_name, metadata, expectedError) => {
     const { flowsDir, outputFile } = await createFixture(`

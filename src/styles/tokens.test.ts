@@ -108,7 +108,10 @@ describe("design tokens", () => {
     const flowCompiler = read("scripts/flow-compiler.mjs");
 
     expect(flowCompiler).toContain('icon: { type: "string" }');
-    expect(flowCompiler).toContain('metadata: { type: "object" }');
+    expect(flowCompiler).toContain("metadata: {");
+    expect(flowCompiler).toContain("additionalProperties");
+    expect(flowCompiler).toContain("landingDescription");
+    expect(flowCompiler).toContain("landingSection");
     expect(flowCompiler).toContain("icon: flow.icon");
     expect(flowCompiler).toContain("metadata: flow.metadata");
   });
