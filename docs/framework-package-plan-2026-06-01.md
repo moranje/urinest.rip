@@ -238,7 +238,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Flush throw-path requeue test.
 - [x] Breaker reload behavior test.
 - [x] Explicit dev persistence enable test.
-- [ ] User-facing errorcopy per domein configureerbaar.
+- [x] User-facing errorcopy per domein configureerbaar.
 - [x] Sourcemap/upload docs voor consumers.
 
 ## Security En Privacy Checklist
@@ -355,6 +355,22 @@ Exit criteria:
 - [x] Consumer fixture app.
 - [ ] CI matrix.
 - [ ] Versioning strategy.
+
+### Ronde 6 — Extractie Naar Gitea En Lokale NPM
+
+Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen naar lokale Gitea npm registry, en `urinest.rip` als consumer draaiend houden.
+
+- [ ] Nieuwe package-map/repo maken voor framework, bijv. `beslismodel-framework/`.
+- [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
+- [ ] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
+- [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
+- [ ] `.npmrc` en package `publishConfig.registry` instellen voor lokale Gitea npm registry.
+- [ ] Package CI in nieuwe repo meenemen: lint, typecheck, tests, package smoke checks, consumer fixture, npm audit, secret scan.
+- [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
+- [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
+- [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
+- [ ] Migratievolgorde: publish prerelease packages naar lokale registry, install in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
+- [ ] Rollback-plan: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 
 ## Commit Discipline
 

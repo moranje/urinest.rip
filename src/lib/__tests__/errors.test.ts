@@ -1,11 +1,25 @@
 import { describe, expect, it } from "vitest";
+import { appConfig } from "../../config/app-config";
 import { HttpStatusError, TimeoutError, classifyError } from "../errors";
 
 describe("classifyError", () => {
   it("classifies network timeouts", () => {
     expect(classifyError(new TimeoutError(10000)).userMessage).toBe(
-      "Server reageert niet. Probeer het opnieuw.",
+      appConfig.errorMessages.network.timeout,
     );
+  });
+
+  it("uses configured user-facing copy", () => {
+    const original = appConfig.errorMessages.network.timeout;
+    appConfig.errorMessages.network.timeout = "Aangepaste domeinmelding voor timeouts.";
+
+    try {
+      expect(classifyError(new TimeoutError(10000)).userMessage).toBe(
+        "Aangepaste domeinmelding voor timeouts.",
+      );
+    } finally {
+      appConfig.errorMessages.network.timeout = original;
+    }
   });
 
   it("classifies unique violations with field context", () => {
@@ -42,7 +56,7 @@ describe("classifyError", () => {
 
   it("includes Retry-After guidance for 429 responses", () => {
     expect(classifyError(new HttpStatusError(429, "rate limited", "12")).userMessage).toBe(
-      "Te veel pogingen. Probeer het over 12 seconden opnieuw.",
+      appConfig.errorMessages.http.rateLimitedWithRetry.replace("{seconds}", "12"),
     );
   });
 });

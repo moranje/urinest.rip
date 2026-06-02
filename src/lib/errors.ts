@@ -6,12 +6,14 @@
  */
 
 import { classifyBeslismodelError, getErrorClass } from "@beslismodel/core";
+import { appConfig } from "../config/app-config";
 import { toastError, toastWarning } from "./toast";
 import { createLogger } from "./logger";
 import { persistError } from "./log-sink";
 import { scrubValue } from "./scrub";
 
 const log = createLogger("error-handler");
+const errorMessages = appConfig.errorMessages;
 
 export function handleError(
   error: unknown,
@@ -72,9 +74,7 @@ export function classifyError(error: unknown): ClassifiedError {
 
   if (classified.kind === "network") {
     return {
-      userMessage: isOffline
-        ? "Geen internetverbinding. Controleer je netwerk."
-        : "Server niet bereikbaar. Probeer het opnieuw.",
+      userMessage: isOffline ? errorMessages.network.offline : errorMessages.network.unreachable,
       level: isOffline ? "warning" : "error",
       notify: true,
     };
@@ -82,7 +82,7 @@ export function classifyError(error: unknown): ClassifiedError {
 
   if (classified.kind === "timeout") {
     return {
-      userMessage: "Server reageert niet. Probeer het opnieuw.",
+      userMessage: errorMessages.network.timeout,
       devDetail: classified.message,
       level: "error",
       notify: true,
@@ -111,7 +111,7 @@ export function classifyError(error: unknown): ClassifiedError {
       };
     }
     return {
-      userMessage: "Er ging iets mis. Probeer het opnieuw.",
+      userMessage: errorMessages.unknown,
       devDetail: error.message,
       level: "error",
       notify: true,
@@ -120,7 +120,7 @@ export function classifyError(error: unknown): ClassifiedError {
 
   // Unknown
   return {
-    userMessage: "Er ging iets mis. Probeer het opnieuw.",
+    userMessage: errorMessages.unknown,
     level: "error",
     notify: true,
   };
@@ -150,44 +150,46 @@ function classifyPostgrestError(e: PostgrestLike): ClassifiedError {
     case "23505":
       return {
         userMessage: fieldFromError(e)
-          ? `${fieldFromError(e)} bestaat al.`
-          : "Dit item bestaat al.",
+          ? formatMessage(errorMessages.database.duplicateField, {
+              field: fieldFromError(e) ?? "",
+            })
+          : errorMessages.database.duplicateFallback,
         devDetail: `PostgrestError ${e.code}`,
         level: "warning",
         notify: true,
       };
     case "23503":
-      return { userMessage: "Gerelateerde gegevens niet gevonden.", level: "error", notify: true };
+      return { userMessage: errorMessages.database.relationMissing, level: "error", notify: true };
     case "23514":
       return {
-        userMessage: "Invoer voldoet niet aan de databasevoorwaarden.",
+        userMessage: errorMessages.database.constraint,
         level: "warning",
         notify: true,
       };
     case "42501":
       return {
-        userMessage: "Je hebt geen toegang tot deze gegevens.",
+        userMessage: errorMessages.database.forbidden,
         level: "error",
         notify: true,
       };
     case "PGRST116":
     case "PGRST301":
-      return { userMessage: "Item niet gevonden.", level: "warning", notify: true };
+      return { userMessage: errorMessages.database.notFound, level: "warning", notify: true };
     case "40001":
       return {
-        userMessage: "Gelijktijdige wijziging. Probeer het opnieuw.",
+        userMessage: errorMessages.database.conflict,
         level: "warning",
         notify: true,
       };
     case "40P01":
       return {
-        userMessage: "Database is tijdelijk bezet. Probeer het opnieuw.",
+        userMessage: errorMessages.database.busy,
         level: "warning",
         notify: true,
       };
     default:
       return {
-        userMessage: "Database fout. Probeer het opnieuw.",
+        userMessage: errorMessages.database.generic,
         devDetail: `PostgrestError ${e.code}`,
         level: "error",
         notify: true,
@@ -207,24 +209,24 @@ function classifyAuthError(e: Error & { status?: number }): ClassifiedError {
   const msg = e.message.toLowerCase();
 
   if (msg.includes("invalid login credentials")) {
-    return { userMessage: "Ongeldig e-mailadres of wachtwoord.", level: "error", notify: true };
+    return { userMessage: errorMessages.auth.invalidLogin, level: "error", notify: true };
   }
   if (msg.includes("email not confirmed")) {
-    return { userMessage: "E-mailadres nog niet bevestigd.", level: "warning", notify: true };
+    return { userMessage: errorMessages.auth.emailUnconfirmed, level: "warning", notify: true };
   }
   if (msg.includes("rate limit") || e.status === 429) {
     return {
-      userMessage: "Te veel pogingen. Probeer het later opnieuw.",
+      userMessage: errorMessages.auth.rateLimited,
       level: "warning",
       notify: true,
     };
   }
   if (msg.includes("session") || msg.includes("refresh_token")) {
-    return { userMessage: "Sessie verlopen. Log opnieuw in.", level: "warning", notify: true };
+    return { userMessage: errorMessages.auth.sessionExpired, level: "warning", notify: true };
   }
 
   return {
-    userMessage: "Authenticatie fout. Probeer het opnieuw.",
+    userMessage: errorMessages.auth.generic,
     devDetail: e.message,
     level: "error",
     notify: true,
@@ -233,31 +235,33 @@ function classifyAuthError(e: Error & { status?: number }): ClassifiedError {
 
 function classifyHttpStatus(status: number, retryAfter: number | null = null): ClassifiedError {
   if (status === 401) {
-    return { userMessage: "Sessie verlopen. Log opnieuw in.", level: "warning", notify: true };
+    return { userMessage: errorMessages.http.sessionExpired, level: "warning", notify: true };
   }
   if (status === 403) {
-    return { userMessage: "Je hebt geen toegang tot deze gegevens.", level: "error", notify: true };
+    return { userMessage: errorMessages.http.forbidden, level: "error", notify: true };
   }
   if (status === 404) {
-    return { userMessage: "Niet gevonden.", level: "warning", notify: true };
+    return { userMessage: errorMessages.http.notFound, level: "warning", notify: true };
   }
   if (status === 422) {
-    return { userMessage: "Controleer de ingevoerde gegevens.", level: "warning", notify: true };
+    return { userMessage: errorMessages.http.invalid, level: "warning", notify: true };
   }
   if (status === 429) {
     return {
       userMessage:
         retryAfter && retryAfter > 0
-          ? `Te veel pogingen. Probeer het over ${retryAfter} seconden opnieuw.`
-          : "Te veel pogingen. Probeer het later opnieuw.",
+          ? formatMessage(errorMessages.http.rateLimitedWithRetry, {
+              seconds: String(retryAfter),
+            })
+          : errorMessages.http.rateLimited,
       level: "warning",
       notify: true,
     };
   }
   if (status >= 500) {
-    return { userMessage: "Serverfout. Probeer het opnieuw.", level: "error", notify: true };
+    return { userMessage: errorMessages.http.server, level: "error", notify: true };
   }
-  return { userMessage: "Er ging iets mis. Probeer het opnieuw.", level: "error", notify: true };
+  return { userMessage: errorMessages.http.unknown, level: "error", notify: true };
 }
 
 // -- Timeout --
@@ -315,4 +319,11 @@ function isDutchMessage(msg: string): boolean {
     /verlopen$/,
   ];
   return dutchPatterns.some((p) => p.test(msg));
+}
+
+function formatMessage(message: string, values: Record<string, string>): string {
+  return Object.entries(values).reduce(
+    (formatted, [key, value]) => formatted.replaceAll(`{${key}}`, value),
+    message,
+  );
 }
