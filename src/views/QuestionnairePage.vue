@@ -210,7 +210,7 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     });
     syncQuestionRoute(transition.questionId, "replace");
   } else if (transition.type === "complete") {
-    nextTick(determineResult);
+    nextTick(() => determineResult({ backTarget: "/" }));
   }
 };
 
@@ -300,11 +300,11 @@ const advanceQuestionState = (branch?: string): void => {
   }
 };
 
-const previousQuestionState = (): boolean => {
+const previousQuestionState = (routeMode: QuestionRouteMode = "replace"): boolean => {
   if (!hasHistory.value) return false;
   const transition = goBackQuestion();
   if (transition.type === "question") {
-    syncQuestionRoute(transition.questionId, "replace");
+    syncQuestionRoute(transition.questionId, routeMode);
     return true;
   }
   if (transition.type === "missing") {
@@ -320,15 +320,37 @@ const previousQuestionState = (): boolean => {
   return false;
 };
 
+const browserBackTargetsPreviousQuestion = (): boolean => {
+  if (!hasHistory.value) return false;
+  const routerBackTarget = router.options.history.state.back;
+  const windowBackTarget =
+    typeof window === "undefined"
+      ? null
+      : (window.history.state as { readonly back?: unknown } | null)?.back;
+  const backTarget = typeof routerBackTarget === "string" ? routerBackTarget : windowBackTarget;
+  if (typeof backTarget !== "string") return false;
+
+  const resolvedBackTarget = router.resolve(backTarget);
+  if (resolvedBackTarget.name !== "Questionnaire") return false;
+  if (String(resolvedBackTarget.params.id ?? "") !== props.id) return false;
+
+  const backQuestionId = readQuestionRouteQuery(resolvedBackTarget.query);
+  return !!backQuestionId && questionHistory.value.includes(backQuestionId);
+};
+
 const goToNextQuestion = (branch?: string): void => {
   advanceQuestionState(branch);
 };
 
 const goToPreviousQuestion = (): void => {
-  previousQuestionState();
+  if (browserBackTargetsPreviousQuestion()) {
+    router.back();
+    return;
+  }
+  previousQuestionState("push");
 };
 
-const determineResult = (): void => {
+const determineResult = (options: { backTarget?: string } = {}): void => {
   if (isNavigating.value) return;
   isNavigating.value = true;
 
@@ -390,13 +412,15 @@ const determineResult = (): void => {
         role: roleStore.role,
       });
       clearStoredRedirectTrail();
-      void router.push(createResultRouteLocation(value, route.fullPath)).catch((error: unknown) => {
-        isNavigating.value = false;
-        handleError(error, "router:result", {
-          questionnaireId: props.id,
-          resultId: value,
+      void router
+        .push(createResultRouteLocation(value, options.backTarget ?? route.fullPath))
+        .catch((error: unknown) => {
+          isNavigating.value = false;
+          handleError(error, "router:result", {
+            questionnaireId: props.id,
+            resultId: value,
+          });
         });
-      });
     } else {
       handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
         questionnaireId: props.id,

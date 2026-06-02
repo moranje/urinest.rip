@@ -36,8 +36,20 @@ describe("question route helpers", () => {
     expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "/questionnaire/strip?q=q_last" })).toBe(
       "/questionnaire/strip?q=q_last",
     );
+    expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "/questionnaire/strip" })).toBe(
+      "/questionnaire/strip",
+    );
     expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "https://example.test" })).toBe("/");
     expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "/admin/logs" })).toBe("/");
+    expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "/questionnaire/%2Fadmin" })).toBe("/");
+    expect(readResultBackTarget({ [RESULT_BACK_QUERY_KEY]: "/questionnaire/strip#section" })).toBe(
+      "/",
+    );
+    expect(
+      readResultBackTarget({
+        [RESULT_BACK_QUERY_KEY]: "/questionnaire/strip?q=q_last&redirect=/admin",
+      }),
+    ).toBe("/");
   });
 
   it("reconstructs browser history for a routed question", () => {

@@ -8,6 +8,7 @@ import LandingPage from "../views/LandingPage.vue";
 import QuestionnairePage from "../views/QuestionnairePage.vue";
 import ResultPage from "../views/ResultPage.vue";
 import ErrorPage from "../views/ErrorPage.vue";
+import { useQuestionnaireStore } from "../store/questionnaireStore";
 import mainData from "../../public/main.json";
 
 vi.mock("../lib/log-sink", () => ({
@@ -94,6 +95,47 @@ async function mountQuestionnaireRoute(routePath: string, id: string) {
   const wrapper = mount(QuestionnairePage, {
     attachTo: document.body,
     props: { id },
+    global: {
+      plugins: [pinia, router],
+    },
+  });
+  await settleRouteUi();
+  return { router, wrapper };
+}
+
+async function mountQuestionnaireRouteWithCompletedAnswers(routePath: string, id: string) {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const router = createTestRouter();
+  const questionnaireStore = useQuestionnaireStore();
+  await questionnaireStore.loadInitialData();
+  questionnaireStore.setAnswer(id, "q_strip_nitrite", { value: "negative", text: "Negatief" });
+  questionnaireStore.setAnswer(id, "q_strip_leuko", { value: "negative", text: "Negatief" });
+  questionnaireStore.setAnswer(id, "q_strip_ery", { value: "negative", text: "Negatief" });
+  router.push(routePath);
+  await router.isReady();
+
+  const wrapper = mount(QuestionnairePage, {
+    attachTo: document.body,
+    props: { id },
+    global: {
+      plugins: [pinia, router],
+    },
+  });
+  await settleRouteUi();
+  return { router, wrapper };
+}
+
+async function mountResultRoute(routePath: string, resultKey: string) {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const router = createTestRouter();
+  router.push(routePath);
+  await router.isReady();
+
+  const wrapper = mount(ResultPage, {
+    attachTo: document.body,
+    props: { resultKey },
     global: {
       plugins: [pinia, router],
     },
@@ -226,6 +268,48 @@ describe("route accessibility smoke", () => {
   );
 
   it(
+    "toolbar back uses routed history instead of replacing the current entry",
+    async () => {
+      const { router, wrapper } = await mountQuestionnaireRoute("/questionnaire/strip", "strip");
+
+      await wrapper.findAll<HTMLButtonElement>('[role="radio"]')[1]?.trigger("keydown.space");
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
+      await wrapper.get(".question-toolbar__back").trigger("click");
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
+
+      router.back();
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
+      expect(wrapper.get("h1").text()).toBe("Leukocyten test");
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "completed stored answers do not carry an invalid question route into result back target",
+    async () => {
+      const { router, wrapper } = await mountQuestionnaireRouteWithCompletedAnswers(
+        "/questionnaire/strip?q=q_strip_missing",
+        "strip",
+      );
+
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.name).toBe("Result");
+      expect(router.currentRoute.value.query.from).toBe("/");
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
     "result route has no axe violations",
     async () => {
       const wrapper = await mountRouteView(ResultPage, "/info/other.noConclusiveAbnormality", {
@@ -234,6 +318,23 @@ describe("route accessibility smoke", () => {
       const result = await runAxe(wrapper);
 
       expect(result.violations.map((violation) => violation.id)).toEqual([]);
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "result back button returns to the routed questionnaire question",
+    async () => {
+      const { router, wrapper } = await mountResultRoute(
+        "/info/other.noConclusiveAbnormality?from=/questionnaire/strip%3Fq%3Dq_strip_nitrite",
+        "other.noConclusiveAbnormality",
+      );
+
+      await wrapper.get(".back-button").trigger("click");
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.fullPath).toBe("/questionnaire/strip?q=q_strip_nitrite");
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,
