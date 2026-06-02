@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LogFilters } from "../../store/logStore";
+import Select, { type SelectOption } from "../primitives/Select.vue";
 
 defineProps<{
   filters: LogFilters;
@@ -8,55 +9,54 @@ defineProps<{
 const emit = defineEmits<{
   change: [filters: Partial<LogFilters>];
 }>();
+
+const hourOptions: SelectOption[] = [
+  { value: "1", label: "1 uur" },
+  { value: "24", label: "24 uur" },
+  { value: "168", label: "7 dagen" },
+  { value: "720", label: "30 dagen" },
+];
+
+const levelOptions: SelectOption[] = [
+  { value: "all", label: "Alle levels" },
+  { value: "info", label: "Info" },
+  { value: "warn", label: "Waarschuwing" },
+  { value: "error", label: "Error" },
+];
+
+const statusOptions: SelectOption[] = [
+  { value: "open", label: "Open" },
+  { value: "resolved", label: "Opgelost" },
+  { value: "suppressed", label: "Onderdrukt" },
+];
 </script>
 
 <template>
   <div class="log-filters">
-    <div class="filter-group">
-      <label for="filter-hours">Periode</label>
-      <select
-        id="filter-hours"
-        :value="filters.hours"
-        @change="emit('change', { hours: Number(($event.target as HTMLSelectElement).value) })"
-      >
-        <option :value="1">1 uur</option>
-        <option :value="24">24 uur</option>
-        <option :value="168">7 dagen</option>
-        <option :value="720">30 dagen</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="filter-level">Level</label>
-      <select
-        id="filter-level"
-        :value="filters.level ?? 'all'"
-        @change="
-          emit('change', {
-            level:
-              ($event.target as HTMLSelectElement).value === 'all'
-                ? null
-                : ($event.target as HTMLSelectElement).value,
-          })
-        "
-      >
-        <option value="all">Alle levels</option>
-        <option value="info">Info</option>
-        <option value="warn">Waarschuwing</option>
-        <option value="error">Error</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="filter-status">Status</label>
-      <select
-        id="filter-status"
-        :value="filters.status"
-        @change="emit('change', { status: ($event.target as HTMLSelectElement).value })"
-      >
-        <option value="open">Open</option>
-        <option value="resolved">Opgelost</option>
-        <option value="suppressed">Onderdrukt</option>
-      </select>
-    </div>
+    <Select
+      id="filter-hours"
+      class="log-filters__field"
+      label="Periode"
+      :model-value="String(filters.hours)"
+      :options="hourOptions"
+      @update:model-value="emit('change', { hours: Number($event) })"
+    />
+    <Select
+      id="filter-level"
+      class="log-filters__field"
+      label="Level"
+      :model-value="filters.level ?? 'all'"
+      :options="levelOptions"
+      @update:model-value="emit('change', { level: $event === 'all' ? null : $event })"
+    />
+    <Select
+      id="filter-status"
+      class="log-filters__field"
+      label="Status"
+      :model-value="filters.status"
+      :options="statusOptions"
+      @update:model-value="emit('change', { status: $event })"
+    />
   </div>
 </template>
 
@@ -65,28 +65,11 @@ const emit = defineEmits<{
   display: flex;
   gap: var(--spacing-md);
   align-items: end;
+  flex-wrap: wrap;
 }
 
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-label {
-  font: var(--md-sys-typescale-label-small);
-  color: var(--md-sys-color-outline);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-select {
+.log-filters__field {
   min-width: 120px;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font: var(--md-sys-typescale-body-small);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface-container-lowest);
-  color: var(--md-sys-color-on-surface);
+  flex: 1 1 10rem;
 }
 </style>

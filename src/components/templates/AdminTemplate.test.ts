@@ -117,9 +117,9 @@ describe("AdminTemplate", () => {
     expect(wrapper.get(".admin-template__error").attributes("role")).toBe("alert");
     expect(wrapper.get(".admin-log-list-stub").attributes("data-count")).toBe("1");
 
-    await wrapper.get(".button-stub").trigger("click");
+    await wrapper.findAll(".button-stub")[0]?.trigger("click");
     await wrapper.get(".filters-change").trigger("click");
-    await wrapper.get(".admin-template__warning button").trigger("click");
+    await wrapper.get(".admin-template__warning .button-stub").trigger("click");
     await wrapper.get(".select-group").trigger("click");
 
     expect(wrapper.emitted("signOut")).toHaveLength(1);

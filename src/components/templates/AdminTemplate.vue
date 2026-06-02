@@ -21,7 +21,9 @@
 
       <div v-if="sinkDownAt" class="admin-template__warning" role="status">
         <span>Log-persistentie is uitgeschakeld sinds {{ sinkDownAt }}.</span>
-        <button type="button" @click="emit('clearSinkStatus')">Markeer gezien</button>
+        <Button variant="outlined" size="sm" @click="emit('clearSinkStatus')">
+          Markeer gezien
+        </Button>
       </div>
 
       <div v-if="error" class="admin-template__error" role="alert">
@@ -119,17 +121,6 @@ const emit = defineEmits<{
 .admin-template__warning {
   background: var(--md-sys-color-warning-container);
   color: var(--md-sys-color-on-warning-container);
-}
-
-.admin-template__warning button {
-  min-height: var(--min-touch-target);
-  padding: 0 var(--spacing-sm);
-  border: 1px solid currentColor;
-  border-radius: var(--md-sys-shape-corner-small);
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font: var(--md-sys-typescale-label-medium);
 }
 
 @container admin (max-width: 37.5rem) {
