@@ -47,6 +47,12 @@ import {
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
 import { renderMarkdown } from "../lib/markdown-renderer";
+import {
+  buildQuestionRouteHistory,
+  createQuestionRouteLocation,
+  createResultRouteLocation,
+  readQuestionRouteQuery,
+} from "../lib/question-route";
 import { appendStoredRedirectTrail, clearStoredRedirectTrail } from "../lib/redirect-trail";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
@@ -74,10 +80,14 @@ const {
   hasHistory,
   hasSelectedOptions,
   isMultiSelect,
+  findNextQuestionId,
   progress,
   questionnaire,
+  questionHistory,
+  replaceHistory,
   resetNavigation,
   selectedCount,
+  setCurrentQuestion,
   start: startQuestionnaire,
   advance: advanceQuestion,
 } = runner;
@@ -146,6 +156,8 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     return;
   }
 
+  const requestedQuestionId = readQuestionRouteQuery(route.query);
+
   // Only wipe answers on explicit reset (e.g. user pressed "Opnieuw beginnen"
   // or navigated to a different flow). Mounting/remounting on the same
   // flow-id preserves progress (DSN-C02).
@@ -170,6 +182,25 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     return;
   }
 
+  if (requestedQuestionId && restoreQuestionRouteState(requestedQuestionId)) {
+    isLoading.value = false;
+    recordFlowStart({
+      flowId: props.id,
+      version: questionnaire.value.version,
+      role: roleStore.role,
+      questionId: requestedQuestionId,
+    });
+    return;
+  }
+
+  if (requestedQuestionId) {
+    log.warn("route question could not be restored", {
+      questionId: requestedQuestionId,
+      questionnaireId: props.id,
+    });
+  }
+
+  isLoading.value = false;
   if (transition.type === "question") {
     recordFlowStart({
       flowId: props.id,
@@ -177,10 +208,8 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
       role: roleStore.role,
       questionId: transition.questionId,
     });
-  }
-
-  isLoading.value = false;
-  if (transition.type === "complete") {
+    syncQuestionRoute(transition.questionId, "replace");
+  } else if (transition.type === "complete") {
     nextTick(determineResult);
   }
 };
@@ -207,6 +236,37 @@ const getQuestionStepId = (questionId: string | null): string | undefined => {
   });
 };
 
+const restoreQuestionRouteState = (questionId: string): boolean => {
+  if (!questionnaire.value) return false;
+  const history = buildQuestionRouteHistory({
+    findNextQuestionId,
+    questionIds: questionnaire.value.questionIds,
+    targetQuestionId: questionId,
+  });
+  if (!history) return false;
+
+  replaceHistory(history);
+  setCurrentQuestion(questionId);
+  closePopover();
+  return true;
+};
+
+type QuestionRouteMode = "push" | "replace";
+
+const syncQuestionRoute = (questionId: string | null, mode: QuestionRouteMode): void => {
+  if (!questionId) return;
+  if (readQuestionRouteQuery(route.query) === questionId) return;
+
+  const location = createQuestionRouteLocation(props.id, questionId, route.query);
+  void router[mode](location).catch((error: unknown) => {
+    handleError(error, `router:question-${mode}`, {
+      questionHistory: [...questionHistory.value],
+      questionId,
+      questionnaireId: props.id,
+    });
+  });
+};
+
 const advanceQuestionState = (branch?: string): void => {
   const previousQuestionId = currentQuestionId.value;
   if (previousQuestionId) {
@@ -224,6 +284,10 @@ const advanceQuestionState = (branch?: string): void => {
     determineResult();
     return;
   }
+  if (transition.type === "question") {
+    syncQuestionRoute(transition.questionId, "push");
+    return;
+  }
   if (transition.type === "missing") {
     handleError(
       new Error(`Questionnaire not found: ${transition.questionnaireId}`),
@@ -236,9 +300,24 @@ const advanceQuestionState = (branch?: string): void => {
   }
 };
 
-const previousQuestionState = (): void => {
-  if (!hasHistory.value) return;
-  goBackQuestion();
+const previousQuestionState = (): boolean => {
+  if (!hasHistory.value) return false;
+  const transition = goBackQuestion();
+  if (transition.type === "question") {
+    syncQuestionRoute(transition.questionId, "replace");
+    return true;
+  }
+  if (transition.type === "missing") {
+    handleError(
+      new Error(`Questionnaire not found: ${transition.questionnaireId}`),
+      "questionnaire:not-found",
+      {
+        questionnaireId: transition.questionnaireId,
+      },
+    );
+    router.replace({ name: "Error", query: { message: "Vragenlijst niet gevonden" } });
+  }
+  return false;
 };
 
 const goToNextQuestion = (branch?: string): void => {
@@ -311,7 +390,7 @@ const determineResult = (): void => {
         role: roleStore.role,
       });
       clearStoredRedirectTrail();
-      void router.push(`/info/${value}`).catch((error: unknown) => {
+      void router.push(createResultRouteLocation(value, route.fullPath)).catch((error: unknown) => {
         isNavigating.value = false;
         handleError(error, "router:result", {
           questionnaireId: props.id,
@@ -490,6 +569,28 @@ watch(
     isNavigating.value = false;
     resetNavigation();
     await loadStateAndDetermineStart({ reset: true });
+  },
+);
+
+watch(
+  () => route.query.q,
+  (value) => {
+    if (isLoading.value || isNavigating.value) return;
+    const questionId = typeof value === "string" && value.length > 0 ? value : null;
+
+    if (!questionId) {
+      syncQuestionRoute(currentQuestionId.value, "replace");
+      return;
+    }
+
+    if (questionId === currentQuestionId.value) return;
+    if (!restoreQuestionRouteState(questionId)) {
+      log.warn("route question could not be restored", {
+        questionId,
+        questionnaireId: props.id,
+      });
+      syncQuestionRoute(currentQuestionId.value, "replace");
+    }
   },
 );
 

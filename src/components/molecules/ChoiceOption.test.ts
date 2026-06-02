@@ -88,11 +88,11 @@ describe("ChoiceOption", () => {
     const selectedCss = source.match(/\.choice-option--selected\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
       ?.body;
 
-    expect(cardCss).toContain("border: 1px solid transparent");
+    expect(cardCss).toContain("border: 0");
     expect(focusCss).toContain("outline: none");
     expect(focusCss).toContain("box-shadow: inset 4px 0 0 var(--md-sys-color-primary)");
     expect(focusCss).not.toContain("outline: 2px solid");
-    expect(selectedCss).toContain("border-color: transparent");
     expect(selectedCss).not.toContain("border-color: var(--md-sys-color-primary)");
+    expect(selectedCss).not.toContain("border:");
   });
 });

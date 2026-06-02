@@ -14,6 +14,26 @@ import ResultPage from "../views/ResultPage.vue";
 import AboutPage from "../views/AboutPage.vue";
 import ErrorPage from "../views/ErrorPage.vue";
 
+const clinicalDataReadyGuard = createBeslismodelDataReadyGuard({
+  afterLoad: () => nextTick(),
+  onFailure: (failure) => {
+    if (failure.reason === "load-error" && failure.phase === "pending") {
+      return {
+        name: "Error",
+        query: { message: "Kon gegevens niet laden", retry: failure.to.fullPath },
+      };
+    }
+    if (failure.reason === "load-error") {
+      return { name: "Error", query: { retry: failure.to.fullPath } };
+    }
+    return {
+      name: "Error",
+      query: { message: "Laden mislukt", retry: failure.to.fullPath },
+    };
+  },
+  useStore: useQuestionnaireStore,
+});
+
 const routes = [
   {
     path: "/",
@@ -25,31 +45,14 @@ const routes = [
     name: "Questionnaire",
     component: () => import("../views/QuestionnairePage.vue").then((m) => m.default),
     props: true,
-    beforeEnter: createBeslismodelDataReadyGuard({
-      afterLoad: () => nextTick(),
-      onFailure: (failure) => {
-        if (failure.reason === "load-error" && failure.phase === "pending") {
-          return {
-            name: "Error",
-            query: { message: "Kon gegevens niet laden", retry: failure.to.fullPath },
-          };
-        }
-        if (failure.reason === "load-error") {
-          return { name: "Error", query: { retry: failure.to.fullPath } };
-        }
-        return {
-          name: "Error",
-          query: { message: "Laden mislukt", retry: failure.to.fullPath },
-        };
-      },
-      useStore: useQuestionnaireStore,
-    }),
+    beforeEnter: clinicalDataReadyGuard,
   },
   {
     path: "/info/:resultKey",
     name: "Result",
     component: ResultPage,
     props: true,
+    beforeEnter: clinicalDataReadyGuard,
   },
   { path: "/over", name: "About", component: AboutPage },
   { path: "/error", name: "Error", component: ErrorPage },

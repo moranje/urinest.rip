@@ -84,8 +84,28 @@ async function mountRouteView(
   return wrapper;
 }
 
+async function mountQuestionnaireRoute(routePath: string, id: string) {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const router = createTestRouter();
+  router.push(routePath);
+  await router.isReady();
+
+  const wrapper = mount(QuestionnairePage, {
+    attachTo: document.body,
+    props: { id },
+    global: {
+      plugins: [pinia, router],
+    },
+  });
+  await settleRouteUi();
+  return { router, wrapper };
+}
+
 describe("route accessibility smoke", () => {
   beforeEach(() => {
+    sessionStorage.clear?.();
+    localStorage.clear?.();
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => new Response(JSON.stringify(mainData), { status: 200 })),
@@ -170,6 +190,35 @@ describe("route accessibility smoke", () => {
       expect(
         wrapper.findAll('[role="radio"]').map((option) => option.attributes("tabindex")),
       ).toEqual(["0", "-1", "-1", "-1"]);
+
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "questionnaire browser history restores the previous routed question",
+    async () => {
+      const { router, wrapper } = await mountQuestionnaireRoute("/questionnaire/strip", "strip");
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
+
+      const nitriteOptions = wrapper.findAll<HTMLButtonElement>('[role="radio"]');
+      await nitriteOptions[1]?.trigger("keydown.space");
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
+      expect(wrapper.get("h1").text()).toBe("Leukocyten test");
+
+      router.back();
+      await settleRouteUi();
+
+      expect(router.currentRoute.value.query.q).toBe("q_strip_nitrite");
+      expect(wrapper.get("h1").text()).toBe("Nitriet test");
+      expect(
+        wrapper.findAll('[role="radio"]').map((option) => option.attributes("aria-checked")),
+      ).toEqual(["false", "true"]);
 
       wrapper.unmount();
     },

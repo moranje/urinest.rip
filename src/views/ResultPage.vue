@@ -12,8 +12,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { handleError } from "../lib/errors";
+import { readResultBackTarget } from "../lib/question-route";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import ResultTemplate from "../components/templates/ResultTemplate.vue";
@@ -24,6 +25,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToastStore();
 const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
@@ -59,11 +61,9 @@ const fetchResultData = (key: string): void => {
 };
 
 const goBack = (): void => {
-  if (window.history.state.back) {
-    router.back();
-  } else {
-    router.push("/");
-  }
+  void router.push(readResultBackTarget(route.query)).catch((navigationError: unknown) => {
+    handleError(navigationError, "result-page:back", { resultKey: props.resultKey });
+  });
 };
 
 const handleDocumentationCopied = (): void => {

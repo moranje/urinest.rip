@@ -83,13 +83,12 @@ const emit = defineEmits<{
   align-items: stretch;
   width: 100%;
   overflow: hidden;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: var(--md-sys-shape-corner-small);
   background-color: var(--md-sys-color-surface-container-lowest);
   color: var(--md-sys-color-on-surface);
   transition:
     background-color var(--motion-duration-medium) var(--motion-easing-standard),
-    border-color var(--motion-duration-medium) var(--motion-easing-standard),
     box-shadow var(--motion-duration-medium) var(--motion-easing-standard),
     transform var(--motion-duration-short) var(--motion-easing-standard);
 }
@@ -113,7 +112,6 @@ const emit = defineEmits<{
 }
 
 .choice-option--selected {
-  border-color: transparent;
   box-shadow: inset 3px 0 0 var(--md-sys-color-primary);
   background-color: color-mix(
     in srgb,
