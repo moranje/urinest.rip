@@ -32,49 +32,10 @@
       <div v-else-if="resultData" class="result-content">
         <ResultSectionList :result="resultData">
           <template #after-additional>
-            <!-- Contraindications Checklist -->
-            <div
-              v-if="contraindicationsState.length > 0"
-              class="result-section contraindications-section"
-            >
-              <h3 class="section-title">Controleer Contra-indicaties</h3>
-              <div class="checklist">
-                <div
-                  v-for="(item, index) in contraindicationsState"
-                  :key="index"
-                  class="checklist-item"
-                >
-                  <input
-                    :id="'ci-check-' + index"
-                    v-model="item.checked"
-                    type="checkbox"
-                    class="md-checkbox"
-                  />
-                  <label :for="'ci-check-' + index" class="checklist-label">
-                    {{ item.text }}
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Treatment (conditional on contraindications) -->
-            <div
-              v-if="allContraindicationsChecked && resultData.treatment"
-              class="result-section treatment-section"
-              aria-live="polite"
-            >
-              <h3 class="section-title">Behandeling</h3>
-              <p>{{ resultData.treatment }}</p>
-            </div>
-            <Notice
-              v-else-if="!allContraindicationsChecked && resultData.treatment"
-              class="result-section"
-              variant="info"
-              role="status"
-            >
-              <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
-            </Notice>
-            <p class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
+            <ContraindicationGate
+              :contraindications="resultData.contraindications"
+              :treatment="resultData.treatment"
+            />
           </template>
 
           <DocumentationCopyPanel
@@ -89,17 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { handleError } from "../lib/errors";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
-import Notice from "../components/molecules/Notice.vue";
+import ContraindicationGate from "../components/organisms/ContraindicationGate.vue";
 import DocumentationCopyPanel from "../components/organisms/DocumentationCopyPanel.vue";
 import ResultSectionList from "../components/organisms/ResultSectionList.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
-import type { Contraindication, ResultData } from "../types";
+import type { ResultData } from "../types";
 
 const props = defineProps<{
   resultKey: string;
@@ -110,45 +71,22 @@ const toast = useToastStore();
 const resultData = ref<ResultData | null>(null);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const treatmentStatusMessage = ref("");
-
-const contraindicationsState = reactive<Array<Contraindication & { checked: boolean }>>([]);
-
-const allContraindicationsChecked = computed(() => {
-  if (contraindicationsState.length === 0) return true;
-  return contraindicationsState.every((item) => item.checked);
-});
 
 const planDocumentation = computed(() => {
   if (!resultData.value) return "";
   return (resultData.value.documentation || "").trim();
 });
 
-watch(allContraindicationsChecked, (isChecked) => {
-  if (!resultData.value?.treatment) return;
-  treatmentStatusMessage.value = isChecked
-    ? "Behandeling beschikbaar na controle van contra-indicaties."
-    : "Behandeling verborgen tot alle contra-indicaties zijn gecontroleerd.";
-});
-
 const fetchResultData = (key: string): void => {
   isLoading.value = true;
   error.value = null;
   resultData.value = null;
-  contraindicationsState.splice(0, contraindicationsState.length);
 
   const store = useQuestionnaireStore();
   const foundResult = store.getResultByKey(key);
 
   if (foundResult) {
     resultData.value = foundResult;
-    if (Array.isArray(foundResult.contraindications)) {
-      for (const ci of foundResult.contraindications) {
-        if (ci && typeof ci.text === "string") {
-          contraindicationsState.push({ ...ci, checked: false });
-        }
-      }
-    }
   } else {
     const availableKeys = Object.keys(store.results);
     const questionnaires = store.questionnaireList.map((q) => q.id);
@@ -273,86 +211,6 @@ watch(
   padding: 0;
 }
 
-.section-title {
-  font: var(--md-sys-typescale-title-medium);
-  color: var(--md-sys-color-primary);
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
-}
-
-.result-section p {
-  margin: 0;
-  font: var(--md-sys-typescale-body-large);
-  line-height: 1.6;
-}
-
-/* Contraindications — clean, no card */
-.contraindications-section {
-  padding: 0;
-  background: none;
-}
-
-.checklist {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.checklist-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  cursor: pointer;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-xs) 0;
-}
-
-.md-checkbox {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--md-sys-color-primary);
-  margin: 0;
-  flex-shrink: 0;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.checklist-label {
-  font: var(--md-sys-typescale-body-medium);
-  color: var(--md-sys-color-on-surface);
-  position: relative;
-  transition: color var(--motion-duration-long) var(--motion-easing-standard);
-}
-
-.checklist-label::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  height: 1px;
-  width: 100%;
-  background-color: var(--md-sys-color-on-surface-variant);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--motion-duration-long) var(--motion-easing-standard);
-}
-
-.md-checkbox:checked + .checklist-label {
-  color: var(--md-sys-color-on-surface-variant);
-}
-.md-checkbox:checked + .checklist-label::after {
-  transform: scaleX(1);
-}
-
-/* Treatment — card with left accent border */
-.treatment-section {
-  background: var(--md-sys-color-surface-container-low);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-left: 3px solid var(--md-sys-color-primary);
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-}
-
 .error-message {
   width: 100%;
   text-align: center;
@@ -416,9 +274,6 @@ watch(
   }
   .result-content {
     gap: var(--spacing-sm);
-  }
-  .treatment-section {
-    padding: var(--spacing-sm);
   }
 }
 </style>
