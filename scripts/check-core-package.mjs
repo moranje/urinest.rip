@@ -1,11 +1,13 @@
 import {
   appendAuditTrailEvent,
+  classifyBeslismodelError,
   createCalculatorRegistry,
   createAuditTrailEvent,
   createMarkdownRenderer,
   createRuntimeContext,
   detectRedirectCycle,
   findNextQuestionId,
+  getErrorClass,
   getQuestionProgress,
   nextAuditTrailSequence,
   normalizeDecisionManifest,
@@ -101,6 +103,15 @@ if (nextQuestionId !== "q1") {
 
 if (!detectRedirectCycle(["a", "b"], "a").hasCycle) {
   throw new Error("detectRedirectCycle export failed");
+}
+
+const classified = classifyBeslismodelError({ status: 429, retryAfter: "7" });
+if (
+  classified.kind !== "rate_limit" ||
+  classified.retryAfterSeconds !== 7 ||
+  getErrorClass(new Error("hidden detail")) !== "Error"
+) {
+  throw new Error("error classification export failed");
 }
 
 console.log("@beslismodel/core package exports ok");

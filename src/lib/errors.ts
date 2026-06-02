@@ -5,6 +5,7 @@
  * Classifies errors, shows the right toast, and logs to sinks.
  */
 
+import { classifyBeslismodelError, getErrorClass } from "@beslismodel/core";
 import { toastError, toastWarning } from "./toast";
 import { createLogger } from "./logger";
 import { persistError } from "./log-sink";
@@ -45,7 +46,7 @@ export function handleError(
     context: context ?? "unknown",
     userMessage: classified.userMessage,
     devDetail: classified.devDetail,
-    errorClass: error instanceof Error ? error.constructor.name : typeof error,
+    errorClass: getErrorClass(error),
     stack: originalStack || fallbackStack,
     level: classified.level === "warning" ? "warn" : "error",
     extraContext,
@@ -66,44 +67,37 @@ interface ClassifiedError {
 // -- Classification logic --
 
 export function classifyError(error: unknown): ClassifiedError {
-  // Network / offline
-  if (typeof navigator !== "undefined" && !navigator.onLine) {
+  const isOffline = typeof navigator !== "undefined" && !navigator.onLine;
+  const classified = classifyBeslismodelError(error, { isOffline });
+
+  if (classified.kind === "network") {
     return {
-      userMessage: "Geen internetverbinding. Controleer je netwerk.",
-      level: "warning",
+      userMessage: isOffline
+        ? "Geen internetverbinding. Controleer je netwerk."
+        : "Server niet bereikbaar. Probeer het opnieuw.",
+      level: isOffline ? "warning" : "error",
       notify: true,
     };
   }
 
-  if (error instanceof TypeError && error.message === "Failed to fetch") {
-    return {
-      userMessage: "Server niet bereikbaar. Probeer het opnieuw.",
-      level: "error",
-      notify: true,
-    };
-  }
-
-  // Timeout
-  if (error instanceof TimeoutError) {
+  if (classified.kind === "timeout") {
     return {
       userMessage: "Server reageert niet. Probeer het opnieuw.",
-      devDetail: error.message,
+      devDetail: classified.message,
       level: "error",
       notify: true,
     };
   }
 
-  // Supabase PostgrestError
-  if (isPostgrestError(error)) {
+  if (classified.source === "database" && isPostgrestError(error)) {
     return classifyPostgrestError(error);
   }
 
-  if (hasStatus(error)) {
-    return classifyHttpStatus(error.status, retryAfterSeconds(error));
+  if (classified.source === "http" && typeof classified.status === "number") {
+    return classifyHttpStatus(classified.status, classified.retryAfterSeconds ?? null);
   }
 
-  // Supabase AuthError
-  if (isAuthError(error)) {
+  if (classified.source === "auth" && error instanceof Error) {
     return classifyAuthError(error);
   }
 
@@ -132,26 +126,6 @@ export function classifyError(error: unknown): ClassifiedError {
   };
 }
 
-// -- Type guards --
-
-function hasCode(e: unknown): e is { code: string } {
-  return (
-    typeof e === "object" &&
-    e !== null &&
-    "code" in e &&
-    typeof (e as Record<string, unknown>).code === "string"
-  );
-}
-
-function hasStatus(e: unknown): e is { status: number } {
-  return (
-    typeof e === "object" &&
-    e !== null &&
-    "status" in e &&
-    typeof (e as Record<string, unknown>).status === "number"
-  );
-}
-
 // -- Supabase PostgrestError --
 
 interface PostgrestLike {
@@ -162,7 +136,13 @@ interface PostgrestLike {
 }
 
 function isPostgrestError(e: unknown): e is PostgrestLike {
-  return typeof e === "object" && e !== null && "code" in e && "message" in e && hasCode(e);
+  return (
+    typeof e === "object" &&
+    e !== null &&
+    "code" in e &&
+    "message" in e &&
+    typeof (e as Record<string, unknown>).code === "string"
+  );
 }
 
 function classifyPostgrestError(e: PostgrestLike): ClassifiedError {
@@ -223,12 +203,6 @@ function fieldFromError(e: PostgrestLike): string | null {
 
 // -- Supabase AuthError --
 
-function isAuthError(e: unknown): e is Error & { status?: number } {
-  return (
-    e instanceof Error && (e.constructor.name === "AuthError" || ("status" in e && hasStatus(e)))
-  );
-}
-
 function classifyAuthError(e: Error & { status?: number }): ClassifiedError {
   const msg = e.message.toLowerCase();
 
@@ -255,23 +229,6 @@ function classifyAuthError(e: Error & { status?: number }): ClassifiedError {
     level: "error",
     notify: true,
   };
-}
-
-function retryAfterSeconds(e: unknown): number | null {
-  if (typeof e !== "object" || e === null) return null;
-  const value = (e as Record<string, unknown>).retryAfter;
-  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.round(value));
-  if (typeof value === "string") {
-    const seconds = Number(value);
-    if (Number.isFinite(seconds)) return Math.max(0, Math.round(seconds));
-    const dateMs = Date.parse(value);
-    if (Number.isFinite(dateMs)) return Math.max(0, Math.ceil((dateMs - Date.now()) / 1000));
-  }
-  const headers = (e as Record<string, unknown>).headers;
-  if (headers && typeof (headers as Headers).get === "function") {
-    return retryAfterSeconds({ retryAfter: (headers as Headers).get("Retry-After") });
-  }
-  return null;
 }
 
 function classifyHttpStatus(status: number, retryAfter: number | null = null): ClassifiedError {

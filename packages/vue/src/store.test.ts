@@ -21,6 +21,8 @@ const createStorage = (initial: Record<string, string> = {}) => {
   return { adapter, values };
 };
 
+class MissingManifestError extends Error {}
+
 describe("createBeslismodelStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -162,7 +164,7 @@ describe("createBeslismodelStore", () => {
       track: vi.fn(),
     };
     const onError = vi.fn();
-    const loadError = new Error("patient specific missing manifest");
+    const loadError = new MissingManifestError("patient specific missing manifest");
     const useStore = createBeslismodelStore({
       loadManifest: async () => {
         throw loadError;
@@ -180,7 +182,7 @@ describe("createBeslismodelStore", () => {
       type: "manifest.load_failed",
       phase: "manifest.load",
       storeId: "beslismodel",
-      errorClass: "Error",
+      errorClass: "MissingManifestError",
     });
     expect(onError).toHaveBeenCalledWith(loadError, {
       phase: "manifest.load",

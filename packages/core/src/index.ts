@@ -24,6 +24,13 @@ export { createCalculatorRegistry } from "./calculator";
 export type { ConditionAnswers, ConditionValidationResult } from "./conditions";
 export { evaluateCondition, validateConditions } from "./conditions";
 export type {
+  BeslismodelErrorClassification,
+  BeslismodelErrorKind,
+  BeslismodelErrorSource,
+  ClassifyBeslismodelErrorOptions,
+} from "./error-classification";
+export { classifyBeslismodelError, getErrorClass } from "./error-classification";
+export type {
   FindNextQuestionInput,
   NormalizeRedirectTrailOptions,
   QuestionnaireGraph,

@@ -1,6 +1,7 @@
 import {
   applyRuntimeContext,
   createRuntimeContext,
+  getErrorClass,
   normalizeDecisionManifest,
   validateConditions as validateConditionsCore,
   type DecisionManifest,
@@ -124,8 +125,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const toError = (caught: unknown): Error => (caught instanceof Error ? caught : new Error("Error"));
 
-const errorClass = (error: Error): string => error.constructor.name || "Error";
-
 const isRuntimeContext = (value: RuntimeContext | RuntimeContextValues): value is RuntimeContext =>
   isRecord(value) && "values" in value && "get" in value && typeof value.get === "function";
 
@@ -199,7 +198,7 @@ export function createBeslismodelStore<
             type: "answers.persist_failed",
             phase: "answers.persist",
             storeId,
-            errorClass: errorClass(persistError),
+            errorClass: getErrorClass(persistError),
           });
           options.onError?.(persistError, {
             phase: "answers.persist",
@@ -244,7 +243,7 @@ export function createBeslismodelStore<
           type: "answers.restore_failed",
           phase: "answers.restore",
           storeId,
-          errorClass: errorClass(restoreError),
+          errorClass: getErrorClass(restoreError),
         });
         options.onError?.(restoreError, {
           phase: "answers.restore",
@@ -330,7 +329,7 @@ export function createBeslismodelStore<
             type: "manifest.load_failed",
             phase: "manifest.load",
             storeId,
-            errorClass: errorClass(loadError),
+            errorClass: getErrorClass(loadError),
           });
           throw loadError;
         } finally {
@@ -400,7 +399,7 @@ export function createBeslismodelStore<
           storeId,
           questionnaireId,
           conditionCount: conditionList.length,
-          errorClass: errorClass(validationError),
+          errorClass: getErrorClass(validationError),
         });
         options.onError?.(validationError, {
           phase: "conditions.validate",
@@ -435,7 +434,7 @@ export function createBeslismodelStore<
           storeId,
           questionnaireId,
           logicCount: logic.length,
-          errorClass: errorClass(outcomeError),
+          errorClass: getErrorClass(outcomeError),
         });
         options.onError?.(outcomeError, {
           phase: "outcome.resolve",

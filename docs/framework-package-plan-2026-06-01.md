@@ -232,7 +232,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] App-specific source/config injecteerbaar.
 - [x] No-op telemetry adapter voor packages.
 - [x] Supabase adapter apart package/app-only houden.
-- [ ] Error classification delen tussen app en package.
+- [x] Error classification delen tussen app en package.
 - [ ] Breadcrumb model typed maken.
 - [x] Log persistence tests voor 401/403/429/5xx/offline.
 - [x] Flush throw-path requeue test.
