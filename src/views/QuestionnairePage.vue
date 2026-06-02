@@ -19,28 +19,11 @@
       </div>
       <Transition v-else name="question-fade" mode="out-in">
         <div v-if="currentQuestion" :key="currentQuestion.id" class="md-card question-card">
-          <div class="question-toolbar">
-            <button
-              v-if="hasHistory"
-              class="back-button"
-              type="button"
-              aria-label="Vorige vraag (Esc of Backspace)"
-              @click="goToPreviousQuestion"
-            >
-              <Icon name="arrow-left" :size="20" />
-              Terug
-            </button>
-            <span class="question-toolbar-spacer" />
-            <button
-              v-if="hasHistory"
-              class="restart-button"
-              type="button"
-              aria-label="Opnieuw beginnen"
-              @click="restartQuestionnaire"
-            >
-              <Icon name="restart" :size="18" />
-            </button>
-          </div>
+          <QuestionToolbar
+            :has-history="hasHistory"
+            @back="goToPreviousQuestion"
+            @restart="restartQuestionnaire"
+          />
           <ProgressBar
             :value="progressValue"
             :max="progressMax"
@@ -115,7 +98,7 @@ import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
 import ChoiceGroup from "../components/molecules/ChoiceGroup.vue";
 import InfoPopover from "../components/molecules/InfoPopover.vue";
-import Icon from "../components/primitives/Icon.vue";
+import QuestionToolbar from "../components/organisms/QuestionToolbar.vue";
 import ProgressBar from "../components/primitives/ProgressBar.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import { usePopover } from "../composables/usePopover";
@@ -621,56 +604,6 @@ watch(
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-.question-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-sm);
-}
-
-.question-toolbar-spacer {
-  flex: 1;
-}
-
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border: none;
-  background: transparent;
-  color: var(--md-sys-color-primary);
-  font: var(--md-sys-typescale-label-large);
-  cursor: pointer;
-  border-radius: var(--md-sys-shape-corner-small);
-  min-height: var(--min-touch-target);
-  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
-}
-.back-button:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
-}
-.back-button:active {
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
-}
-
-.restart-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--min-touch-target);
-  min-height: var(--min-touch-target);
-  border: none;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-  border-radius: var(--md-sys-shape-corner-full);
-  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
-}
-.restart-button:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
-  color: var(--md-sys-color-on-surface);
 }
 
 .question-header {
