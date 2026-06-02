@@ -34,6 +34,12 @@ export interface BeslismodelPersistedAnswers<Answer = unknown> {
   readonly answers: Record<string, BeslismodelAnswerMap<Answer>>;
 }
 
+export type BeslismodelManifestCacheStrategy = "memory" | "reload";
+
+export interface BeslismodelLoadInitialDataOptions {
+  readonly force?: boolean;
+}
+
 export interface BeslismodelOutcomeResult {
   readonly outcome: string | null;
   readonly ruleId: string | null;
@@ -104,6 +110,7 @@ export interface CreateBeslismodelStoreOptions<
   readonly storeId?: string;
   readonly loadManifest: () => Promise<BeslismodelManifestInput<ResultData>>;
   readonly duplicateIdPolicy?: DuplicateManifestIdPolicy;
+  readonly manifestCacheStrategy?: BeslismodelManifestCacheStrategy;
   readonly storage?: BeslismodelStorageAdapter;
   readonly answersStorage?: BeslismodelStorageAdapter;
   readonly answersStorageKey?: string;
@@ -149,6 +156,7 @@ export function createBeslismodelStore<
 >(options: CreateBeslismodelStoreOptions<ResultData, QuestionnaireMeta, ResultLogicRule, Outcome>) {
   const storeId = options.storeId ?? options.id ?? "beslismodel";
   const telemetry = options.telemetry ?? noopTelemetryAdapter;
+  const manifestCacheStrategy = options.manifestCacheStrategy ?? "memory";
   const answersStorage = options.answersStorage ?? options.storage;
   const answersStorageKey = options.answersStorageKey;
   const answersTtlMs = options.answersTtlMs;
@@ -276,7 +284,13 @@ export function createBeslismodelStore<
       };
     };
 
-    async function loadInitialData(): Promise<void> {
+    async function loadInitialData(
+      loadOptions: BeslismodelLoadInitialDataOptions = {},
+    ): Promise<void> {
+      if (dataReady.value && manifestCacheStrategy === "memory" && !loadOptions.force) {
+        return;
+      }
+
       if (isLoading.value && loadingPromise.value) {
         return loadingPromise.value;
       }

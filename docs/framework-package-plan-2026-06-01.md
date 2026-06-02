@@ -287,7 +287,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Vue package tree-shakeable exports.
 - [x] Admin/Supabase lazy app-only.
 - [x] Markdown renderer lazy or injectable.
-- [ ] Manifest load cache strategy configurable.
+- [x] Manifest load cache strategy configurable.
 - [ ] Route prefetch opt-in.
 - [ ] Bundle budget package en app.
 - [ ] Lighthouse CI landing/questionnaire/result.

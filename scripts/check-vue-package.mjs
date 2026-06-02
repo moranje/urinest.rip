@@ -47,8 +47,10 @@ for (const term of forbiddenBoundaryTerms) {
 
 setActivePinia(createPinia());
 
+let loadCount = 0;
 const useStore = createBeslismodelStore({
   loadManifest: async () => ({
+    metadata: { loadCount: ++loadCount },
     questionnaires: [
       {
         id: "package-smoke",
@@ -69,6 +71,14 @@ const store = useStore();
 const manifest = await store.load();
 if (manifest.questionnaires["package-smoke"]?.id !== "package-smoke") {
   throw new Error("vue package store factory export failed");
+}
+await store.load();
+if (loadCount !== 1) {
+  throw new Error("vue package manifest memory cache export failed");
+}
+await store.loadInitialData({ force: true });
+if (loadCount !== 2) {
+  throw new Error("vue package manifest force reload export failed");
 }
 
 const resolver = useResultResolver({

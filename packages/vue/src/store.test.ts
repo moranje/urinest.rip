@@ -191,4 +191,58 @@ describe("createBeslismodelStore", () => {
     expect(JSON.stringify(telemetry.track.mock.calls)).not.toContain("patient specific");
     expect(telemetry.track.mock.calls[0]?.[0]).not.toHaveProperty("error");
   });
+
+  it("keeps manifest loading cached in memory unless force reload is requested", async () => {
+    let version = 0;
+    const loadManifest = vi.fn(async () => ({
+      questionnaires: [
+        {
+          id: "example-flow",
+          title: `Example ${++version}`,
+          questions: [],
+          steps: [],
+          results: {},
+          resultsLogic: [],
+        },
+      ],
+    }));
+    const useStore = createBeslismodelStore({ loadManifest });
+    const store = useStore();
+
+    await store.loadInitialData();
+    await store.loadInitialData();
+    expect(loadManifest).toHaveBeenCalledTimes(1);
+    expect(store.getQuestionnaireById("example-flow")?.title).toBe("Example 1");
+
+    await store.loadInitialData({ force: true });
+    expect(loadManifest).toHaveBeenCalledTimes(2);
+    expect(store.getQuestionnaireById("example-flow")?.title).toBe("Example 2");
+  });
+
+  it("can reload manifests on every load for consumers that disable memory cache", async () => {
+    let version = 0;
+    const loadManifest = vi.fn(async () => ({
+      questionnaires: [
+        {
+          id: "example-flow",
+          title: `Example ${++version}`,
+          questions: [],
+          steps: [],
+          results: {},
+          resultsLogic: [],
+        },
+      ],
+    }));
+    const useStore = createBeslismodelStore({
+      loadManifest,
+      manifestCacheStrategy: "reload",
+    });
+    const store = useStore();
+
+    await store.loadInitialData();
+    await store.loadInitialData();
+
+    expect(loadManifest).toHaveBeenCalledTimes(2);
+    expect(store.getQuestionnaireById("example-flow")?.title).toBe("Example 2");
+  });
 });

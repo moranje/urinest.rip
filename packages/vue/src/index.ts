@@ -16,7 +16,9 @@ export {
 export type {
   BeslismodelAnswerMap,
   BeslismodelFullQuestionnaire,
+  BeslismodelLoadInitialDataOptions,
   BeslismodelManifestInput,
+  BeslismodelManifestCacheStrategy,
   BeslismodelOutcomeResolver,
   BeslismodelOutcomeResult,
   BeslismodelPersistedAnswers,
