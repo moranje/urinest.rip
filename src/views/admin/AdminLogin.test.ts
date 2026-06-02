@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
-import { mount } from "@vue/test-utils";
+import { mount, type VueWrapper } from "@vue/test-utils";
+import axe from "axe-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AdminLogin from "./AdminLogin.vue";
 
@@ -21,6 +22,20 @@ vi.mock("../../store/authStore", () => ({
 vi.mock("../../store/toastStore", () => ({
   useToastStore: () => ({ error: mocks.toastError }),
 }));
+
+async function runAxe(wrapper: VueWrapper) {
+  const landmark = document.createElement("main");
+  landmark.id = "admin-login-axe-root";
+  landmark.appendChild(wrapper.element);
+  document.body.appendChild(landmark);
+  try {
+    return await axe.run(landmark, {
+      runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"],
+    });
+  } finally {
+    document.body.removeChild(landmark);
+  }
+}
 
 describe("AdminLogin", () => {
   beforeEach(() => {
@@ -70,5 +85,13 @@ describe("AdminLogin", () => {
     expect(wrapper.get('[aria-label="Wachtwoord verbergen"]').attributes("aria-pressed")).toBe(
       "true",
     );
+  });
+
+  it("has no axe violations on the admin login route", async () => {
+    const wrapper = mount(AdminLogin, { attachTo: document.body });
+    const result = await runAxe(wrapper);
+
+    expect(result.violations.map((violation) => violation.id)).toEqual([]);
+    wrapper.unmount();
   });
 });
