@@ -30,112 +30,59 @@
 
       <!-- Result content — no wrapping card, sections stand alone -->
       <div v-else-if="resultData" class="result-content">
-        <!-- Title & Description -->
-        <div class="result-section result-section--title">
-          <StatusBadge
-            v-if="resultData.urgency"
-            :variant="urgencyVariant"
-            size="md"
-            :pulse="urgencyVariant === 'u1'"
-            :role="resultData.urgency.toLowerCase() === 'u1' ? 'status' : undefined"
-            :aria-label="urgencyAriaLabel"
-          >
-            {{ resultData.urgency }}
-          </StatusBadge>
-          <h1 class="result-heading">{{ resultData.title }}</h1>
-          <p v-if="resultData.description" class="result-description">
-            {{ resultData.description }}
-          </p>
-        </div>
-
-        <!-- Additional Tests -->
-        <div v-if="resultData.additionalTests" class="result-section">
-          <h3 class="section-title">Aanvullend Onderzoek</h3>
-          <p>{{ resultData.additionalTests }}</p>
-        </div>
-
-        <!-- Contraindications Checklist -->
-        <div
-          v-if="contraindicationsState.length > 0"
-          class="result-section contraindications-section"
-        >
-          <h3 class="section-title">Controleer Contra-indicaties</h3>
-          <div class="checklist">
+        <ResultSectionList :result="resultData">
+          <template #after-additional>
+            <!-- Contraindications Checklist -->
             <div
-              v-for="(item, index) in contraindicationsState"
-              :key="index"
-              class="checklist-item"
+              v-if="contraindicationsState.length > 0"
+              class="result-section contraindications-section"
             >
-              <input
-                :id="'ci-check-' + index"
-                v-model="item.checked"
-                type="checkbox"
-                class="md-checkbox"
-              />
-              <label :for="'ci-check-' + index" class="checklist-label">
-                {{ item.text }}
-              </label>
+              <h3 class="section-title">Controleer Contra-indicaties</h3>
+              <div class="checklist">
+                <div
+                  v-for="(item, index) in contraindicationsState"
+                  :key="index"
+                  class="checklist-item"
+                >
+                  <input
+                    :id="'ci-check-' + index"
+                    v-model="item.checked"
+                    type="checkbox"
+                    class="md-checkbox"
+                  />
+                  <label :for="'ci-check-' + index" class="checklist-label">
+                    {{ item.text }}
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Treatment (conditional on contraindications) -->
-        <div
-          v-if="allContraindicationsChecked && resultData.treatment"
-          class="result-section treatment-section"
-          aria-live="polite"
-        >
-          <h3 class="section-title">Behandeling</h3>
-          <p>{{ resultData.treatment }}</p>
-        </div>
-        <Notice
-          v-else-if="!allContraindicationsChecked && resultData.treatment"
-          class="result-section"
-          variant="info"
-          role="status"
-        >
-          <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
-        </Notice>
-        <p class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
+            <!-- Treatment (conditional on contraindications) -->
+            <div
+              v-if="allContraindicationsChecked && resultData.treatment"
+              class="result-section treatment-section"
+              aria-live="polite"
+            >
+              <h3 class="section-title">Behandeling</h3>
+              <p>{{ resultData.treatment }}</p>
+            </div>
+            <Notice
+              v-else-if="!allContraindicationsChecked && resultData.treatment"
+              class="result-section"
+              variant="info"
+              role="status"
+            >
+              <em>Behandeling wordt getoond na controle van contra-indicaties.</em>
+            </Notice>
+            <p class="sr-only" aria-live="polite">{{ treatmentStatusMessage }}</p>
+          </template>
 
-        <!-- Warnings -->
-        <Notice
-          v-if="resultData.warnings"
-          class="result-section"
-          variant="warning"
-          title="Waarschuwing"
-          role="alert"
-        >
-          <p>{{ resultData.warnings }}</p>
-        </Notice>
-
-        <!-- Test After Treatment -->
-        <div v-if="resultData.testAfterTreatment" class="result-section">
-          <h3 class="section-title">Vervolgonderzoek</h3>
-          <p>{{ resultData.testAfterTreatment }}</p>
-        </div>
-
-        <!-- Explainer (for patient conversation) -->
-        <div v-if="resultData.explainer" class="result-section explainer-section">
-          <h3 class="section-title">Leg uit aan patiënt</h3>
-          <p>{{ resultData.explainer }}</p>
-        </div>
-
-        <DocumentationCopyPanel
-          :text="planDocumentation"
-          @copied="handleDocumentationCopied"
-          @error="handleDocumentationCopyError"
-        />
-
-        <!-- Sources -->
-        <div v-if="resultData.sources && resultData.sources.length > 0" class="result-section">
-          <h3 class="section-title">Bronnen</h3>
-          <ul class="sources-list">
-            <li v-for="(source, index) in resultData.sources" :key="index">
-              <SourceChip :name="source.name" :url="source.url" />
-            </li>
-          </ul>
-        </div>
+          <DocumentationCopyPanel
+            :text="planDocumentation"
+            @copied="handleDocumentationCopied"
+            @error="handleDocumentationCopyError"
+          />
+        </ResultSectionList>
       </div>
     </section>
   </div>
@@ -149,9 +96,8 @@ import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useToastStore } from "../store/toastStore";
 import BackButton from "../components/primitives/BackButton.vue";
 import Notice from "../components/molecules/Notice.vue";
-import SourceChip from "../components/molecules/SourceChip.vue";
-import StatusBadge from "../components/molecules/StatusBadge.vue";
 import DocumentationCopyPanel from "../components/organisms/DocumentationCopyPanel.vue";
+import ResultSectionList from "../components/organisms/ResultSectionList.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import type { Contraindication, ResultData } from "../types";
 
@@ -176,20 +122,6 @@ const allContraindicationsChecked = computed(() => {
 const planDocumentation = computed(() => {
   if (!resultData.value) return "";
   return (resultData.value.documentation || "").trim();
-});
-
-const urgencyAriaLabel = computed(() => {
-  const u = resultData.value?.urgency?.toLowerCase();
-  if (u === "u1") return "Urgentie U1 — spoed";
-  if (u === "u2") return "Urgentie U2 — binnen 24 uur";
-  if (u === "u3") return "Urgentie U3 — niet-spoedeisend";
-  return resultData.value?.urgency ?? "";
-});
-
-const urgencyVariant = computed(() => {
-  const u = resultData.value?.urgency?.toLowerCase();
-  if (u === "u1" || u === "u2" || u === "u3") return u;
-  return "info";
 });
 
 watch(allContraindicationsChecked, (isChecked) => {
@@ -341,32 +273,11 @@ watch(
   padding: 0;
 }
 
-/* Title section */
-.result-section--title {
-  padding: 0;
-  background: none;
-}
-
 .section-title {
   font: var(--md-sys-typescale-title-medium);
   color: var(--md-sys-color-primary);
   margin-top: 0;
   margin-bottom: var(--spacing-sm);
-}
-
-.result-heading {
-  font: var(--md-sys-typescale-headline-small);
-  color: var(--md-sys-color-on-surface);
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
-}
-
-.result-description {
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-body-large);
-  line-height: 1.6;
-  margin: 0;
-  white-space: pre-wrap;
 }
 
 .result-section p {
@@ -442,28 +353,6 @@ watch(
   border-radius: var(--md-sys-shape-corner-medium);
 }
 
-/* Explainer section — soft background */
-.explainer-section {
-  background-color: var(--md-sys-color-surface-container);
-  padding: var(--spacing-md);
-  border-radius: var(--md-sys-shape-corner-medium);
-}
-.explainer-section p {
-  font: var(--md-sys-typescale-body-medium);
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-/* Sources */
-.sources-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-}
-
 .error-message {
   width: 100%;
   text-align: center;
@@ -528,11 +417,7 @@ watch(
   .result-content {
     gap: var(--spacing-sm);
   }
-  .result-heading {
-    font: var(--md-sys-typescale-title-large);
-  }
-  .treatment-section,
-  .explainer-section {
+  .treatment-section {
     padding: var(--spacing-sm);
   }
 }
