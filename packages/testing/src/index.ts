@@ -89,6 +89,46 @@ export interface ClinicalSafetyFixtureResult<
   readonly passed: boolean;
 }
 
+export interface RoleContextMatrixCase<
+  Context extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
+  Expected = unknown,
+> {
+  readonly id: string;
+  readonly context: Context;
+  readonly expected: Expected;
+  readonly description?: string;
+  readonly tags?: readonly string[];
+}
+
+export type RoleContextMatrixRunner<
+  Context extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
+  Actual = unknown,
+  Expected = unknown,
+> = (matrixCase: RoleContextMatrixCase<Context, Expected>) => Actual;
+
+export interface RoleContextMatrixFailure {
+  readonly caseId: string;
+  readonly message: string;
+  readonly expected?: StableSnapshotValue;
+  readonly actual?: StableSnapshotValue;
+}
+
+export interface RoleContextMatrixResult<
+  Context extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
+  Actual = unknown,
+  Expected = unknown,
+> {
+  readonly case: RoleContextMatrixCase<Context, Expected>;
+  readonly actual: Actual;
+  readonly failures: readonly RoleContextMatrixFailure[];
+  readonly passed: boolean;
+}
+
+export interface RoleContextMatrixOptions<Actual = unknown, Expected = unknown> {
+  readonly compare?: (actual: Actual, expected: Expected) => boolean;
+  readonly failureMessage?: string;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -188,6 +228,9 @@ const expectedSnapshot = (expected: ClinicalSafetyExpectedOutcome): StableSnapsh
 
 const actualSnapshot = (actual: TypedOutcome): StableSnapshotValue => stableValue(actual);
 
+const snapshotsEqual = (actual: unknown, expected: unknown): boolean =>
+  JSON.stringify(stableValue(actual)) === JSON.stringify(stableValue(expected));
+
 export const evaluateClinicalSafetyFixtures = <
   Answers extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
 >(
@@ -249,6 +292,59 @@ export const assertClinicalSafetyFixtures = <
       [
         "Clinical safety fixture check failed:",
         ...failures.map((failure) => `- ${failure.fixtureId}: ${failure.message}`),
+      ].join("\n"),
+    );
+  }
+  return results;
+};
+
+export const evaluateRoleContextMatrix = <
+  Context extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
+  Actual = unknown,
+  Expected = Actual,
+>(
+  cases: readonly RoleContextMatrixCase<Context, Expected>[],
+  runCase: RoleContextMatrixRunner<Context, Actual, Expected>,
+  options: RoleContextMatrixOptions<Actual, Expected> = {},
+): readonly RoleContextMatrixResult<Context, Actual, Expected>[] =>
+  cases.map((matrixCase) => {
+    const actual = runCase(matrixCase);
+    const compare = options.compare ?? snapshotsEqual;
+    const failures: RoleContextMatrixFailure[] = [];
+
+    if (!compare(actual, matrixCase.expected)) {
+      failures.push({
+        actual: stableValue(actual),
+        caseId: matrixCase.id,
+        expected: stableValue(matrixCase.expected),
+        message: options.failureMessage ?? "Unexpected role/context matrix output.",
+      });
+    }
+
+    return {
+      actual,
+      case: matrixCase,
+      failures,
+      passed: failures.length === 0,
+    };
+  });
+
+export const assertRoleContextMatrix = <
+  Context extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
+  Actual = unknown,
+  Expected = Actual,
+>(
+  cases: readonly RoleContextMatrixCase<Context, Expected>[],
+  runCase: RoleContextMatrixRunner<Context, Actual, Expected>,
+  options: RoleContextMatrixOptions<Actual, Expected> = {},
+): readonly RoleContextMatrixResult<Context, Actual, Expected>[] => {
+  const results = evaluateRoleContextMatrix(cases, runCase, options);
+  const failures = results.flatMap((result) => result.failures);
+  if (failures.length > 0) {
+    throw new Error(
+      [
+        "Role/context matrix check failed:",
+        ...failures.map((failure) => `- ${failure.caseId}: ${failure.message}`),
       ].join("\n"),
     );
   }

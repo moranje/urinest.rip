@@ -11,6 +11,7 @@
     "jsx": "preserve",
     "paths": {
       "@beslismodel/core": ["./packages/core/src/index.ts"],
+      "@beslismodel/testing": ["./packages/testing/src/index.ts"],
       "@beslismodel/vue": ["./packages/vue/src/index.ts"],
       "@/*": ["./src/*"]
     }

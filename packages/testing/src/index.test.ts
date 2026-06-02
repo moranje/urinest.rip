@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  assertRoleContextMatrix,
   assertClinicalSafetyFixtures,
   createManifestSnapshot,
   createNormalizedManifestSnapshot,
   createStableSnapshot,
+  evaluateRoleContextMatrix,
   evaluateClinicalSafetyFixtures,
   type ClinicalSafetyFixture,
+  type RoleContextMatrixCase,
 } from "./index";
 
 const manifest = {
@@ -130,5 +133,42 @@ describe("@beslismodel/testing clinical safety fixtures", () => {
         () => "redirect:bacteriurie",
       ),
     ).toThrow("Required answered question missing: q_nitrite.");
+  });
+});
+
+describe("@beslismodel/testing role/context matrix", () => {
+  const matrixCases = [
+    {
+      id: "behandelaar-treatment-visible",
+      context: { role: "behandelaar", phase: "result" },
+      expected: { role: "behandelaar", treatmentVisible: true },
+    },
+    {
+      id: "triagist-treatment-hidden",
+      context: { role: "triagist", phase: "result" },
+      expected: { role: "triagist", treatmentVisible: false },
+    },
+  ] satisfies readonly RoleContextMatrixCase[];
+
+  it("evaluates role/context cases with stable snapshots", () => {
+    const results = evaluateRoleContextMatrix(matrixCases, ({ context }) => ({
+      role: context.role,
+      treatmentVisible: context.role === "behandelaar",
+    }));
+
+    expect(results).toHaveLength(2);
+    expect(results.every((result) => result.passed)).toBe(true);
+  });
+
+  it("throws readable matrix failures", () => {
+    expect(() =>
+      assertRoleContextMatrix([matrixCases[0]], () => ({
+        role: "behandelaar",
+        treatmentVisible: false,
+      })),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [Error: Role/context matrix check failed:
+      - behandelaar-treatment-visible: Unexpected role/context matrix output.]
+    `);
   });
 });

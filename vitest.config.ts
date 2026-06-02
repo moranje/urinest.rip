@@ -6,6 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@beslismodel/core": new URL("./packages/core/src/index.ts", import.meta.url).pathname,
+      "@beslismodel/testing": new URL("./packages/testing/src/index.ts", import.meta.url).pathname,
       "@beslismodel/vue": new URL("./packages/vue/src/index.ts", import.meta.url).pathname,
     },
   },
