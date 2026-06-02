@@ -19,16 +19,18 @@
     <template v-else>
       <LogFilters :filters="filters" @change="emit('filtersChange', $event)" />
 
-      <div v-if="sinkDownAt" class="admin-template__warning" role="status">
+      <Notice v-if="sinkDownAt" class="admin-template__warning" variant="warning" role="status">
         <span>Log-persistentie is uitgeschakeld sinds {{ sinkDownAt }}.</span>
-        <Button variant="outlined" size="sm" @click="emit('clearSinkStatus')">
-          Markeer gezien
-        </Button>
-      </div>
+        <template #action>
+          <Button variant="outlined" size="sm" @click="emit('clearSinkStatus')">
+            Markeer gezien
+          </Button>
+        </template>
+      </Notice>
 
-      <div v-if="error" class="admin-template__error" role="alert">
+      <Notice v-if="error" class="admin-template__error" variant="error" role="alert">
         {{ error }}
-      </div>
+      </Notice>
 
       <AdminLogList :groups="groups" :loading="loading" @select="emit('selectGroup', $event)" />
     </template>
@@ -37,6 +39,7 @@
 
 <script setup lang="ts">
 import LogFilters from "../admin/LogFilters.vue";
+import Notice from "../molecules/Notice.vue";
 import AdminLogDetail from "../organisms/AdminLogDetail.vue";
 import AdminLogList from "../organisms/AdminLogList.vue";
 import Button from "../primitives/Button.vue";
@@ -101,26 +104,9 @@ const emit = defineEmits<{
   gap: var(--spacing-md);
 }
 
-.admin-template__error,
-.admin-template__warning {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin: var(--spacing-md) 0;
-  border-radius: var(--md-sys-shape-corner-small);
-  font: var(--md-sys-typescale-body-small);
-}
-
+.admin-template__warning,
 .admin-template__error {
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-}
-
-.admin-template__warning {
-  background: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
+  margin: var(--spacing-md) 0;
 }
 
 @container admin (max-width: 37.5rem) {
@@ -129,9 +115,7 @@ const emit = defineEmits<{
     padding: var(--spacing-md) 0;
   }
 
-  .admin-template__header,
-  .admin-template__error,
-  .admin-template__warning {
+  .admin-template__header {
     align-items: stretch;
     flex-direction: column;
   }

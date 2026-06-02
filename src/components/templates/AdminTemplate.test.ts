@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import AdminTemplate from "./AdminTemplate.vue";
@@ -104,6 +105,20 @@ function mountTemplate(overrides: Partial<InstanceType<typeof AdminTemplate>["$p
 }
 
 describe("AdminTemplate", () => {
+  it("delegates warning and error banners to the Notice molecule", () => {
+    const source = readFileSync("src/components/templates/AdminTemplate.vue", "utf8");
+    const bannerCss =
+      source.match(
+        /\.admin-template__warning,\s*\n\.admin-template__error\s*\{(?<body>[\s\S]*?)\n\}/,
+      )?.groups?.body ?? "";
+
+    expect(source).toContain("<Notice");
+    expect(bannerCss).toContain("margin: var(--spacing-md) 0");
+    expect(bannerCss).not.toContain("background");
+    expect(bannerCss).not.toContain("padding");
+    expect(bannerCss).not.toContain("border-radius");
+  });
+
   it("renders list mode with filters, banners, and sign-out action", async () => {
     const wrapper = mountTemplate({
       sinkDownAt: "2026-06-01T09:00:00Z",
