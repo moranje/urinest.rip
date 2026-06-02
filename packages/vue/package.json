@@ -32,6 +32,9 @@
       "import": "./dist/index.js"
     }
   },
+  "publishConfig": {
+    "registry": "https://git.oranje.wtf/api/packages/martien/npm/"
+  },
   "scripts": {
     "prepack": "npm --prefix ../.. run build:vue"
   },
