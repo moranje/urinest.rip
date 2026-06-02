@@ -276,7 +276,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Urinestrip fixture e2e: nitriet negatief + leuko positief redirect naar leukocyturie.
 - [x] Urinestrip fixture e2e: alles negatief toont no-conclusive-abnormality.
 - [x] Role/context matrix tests.
-- [ ] Accessibility route tests.
+- [x] Accessibility route tests.
 - [ ] Visual regression voor critical UI.
 - [ ] Mutation testing pilot voor core traversal/outcome resolver.
 - [x] Bundle budget per package.
