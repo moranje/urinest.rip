@@ -5,6 +5,7 @@
 Maak van `urinest.rip` een herbruikbaar, standalone beslismodel-framework voor medische richtlijnen en behandelprotocollen.
 
 Primair gebruik:
+
 - `urinest.rip`: eerste productie-app en Urinestrip test case.
 - `huisarts.land`: centrale landing voor meerdere richtlijnen, vragenlijsten en protocollen.
 - Nieuwe domeinen als externe domeinpakketten: CVRM inclusief PREVENT-risicoberekeningen, COPD, DM, ouderenzorg, triage, praktijkprotocollen.
@@ -22,17 +23,17 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 
 ## Huidige Score
 
-| Domein | Huidig | Target | Belangrijkste gap |
-|---|---:|---:|---|
-| Architectuur | 3.2/5 | 4.8/5 | App-, store-, router- en frameworklogica zitten door elkaar |
-| Package readiness | 1.5/5 | 4.8/5 | Geen exports, package boundaries, library build, consumer fixture |
-| Compiler/schema | 2.5/5 | 4.9/5 | Build errors worden geslikt; random rule IDs; type drift |
-| UI/UX framework | 3.0/5 | 4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet |
-| Design tokens | 4.0/5 | 4.8/5 | Sterke CSS tokens, geen DTCG/component-token export |
-| Telemetry | 3.7/5 | 4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt |
-| Security/privacy | 4.0/5 | 4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken |
-| Testing | 4.0/5 | 4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite |
-| Performance | 4.0/5 | 4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken |
+| Domein            | Huidig | Target | Belangrijkste gap                                                     |
+| ----------------- | -----: | -----: | --------------------------------------------------------------------- |
+| Architectuur      |  3.2/5 |  4.8/5 | App-, store-, router- en frameworklogica zitten door elkaar           |
+| Package readiness |  1.5/5 |  4.8/5 | Geen exports, package boundaries, library build, consumer fixture     |
+| Compiler/schema   |  2.5/5 |  4.9/5 | Build errors worden geslikt; random rule IDs; type drift              |
+| UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet   |
+| Design tokens     |  4.0/5 |  4.8/5 | Sterke CSS tokens, geen DTCG/component-token export                   |
+| Telemetry         |  3.7/5 |  4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt                 |
+| Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken |
+| Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite      |
+| Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken  |
 
 ## Kritieke Bevindingen Uit Agent-Ronde
 
@@ -219,7 +220,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Geen `transition: all`.
 - [x] Motion utilities in `motion.css`.
 - [x] Reduced motion per utility, niet alleen global catch-all.
-- [ ] Storybook voor atoms, molecules, organisms, templates.
+- [x] Storybook voor atoms, molecules, organisms, templates.
 - [ ] Route-level visual regression voor landing/questionnaire/result/admin.
 
 ## Telemetry Checklist
@@ -320,6 +321,7 @@ Urinestrip wordt eerste end-to-end package fixture.
 - Agent D: telemetry/testing/security.
 
 Exit criteria:
+
 - [x] `build:flows` strict.
 - [x] `@beslismodel/core` scaffold.
 - [x] Typed outcome model.
@@ -338,7 +340,7 @@ Exit criteria:
 
 - [x] Atoms/molecules completed.
 - [x] Legacy `.md-*` removed from app pages.
-- [ ] Storybook expanded.
+- [x] Storybook expanded.
 - [ ] Motion system centralized.
 
 ### Ronde 4 — Telemetry/Security
@@ -359,6 +361,7 @@ Exit criteria:
 ### Ronde 6 — Extractie Naar Gitea En Lokale NPM
 
 Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen naar lokale Gitea npm registry, en `urinest.rip` als consumer draaiend houden.
+Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en package-gates groen zijn, en elke stap bewijzen met een registry consumer smoke voordat app-source uit deze repo verdwijnt.
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [ ] Nieuwe package-map/repo maken voor framework, bijv. `beslismodel-framework/`.
@@ -388,6 +391,7 @@ Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen n
 Elke stap krijgt atomic conventional commit.
 
 Examples:
+
 - `fix(compiler): fail build on invalid flow`
 - `feat(core): add typed outcome resolver`
 - `refactor(questionnaire): extract runner composable`
