@@ -28,10 +28,14 @@
         <template #secondary="{ viewItem }">
           <router-link
             :to="questionnairePath(viewItem.id)"
-            class="landing-template__secondary-tile"
+            class="landing-template__secondary-link"
           >
-            <span class="landing-template__secondary-title">{{ viewItem.label }}</span>
-            <span class="landing-template__secondary-description">{{ viewItem.description }}</span>
+            <Card class="landing-template__secondary-tile" variant="outlined">
+              <span class="landing-template__secondary-title">{{ viewItem.label }}</span>
+              <span class="landing-template__secondary-description">
+                {{ viewItem.description }}
+              </span>
+            </Card>
           </router-link>
         </template>
       </LandingMenuGrid>
@@ -47,6 +51,7 @@ import {
   type BeslismodelLandingMenuViewItem,
 } from "@beslismodel/vue";
 import MenuItem from "../MenuItem.vue";
+import Card from "../primitives/Card.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -154,23 +159,24 @@ const handlePrefetchError = (error: unknown, viewItem: BeslismodelLandingMenuVie
   block-size: 100%;
 }
 
+.landing-template__secondary-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .landing-template__secondary-tile {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  padding: var(--spacing-md);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  background: var(--md-sys-color-surface-container-low);
-  color: inherit;
-  text-decoration: none;
+  block-size: 100%;
   transition:
     background-color var(--motion-duration-short) var(--motion-easing-standard),
     box-shadow var(--motion-duration-short) var(--motion-easing-standard),
     transform var(--motion-duration-short) var(--motion-easing-standard);
 }
 
-.landing-template__secondary-tile:hover {
+.landing-template__secondary-link:hover .landing-template__secondary-tile {
   background: var(--md-sys-color-surface-container);
   box-shadow: var(--md-sys-elevation-1);
 }

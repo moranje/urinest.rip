@@ -327,6 +327,8 @@ describe("route accessibility smoke", () => {
       expect(router.currentRoute.value.query.q).toBe("q_strip_leuko");
       expect(wrapper.find(".question-toolbar__back").exists()).toBe(false);
       expect(wrapper.find(".back-button").exists()).toBe(false);
+      expect(wrapper.find('[aria-label*="Terug"]').exists()).toBe(false);
+      expect(wrapper.text()).not.toContain("Terug");
       expect(wrapper.get(".question-toolbar__restart").attributes("aria-label")).toBe(
         "Opnieuw beginnen",
       );
@@ -381,6 +383,8 @@ describe("route accessibility smoke", () => {
       );
 
       expect(wrapper.find(".back-button").exists()).toBe(false);
+      expect(wrapper.find('[aria-label*="Terug"]').exists()).toBe(false);
+      expect(wrapper.text()).not.toContain("Terug");
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,

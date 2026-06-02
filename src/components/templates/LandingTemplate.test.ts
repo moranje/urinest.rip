@@ -106,16 +106,29 @@ describe("LandingTemplate", () => {
 
   it("renders secondary tiles with route, label, and description", () => {
     const wrapper = mountTemplate();
-    const secondary = wrapper.get(".landing-template__secondary-tile");
+    const secondaryLink = wrapper.get(".landing-template__secondary-link");
 
     expect(wrapper.get(".bm-landing-menu-grid__secondary-heading").text()).toBe(
       "Urineweginfecties",
     );
-    expect(secondary.attributes("href")).toBe("/questionnaire/bacteriurie");
+    expect(secondaryLink.attributes("href")).toBe("/questionnaire/bacteriurie");
+    expect(wrapper.get(".landing-template__secondary-tile").classes()).toContain("card--outlined");
     expect(wrapper.get(".landing-template__secondary-title").text()).toBe("Bacteriurie");
     expect(wrapper.get(".landing-template__secondary-description").text()).toBe(
       "Diagnose & behandeling",
     );
+  });
+
+  it("delegates secondary tile shell styling to the Card primitive", () => {
+    const source = readFileSync("src/components/templates/LandingTemplate.vue", "utf8");
+    const secondaryTileCss = cssBlock(source, ".landing-template__secondary-tile");
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="outlined"');
+    expect(secondaryTileCss).not.toContain("padding:");
+    expect(secondaryTileCss).not.toContain("border:");
+    expect(secondaryTileCss).not.toContain("border-radius:");
+    expect(secondaryTileCss).not.toContain("background:");
   });
 
   it("keeps the desktop landing grid at 2 rows by 3 columns", () => {
