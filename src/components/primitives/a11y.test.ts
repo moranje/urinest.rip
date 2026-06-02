@@ -6,6 +6,12 @@ import Badge from "./Badge.vue";
 import ProgressBar from "./ProgressBar.vue";
 import BackButton from "./BackButton.vue";
 import Card from "./Card.vue";
+import Checkbox from "./Checkbox.vue";
+import IconButton from "./IconButton.vue";
+import Input from "./Input.vue";
+import Radio from "./Radio.vue";
+import Select from "./Select.vue";
+import Tooltip from "./Tooltip.vue";
 
 interface AxeResult {
   violations: Array<{ id: string; impact?: string; description: string }>;
@@ -68,6 +74,33 @@ describe("Primitive components — axe smoke", () => {
       slots: { default: "<p>Voorbeeld</p>" },
       attachTo: document.body,
     });
+    const result = await runAxe(wrapper.html());
+    expect(result.violations.map((v) => v.id)).toEqual([]);
+    wrapper.unmount();
+  });
+
+  it("Form controls have no violations", async () => {
+    const wrapper = mount(
+      {
+        components: { Checkbox, IconButton, Input, Radio, Select, Tooltip },
+        template: `
+          <form>
+            <IconButton icon="settings" aria-label="Instellingen" />
+            <Input id="email" label="E-mail" model-value="" autocomplete="email" />
+            <Select
+              id="role"
+              label="Rol"
+              model-value="arts"
+              :options="[{ value: 'arts', label: 'Arts' }, { value: 'poh', label: 'POH' }]"
+            />
+            <Checkbox id="confirm" label="Gecontroleerd" />
+            <Radio id="role-arts" name="role-radio" value="arts" model-value="arts" label="Arts" />
+            <Tooltip id="tip">Toelichting</Tooltip>
+          </form>
+        `,
+      },
+      { attachTo: document.body },
+    );
     const result = await runAxe(wrapper.html());
     expect(result.violations.map((v) => v.id)).toEqual([]);
     wrapper.unmount();

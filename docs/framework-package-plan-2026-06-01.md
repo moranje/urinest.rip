@@ -171,12 +171,12 @@ App blijft eigenaar van domeindata en branding.
 - [x] `Skeleton`
 - [x] `ProgressBar`
 - [x] `BackButton`
-- [ ] `IconButton`
-- [ ] `Input`
-- [ ] `Select`
-- [ ] `Checkbox`
-- [ ] `Radio`
-- [ ] `Tooltip`
+- [x] `IconButton`
+- [x] `Input`
+- [x] `Select`
+- [x] `Checkbox`
+- [x] `Radio`
+- [x] `Tooltip`
 
 ### Molecules
 
@@ -261,7 +261,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 47 files, 236 tests.
+- [x] Current full suite groen: 48 files, 243 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
