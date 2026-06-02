@@ -93,8 +93,8 @@ const handlePrefetchError = (error: unknown, viewItem: BeslismodelLandingMenuVie
 
 :deep(.bm-landing-menu-grid__primary) {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--spacing-lg), 4vw, var(--spacing-xxl));
   justify-content: center;
   align-items: start;
 }

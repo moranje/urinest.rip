@@ -108,12 +108,17 @@ describe("LandingTemplate", () => {
 
   it("keeps the desktop landing grid flat and bounded", () => {
     const source = readFileSync("src/components/templates/LandingTemplate.vue", "utf8");
+    const primaryGridCss =
+      source.match(/:deep\(\.bm-landing-menu-grid__primary\)\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
+        ?.body ?? "";
 
     expect(source).not.toContain("28vw");
     expect(source).not.toContain("@container landing (max-width: 56.25rem)");
+    expect(source).not.toContain("--spacing-2xl");
     expect(source).toContain("bm-landing-menu-grid__primary");
     expect(source).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
-    expect(source).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(primaryGridCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(primaryGridCss).not.toContain("grid-template-columns: repeat(3");
     expect(source).toContain("@container landing (max-width: 44rem)");
     expect(source).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(source).toContain("max-inline-size: var(--landing-tile-size)");

@@ -99,12 +99,17 @@ describe("design tokens", () => {
 
   it("keeps landing tiles bounded by component scale with a 2x3 desktop layout", () => {
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");
+    const primaryGridCss =
+      landingTemplate.match(/:deep\(\.bm-landing-menu-grid__primary\)\s*\{(?<body>[\s\S]*?)\n\}/)
+        ?.groups?.body ?? "";
 
     expect(landingTemplate).not.toContain("28vw");
     expect(landingTemplate).not.toContain("@container landing (max-width: 56.25rem)");
+    expect(landingTemplate).not.toContain("--spacing-2xl");
     expect(landingTemplate).toContain("bm-landing-menu-grid__primary");
     expect(landingTemplate).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
-    expect(landingTemplate).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(primaryGridCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(primaryGridCss).not.toContain("grid-template-columns: repeat(3");
     expect(landingTemplate).toContain("@container landing (max-width: 44rem)");
     expect(landingTemplate).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(landingTemplate).toContain("max-inline-size: var(--landing-tile-size)");
