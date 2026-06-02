@@ -141,7 +141,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Outcome strings `redirect:x` / `result:y` vervangen door discriminated union.
 - [x] Redirect-chain logic uit page naar core/runtime.
 - [x] Markdown renderer injectable maken met sanitizer contract.
-- [ ] Admin routes buiten framework houden.
+- [x] Admin routes buiten framework houden.
 - [ ] App shell en framework runner scheiden.
 
 ## Compiler Checklist
@@ -216,7 +216,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Page-local badge/button/form styles vervangen door primitives.
 - [x] Header controls naar shared `SegmentedControl`.
 - [ ] Alle touch targets minimaal 44px/48dp.
-- [ ] Geen `transition: all`.
+- [x] Geen `transition: all`.
 - [ ] Motion utilities in `motion.css`.
 - [ ] Reduced motion per utility, niet alleen global catch-all.
 - [ ] Storybook voor atoms, molecules, organisms, templates.
@@ -246,11 +246,11 @@ App blijft eigenaar van domeindata en branding.
 - [x] Threat model voor framework package.
 - [x] No PHI in telemetry contract.
 - [x] No PHI in storage contract.
-- [ ] Storage TTL en keys configureerbaar.
+- [x] Storage TTL en keys configureerbaar.
 - [x] CSP guidance voor consumer apps.
 - [x] Sanitizer contract verplicht voor markdown/html.
-- [ ] Dependency audit in package CI.
-- [ ] Secret scanning in CI.
+- [x] Dependency audit in package CI.
+- [x] Secret scanning in CI.
 - [x] Package consumer fixture in CI.
 - [x] RLS/admin dashboard blijft app-only.
 - [x] Admin RLS gebruikt claim/email allowlist.
@@ -285,7 +285,7 @@ App blijft eigenaar van domeindata en branding.
 
 - [x] Core package zero DOM/framework dependencies.
 - [x] Vue package tree-shakeable exports.
-- [ ] Admin/Supabase lazy app-only.
+- [x] Admin/Supabase lazy app-only.
 - [x] Markdown renderer lazy or injectable.
 - [ ] Manifest load cache strategy configurable.
 - [ ] Route prefetch opt-in.
@@ -337,7 +337,7 @@ Exit criteria:
 ### Ronde 3 — Design System
 
 - [x] Atoms/molecules completed.
-- [ ] Legacy `.md-*` removed from app pages.
+- [x] Legacy `.md-*` removed from app pages.
 - [ ] Storybook expanded.
 - [ ] Motion system centralized.
 
