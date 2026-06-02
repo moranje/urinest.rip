@@ -9,14 +9,14 @@
     "guidelines",
     "testing"
   ],
-  "homepage": "https://urinest.rip",
+  "homepage": "https://github.com/moranje/beslismodel-framework",
   "bugs": {
-    "url": "https://github.com/moranje/urinestrip/issues"
+    "url": "https://github.com/moranje/beslismodel-framework/issues"
   },
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moranje/urinestrip.git",
+    "url": "https://github.com/moranje/beslismodel-framework.git",
     "directory": "packages/testing"
   },
   "files": [
