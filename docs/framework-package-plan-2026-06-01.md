@@ -279,7 +279,7 @@ App blijft eigenaar van domeindata en branding.
 - [ ] Accessibility route tests.
 - [ ] Visual regression voor critical UI.
 - [ ] Mutation testing pilot voor core traversal/outcome resolver.
-- [ ] Bundle budget per package.
+- [x] Bundle budget per package.
 
 ## Performance Checklist
 
@@ -289,7 +289,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Markdown renderer lazy or injectable.
 - [x] Manifest load cache strategy configurable.
 - [ ] Route prefetch opt-in.
-- [ ] Bundle budget package en app.
+- [x] Bundle budget package en app.
 - [ ] Lighthouse CI landing/questionnaire/result.
 - [ ] No layout shift from SVG/menu tiles.
 - [x] Source maps buiten public deploy artifact houden.

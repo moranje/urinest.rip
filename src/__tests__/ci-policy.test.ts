@@ -3,6 +3,9 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
+const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
+  scripts: Record<string, string>;
+};
 
 describe("CI policy", () => {
   it("keeps dependency audit, secret scanning, package and bundle gates active", () => {
@@ -12,5 +15,10 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:packages");
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain("npm run build-storybook");
+    expect(packageJson.scripts.budget).toContain("budget:app");
+    expect(packageJson.scripts.budget).toContain("budget:packages");
+    expect(packageJson.scripts["budget:packages"]).toBe(
+      "node scripts/check-package-bundle-budget.mjs",
+    );
   });
 });
