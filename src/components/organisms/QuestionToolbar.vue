@@ -3,7 +3,7 @@
     <BackButton
       v-if="hasHistory"
       class="question-toolbar__back"
-      ariaLabel="Vorige vraag (Esc of Backspace)"
+      aria-label="Vorige vraag (Esc of Backspace)"
       @click="emit('back')"
     >
       Terug
@@ -13,7 +13,7 @@
       v-if="hasHistory"
       class="question-toolbar__restart"
       icon="restart"
-      ariaLabel="Opnieuw beginnen"
+      aria-label="Opnieuw beginnen"
       @click="emit('restart')"
     />
   </div>

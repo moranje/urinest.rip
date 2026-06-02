@@ -2,7 +2,7 @@
   <button
     :type="type"
     :disabled="disabled"
-    :aria-label="ariaLabel"
+    :aria-label="buttonAriaLabel"
     class="icon-button"
     :class="[`icon-button--${variant}`, `icon-button--${size}`]"
   >
@@ -21,7 +21,9 @@ type Size = "sm" | "md" | "lg";
 const props = withDefaults(
   defineProps<{
     icon: IconName;
-    ariaLabel: string;
+    ariaLabel?: string;
+    // eslint-disable-next-line vue/prop-name-casing
+    "aria-label"?: string;
     variant?: Variant;
     size?: Size;
     type?: "button" | "submit" | "reset";
@@ -32,10 +34,13 @@ const props = withDefaults(
     size: "md",
     type: "button",
     disabled: false,
+    ariaLabel: undefined,
+    "aria-label": undefined,
   },
 );
 
 const iconSize = computed(() => (props.size === "sm" ? 18 : props.size === "lg" ? 24 : 20));
+const buttonAriaLabel = computed(() => props.ariaLabel ?? props["aria-label"]);
 </script>
 
 <style scoped>
