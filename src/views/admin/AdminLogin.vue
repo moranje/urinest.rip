@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../../store/authStore";
 import { useToastStore } from "../../store/toastStore";
 import Button from "../../components/primitives/Button.vue";
+import Card from "../../components/primitives/Card.vue";
 import IconButton from "../../components/primitives/IconButton.vue";
 import Input from "../../components/primitives/Input.vue";
 import Notice from "../../components/molecules/Notice.vue";
@@ -54,55 +55,57 @@ async function handleSubmit() {
 
 <template>
   <div class="login-page">
-    <form class="login-card" novalidate @submit.prevent="handleSubmit">
-      <h1>Admin Login</h1>
-      <Notice v-if="sessionExpired" variant="warning" role="status">
-        Sessie verlopen. Log opnieuw in.
-      </Notice>
-      <Input
-        id="email"
-        v-model="email"
-        label="E-mail"
-        type="email"
-        autocomplete="email"
-        inputmode="email"
-        enterkeyhint="next"
-        required
-        error-role="alert"
-        :error="emailInvalid ? 'Voer een geldig e-mailadres in' : ''"
-      />
-      <div class="password-field">
+    <Card class="login-card" variant="outlined">
+      <form class="login-form" novalidate @submit.prevent="handleSubmit">
+        <h1>Admin Login</h1>
+        <Notice v-if="sessionExpired" variant="warning" role="status">
+          Sessie verlopen. Log opnieuw in.
+        </Notice>
         <Input
-          id="password"
-          v-model="password"
-          class="password-field__input"
-          label="Wachtwoord"
-          :type="showPassword ? 'text' : 'password'"
-          autocomplete="current-password"
-          enterkeyhint="go"
+          id="email"
+          v-model="email"
+          label="E-mail"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          enterkeyhint="next"
           required
           error-role="alert"
-          :error="passwordInvalid ? 'Wachtwoord is verplicht' : ''"
+          :error="emailInvalid ? 'Voer een geldig e-mailadres in' : ''"
         />
-        <IconButton
-          class="password-field__toggle"
-          :icon="showPassword ? 'eye-off' : 'eye'"
-          :aria-label="showPassword ? 'Wachtwoord verbergen' : 'Wachtwoord tonen'"
-          :aria-pressed="showPassword"
-          @click="showPassword = !showPassword"
-        />
-      </div>
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        full-width
-        :loading="submitting"
-        :disabled="!email.trim() || !password"
-      >
-        {{ submitting ? "Bezig..." : "Inloggen" }}
-      </Button>
-    </form>
+        <div class="password-field">
+          <Input
+            id="password"
+            v-model="password"
+            class="password-field__input"
+            label="Wachtwoord"
+            :type="showPassword ? 'text' : 'password'"
+            autocomplete="current-password"
+            enterkeyhint="go"
+            required
+            error-role="alert"
+            :error="passwordInvalid ? 'Wachtwoord is verplicht' : ''"
+          />
+          <IconButton
+            class="password-field__toggle"
+            :icon="showPassword ? 'eye-off' : 'eye'"
+            :aria-label="showPassword ? 'Wachtwoord verbergen' : 'Wachtwoord tonen'"
+            :aria-pressed="showPassword"
+            @click="showPassword = !showPassword"
+          />
+        </div>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          full-width
+          :loading="submitting"
+          :disabled="!email.trim() || !password"
+        >
+          {{ submitting ? "Bezig..." : "Inloggen" }}
+        </Button>
+      </form>
+    </Card>
   </div>
 </template>
 
@@ -118,10 +121,9 @@ async function handleSubmit() {
 .login-card {
   width: 100%;
   max-width: 360px;
-  background: var(--md-sys-color-surface-container-lowest);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  padding: var(--spacing-xl);
+}
+
+.login-form {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);

@@ -33,6 +33,7 @@ describe("AdminLogin", () => {
     const source = readFileSync("src/views/admin/AdminLogin.vue", "utf8");
 
     expect(source).toContain("<Input");
+    expect(source).toContain("<Card");
     expect(source).toContain("<IconButton");
     expect(source).toContain("<Notice");
     expect(source).not.toContain("<input");
@@ -40,6 +41,20 @@ describe("AdminLogin", () => {
     expect(source).not.toContain(".session-expired");
     expect(source).not.toContain(".login-btn");
     expect(source).not.toContain(".field {");
+  });
+
+  it("delegates login shell styling to Card while keeping form semantics", () => {
+    const wrapper = mount(AdminLogin);
+    const source = readFileSync("src/views/admin/AdminLogin.vue", "utf8");
+    const loginCardCss = source.match(/\.login-card\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+
+    expect(wrapper.get(".login-card").classes()).toContain("card--outlined");
+    expect(wrapper.find("form.login-form").exists()).toBe(true);
+    expect(source).toContain('variant="outlined"');
+    expect(loginCardCss).not.toContain("background:");
+    expect(loginCardCss).not.toContain("border:");
+    expect(loginCardCss).not.toContain("border-radius:");
+    expect(loginCardCss).not.toContain("padding:");
   });
 
   it("keeps password reveal accessible", async () => {
