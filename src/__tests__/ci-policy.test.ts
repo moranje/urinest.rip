@@ -4,10 +4,21 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
+const landingTemplateTest = readFileSync(
+  resolve("src/components/templates/LandingTemplate.test.ts"),
+  "utf8",
+);
+const routeTransitionPolicyTest = readFileSync(
+  resolve("src/router/view-transition-policy.test.ts"),
+  "utf8",
+);
+const viewTransitionTest = readFileSync(resolve("src/lib/view-transition.test.ts"), "utf8");
+const progressTest = readFileSync(resolve("packages/core/src/progress.test.ts"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
   engines?: Record<string, string>;
 };
+const expectedPackageRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
 const corePackage = JSON.parse(readFileSync(resolve("packages/core/package.json"), "utf8")) as {
   name: string;
   version: string;
@@ -16,6 +27,7 @@ const corePackage = JSON.parse(readFileSync(resolve("packages/core/package.json"
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
 const compilerPackage = JSON.parse(
@@ -28,6 +40,7 @@ const compilerPackage = JSON.parse(
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
 const testingPackage = JSON.parse(
@@ -40,6 +53,7 @@ const testingPackage = JSON.parse(
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
 const vuePackage = JSON.parse(readFileSync(resolve("packages/vue/package.json"), "utf8")) as {
@@ -50,6 +64,7 @@ const vuePackage = JSON.parse(readFileSync(resolve("packages/vue/package.json"),
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
 
@@ -74,6 +89,8 @@ describe("CI policy", () => {
     );
     expect(packageJson.scripts["check:packages"]).toContain("check:consumer-imports");
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-boundaries");
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
     expect(packageJson.scripts["budget:packages"]).toBe(
@@ -99,6 +116,7 @@ describe("CI policy", () => {
       expect(manifest.license).toBe("GPL-3.0-only");
       expect(manifest.files).toEqual(["dist"]);
       expect(manifest.engines?.node).toBe(">=20.19.0");
+      expect(manifest.publishConfig?.registry).toBe(expectedPackageRegistry);
       expect(manifest.scripts?.prepack).toContain("run build:");
     }
     expect(releaseStrategy).toContain("All four packages use same version");
@@ -113,5 +131,20 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("exact registry versions");
     expect(releaseStrategy).toContain("landing-grid regression");
     expect(releaseStrategy).toContain("Urinestrip end-to-end fixture");
+  });
+
+  it("keeps critical UI regression tests for landing, transitions and progress", () => {
+    expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 rows by 3 columns");
+    expect(landingTemplateTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(landingTemplateTest).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(landingTemplateTest).toContain("keeps landing menu tiles dimensionally stable");
+
+    expect(routeTransitionPolicyTest).toContain("keeps questionnaire redirects out");
+    expect(routeTransitionPolicyTest).toContain("keeps result navigation out");
+    expect(viewTransitionTest).toContain("classifies skipped transitions as benign");
+    expect(viewTransitionTest).toContain("swallows skipped transition promise rejections");
+
+    expect(progressTest).toContain("returns a bounded fallback without questionnaire data");
+    expect(progressTest).toContain("keeps conditional future questions out");
   });
 });
