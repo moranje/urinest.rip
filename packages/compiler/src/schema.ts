@@ -18,7 +18,17 @@ export const flowSchema = {
     icon: { type: "string" },
     hiddenFromLandingPage: { type: "boolean" },
     recommendedStart: { type: "boolean" },
-    metadata: { type: "object" },
+    metadata: {
+      type: "object",
+      additionalProperties: {
+        anyOf: [{ type: "string" }, { type: "number" }, { type: "boolean" }, { type: "null" }],
+      },
+      properties: {
+        landingDescription: { type: "string", pattern: "^[^<>\\u0000-\\u001f]*$" },
+        landingOrder: { type: "number", minimum: 0 },
+        landingSection: { enum: ["primary", "secondary"] },
+      },
+    },
     questions: { type: "object" },
     steps: { type: "array" },
     results: { type: "object" },

@@ -174,6 +174,51 @@ logic:
     );
   });
 
+  it.each([
+    ["negative landing order", "  landingOrder: -1", "/metadata/landingOrder: must be >= 0"],
+    [
+      "unknown landing section",
+      "  landingOrder: 10\n  landingSection: tertiary",
+      "/metadata/landingSection: must be equal to one of the allowed values",
+    ],
+    [
+      "HTML landing description",
+      '  landingOrder: 10\n  landingDescription: "<script>alert(1)</script>"',
+      "/metadata/landingDescription: must match pattern",
+    ],
+    [
+      "unsafe metadata URL",
+      '  landingOrder: 10\n  landingUrl: "https://example.test/<script>"',
+      'Metadata "landingUrl" must not contain HTML or control characters.',
+    ],
+    [
+      "unsafe metadata URL protocol",
+      '  landingOrder: 10\n  landingUrl: "javascript:alert(1)"',
+      'Metadata "landingUrl" must define an https url.',
+    ],
+    [
+      "nested metadata object",
+      '  landingOrder: 10\n  unsafe:\n    html: "<b>bad</b>"',
+      "/metadata/unsafe: must match a schema in anyOf",
+    ],
+  ])("rejects malicious flow metadata: %s", async (_name, metadata, expectedError) => {
+    const { flowsDir, outputFile } = await createFixture(
+      validFlow.replace("metadata:\n  landingOrder: 10", `metadata:\n${metadata}`),
+    );
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(expectedError);
+  });
+
+  it("rejects source URLs with unsafe characters", async () => {
+    const { flowsDir, outputFile } = await createFixture(
+      validFlow.replace("url: https://example.test/source", "url: https://example.test/<script>"),
+    );
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Result alias "ok" source 1 must define an https url.',
+    );
+  });
+
   it("exposes a Vite-compatible plugin build hook", async () => {
     const { dir } = await createFixture(validFlow);
     const plugin = decisionEngine({
@@ -212,5 +257,17 @@ logic:
       "results",
       "logic",
     ]);
+    expect(written.properties.metadata).toEqual(
+      expect.objectContaining({
+        additionalProperties: expect.objectContaining({
+          anyOf: expect.arrayContaining([expect.objectContaining({ type: "string" })]),
+        }),
+        properties: expect.objectContaining({
+          landingDescription: expect.objectContaining({ type: "string" }),
+          landingOrder: expect.objectContaining({ minimum: 0, type: "number" }),
+          landingSection: expect.objectContaining({ enum: ["primary", "secondary"] }),
+        }),
+      }),
+    );
   });
 });

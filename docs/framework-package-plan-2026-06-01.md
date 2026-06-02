@@ -256,7 +256,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Admin RLS gebruikt claim/email allowlist.
 - [x] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
 - [x] `.map` files niet publiek deployen.
-- [ ] Security tests voor malicious flow metadata.
+- [x] Security tests voor malicious flow metadata.
 
 ## Testing Checklist
 

@@ -237,7 +237,7 @@ function assertResultSources(flow: RawFlow): void {
       throw new Error(`Result alias "${resultAlias}" must define at least one source.`);
     }
     for (const [sourceIndex, source] of result.sources.entries()) {
-      if (!source?.url || typeof source.url !== "string" || !source.url.startsWith("https://")) {
+      if (!source?.url || typeof source.url !== "string" || !isHttpsUrl(source.url)) {
         throw new Error(
           `Result alias "${resultAlias}" source ${sourceIndex + 1} must define an https url.`,
         );
@@ -251,11 +251,63 @@ function assertResultSources(flow: RawFlow): void {
   }
 }
 
+const LANDING_SECTIONS = new Set(["primary", "secondary"]);
+const URL_METADATA_KEY = /(url|uri|href|link)$/i;
+
+function hasControlCharacter(value: string): boolean {
+  return [...value].some((character) => character.charCodeAt(0) < 32);
+}
+
+function isHttpsUrl(value: string): boolean {
+  if (value.includes("<") || value.includes(">") || hasControlCharacter(value)) return false;
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function assertSafeMetadataString(key: string, value: string): void {
+  if (value.includes("<") || value.includes(">") || hasControlCharacter(value)) {
+    throw new Error(`Metadata "${key}" must not contain HTML or control characters.`);
+  }
+  if (URL_METADATA_KEY.test(key) && !isHttpsUrl(value)) {
+    throw new Error(`Metadata "${key}" must define an https url.`);
+  }
+}
+
+function assertSafeFlowMetadata(flow: RawFlow): void {
+  if (!flow.metadata) return;
+
+  for (const [key, value] of Object.entries(flow.metadata)) {
+    if (key === "landingOrder") {
+      if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+        throw new Error('Metadata "landingOrder" must be a finite non-negative number.');
+      }
+      continue;
+    }
+    if (key === "landingSection") {
+      if (typeof value !== "string" || !LANDING_SECTIONS.has(value)) {
+        throw new Error('Metadata "landingSection" must be "primary" or "secondary".');
+      }
+      continue;
+    }
+    if (typeof value === "string") {
+      assertSafeMetadataString(key, value);
+      continue;
+    }
+    if (value === null || typeof value === "boolean") continue;
+    if (typeof value === "number" && Number.isFinite(value)) continue;
+    throw new Error(`Metadata "${key}" must be a string, number, boolean or null.`);
+  }
+}
+
 function compileFlow(flow: RawFlow): CompiledQuestionnaire {
   assertUniqueOptionValues(flow);
   assertNoOrphanQuestions(flow);
   assertNoUnreachableResults(flow);
   assertResultSources(flow);
+  assertSafeFlowMetadata(flow);
 
   const questionAliasMap: Record<string, string> = {};
   const resultAliasMap = new Set(Object.keys(flow.results));
