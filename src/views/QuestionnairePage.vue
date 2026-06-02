@@ -7,70 +7,43 @@
         aria-busy="true"
         aria-label="Vragenlijst laden"
       >
-        <div class="question-header">
+        <div class="question-loading-header">
           <Skeleton variant="title" />
           <Skeleton variant="short" />
         </div>
-        <div class="question-options">
+        <div class="question-loading-options">
           <Skeleton variant="option" />
           <Skeleton variant="option" />
           <Skeleton variant="option" />
         </div>
       </div>
       <Transition v-else name="question-fade" mode="out-in">
-        <div v-if="currentQuestion" :key="currentQuestion.id" class="md-card question-card">
-          <QuestionToolbar
-            :has-history="hasHistory"
-            @back="goToPreviousQuestion"
-            @restart="restartQuestionnaire"
-          />
-          <ProgressBar
-            :value="progressValue"
-            :max="progressMax"
-            :label="progressLabel"
-            :text="progressText"
-            show-text
-          />
-          <p class="sr-only" aria-live="polite">{{ progressLabel }}: {{ currentQuestion.text }}</p>
-          <div class="question-header">
-            <h1 :id="`q-title-${currentQuestion.id}`" class="question-title">
-              {{ currentQuestion.text }}
-            </h1>
-            <p
-              v-if="currentStep?.description"
-              :id="`q-step-${currentQuestion.id}`"
-              class="question-step"
-            >
-              {{ currentStep.description }}
-            </p>
-          </div>
-
-          <ChoiceGroup
-            :options="currentQuestion.options"
-            :selected-option-ids="selectedOptionIds"
-            :selected-count="selectedCount"
-            :has-selected-options="hasSelectedOptions"
-            :multi-select="isMultiSelect"
-            :non-touch="isNonTouchDevice"
-            :labelled-by="`q-title-${currentQuestion.id}`"
-            :described-by="currentStep?.description ? `q-step-${currentQuestion.id}` : undefined"
-            :active-popover-option-id="activePopoverOptionId"
-            @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
-            @show-popover="showPopover"
-            @toggle-popover="togglePopover"
-            @schedule-popover-close="schedulePopoverClose"
-            @close-popover="closePopover"
-            @confirm="confirmMultipleChoice"
-          />
-
-          <!-- eslint-disable vue/no-v-html -- sanitized Markdown from compiled YAML -->
-          <div
-            v-if="currentQuestion.description"
-            class="question-description"
-            v-html="compiledMarkdown(currentQuestion.description)"
-          />
-          <!-- eslint-enable vue/no-v-html -->
-        </div>
+        <QuestionPanel
+          v-if="currentQuestion"
+          :key="currentQuestion.id"
+          :question="currentQuestion"
+          :step-description="currentStep?.description"
+          :description-html="compiledMarkdown(currentQuestion.description)"
+          :has-history="hasHistory"
+          :progress-value="progressValue"
+          :progress-max="progressMax"
+          :progress-label="progressLabel"
+          :progress-text="progressText"
+          :selected-option-ids="selectedOptionIds"
+          :selected-count="selectedCount"
+          :has-selected-options="hasSelectedOptions"
+          :multi-select="isMultiSelect"
+          :non-touch="isNonTouchDevice"
+          :active-popover-option-id="activePopoverOptionId"
+          @back="goToPreviousQuestion"
+          @restart="restartQuestionnaire"
+          @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
+          @show-popover="showPopover"
+          @toggle-popover="togglePopover"
+          @schedule-popover-close="schedulePopoverClose"
+          @close-popover="closePopover"
+          @confirm="confirmMultipleChoice"
+        />
         <div v-else-if="!isLoading && !currentQuestion">
           <div class="loading-message">
             <div class="loading-spinner" />
@@ -96,10 +69,8 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useRoute, useRouter } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
-import ChoiceGroup from "../components/molecules/ChoiceGroup.vue";
 import InfoPopover from "../components/molecules/InfoPopover.vue";
-import QuestionToolbar from "../components/organisms/QuestionToolbar.vue";
-import ProgressBar from "../components/primitives/ProgressBar.vue";
+import QuestionPanel from "../components/organisms/QuestionPanel.vue";
 import Skeleton from "../components/primitives/Skeleton.vue";
 import { usePopover } from "../composables/usePopover";
 import { breadcrumbClick } from "../lib/breadcrumbs";
@@ -606,31 +577,6 @@ watch(
   box-sizing: border-box;
 }
 
-.question-header {
-  margin-bottom: var(--spacing-xl);
-}
-
-.question-title {
-  font: var(--md-sys-typescale-headline-small);
-  color: var(--md-sys-color-on-surface);
-  margin: 0 0 var(--spacing-sm) 0;
-  text-wrap: balance;
-}
-
-.question-step {
-  font: var(--md-sys-typescale-body-small);
-  color: var(--md-sys-color-on-surface-variant);
-  margin: 0;
-}
-
-.question-description {
-  margin-top: var(--spacing-lg);
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  font: var(--md-sys-typescale-body-medium);
-  color: var(--md-sys-color-on-surface-variant);
-}
-
 /* Animations */
 .question-fade-enter-active {
   transition:
@@ -679,6 +625,16 @@ watch(
   animation-delay: 200ms;
 }
 
+.question-loading-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.question-loading-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
 @container questionnaire (max-width: 37.5rem) {
   .page-content {
     padding: var(--spacing-sm);
@@ -687,7 +643,7 @@ watch(
     padding: var(--spacing-md);
     margin: var(--spacing-sm) 0;
   }
-  .question-header {
+  .question-loading-header {
     margin-bottom: var(--spacing-lg);
   }
 }
@@ -699,9 +655,6 @@ watch(
   .question-card {
     padding: var(--spacing-xl);
     margin: var(--spacing-lg) auto;
-  }
-  .question-title {
-    font: var(--md-sys-typescale-headline-medium);
   }
 }
 
