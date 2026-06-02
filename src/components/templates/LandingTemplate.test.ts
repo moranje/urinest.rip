@@ -118,19 +118,22 @@ describe("LandingTemplate", () => {
     );
   });
 
-  it("keeps the desktop landing grid flat and bounded", () => {
+  it("keeps the desktop landing grid at 2 rows by 3 columns", () => {
     const source = readFileSync("src/components/templates/LandingTemplate.vue", "utf8");
     const primaryGridCss = cssBlock(source, ":deep(.bm-landing-menu-grid__primary)");
+    const compactCss = source.match(
+      /@container landing \(max-width: 44rem\)\s*\{(?<body>[\s\S]*?)\n\}/,
+    )?.groups?.body;
 
     expect(source).not.toContain("28vw");
     expect(source).not.toContain("@container landing (max-width: 56.25rem)");
     expect(source).not.toContain("--spacing-2xl");
     expect(source).toContain("bm-landing-menu-grid__primary");
     expect(source).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
-    expect(primaryGridCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
-    expect(primaryGridCss).not.toContain("grid-template-columns: repeat(3");
+    expect(primaryGridCss).toContain("five primary flows render as 2 rows x 3 columns");
+    expect(primaryGridCss).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
     expect(source).toContain("@container landing (max-width: 44rem)");
-    expect(source).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(compactCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(source).toContain("max-inline-size: var(--landing-tile-size)");
   });
 
