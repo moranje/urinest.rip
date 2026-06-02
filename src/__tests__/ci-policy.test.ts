@@ -15,6 +15,10 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:packages");
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain("npm run build-storybook");
+    expect(packageJson.scripts["check:consumer-imports"]).toBe(
+      "node scripts/check-consumer-package-imports.mjs",
+    );
+    expect(packageJson.scripts["check:packages"]).toContain("check:consumer-imports");
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
     expect(packageJson.scripts["budget:packages"]).toBe(

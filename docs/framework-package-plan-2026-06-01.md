@@ -369,7 +369,7 @@ Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen n
 - [ ] Package CI in nieuwe repo meenemen: lint, typecheck, tests, package smoke checks, consumer fixture, npm audit, secret scan.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
-- [ ] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
+- [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [ ] `urinest.rip` build scripts aanpassen: package-build scripts verwijderen uit app-only CI, maar `check:packages` vervangen door registry smoke checks zolang extractie loopt.
 - [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [ ] Migratievolgorde: publish prerelease packages naar lokale registry, install in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
