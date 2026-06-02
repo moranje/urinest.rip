@@ -28,7 +28,7 @@
   </div>
   <Notice
     v-else-if="!allChecked && treatmentText"
-    class="result-section contraindication-notice"
+    class="contraindication-notice"
     variant="info"
     title="Controle nodig"
     role="status"

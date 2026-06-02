@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import ContraindicationGate from "./ContraindicationGate.vue";
@@ -20,6 +21,7 @@ describe("ContraindicationGate", () => {
     expect(wrapper.get(".section-title").text()).toBe("Controleer Contra-indicaties");
     expect(wrapper.find(".treatment-section").exists()).toBe(false);
     expect(wrapper.get(".notice__title").text()).toBe("Controle nodig");
+    expect(wrapper.get(".notice").classes()).not.toContain("result-section");
     expect(wrapper.get(".notice").text()).toContain(
       "Controleer alle contra-indicaties voordat behandeling wordt getoond.",
     );
@@ -85,5 +87,15 @@ describe("ContraindicationGate", () => {
     expect(wrapper.find(".notice").exists()).toBe(false);
     expect(wrapper.find(".treatment-section").exists()).toBe(false);
     expect(wrapper.find(".sr-only").exists()).toBe(false);
+  });
+
+  it("keeps status notice padding owned by the Notice primitive", () => {
+    const source = readFileSync("src/components/organisms/ContraindicationGate.vue", "utf8");
+    const noticeAttrs = source.match(
+      /<Notice\s+v-else-if="!allChecked && treatmentText"(?<attrs>[\s\S]*?)role="status"/,
+    )?.groups?.attrs;
+
+    expect(noticeAttrs).toBeDefined();
+    expect(noticeAttrs).not.toContain("result-section");
   });
 });

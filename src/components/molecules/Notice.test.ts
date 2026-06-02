@@ -48,8 +48,11 @@ describe("Notice", () => {
 
   it("keeps warning styling low-emphasis and tokenized", () => {
     const source = readFileSync("src/components/molecules/Notice.vue", "utf8");
+    const baseCss = source.match(/\.notice\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
     const warningCss = source.match(/\.notice--warning\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
 
+    expect(baseCss).toBeDefined();
+    expect(baseCss).toContain("padding: var(--spacing-lg)");
     expect(warningCss).toBeDefined();
     expect(warningCss).toContain("--notice-bg");
     expect(warningCss).toContain("color-mix");

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import ResultSectionList from "./ResultSectionList.vue";
@@ -37,6 +38,7 @@ describe("ResultSectionList", () => {
     expect(wrapper.text()).toContain("Controleer alarmsymptomen.");
     expect(wrapper.text()).toContain("Controle na 48 uur.");
     expect(wrapper.text()).toContain("Leg uit dat klachten meestal snel verbeteren.");
+    expect(wrapper.get(".notice").classes()).not.toContain("result-section");
 
     const sourceLinks = wrapper.findAll(".source-chip");
     expect(sourceLinks).toHaveLength(2);
@@ -58,11 +60,21 @@ describe("ResultSectionList", () => {
     expect(sectionText[0]).toContain("Behandeladvies");
     expect(sectionText[1]).toContain("Verricht urinekweek.");
     expect(sectionText[2]).toContain("Contra slot");
-    expect(sectionText[3]).toContain("Controleer alarmsymptomen.");
-    expect(sectionText[4]).toContain("Controle na 48 uur.");
-    expect(sectionText[5]).toContain("Leg uit dat klachten meestal snel verbeteren.");
-    expect(sectionText[6]).toContain("Documentatie slot");
-    expect(sectionText[7]).toContain("Bronnen");
+    expect(wrapper.get(".notice").text()).toContain("Controleer alarmsymptomen.");
+    expect(sectionText[3]).toContain("Controle na 48 uur.");
+    expect(sectionText[4]).toContain("Leg uit dat klachten meestal snel verbeteren.");
+    expect(sectionText[5]).toContain("Documentatie slot");
+    expect(sectionText[6]).toContain("Bronnen");
+  });
+
+  it("keeps warning notices outside zero-padding result-section wrappers", () => {
+    const source = readFileSync("src/components/organisms/ResultSectionList.vue", "utf8");
+    const warningNotice = source.match(
+      /<Notice\s+v-if="result\.warnings"(?<attrs>[\s\S]*?)role="alert"/,
+    )?.groups?.attrs;
+
+    expect(warningNotice).toBeDefined();
+    expect(warningNotice).not.toContain("result-section");
   });
 
   it("omits optional sections when data is absent", () => {

@@ -23,13 +23,7 @@
 
   <slot name="after-additional" />
 
-  <Notice
-    v-if="result.warnings"
-    class="result-section"
-    variant="warning"
-    title="Waarschuwing"
-    role="alert"
-  >
+  <Notice v-if="result.warnings" variant="warning" title="Waarschuwing" role="alert">
     <p>{{ result.warnings }}</p>
   </Notice>
 
