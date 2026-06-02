@@ -115,6 +115,27 @@ describe("design tokens", () => {
     expect(landingTemplate).toContain("max-inline-size: var(--landing-tile-size)");
   });
 
+  it("keeps landing template CSS variables resolvable", () => {
+    const tokensCss = read("src/styles/tokens.css");
+    const landingTemplate = read("src/components/templates/LandingTemplate.vue");
+    const tokenNames = new Set(
+      [...tokensCss.matchAll(/(?<name>--[\w-]+)\s*:/g)].map((match) => match.groups?.name),
+    );
+    const localNames = new Set(
+      [...landingTemplate.matchAll(/(?<name>--[\w-]+)\s*:/g)].map((match) => match.groups?.name),
+    );
+    const referencedNames = [
+      ...new Set(
+        [...landingTemplate.matchAll(/var\((?<name>--[\w-]+)/g)].map((match) => match.groups?.name),
+      ),
+    ];
+    const unresolved = referencedNames.filter(
+      (name) => !tokenNames.has(name) && !localNames.has(name),
+    );
+
+    expect(unresolved).toEqual([]);
+  });
+
   it("keeps landing routes driven by manifest taxonomy", () => {
     const landingPage = read("src/views/LandingPage.vue");
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");

@@ -50,6 +50,18 @@ const routerLinkStub = {
   template: `<a class="router-link-stub" :href="to"><slot /></a>`,
 };
 
+function cssBlock(source: string, selector: string): string {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return (
+    source.match(new RegExp(`${escapedSelector}\\s*\\{(?<body>[\\s\\S]*?)\\n\\}`))?.groups?.body ??
+    ""
+  );
+}
+
+function rootSvgAttrs(source: string): string {
+  return source.match(/<svg(?<attrs>[\s\S]*?)>/)?.groups?.attrs ?? "";
+}
+
 function mountTemplate(
   overrides: Partial<{
     prefetchQuestionnaire: (id: string) => void | Promise<void>;
@@ -108,9 +120,7 @@ describe("LandingTemplate", () => {
 
   it("keeps the desktop landing grid flat and bounded", () => {
     const source = readFileSync("src/components/templates/LandingTemplate.vue", "utf8");
-    const primaryGridCss =
-      source.match(/:deep\(\.bm-landing-menu-grid__primary\)\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
-        ?.body ?? "";
+    const primaryGridCss = cssBlock(source, ":deep(.bm-landing-menu-grid__primary)");
 
     expect(source).not.toContain("28vw");
     expect(source).not.toContain("@container landing (max-width: 56.25rem)");
@@ -122,6 +132,46 @@ describe("LandingTemplate", () => {
     expect(source).toContain("@container landing (max-width: 44rem)");
     expect(source).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(source).toContain("max-inline-size: var(--landing-tile-size)");
+  });
+
+  it("keeps landing menu tiles dimensionally stable", () => {
+    const landingTemplate = readFileSync("src/components/templates/LandingTemplate.vue", "utf8");
+    const menuItem = readFileSync("src/components/MenuItem.vue", "utf8");
+    const cultureSvg = readFileSync("src/components/CultureSvg.vue", "utf8");
+    const dipslideSvg = readFileSync("src/components/DipslideSvg.vue", "utf8");
+    const healthySvg = readFileSync("src/components/HealthySvg.vue", "utf8");
+    const sedimentSvg = readFileSync("src/components/SedimentSvg.vue", "utf8");
+    const stripSvg = readFileSync("src/components/StripSvg.vue", "utf8");
+
+    const primaryItemCss = cssBlock(landingTemplate, ":deep(.bm-landing-menu-grid__primary-item)");
+    const primaryChildCss = cssBlock(
+      landingTemplate,
+      ":deep(.bm-landing-menu-grid__primary-item > *)",
+    );
+    const menuItemCss = cssBlock(menuItem, ".menu-item");
+    const menuImageCss = cssBlock(menuItem, ".menu-image");
+    const menuSvgCss = cssBlock(menuItem, ".menu-image > :deep(svg)");
+
+    expect(primaryItemCss).toContain("inline-size: 100%");
+    expect(primaryItemCss).toContain("max-inline-size: var(--landing-tile-size)");
+    expect(primaryItemCss).toContain("aspect-ratio: 1 / 1");
+    expect(primaryItemCss).toContain("overflow: hidden");
+    expect(primaryChildCss).toContain("inline-size: 100%");
+    expect(primaryChildCss).toContain("block-size: 100%");
+    expect(menuItemCss).toContain("overflow: hidden");
+    expect(menuImageCss).toContain("min-height: 0");
+    expect(menuImageCss).toContain("overflow: hidden");
+    expect(menuSvgCss).toContain("width: 100%");
+    expect(menuSvgCss).toContain("height: 100%");
+    expect(menuSvgCss).toContain("max-width: 100%");
+    expect(menuSvgCss).toContain("max-height: 100%");
+
+    for (const svg of [cultureSvg, dipslideSvg, healthySvg, sedimentSvg, stripSvg]) {
+      const attrs = rootSvgAttrs(svg);
+      expect(attrs).toContain("viewBox=");
+      expect(attrs).not.toMatch(/\swidth=/);
+      expect(attrs).not.toMatch(/\sheight=/);
+    }
   });
 
   it("prefetches questionnaire routes through the package landing grid", async () => {
