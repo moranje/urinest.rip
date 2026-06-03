@@ -176,7 +176,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `Icon`
 - [x] `Skeleton`
 - [x] `ProgressBar`
-- [x] Back-navigation controls via `Button` + `Icon`; dedicated `BackButton` removed as duplicate primitive.
+- [x] Browser-native history is the only back-navigation control in clinical flows; dedicated `BackButton` and result `from` routes removed as duplicate navigation primitives.
 - [x] `IconButton`
 - [x] `Input`
 - [x] `Select`

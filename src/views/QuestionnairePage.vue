@@ -227,7 +227,7 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     syncQuestionRoute(transition.questionId, "replace");
   } else if (transition.type === "complete") {
     nextTick(() => {
-      void determineResult({ backTarget: "/" });
+      void determineResult();
     });
   }
 };
@@ -337,7 +337,7 @@ const goToNextQuestion = (branch?: string): void => {
   advanceQuestionState(branch);
 };
 
-const determineResult = async (options: { backTarget?: string } = {}): Promise<void> => {
+const determineResult = async (): Promise<void> => {
   if (isNavigating.value) return;
   isNavigating.value = true;
 
@@ -402,14 +402,10 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
         role: roleStore.role,
       });
       clearStoredRedirectTrail();
-      await pushNavigation(
-        createResultRouteLocation(value, options.backTarget ?? route.fullPath),
-        "router:result",
-        {
-          questionnaireId: props.id,
-          resultId: value,
-        },
-      );
+      await pushNavigation(createResultRouteLocation(value), "router:result", {
+        questionnaireId: props.id,
+        resultId: value,
+      });
       return;
     } else {
       handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {

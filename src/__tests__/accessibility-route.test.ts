@@ -354,7 +354,7 @@ describe("route accessibility smoke", () => {
       await settleRouteUi();
 
       expect(router.currentRoute.value.name).toBe("Result");
-      expect(router.currentRoute.value.query.from).toBe("/");
+      expect(router.currentRoute.value.query).toEqual({});
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,
@@ -378,7 +378,7 @@ describe("route accessibility smoke", () => {
     "result route relies on browser history instead of a synthetic back button",
     async () => {
       const { wrapper } = await mountResultRoute(
-        "/info/other.noConclusiveAbnormality?from=/questionnaire/strip%3Fq%3Dq_strip_nitrite",
+        "/info/other.noConclusiveAbnormality",
         "other.noConclusiveAbnormality",
       );
 
