@@ -11,6 +11,12 @@ const packageBudgets = [
     jsTotal: 40 * KB,
     largestJs: 32 * KB,
   },
+  {
+    name: "@beslismodel/cvrm-prevent",
+    dir: "packages/cvrm-prevent/dist",
+    jsTotal: 40 * KB,
+    largestJs: 40 * KB,
+  },
   { name: "@beslismodel/vue", dir: "packages/vue/dist", jsTotal: 80 * KB, largestJs: 80 * KB },
   {
     name: "@beslismodel/testing",
@@ -21,7 +27,7 @@ const packageBudgets = [
 ];
 
 const aggregateBudget = {
-  jsTotal: 160 * KB,
+  jsTotal: 200 * KB,
 };
 
 function collectFiles(dir) {

@@ -3,10 +3,15 @@ import { join, relative } from "node:path";
 
 const consumerRoots = ["src", "fixtures"];
 const sourceExtensions = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".vue"]);
+const packageNamePattern = "(?:core|vue|compiler|testing|cvrm-prevent)";
 const forbiddenPatterns = [
-  /(?:^|["'`])@beslismodel\/(?:core|vue|compiler|testing)\/(?:src|dist)(?:\/|["'`]|$)/,
-  /(?:^|["'`])(?:\.\.?\/)+packages\/(?:core|vue|compiler|testing)\/(?:src|dist)(?:\/|["'`]|$)/,
-  /packages\/(?:core|vue|compiler|testing)\/src\//,
+  new RegExp(
+    String.raw`(?:^|["'\`])@beslismodel\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,
+  ),
+  new RegExp(
+    String.raw`(?:^|["'\`])(?:\.\.?\/)+packages\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,
+  ),
+  new RegExp(String.raw`packages\/${packageNamePattern}\/src\/`),
 ];
 
 const hasSourceExtension = (path) => {

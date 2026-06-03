@@ -6,6 +6,7 @@ const expectedRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
 const packageFiles = [
   "packages/core/package.json",
   "packages/compiler/package.json",
+  "packages/cvrm-prevent/package.json",
   "packages/vue/package.json",
   "packages/testing/package.json",
 ];

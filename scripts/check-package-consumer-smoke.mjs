@@ -17,6 +17,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packages = [
   { dir: "packages/core", name: "@beslismodel/core" },
   { dir: "packages/compiler", name: "@beslismodel/compiler" },
+  { dir: "packages/cvrm-prevent", name: "@beslismodel/cvrm-prevent" },
   { dir: "packages/vue", name: "@beslismodel/vue" },
   { dir: "packages/testing", name: "@beslismodel/testing" },
 ];
@@ -65,8 +66,13 @@ logic:
 `;
 
 const smokeSource = `
-import { createCalculatorRegistry, getQuestionProgress } from "@beslismodel/core";
+import {
+  createCalculatorRegistry,
+  determineOutcomeWithCalculators,
+  getQuestionProgress,
+} from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
+import { createCvrmPreventCalculatorRegistry } from "@beslismodel/cvrm-prevent";
 import { createManifestSnapshot } from "@beslismodel/testing";
 import { createBeslismodelLandingMenuSections, noopTelemetryAdapter } from "@beslismodel/vue";
 
@@ -98,6 +104,62 @@ if (score.total !== 6) {
   throw new Error("core calculator registry failed from packed consumer");
 }
 
+const cvrmRegistry = createCvrmPreventCalculatorRegistry();
+const cvrmResult = await cvrmRegistry.run("cvrm.score2", {
+  age: 55,
+  sex: "M",
+  smoking: false,
+  systolicBp: 140,
+  totalCholesterol: 5.5,
+  hdlCholesterol: 1.3,
+  region: "low",
+});
+if (cvrmResult.model !== "SCORE2" || cvrmResult.riskClass.label !== "laag-matig") {
+  throw new Error("cvrm-prevent package SCORE2 calculator failed from packed consumer");
+}
+
+const cvrmOutcome = await determineOutcomeWithCalculators({
+  registry: cvrmRegistry,
+  answers: {
+    q_age: { value: "65", text: "65" },
+    q_sex: { value: "M", text: "Man" },
+    q_smoking: { value: "true", text: "Ja" },
+    q_sbp: { value: "150", text: "150" },
+    q_total_cholesterol: { value: "6", text: "6" },
+    q_hdl: { value: "1", text: "1" },
+  },
+  calculatorBindings: [
+    {
+      id: "score2",
+      calculatorId: "cvrm.score2",
+      input: {
+        age: { source: "answer", key: "q_age", coerce: "number" },
+        sex: { source: "answer", key: "q_sex" },
+        smoking: { source: "answer", key: "q_smoking", coerce: "boolean" },
+        systolicBp: { source: "answer", key: "q_sbp", coerce: "number" },
+        totalCholesterol: { source: "answer", key: "q_total_cholesterol", coerce: "number" },
+        hdlCholesterol: { source: "answer", key: "q_hdl", coerce: "number" },
+        region: { source: "literal", value: "low" },
+      },
+      outputs: {
+        _score2_percent: { path: "riskPercent" },
+        _score2_class: { path: "riskClass.label" },
+      },
+    },
+  ],
+  resultsLogic: [
+    {
+      id: "score2-high",
+      actionType: "showResult",
+      resultKey: "intensive_cvrm",
+      conditions: [{ questionId: "_score2_class", operator: "equals", value: "hoog" }],
+    },
+  ],
+});
+if (cvrmOutcome.outcome !== "result:intensive_cvrm") {
+  throw new Error("cvrm-prevent score-driven outcome failed from packed consumer");
+}
+
 const progress = getQuestionProgress({
   questionnaire,
   currentQuestionId: questionnaire.questions[0]?.id ?? null,
@@ -118,6 +180,7 @@ const urinestripSmokeSource = `
 import { createPinia, setActivePinia } from "pinia";
 import { createCalculatorRegistry, determineOutcome } from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
+import { calculateScore2Risk } from "@beslismodel/cvrm-prevent";
 import {
   createBeslismodelDataReadyGuard,
   createBeslismodelStore,
@@ -253,6 +316,19 @@ const score = await registry.run("fixture.consumer-score", { values: [1, 2, 3] }
 if (score.score !== 6 || score.role !== "triagist") {
   throw new Error("Urinestrip packed consumer calculator registration failed");
 }
+
+const cvrmRisk = calculateScore2Risk({
+  age: 65,
+  sex: "M",
+  smoking: true,
+  systolicBp: 150,
+  totalCholesterol: 6,
+  hdlCholesterol: 1,
+  region: "low",
+});
+if (cvrmRisk.model !== "SCORE2" || cvrmRisk.riskClass.label !== "hoog") {
+  throw new Error("Urinestrip packed consumer cvrm score package failed");
+}
 `;
 
 const tempDir = mkdtempSync(join(tmpdir(), "beslismodel-packed-consumer-"));
@@ -324,7 +400,7 @@ try {
   });
 
   console.log(
-    "Packed package consumer smoke passed with public @beslismodel/* imports and Urinestrip flows",
+    "Packed package consumer smoke passed with public @beslismodel/* imports, CVRM calculator and Urinestrip flows",
   );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });

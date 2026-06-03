@@ -6,6 +6,7 @@ import { join } from "node:path";
 const packages = [
   { dir: "packages/core", name: "@beslismodel/core" },
   { dir: "packages/compiler", name: "@beslismodel/compiler" },
+  { dir: "packages/cvrm-prevent", name: "@beslismodel/cvrm-prevent" },
   { dir: "packages/vue", name: "@beslismodel/vue" },
   { dir: "packages/testing", name: "@beslismodel/testing" },
 ];

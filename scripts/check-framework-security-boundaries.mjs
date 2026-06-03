@@ -1,7 +1,13 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const packageRoots = ["packages/core", "packages/compiler", "packages/vue", "packages/testing"];
+const packageRoots = [
+  "packages/core",
+  "packages/compiler",
+  "packages/cvrm-prevent",
+  "packages/vue",
+  "packages/testing",
+];
 const sourceExtensions = new Set([".ts", ".mts", ".cts", ".js", ".mjs", ".cjs"]);
 const appSpecificPattern = /(?:urinest|urinestrip)/i;
 const directStoragePattern =
@@ -18,6 +24,12 @@ const packageRules = {
   "packages/compiler": [
     ["browser global", /(?:^|[^A-Za-z0-9_])(?:window|document)\s*\./i],
     ["runtime storage global", directStoragePattern],
+  ],
+  "packages/cvrm-prevent": [
+    ["browser global", /(?:^|[^A-Za-z0-9_])(?:window|document)\s*\./i],
+    ["direct fetch", /(?:^|[^A-Za-z0-9_])fetch\s*\(/i],
+    ["direct storage sink", directStoragePattern],
+    ["production telemetry sink", /(?:app_logs|log-sink|insert_app_logs)/i],
   ],
   "packages/vue": [
     ["browser global", /(?:^|[^A-Za-z0-9_])(?:window|document)\s*\./i],
