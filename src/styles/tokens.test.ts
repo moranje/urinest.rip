@@ -105,7 +105,7 @@ describe("design tokens", () => {
     expect(mainCss).not.toContain("@keyframes spin");
   });
 
-  it("keeps landing tiles bounded by component scale with a 2-column desktop layout", () => {
+  it("keeps landing tiles bounded by component scale with a 2 rows by 3 columns desktop layout", () => {
     const landingTemplate = read("src/components/templates/LandingTemplate.vue");
     const primaryGridCss =
       landingTemplate.match(/:deep\(\.bm-landing-menu-grid__primary\)\s*\{(?<body>[\s\S]*?)\n\}/)
@@ -119,8 +119,8 @@ describe("design tokens", () => {
     expect(landingTemplate).not.toContain("--spacing-2xl");
     expect(landingTemplate).toContain("bm-landing-menu-grid__primary");
     expect(landingTemplate).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
-    expect(primaryGridCss).toContain("five primary flows render as 2 columns x 3 rows");
-    expect(primaryGridCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(primaryGridCss).toContain("five primary flows render as 2 rows x 3 columns");
+    expect(primaryGridCss).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
     expect(landingTemplate).toContain("@container landing (max-width: 44rem)");
     expect(compactCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(landingTemplate).toContain("max-inline-size: var(--landing-tile-size)");

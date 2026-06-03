@@ -14,6 +14,11 @@ const routeTransitionPolicyTest = readFileSync(
 );
 const viewTransitionTest = readFileSync(resolve("src/lib/view-transition.test.ts"), "utf8");
 const progressTest = readFileSync(resolve("packages", "core", "src", "progress.test.ts"), "utf8");
+const tokenPolicyTest = readFileSync(resolve("src/styles/tokens.test.ts"), "utf8");
+const routeVisualContractTest = readFileSync(
+  resolve("src/__tests__/route-visual-contract.test.ts"),
+  "utf8",
+);
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
   engines?: Record<string, string>;
@@ -156,9 +161,11 @@ describe("CI policy", () => {
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {
-    expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 columns by 3 rows");
-    expect(landingTemplateTest).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
+    expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 rows by 3 columns");
+    expect(landingTemplateTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
     expect(landingTemplateTest).toContain("keeps landing menu tiles dimensionally stable");
+    expect(tokenPolicyTest).toContain("five primary flows render as 2 rows x 3 columns");
+    expect(tokenPolicyTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
 
     expect(routeTransitionPolicyTest).toContain("keeps questionnaire redirects out");
     expect(routeTransitionPolicyTest).toContain("keeps result navigation out");
@@ -167,5 +174,16 @@ describe("CI policy", () => {
 
     expect(progressTest).toContain("returns a bounded fallback without questionnaire data");
     expect(progressTest).toContain("keeps conditional future questions out");
+
+    expect(routeVisualContractTest).toContain(
+      "keeps route views wired to template-level visual shells",
+    );
+    expect(routeVisualContractTest).toContain("keeps landing route at desktop 2 rows by 3 columns");
+    expect(routeVisualContractTest).toContain(
+      "keeps questionnaire route transition, progress and grouped-input layout stable",
+    );
+    expect(routeVisualContractTest).toContain(
+      "keeps result and admin routes bounded by content tokens",
+    );
   });
 });

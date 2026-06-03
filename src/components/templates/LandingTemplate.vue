@@ -98,8 +98,8 @@ const handlePrefetchError = (error: unknown, viewItem: BeslismodelLandingMenuVie
 
 :deep(.bm-landing-menu-grid__primary) {
   display: grid;
-  /* Desktop invariant: five primary flows render as 2 columns x 3 rows. */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Desktop invariant: five primary flows render as 2 rows x 3 columns. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(var(--spacing-lg), 4vw, var(--spacing-xxl));
   justify-content: center;
   align-items: start;

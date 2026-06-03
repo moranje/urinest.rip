@@ -228,7 +228,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Reduced motion per utility, niet alleen global catch-all.
 - [x] Storybook voor atoms, molecules, organisms, templates.
 - [x] Storybook en componenttests voor lange klinische multi-input labels.
-- [ ] Route-level visual regression voor landing/questionnaire/result/admin.
+- [x] Route-level visual contractgate voor landing/questionnaire/result/admin.
 
 ## Telemetry Checklist
 
@@ -285,7 +285,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Urinestrip fixture e2e: alles negatief toont no-conclusive-abnormality.
 - [x] Role/context matrix tests.
 - [x] Accessibility route tests.
-- [ ] Visual regression voor critical UI.
+- [x] Source/DOM visual contracttests voor critical UI.
 - [ ] Mutation testing pilot voor core traversal/outcome resolver.
 - [x] Bundle budget per package.
 
