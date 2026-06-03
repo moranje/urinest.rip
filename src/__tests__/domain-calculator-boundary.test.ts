@@ -7,10 +7,11 @@ const security = readFileSync("docs/framework-security-privacy.md", "utf8");
 describe("domain calculator package boundary", () => {
   it("documents generic core calculators and domain calculators outside core", () => {
     expect(plan).toContain("Domein-agnostisch calculator extensiecontract");
+    expect(plan).toContain("Domein-agnostische flow-calculatorbinding");
     expect(plan).toContain("Geen CVRM/PREVENT-specifieke calculator-API");
     expect(plan).toContain(
       "Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buiten core.",
     );
-    expect(security).toContain("Calculatorformules zitten in domain packages met testvectors.");
+    expect(security).toContain("Calculatorformules zitten in domain packages met testvectors");
   });
 });

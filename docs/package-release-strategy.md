@@ -8,10 +8,11 @@ Initial lockstep set:
 
 - `@beslismodel/core`
 - `@beslismodel/compiler`
+- `@beslismodel/cvrm-prevent`
 - `@beslismodel/vue`
 - `@beslismodel/testing`
 
-All four packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
+All five packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
 
 Package manifests must include:
 
@@ -44,6 +45,7 @@ Example publish order:
 ```bash
 npm publish packages/core --tag next
 npm publish packages/compiler --tag next
+npm publish packages/cvrm-prevent --tag next
 npm publish packages/vue --tag next
 npm publish packages/testing --tag next
 ```
@@ -57,7 +59,7 @@ For now extraction is a planned round, not an in-place source move. The framewor
 Target shape:
 
 - Create a separate package directory/repository, for example sibling folder `beslismodel-framework/`.
-- Keep the initial package boundaries identical: `core`, `compiler`, `vue` and `testing`.
+- Keep the initial package boundaries identical: `core`, `compiler`, `cvrm-prevent`, `vue` and `testing`.
 - Copy only framework package source, package tests, package build scripts, release docs and package CI.
 - Leave app-owned material in `urinest.rip`: YAML flows, Supabase logging/admin UI, Urinest taxonomy/icons, PWA branding, clinical Dutch copy and app config.
 - Preserve public exports exactly on the first move; export changes happen in later minor/major releases.
@@ -104,7 +106,7 @@ Before moving `urinest.rip` to registry dependencies, create clean temp consumer
 
 - run local packed-consumer smoke first: pack all framework packages, extract them into a clean
   temp consumer, import only public `@beslismodel/*` exports and run the real Urinestrip
-  runner/redirect/result checks;
+  runner/redirect/result checks plus CVRM SCORE2 calculator/outcome binding;
 - fresh `package.json`
 - install packages from Gitea registry
 - compile minimal manifest runner

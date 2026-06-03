@@ -65,6 +65,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Redirect-cycle detector
 - [x] Role/context injection via pure `RuntimeContext`
 - [x] Domein-agnostisch calculator extensiecontract (`CalculatorDefinition` + `createCalculatorRegistry`)
+- [x] Domein-agnostische flow-calculatorbinding: antwoorden/context/literals naar calculatorinput, calculatoroutput naar virtuele answers, outcome-logica op scoreklasse
 - [x] Geen CVRM/PREVENT-specifieke calculator-API, extensiepunt of implementatie in core
 - [x] Deterministic audit trail model
 
@@ -73,7 +74,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buiten core. Core levert alleen generieke contracten.
 
 - [x] Urinestrip consumer fixture bewijst dat een consumer lokaal calculators kan registreren via publieke core exports
-- [ ] CVRM/PREVENT calculatorpakket als consumer/domain package
+- [x] CVRM/U-Prevent calculatorpakket als consumer/domain package: `@beslismodel/cvrm-prevent` met SCORE2, SCORE2-OP en SCORE2-Diabetes uit labbie + U-Prevent testvectors; AHA PREVENT-equations nog niet aanwezig in labbie-data
 - [ ] COPD calculatorpakket als consumer/domain package
 - [ ] DM calculatorpakket als consumer/domain package
 
@@ -97,6 +98,7 @@ Vue runtime en UI.
 
 - [x] `createBeslismodelStore({ loadManifest, storage, contextProvider, telemetry, onError })`
 - [x] `useQuestionnaireRunner`
+- [x] Gegroepeerde multi-input stappen via `step.metadata.inputMode: group`, inclusief headless slot-API voor externe apps
 - [x] `useResultResolver`
 - [x] Route helpers
 - [x] `QuestionnaireRunner`
@@ -199,6 +201,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] `AppHeader`
 - [x] `LandingMenuGrid`
 - [x] `QuestionPanel`
+- [x] `MultiInputPanel` voor calculator-intakes zoals CVRM/PREVENT/SCORE2
 - [x] `QuestionToolbar`
 - [x] `ResultSectionList`
 - [x] `DocumentationCopyPanel`
@@ -224,6 +227,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Motion utilities in `motion.css`.
 - [x] Reduced motion per utility, niet alleen global catch-all.
 - [x] Storybook voor atoms, molecules, organisms, templates.
+- [x] Storybook en componenttests voor lange klinische multi-input labels.
 - [ ] Route-level visual regression voor landing/questionnaire/result/admin.
 
 ## Telemetry Checklist
@@ -368,14 +372,14 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [ ] Nieuwe package-map/repo maken voor framework als eigen sibling-map, bijv. `beslismodel-framework/`, zodat `urinest.rip` app-code en framework-code niet meer door elkaar lopen.
-- [ ] Package-map starten met dezelfde package boundaries als deze repo: core, compiler, vue en testing; geen tijdelijke bundeling van app-only code.
+- [ ] Package-map starten met dezelfde package boundaries als deze repo: core, compiler, cvrm-prevent, vue en testing; geen tijdelijke bundeling van app-only code.
 - [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
 - [ ] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [ ] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.
-- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks.
+- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding.
 - [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [ ] Registry smoke consumer maken die de packages via Gitea npm installeert in een schone temp-map en een minimale manifest-runner compileert.

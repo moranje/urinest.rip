@@ -43,6 +43,19 @@ const compilerPackage = JSON.parse(
   publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
+const cvrmPreventPackage = JSON.parse(
+  readFileSync(resolve("packages/cvrm-prevent/package.json"), "utf8"),
+) as {
+  name: string;
+  version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
+  dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
+  scripts?: Record<string, string>;
+};
 const testingPackage = JSON.parse(
   readFileSync(resolve("packages/testing/package.json"), "utf8"),
 ) as {
@@ -94,6 +107,7 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
+    expect(packageJson.scripts["check:packages"]).toContain("check:cvrm-prevent-package");
     expect(packageJson.scripts["check:package-consumer-smoke"]).toBe(
       "node scripts/check-package-consumer-smoke.mjs",
     );
@@ -105,16 +119,18 @@ describe("CI policy", () => {
   });
 
   it("keeps framework package release policy explicit and lockstep", () => {
-    const packages = [corePackage, compilerPackage, testingPackage, vuePackage];
+    const packages = [corePackage, compilerPackage, cvrmPreventPackage, testingPackage, vuePackage];
     const versions = new Set(packages.map((manifest) => manifest.version));
 
     expect(packages.map((manifest) => manifest.name).sort()).toEqual([
       "@beslismodel/compiler",
       "@beslismodel/core",
+      "@beslismodel/cvrm-prevent",
       "@beslismodel/testing",
       "@beslismodel/vue",
     ]);
     expect(versions.size).toBe(1);
+    expect(cvrmPreventPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(testingPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(vuePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     for (const manifest of packages) {
@@ -125,7 +141,7 @@ describe("CI policy", () => {
       expect(manifest.publishConfig?.registry).toBe(expectedPackageRegistry);
       expect(manifest.scripts?.prepack).toContain("run build:");
     }
-    expect(releaseStrategy).toContain("All four packages use same version");
+    expect(releaseStrategy).toContain("All five packages use same version");
     expect(releaseStrategy).toContain("publishConfig.registry");
     expect(releaseStrategy).toContain("dist-tag `next`");
     expect(releaseStrategy).toContain("Registry Smoke");
@@ -140,8 +156,7 @@ describe("CI policy", () => {
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {
-    expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 rows by 3 columns");
-    expect(landingTemplateTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 columns by 3 rows");
     expect(landingTemplateTest).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(landingTemplateTest).toContain("keeps landing menu tiles dimensionally stable");
 

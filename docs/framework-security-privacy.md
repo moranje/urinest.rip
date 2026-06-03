@@ -165,5 +165,5 @@ Eisen voor consumer apps:
 - [x] Admin routes zijn app-only, lazy en auth-gated (`router/index.ts`, package boundary checks).
 - [x] RLS/admin policies zijn getest met admin en niet-admin user (`supabase-migrations`).
 - [x] Malicious flow metadata tests zijn groen (`flow-compiler`, `compiler`).
-- [ ] Calculatorformules zitten in domain packages met testvectors.
+- [x] Calculatorformules zitten in domain packages met testvectors (`@beslismodel/cvrm-prevent`: SCORE2/SCORE2-OP/SCORE2-Diabetes uit labbie + U-Prevent vectors).
 - [x] Traceability en reviewdatums zijn actueel (`npm run check:guidelines`).
