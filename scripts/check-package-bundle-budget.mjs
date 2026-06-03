@@ -78,4 +78,6 @@ for (const packageBudget of packageBudgets) {
 
 assertBudget("Package aggregate JS", aggregateJsTotal, aggregateBudget.jsTotal);
 
-console.log([`Package bundle budget OK`, ...reports, `aggregate ${format(aggregateJsTotal)}`].join(" | "));
+console.log(
+  [`Package bundle budget OK`, ...reports, `aggregate ${format(aggregateJsTotal)}`].join(" | "),
+);

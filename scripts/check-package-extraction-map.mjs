@@ -16,6 +16,7 @@ const expectedPackages = new Map([
 const requiredAppOnlyExclusions = [
   "flows/",
   "public/",
+  "src/",
   "src/components/LogoSvg.vue",
   "src/components/StripSvg.vue",
   "src/config/app-config.ts",

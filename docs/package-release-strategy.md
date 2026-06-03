@@ -59,6 +59,9 @@ For now extraction is a planned round, not an in-place source move. The framewor
 Target shape:
 
 - Create a separate package directory/repository, for example sibling folder `beslismodel-framework/`.
+- Prove the copy with `npm run check:framework-extract`; this creates a clean framework target,
+  excludes app-only paths and runs the standalone package lint, type, build, package and consumer
+  smoke gates.
 - Keep the initial package boundaries identical: `core`, `compiler`, `cvrm-prevent`, `vue` and `testing`.
 - Keep `docs/package-extraction-map.json` and `check:package-extraction-map` green; it pins initial package roots, public export hashes and app-only exclusions before the sibling move.
 - Copy only framework package source, package tests, package build scripts, release docs and package CI.

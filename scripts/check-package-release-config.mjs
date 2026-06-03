@@ -31,7 +31,15 @@ if (secretPattern.test(npmrcExample)) {
   violations.push(".npmrc.example must not contain auth material");
 }
 
-const trackedNpmrc = execFileSync("git", ["ls-files", ".npmrc"], { encoding: "utf8" }).trim();
+let trackedNpmrc = "";
+try {
+  trackedNpmrc = execFileSync("git", ["ls-files", ".npmrc"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore"],
+  }).trim();
+} catch {
+  trackedNpmrc = "";
+}
 if (trackedNpmrc) {
   violations.push(".npmrc must stay untracked; keep tokens in user-level ~/.npmrc");
 }

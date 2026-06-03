@@ -130,9 +130,13 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:package-extraction-map"]).toBe(
       "node scripts/check-package-extraction-map.mjs",
     );
+    expect(packageJson.scripts["check:framework-extract"]).toBe(
+      "node scripts/check-framework-extract.mjs",
+    );
     expect(packageJson.scripts["check:packages"]).toContain("check:consumer-imports");
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-boundaries");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-extraction-map");
+    expect(packageJson.scripts["check:packages"]).toContain("check:framework-extract");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
@@ -185,6 +189,12 @@ describe("CI policy", () => {
     expect(packageExtractionMapScript).toContain("publicExportSha256");
     expect(packageExtractionMapScript).toContain("appOnlyExclusions");
     expect(packageExtractionMapScript).toContain("targetSiblingFolder");
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "beslismodel-framework",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "Standalone framework extraction smoke passed",
+    );
     expect(packageExtractionMap.targetSiblingFolder).toBe("beslismodel-framework");
     expect(packageExtractionMap.packages?.map((item) => item.name).sort()).toEqual([
       "@beslismodel/compiler",

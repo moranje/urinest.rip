@@ -371,7 +371,7 @@ Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen n
 Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en package-gates groen zijn, en elke stap bewijzen met een registry consumer smoke voordat app-source uit deze repo verdwijnt.
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
-- [ ] Nieuwe package-map/repo maken voor framework als eigen sibling-map, bijv. `beslismodel-framework/`, zodat `urinest.rip` app-code en framework-code niet meer door elkaar lopen.
+- [x] Nieuwe package-map/repo reproduceerbaar gemaakt met `extract-beslismodel-framework.mjs` en `check:framework-extract`, zodat framework-code als eigen `beslismodel-framework/` target zonder app-only code gebouwd kan worden.
 - [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, cvrm-prevent, vue en testing; geen tijdelijke bundeling van app-only code.
 - [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
 - [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
