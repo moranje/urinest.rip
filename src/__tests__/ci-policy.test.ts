@@ -143,6 +143,7 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain(
       "check:package-file-install-consumer-smoke",
     );
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-registry-smoke:config");
     expect(packageJson.scripts["check:packages"]).toContain("check:cvrm-prevent-package");
     expect(packageJson.scripts["check:packages"]).toContain("check:mutation-pilot");
     expect(packageJson.scripts["check:mutation-pilot"]).toBe(
@@ -153,6 +154,12 @@ describe("CI policy", () => {
     );
     expect(packageJson.scripts["check:package-file-install-consumer-smoke"]).toBe(
       "node scripts/check-package-file-install-consumer-smoke.mjs",
+    );
+    expect(packageJson.scripts["check:package-registry-smoke"]).toBe(
+      "node scripts/check-package-registry-smoke.mjs",
+    );
+    expect(packageJson.scripts["check:package-registry-smoke:config"]).toBe(
+      "node scripts/check-package-registry-smoke.mjs --check-config",
     );
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
@@ -200,6 +207,12 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "node-version: [20, 22, 24]",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "BESLISMODEL_REGISTRY_SMOKE_VERSION",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "Registry package consumer smoke passed",
     );
     expect(packageExtractionMap.targetSiblingFolder).toBe("beslismodel-framework");
     expect(packageExtractionMap.packages?.map((item) => item.name).sort()).toEqual([

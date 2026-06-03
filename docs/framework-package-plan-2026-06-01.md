@@ -383,7 +383,8 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] File-tarball install-smoke toegevoegd: `check:package-file-install-consumer-smoke` installeert de gepackte frameworkpackages via echte `file:` npm dependencies in een schone consumer, draait de geïnstalleerde `beslismodel` CLI en importeert alleen publieke `@beslismodel/*` exports.
 - [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
-- [ ] Registry smoke consumer maken die de packages via Gitea npm installeert in een schone temp-map en een minimale manifest-runner compileert.
+- [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
+- [ ] Registry smoke uitvoeren tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION`.
 - [x] Package CI-template in nieuwe repo meenemen via `extract-beslismodel-framework.mjs`: lint, typecheck, tests, package smoke checks, package budget, npm audit en secret scan.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.

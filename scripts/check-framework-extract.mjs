@@ -59,6 +59,10 @@ try {
   execFileSync("npm", ["run", "lint:all"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "check"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "check:tsgo"], { cwd: tempDir, stdio: "inherit" });
+  execFileSync("npm", ["run", "check:package-registry-smoke:config"], {
+    cwd: tempDir,
+    stdio: "inherit",
+  });
   execFileSync("npm", ["run", "check:packages"], { cwd: tempDir, stdio: "inherit" });
 
   console.log("Standalone framework extraction smoke passed");
