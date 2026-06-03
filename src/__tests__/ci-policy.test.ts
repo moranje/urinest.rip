@@ -23,6 +23,7 @@ const packageReleaseConfigScript = readFileSync(
   resolve("scripts/check-package-release-config.mjs"),
   "utf8",
 );
+const clinicalCopyScript = readFileSync(resolve("scripts/check-clinical-dutch-copy.mjs"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
   engines?: Record<string, string>;
@@ -129,8 +130,23 @@ describe("CI policy", () => {
     expect(packageJson.scripts["budget:packages"]).toBe(
       "node scripts/check-package-bundle-budget.mjs",
     );
+    expect(packageJson.scripts["check:guideline-traceability"]).toBe(
+      "node scripts/check-guideline-traceability.mjs",
+    );
+    expect(packageJson.scripts["check:clinical-copy:only"]).toBe(
+      "node scripts/check-clinical-dutch-copy.mjs",
+    );
+    expect(packageJson.scripts["check:clinical-copy"]).toContain("build:flows");
+    expect(packageJson.scripts["check:clinical-copy"]).toContain("check:clinical-copy:only");
+    expect(packageJson.scripts["check:guidelines"]).toContain("build:flows");
+    expect(packageJson.scripts["check:guidelines"]).toContain("check:guideline-traceability");
+    expect(packageJson.scripts["check:guidelines"]).toContain("check:clinical-copy");
     expect(packageReleaseConfigScript).toContain("Project .npmrc contains auth material");
     expect(packageReleaseConfigScript).not.toContain("console.warn");
+    expect(clinicalCopyScript).toContain("../public/main.json");
+    expect(clinicalCopyScript).toContain("visibleStringKeys");
+    expect(clinicalCopyScript).toContain("blockedEnglishTerms");
+    expect(clinicalCopyScript).toContain("metadata");
   });
 
   it("keeps framework package release policy explicit and lockstep", () => {

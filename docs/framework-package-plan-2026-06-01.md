@@ -131,7 +131,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] About page
 - [x] PWA branding
 - [x] Supabase admin/log dashboard
-- [ ] Clinical Dutch copy
+- [x] Clinical Dutch copy
 
 ## Architectuur Checklist
 
