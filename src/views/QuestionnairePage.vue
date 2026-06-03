@@ -8,7 +8,7 @@
     :is-grouped-step="isCurrentStepGrouped"
     :step-description="currentStep?.description"
     :description-html="compiledMarkdown(currentQuestion?.description)"
-    :has-history="hasHistory"
+    :can-restart="hasHistory"
     :progress-value="progressValue"
     :progress-max="progressMax"
     :progress-label="progressLabel"
@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
 import QuestionnaireTemplate from "../components/templates/QuestionnaireTemplate.vue";
@@ -271,6 +271,21 @@ const restoreQuestionRouteState = (questionId: string): boolean => {
 
 type QuestionRouteMode = "push" | "replace";
 
+const pushNavigation = async (
+  target: RouteLocationRaw,
+  module: string,
+  context: Record<string, unknown>,
+): Promise<boolean> => {
+  try {
+    await router.push(target);
+    return true;
+  } catch (error) {
+    isNavigating.value = false;
+    handleError(error, module, context);
+    return false;
+  }
+};
+
 const syncQuestionRoute = (questionId: string | null, mode: QuestionRouteMode): void => {
   if (!questionId) return;
   if (readQuestionRouteQuery(route.query) === questionId) return;
@@ -359,7 +374,10 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
           },
         );
         clearStoredRedirectTrail();
-        router.push("/error");
+        await pushNavigation("/error", "router:error-navigation", {
+          questionnaireId: props.id,
+          targetQuestionnaireId: value,
+        });
         return;
       }
       recordFlowRedirect({
@@ -368,14 +386,13 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
         targetFlowId: value,
         role: roleStore.role,
       });
+      isLoading.value = true;
       questionnaireStore.clearAnswers(props.id);
-      void router.push(`/questionnaire/${value}`).catch((error: unknown) => {
-        isNavigating.value = false;
-        handleError(error, "router:questionnaire-redirect", {
-          questionnaireId: props.id,
-          targetQuestionnaireId: value,
-        });
+      await pushNavigation(`/questionnaire/${value}`, "router:questionnaire-redirect", {
+        questionnaireId: props.id,
+        targetQuestionnaireId: value,
       });
+      return;
     } else if (typedOutcome.type === "result") {
       const value = typedOutcome.key;
       recordFlowResult({
@@ -385,15 +402,15 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
         role: roleStore.role,
       });
       clearStoredRedirectTrail();
-      void router
-        .push(createResultRouteLocation(value, options.backTarget ?? route.fullPath))
-        .catch((error: unknown) => {
-          isNavigating.value = false;
-          handleError(error, "router:result", {
-            questionnaireId: props.id,
-            resultId: value,
-          });
-        });
+      await pushNavigation(
+        createResultRouteLocation(value, options.backTarget ?? route.fullPath),
+        "router:result",
+        {
+          questionnaireId: props.id,
+          resultId: value,
+        },
+      );
+      return;
     } else {
       handleError(new Error("No outcome matched"), "decision-engine:no-outcome", {
         questionnaireId: props.id,
@@ -401,10 +418,10 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
         answeredQuestionIds: Object.keys(answers ?? {}),
       });
       clearStoredRedirectTrail();
-      void router.push("/error").catch((error: unknown) => {
-        isNavigating.value = false;
-        handleError(error, "router:error-navigation", { questionnaireId: props.id });
+      await pushNavigation("/error", "router:error-navigation", {
+        questionnaireId: props.id,
       });
+      return;
     }
   } catch (error) {
     handleError(error, "decision-engine:resolve-result", {
@@ -414,9 +431,8 @@ const determineResult = async (options: { backTarget?: string } = {}): Promise<v
       answeredQuestionIds: Object.keys(answers ?? {}),
     });
     clearStoredRedirectTrail();
-    void router.push("/error").catch((navigationError: unknown) => {
-      isNavigating.value = false;
-      handleError(navigationError, "router:error-navigation", { questionnaireId: props.id });
+    await pushNavigation("/error", "router:error-navigation", {
+      questionnaireId: props.id,
     });
   }
 };

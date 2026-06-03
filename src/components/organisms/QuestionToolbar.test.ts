@@ -4,9 +4,9 @@ import { describe, expect, it } from "vitest";
 import QuestionToolbar from "./QuestionToolbar.vue";
 
 describe("QuestionToolbar", () => {
-  it("renders restart without a synthetic back button when history is available", async () => {
+  it("renders restart without a synthetic back button when the flow can restart", async () => {
     const wrapper = mount(QuestionToolbar, {
-      props: { hasHistory: true },
+      props: { canRestart: true },
     });
 
     const buttons = wrapper.findAll("button");
@@ -22,7 +22,7 @@ describe("QuestionToolbar", () => {
 
   it("keeps layout stable without action buttons", () => {
     const wrapper = mount(QuestionToolbar, {
-      props: { hasHistory: false },
+      props: { canRestart: false },
     });
 
     expect(wrapper.findAll("button")).toHaveLength(0);

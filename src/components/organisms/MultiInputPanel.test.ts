@@ -32,7 +32,7 @@ function mountPanel(overrides: Partial<InstanceType<typeof MultiInputPanel>["$pr
   return mount(MultiInputPanel, {
     props: {
       answers: {},
-      hasHistory: true,
+      canRestart: true,
       progressMax: 6,
       progressValue: 2,
       questions,

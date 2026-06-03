@@ -1,6 +1,6 @@
 <template>
   <Card class="multi-input-panel" variant="elevated">
-    <QuestionToolbar :has-history="hasHistory" @restart="emit('restart')" />
+    <QuestionToolbar :can-restart="canRestart" @restart="emit('restart')" />
     <ProgressBar
       :value="progressValue"
       :max="progressMax"
@@ -84,7 +84,7 @@ const props = defineProps<{
   questions: readonly Question[];
   answers: Readonly<Record<string, Answer | undefined>>;
   stepDescription?: string;
-  hasHistory: boolean;
+  canRestart: boolean;
   progressValue: number;
   progressMax: number;
 }>();

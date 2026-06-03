@@ -27,10 +27,10 @@ const question: Question = {
 };
 
 const toolbarStub = {
-  props: ["hasHistory"],
+  props: ["canRestart"],
   emits: ["restart"],
   template: `
-    <nav class="question-toolbar-stub" :data-has-history="String(hasHistory)">
+    <nav class="question-toolbar-stub" :data-can-restart="String(canRestart)">
       <button type="button" class="restart" @click="$emit('restart')">Opnieuw</button>
     </nav>
   `,
@@ -104,7 +104,7 @@ const mountPanel = () =>
       question,
       stepDescription: "Stapbeschrijving voor deze vraag",
       descriptionHtml: "<p><strong>Bron</strong>: richtlijntekst</p>",
-      hasHistory: true,
+      canRestart: true,
       progressValue: 2,
       progressMax: 5,
       progressLabel: "Vraag 2 van 5",

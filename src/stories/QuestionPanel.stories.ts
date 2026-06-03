@@ -57,7 +57,7 @@ const meta = {
     stepDescription: "",
     descriptionHtml:
       "<p>Nitriet wordt gevormd door bacterien die nitraat omzetten. Een positieve test wijst op bacteriurie.</p>",
-    hasHistory: true,
+    canRestart: true,
     progressValue: 2,
     progressMax: 5,
     progressLabel: "Indicatieve voortgang",

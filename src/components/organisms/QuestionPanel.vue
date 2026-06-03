@@ -1,6 +1,6 @@
 <template>
   <Card class="question-panel" variant="elevated">
-    <QuestionToolbar :has-history="hasHistory" @restart="emit('restart')" />
+    <QuestionToolbar :can-restart="canRestart" @restart="emit('restart')" />
     <ProgressBar
       :value="progressValue"
       :max="progressMax"
@@ -57,7 +57,7 @@ const props = withDefaults(
     question: Question;
     stepDescription?: string;
     descriptionHtml?: string;
-    hasHistory: boolean;
+    canRestart: boolean;
     progressValue: number;
     progressMax: number;
     progressLabel: string;

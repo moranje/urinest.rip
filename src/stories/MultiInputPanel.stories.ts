@@ -84,7 +84,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     answers: completeAnswers,
-    hasHistory: true,
+    canRestart: true,
     progressMax: 8,
     progressValue: 3,
     questions: cvrmQuestions,

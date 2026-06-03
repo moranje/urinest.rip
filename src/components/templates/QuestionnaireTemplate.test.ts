@@ -36,7 +36,7 @@ const questionPanelStub = {
     "question",
     "stepDescription",
     "descriptionHtml",
-    "hasHistory",
+    "canRestart",
     "progressValue",
     "progressMax",
     "progressLabel",
@@ -63,7 +63,7 @@ const questionPanelStub = {
       :data-question-id="question.id"
       :data-step-description="stepDescription"
       :data-description-html="descriptionHtml"
-      :data-has-history="String(hasHistory)"
+      :data-can-restart="String(canRestart)"
       :data-progress-value="progressValue"
       :data-progress-max="progressMax"
       :data-progress-label="progressLabel"
@@ -100,7 +100,7 @@ const multiInputPanelStub = {
     "questions",
     "answers",
     "stepDescription",
-    "hasHistory",
+    "canRestart",
     "progressValue",
     "progressMax",
   ],
@@ -112,7 +112,7 @@ const multiInputPanelStub = {
       :data-question-ids="questions.map((question) => question.id).join(',')"
       :data-answer-count="Object.keys(answers).length"
       :data-step-description="stepDescription"
-      :data-has-history="String(hasHistory)"
+      :data-can-restart="String(canRestart)"
       :data-progress-value="progressValue"
       :data-progress-max="progressMax"
     >
@@ -174,7 +174,7 @@ function mountTemplate(
       question,
       stepDescription: "Stap 1",
       descriptionHtml: "<p>Beschrijving</p>",
-      hasHistory: true,
+      canRestart: true,
       progressValue: 1,
       progressMax: 4,
       progressLabel: "Vraag 1 van 4",

@@ -26,7 +26,7 @@
             :questions="groupQuestions"
             :answers="groupAnswers"
             :step-description="stepDescription"
-            :has-history="hasHistory"
+            :can-restart="canRestart"
             :progress-value="progressValue"
             :progress-max="progressMax"
             @restart="emit('restart')"
@@ -38,7 +38,7 @@
             :question="question"
             :step-description="stepDescription"
             :description-html="descriptionHtml"
-            :has-history="hasHistory"
+            :can-restart="canRestart"
             :progress-value="progressValue"
             :progress-max="progressMax"
             :progress-label="progressLabel"
@@ -95,7 +95,7 @@ const props = withDefaults(
     isGroupedStep?: boolean;
     stepDescription?: string;
     descriptionHtml?: string;
-    hasHistory: boolean;
+    canRestart: boolean;
     progressValue: number;
     progressMax: number;
     progressLabel: string;

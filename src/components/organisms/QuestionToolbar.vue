@@ -2,7 +2,7 @@
   <div class="question-toolbar">
     <span class="question-toolbar__spacer" />
     <IconButton
-      v-if="hasHistory"
+      v-if="canRestart"
       class="question-toolbar__restart"
       icon="restart"
       aria-label="Opnieuw beginnen"
@@ -15,7 +15,7 @@
 import IconButton from "../primitives/IconButton.vue";
 
 defineProps<{
-  hasHistory: boolean;
+  canRestart: boolean;
 }>();
 
 const emit = defineEmits<{
