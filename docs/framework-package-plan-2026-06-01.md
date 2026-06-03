@@ -384,7 +384,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [ ] Registry smoke consumer maken die de packages via Gitea npm installeert in een schone temp-map en een minimale manifest-runner compileert.
-- [ ] Package CI in nieuwe repo meenemen: lint, typecheck, tests, package smoke checks, consumer fixture, npm audit, secret scan.
+- [x] Package CI-template in nieuwe repo meenemen via `extract-beslismodel-framework.mjs`: lint, typecheck, tests, package smoke checks, package budget, npm audit en secret scan.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.

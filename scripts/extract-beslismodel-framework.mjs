@@ -273,6 +273,53 @@ export default [
   );
 }
 
+function writePackageCi(target) {
+  mkdirSync(join(target, ".github/workflows"), { recursive: true });
+  writeFileSync(
+    join(target, ".github/workflows/ci.yml"),
+    `name: Beslismodel Framework CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  package-ci:
+    name: Package CI / Node \${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: \${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint:all
+      - run: npm run check
+      - run: npm run check:tsgo
+      - run: npm run test
+      - run: npm run check:packages
+      - run: npm run budget:packages
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Secret scan
+        run: |
+          ! git grep -nE '(service[_-]?role|VITE_SUPABASE|_authToken|app_logs)' -- packages scripts docs .github
+      - name: Keep env files untracked
+        run: |
+          ! git ls-files --error-unmatch .env
+`,
+  );
+}
+
 function linkNodeModules(target) {
   symlinkSync(join(root, "node_modules"), join(target, "node_modules"), "dir");
 }
@@ -308,6 +355,7 @@ function main() {
   writeTypeScriptConfigs(target);
   writeVitestConfig(target);
   writeEslintConfig(target);
+  writePackageCi(target);
 
   if (shouldLinkNodeModules) {
     linkNodeModules(target);

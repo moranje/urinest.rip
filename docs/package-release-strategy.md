@@ -62,6 +62,8 @@ Target shape:
 - Prove the copy with `npm run check:framework-extract`; this creates a clean framework target,
   excludes app-only paths and runs the standalone package lint, type, build, package and consumer
   smoke gates.
+- Generate package CI in the extracted target with Node `20`, `22` and `24`, package tests,
+  package smoke checks, package bundle budget, npm audit and secret scan before first push.
 - Keep the initial package boundaries identical: `core`, `compiler`, `cvrm-prevent`, `vue` and `testing`.
 - Keep `docs/package-extraction-map.json` and `check:package-extraction-map` green; it pins initial package roots, public export hashes and app-only exclusions before the sibling move.
 - Copy only framework package source, package tests, package build scripts, release docs and package CI.

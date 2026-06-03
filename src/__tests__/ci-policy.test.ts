@@ -195,6 +195,12 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
       "Standalone framework extraction smoke passed",
     );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "npm audit --omit=dev --audit-level=high",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "node-version: [20, 22, 24]",
+    );
     expect(packageExtractionMap.targetSiblingFolder).toBe("beslismodel-framework");
     expect(packageExtractionMap.packages?.map((item) => item.name).sort()).toEqual([
       "@beslismodel/compiler",

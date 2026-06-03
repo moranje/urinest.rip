@@ -39,6 +39,22 @@ try {
     }
   }
 
+  const packageCi = readFileSync(join(tempDir, ".github/workflows/ci.yml"), "utf8");
+  for (const requiredGate of [
+    "node-version: [20, 22, 24]",
+    "npm ci",
+    "npm run lint:all",
+    "npm run check:tsgo",
+    "npm run test",
+    "npm run check:packages",
+    "npm audit --omit=dev --audit-level=high",
+    "Secret scan",
+  ]) {
+    if (!packageCi.includes(requiredGate)) {
+      throw new Error(`Extracted framework CI is missing gate: ${requiredGate}`);
+    }
+  }
+
   execFileSync("npm", ["run", "format:check"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "lint:all"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "check"], { cwd: tempDir, stdio: "inherit" });
