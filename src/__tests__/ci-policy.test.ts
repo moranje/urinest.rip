@@ -117,6 +117,10 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
     expect(packageJson.scripts["check:packages"]).toContain("check:cvrm-prevent-package");
+    expect(packageJson.scripts["check:packages"]).toContain("check:mutation-pilot");
+    expect(packageJson.scripts["check:mutation-pilot"]).toBe(
+      "node scripts/check-core-mutation-pilot.mjs",
+    );
     expect(packageJson.scripts["check:package-consumer-smoke"]).toBe(
       "node scripts/check-package-consumer-smoke.mjs",
     );

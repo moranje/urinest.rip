@@ -286,7 +286,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Role/context matrix tests.
 - [x] Accessibility route tests.
 - [x] Source/DOM visual contracttests voor critical UI.
-- [ ] Mutation testing pilot voor core traversal/outcome resolver.
+- [x] Mutation testing pilot voor core traversal/outcome resolver.
 - [x] Bundle budget per package.
 
 ## Performance Checklist
