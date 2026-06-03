@@ -134,7 +134,7 @@ describe("AdminLogDetail", () => {
     }
   });
 
-  it("renders log context and emits back navigation", async () => {
+  it("renders log context and emits detail close intent", async () => {
     const { wrapper } = mountDetail();
 
     expect(wrapper.get("h2").text()).toBe("Transition was skipped");
@@ -146,14 +146,14 @@ describe("AdminLogDetail", () => {
     expect(wrapper.get(".breadcrumb-type").classes()).toContain("badge--dev");
     expect(wrapper.get(".breadcrumb-count").classes()).toContain("badge--suppressed");
     expect(wrapper.text()).toContain("Events (2)");
-    expect(wrapper.get('[data-testid="log-detail-back"]').text()).toBe("Logoverzicht");
-    expect(wrapper.get('[data-testid="log-detail-back"]').attributes("aria-label")).toBe(
-      "Logoverzicht openen",
+    expect(wrapper.get('[data-testid="log-detail-close"]').text()).toBe("Detail sluiten");
+    expect(wrapper.get('[data-testid="log-detail-close"]').attributes("aria-label")).toBe(
+      "Detail sluiten",
     );
 
-    await wrapper.get('[data-testid="log-detail-back"]').trigger("click");
+    await wrapper.get('[data-testid="log-detail-close"]').trigger("click");
 
-    expect(wrapper.emitted("back")).toHaveLength(1);
+    expect(wrapper.emitted("closeDetail")).toHaveLength(1);
   });
 
   it("delegates breadcrumb labels to Badge", () => {

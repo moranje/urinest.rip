@@ -66,7 +66,7 @@ const adminLogListStub = {
 
 const adminLogDetailStub = {
   props: ["group", "events", "loading"],
-  emits: ["back", "resolved"],
+  emits: ["closeDetail", "resolved"],
   template: `
     <section
       class="admin-log-detail-stub"
@@ -74,7 +74,7 @@ const adminLogDetailStub = {
       :data-event-count="events.length"
       :data-loading="String(loading)"
     >
-      <button class="detail-back" type="button" @click="$emit('back')">Back</button>
+      <button class="detail-close" type="button" @click="$emit('closeDetail')">Close</button>
       <button class="detail-resolved" type="button" @click="$emit('resolved')">Resolved</button>
     </section>
   `,
@@ -154,10 +154,10 @@ describe("AdminTemplate", () => {
     expect(wrapper.get(".admin-log-detail-stub").attributes("data-event-count")).toBe("1");
     expect(wrapper.get(".admin-log-detail-stub").attributes("data-loading")).toBe("true");
 
-    await wrapper.get(".detail-back").trigger("click");
+    await wrapper.get(".detail-close").trigger("click");
     await wrapper.get(".detail-resolved").trigger("click");
 
-    expect(wrapper.emitted("back")).toHaveLength(1);
+    expect(wrapper.emitted("closeDetail")).toHaveLength(1);
     expect(wrapper.emitted("resolved")).toHaveLength(1);
   });
 });

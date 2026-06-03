@@ -12,7 +12,7 @@
       :group="selectedGroup"
       :events="events"
       :loading="loadingEvents"
-      @back="emit('back')"
+      @close-detail="emit('closeDetail')"
       @resolved="emit('resolved')"
     />
 
@@ -70,7 +70,7 @@ const emit = defineEmits<{
   selectGroup: [fingerprint: string];
   filtersChange: [filters: Partial<LogFiltersType>];
   clearSinkStatus: [];
-  back: [];
+  closeDetail: [];
   resolved: [];
 }>();
 </script>

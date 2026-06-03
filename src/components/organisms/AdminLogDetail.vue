@@ -19,7 +19,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  back: [];
+  closeDetail: [];
   resolved: [];
 }>();
 
@@ -247,14 +247,14 @@ async function exportMarkdown() {
       <Button
         variant="text"
         size="sm"
-        data-testid="log-detail-back"
-        aria-label="Logoverzicht openen"
-        @click="emit('back')"
+        data-testid="log-detail-close"
+        aria-label="Detail sluiten"
+        @click="emit('closeDetail')"
       >
         <template #leading>
-          <Icon name="arrow-left" :size="16" />
+          <Icon name="x" :size="16" />
         </template>
-        Logoverzicht
+        Detail sluiten
       </Button>
       <Button
         variant="outlined"

@@ -14,7 +14,7 @@ function handleSelectGroup(fingerprint: string) {
   logStore.loadEvents(fingerprint);
 }
 
-function handleBack() {
+function handleCloseDetail() {
   logStore.selectGroup(null);
 }
 
@@ -70,7 +70,7 @@ watch(
     @select-group="handleSelectGroup"
     @filters-change="handleFiltersChange"
     @clear-sink-status="logStore.clearSinkStatus()"
-    @back="handleBack"
+    @close-detail="handleCloseDetail"
     @resolved="handleResolved"
   />
 </template>
