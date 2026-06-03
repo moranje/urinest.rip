@@ -146,7 +146,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Redirect-chain logic uit page naar core/runtime.
 - [x] Markdown renderer injectable maken met sanitizer contract.
 - [x] Admin routes buiten framework houden.
-- [ ] App shell en framework runner scheiden.
+- [x] App shell en framework runner scheiden.
 
 ## Compiler Checklist
 

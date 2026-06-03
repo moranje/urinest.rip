@@ -59,7 +59,10 @@ describe("route visual contracts", () => {
       "src/components/templates/QuestionnaireTemplate.vue",
       "utf8",
     );
-    const questionnairePage = readFileSync("src/views/QuestionnairePage.vue", "utf8");
+    const questionnairePageController = readFileSync(
+      "src/composables/useQuestionnairePageController.ts",
+      "utf8",
+    );
     const multiInputPanel = readFileSync("src/components/organisms/MultiInputPanel.vue", "utf8");
     const panelCss = cssBlock(questionnaireTemplate, ".questionnaire-template__panel");
     const pendingCss = cssBlock(questionnaireTemplate, ".questionnaire-template__pending");
@@ -81,9 +84,9 @@ describe("route visual contracts", () => {
     expect(gridCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(actionsCss).toContain("justify-content: flex-end");
     expect(multiInputPanel).toContain("@container questionnaire (max-width: 37.5rem)");
-    expect(questionnairePage).toContain("const pushNavigation = async");
-    expect(questionnairePage).toContain("isLoading.value = true;");
-    expect(questionnairePage).toContain(
+    expect(questionnairePageController).toContain("const pushNavigation = async");
+    expect(questionnairePageController).toContain("isLoading.value = true;");
+    expect(questionnairePageController).toContain(
       'await pushNavigation(`/questionnaire/${value}`, "router:questionnaire-redirect"',
     );
   });
