@@ -20,7 +20,7 @@ const tempDir = mkdtempSync(join(tmpdir(), "beslismodel-framework-extract-"));
 try {
   execFileSync(
     process.execPath,
-    ["scripts/extract-beslismodel-framework.mjs", "--target", tempDir, "--link-node-modules"],
+    ["scripts/extract-beslismodel-framework.mjs", "--target", tempDir],
     {
       stdio: "inherit",
     },
@@ -72,6 +72,7 @@ try {
     }
   }
 
+  execFileSync("npm", ["ci"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "format:check"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "lint:all"], { cwd: tempDir, stdio: "inherit" });
   execFileSync("npm", ["run", "check"], { cwd: tempDir, stdio: "inherit" });

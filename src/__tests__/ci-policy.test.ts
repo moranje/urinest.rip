@@ -265,6 +265,12 @@ describe("CI policy", () => {
       ".gitignore",
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "@vue/test-utils",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "jsdom",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "docs/gitea-package-publishing.md",
     );
     expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
@@ -275,6 +281,9 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
       "Extracted framework .gitignore is missing",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      'npm", ["ci"]',
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "getFrameworkPackages",
