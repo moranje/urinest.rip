@@ -19,6 +19,10 @@ const routeVisualContractTest = readFileSync(
   resolve("src/__tests__/route-visual-contract.test.ts"),
   "utf8",
 );
+const packageReleaseConfigScript = readFileSync(
+  resolve("scripts/check-package-release-config.mjs"),
+  "utf8",
+);
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
   engines?: Record<string, string>;
@@ -121,6 +125,8 @@ describe("CI policy", () => {
     expect(packageJson.scripts["budget:packages"]).toBe(
       "node scripts/check-package-bundle-budget.mjs",
     );
+    expect(packageReleaseConfigScript).toContain("Project .npmrc contains auth material");
+    expect(packageReleaseConfigScript).not.toContain("console.warn");
   });
 
   it("keeps framework package release policy explicit and lockstep", () => {

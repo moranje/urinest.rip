@@ -40,12 +40,9 @@ const projectNpmrcPath = join(process.cwd(), ".npmrc");
 if (existsSync(projectNpmrcPath)) {
   const projectNpmrc = readFileSync(projectNpmrcPath, "utf8");
   if (secretPattern.test(projectNpmrc)) {
-    const message = "Project .npmrc contains auth material; move the token to user-level ~/.npmrc.";
-    if (process.env.CI === "true" || process.env.BESLISMODEL_STRICT_NPMRC === "true") {
-      violations.push(message);
-    } else {
-      console.warn(`Warning: ${message}`);
-    }
+    violations.push(
+      "Project .npmrc contains auth material; move the token to user-level ~/.npmrc.",
+    );
   }
 }
 

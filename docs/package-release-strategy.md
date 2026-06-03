@@ -67,7 +67,7 @@ Target shape:
 Local npm setup:
 
 - User-level `.npmrc` stores the Gitea auth token and is never committed.
-- Project `.npmrc` may define the scope registry but must not contain a token.
+- Project `.npmrc` may define the scope registry but must not contain a token; package release preflight fails on project-level auth material.
 - Package manifests get `publishConfig.registry` only after the local Gitea registry URL is known.
 - Prereleases publish with `--tag next`; `latest` waits until registry smoke and app smoke pass.
 
