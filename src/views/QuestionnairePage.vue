@@ -35,6 +35,7 @@ import { parseOutcome } from "@beslismodel/core";
 import { useQuestionnaireRunner } from "@beslismodel/vue";
 import QuestionnaireTemplate from "../components/templates/QuestionnaireTemplate.vue";
 import { usePopover } from "../composables/usePopover";
+import { renderAppMarkdown } from "../lib/app-compatibility";
 import { breadcrumbClick } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";
 import {
@@ -45,7 +46,6 @@ import {
   recordFlowStep,
 } from "../lib/flow-trail";
 import { createLogger } from "../lib/logger";
-import { renderMarkdown } from "../lib/markdown-renderer";
 import {
   buildQuestionRouteHistory,
   createQuestionRouteLocation,
@@ -503,7 +503,7 @@ const checkNonTouch = (): void => {
 
 const compiledMarkdown = (text: string | undefined): string => {
   try {
-    return renderMarkdown(text);
+    return renderAppMarkdown(text);
   } catch (error) {
     handleError(error, "markdown:compile", { questionnaireId: props.id });
     return "";
