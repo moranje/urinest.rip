@@ -373,15 +373,15 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [x] Nieuwe package-map/repo reproduceerbaar gemaakt met `extract-beslismodel-framework.mjs` en `check:framework-extract`, zodat framework-code als eigen `beslismodel-framework/` target zonder app-only code gebouwd kan worden.
-- [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, cvrm-prevent, vue en testing; geen tijdelijke bundeling van app-only code.
-- [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
+- [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, copd-care, cvrm-prevent, dm-care, vue en testing; geen tijdelijke bundeling van app-only code.
+- [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/copd-care`, `@beslismodel/cvrm-prevent`, `@beslismodel/dm-care`, `@beslismodel/vue`, `@beslismodel/testing`.
 - [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [x] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.
-- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding.
-- [x] File-tarball install-smoke toegevoegd: `check:package-file-install-consumer-smoke` installeert de gepackte frameworkpackages via echte `file:` npm dependencies in een schone consumer, draait de geïnstalleerde `beslismodel` CLI en importeert alleen publieke `@beslismodel/*` exports.
+- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding, DM HbA1c en COPD GOLD ABE.
+- [x] File-tarball install-smoke toegevoegd: `check:package-file-install-consumer-smoke` installeert de gepackte frameworkpackages via echte `file:` npm dependencies in een schone consumer, draait de geïnstalleerde `beslismodel` CLI en importeert alleen publieke `@beslismodel/*` exports inclusief CVRM, DM en COPD calculators.
 - [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
@@ -393,7 +393,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
 - [x] `urinest.rip` app- en frameworkchecks gesplitst: `check:app` bevat geen package-build of `check:packages`, terwijl CI frameworkextractie apart via `check:framework` draait.
-- [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
+- [x] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
 - [ ] Migratievolgorde uitvoeren met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`.
 - [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke, landing-grid regressie, questionnaire-switch regressie en Urinestrip end-to-end fixture.
