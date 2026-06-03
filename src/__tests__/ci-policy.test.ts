@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
+const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const landingTemplateTest = readFileSync(
   resolve("src/components/templates/LandingTemplate.test.ts"),
   "utf8",
@@ -112,6 +113,9 @@ describe("CI policy", () => {
     expect(workflow).toContain('BESLISMODEL_STRICT_NPMRC: "true"');
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain("npm run build-storybook");
+    expect(workflow).toContain("browser-actions/setup-chrome@v1");
+    expect(workflow).toContain("CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}");
+    expect(workflow).toContain("npm run check:lighthouse:only");
     expect(workflow).toContain("node-version: [20, 22, 24]");
     expect(workflow).toContain("node-version: ${{ matrix.node-version }}");
     expect(workflow).toContain("npm run format:check");
@@ -145,6 +149,20 @@ describe("CI policy", () => {
     expect(packageJson.scripts["budget:packages"]).toBe(
       "node scripts/check-package-bundle-budget.mjs",
     );
+    expect(packageJson.scripts["check:lighthouse:only"]).toBe(
+      "lhci autorun --config=./lighthouserc.cjs",
+    );
+    expect(packageJson.scripts["check:lighthouse"]).toContain("build");
+    expect(packageJson.scripts["check:lighthouse"]).toContain("check:lighthouse:only");
+    expect(lighthouseConfig).toContain("http://127.0.0.1:4173/");
+    expect(lighthouseConfig).toContain("http://127.0.0.1:4173/questionnaire/strip");
+    expect(lighthouseConfig).toContain("http://127.0.0.1:4173/info/other.noConclusiveAbnormality");
+    expect(lighthouseConfig).toContain("chromePath");
+    expect(lighthouseConfig).toContain(
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    );
+    expect(lighthouseConfig).toContain('"categories:accessibility"');
+    expect(lighthouseConfig).toContain('"categories:best-practices"');
     expect(packageJson.scripts["check:guideline-traceability"]).toBe(
       "node scripts/check-guideline-traceability.mjs",
     );

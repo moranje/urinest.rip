@@ -17,3 +17,8 @@ public/main.json
 
 # Storybook
 storybook-static
+
+# Lighthouse CI local reports
+.lighthouseci/
+docs/lighthouse/*
+!docs/lighthouse/.gitkeep

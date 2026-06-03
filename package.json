@@ -43,6 +43,8 @@
     "budget": "npm run budget:app && npm run budget:packages",
     "budget:app": "node scripts/check-bundle-budget.mjs",
     "budget:packages": "node scripts/check-package-bundle-budget.mjs",
+    "check:lighthouse:only": "lhci autorun --config=./lighthouserc.cjs",
+    "check:lighthouse": "npm run build && npm run check:lighthouse:only",
     "lint": "oxlint src/ packages/ fixtures/ --deny-warnings",
     "lint:eslint": "eslint src/ packages/ fixtures/",
     "lint:all": "oxlint src/ packages/ fixtures/ --deny-warnings && eslint src/ packages/ fixtures/",
@@ -64,6 +66,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
+    "@lhci/cli": "^0.15.1",
     "@storybook/addon-a11y": "^10.4.1",
     "@storybook/vue3-vite": "^10.4.1",
     "@types/dompurify": "^3.0.5",

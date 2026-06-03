@@ -298,7 +298,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Manifest load cache strategy configurable.
 - [x] Route prefetch opt-in.
 - [x] Bundle budget package en app.
-- [ ] Lighthouse CI landing/questionnaire/result.
+- [x] Lighthouse CI landing/questionnaire/result.
 - [x] No layout shift from SVG/menu tiles.
 - [x] Source maps buiten public deploy artifact houden.
 

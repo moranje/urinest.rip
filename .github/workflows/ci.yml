@@ -80,6 +80,15 @@ jobs:
       - name: Production build
         run: npm run build
 
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Lighthouse CI
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: npm run check:lighthouse:only
+
       - name: Clinical guideline traceability
         run: npm run check:guidelines
 
