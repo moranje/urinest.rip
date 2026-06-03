@@ -19,6 +19,8 @@
     "prepare": "husky",
     "check": "vue-tsc --noEmit",
     "check:tsgo": "tsgo --noEmit --project tsconfig.tsgo.json",
+    "check:app": "npm run build:flows && npm run format:check && npm run lint:all && npm run check && npm run check:tsgo && npm run test && npm run check:guidelines && npm run budget:app && npm run build",
+    "check:framework": "npm run check:packages",
     "check:core-package": "node scripts/check-core-package.mjs",
     "check:compiler-package": "node scripts/check-compiler-package.mjs",
     "check:cvrm-prevent-package": "node scripts/check-cvrm-prevent-package.mjs",

@@ -108,7 +108,7 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm audit --omit=dev --audit-level=high");
     expect(workflow).toContain("Possible hardcoded JWT/key found in source code");
     expect(workflow).toContain("git ls-files --error-unmatch .env");
-    expect(workflow).toContain("npm run check:packages");
+    expect(workflow).toContain("npm run check:framework");
     expect(workflow).toContain("Package release config preflight");
     expect(workflow).toContain('BESLISMODEL_STRICT_NPMRC: "true"');
     expect(workflow).toContain("npm run budget");
@@ -121,6 +121,15 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run format:check");
     expect(workflow).toContain("npm run check:tsgo");
     expect(packageJson.engines?.node).toBe(">=20.19.0");
+    expect(packageJson.scripts["check:app"]).toContain("build:flows");
+    expect(packageJson.scripts["check:app"]).toContain("format:check");
+    expect(packageJson.scripts["check:app"]).toContain("lint:all");
+    expect(packageJson.scripts["check:app"]).toContain("check:guidelines");
+    expect(packageJson.scripts["check:app"]).toContain("budget:app");
+    expect(packageJson.scripts["check:app"]).toContain("build");
+    expect(packageJson.scripts["check:app"]).not.toContain("build:packages");
+    expect(packageJson.scripts["check:app"]).not.toContain("check:packages");
+    expect(packageJson.scripts["check:framework"]).toBe("npm run check:packages");
     expect(packageJson.scripts["check:consumer-imports"]).toBe(
       "node scripts/check-consumer-package-imports.mjs",
     );

@@ -74,8 +74,8 @@ jobs:
       - name: Storybook build (geen deploy)
         run: npm run build-storybook
 
-      - name: Package build
-        run: npm run check:packages
+      - name: Framework package checks
+        run: npm run check:framework
 
       - name: Production build
         run: npm run build

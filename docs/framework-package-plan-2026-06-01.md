@@ -391,7 +391,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
-- [ ] `urinest.rip` build scripts aanpassen: package-build scripts verwijderen uit app-only CI, maar `check:packages` vervangen door registry smoke checks zolang extractie loopt.
+- [x] `urinest.rip` app- en frameworkchecks gesplitst: `check:app` bevat geen package-build of `check:packages`, terwijl CI frameworkextractie apart via `check:framework` draait.
 - [ ] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
 - [ ] Migratievolgorde uitvoeren met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`.
