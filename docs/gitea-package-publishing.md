@@ -14,11 +14,13 @@ ssh://git@192.168.1.170:2223/martien/<repo>.git
 For the extracted framework repository:
 
 ```bash
+git init -b master
 git remote add origin ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git
 git push -u origin master
 ```
 
-The Gitea repository must exist first unless server-side repo creation on push is enabled.
+The Gitea server creates this repository on first push. `git ls-remote` may return "not found"
+before the first push and must not be treated as a blocking preflight.
 
 ## Registry
 
@@ -34,10 +36,10 @@ Project-level `.npmrc.example` may contain only scope routing:
 @beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/
 ```
 
-User-level `~/.npmrc` or CI secrets provide auth:
+User-level `~/.npmrc` provides auth:
 
 ```text
-//git.oranje.wtf/api/packages/martien/npm/:_authToken=<token>
+<canonical-registry-auth-line-with-token>
 ```
 
 Do not commit auth material. Prior audits in `labbie` and `patient-tracker` marked tracked npm
@@ -50,8 +52,9 @@ Patterns found in sibling repos:
 - `NPM_REGISTRY_TOKEN`: Gitea Actions build/deploy token passed to baseline actions.
 - `GITEA_NPM_TOKEN`: Renovate/private registry token name.
 
-For framework package publishing, local scripts rely on npm's own auth lookup. Keep the token in
-user-level npm config or inject it into the process environment before publish.
+For framework package publishing, local scripts rely on npm's own auth lookup and verify it with
+`npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/` before publish. Keep the
+token in user-level npm config; do not create project-local npm auth files.
 
 ## Baseline Actions
 
@@ -86,6 +89,9 @@ Publish the prerelease with dist-tag `next`:
 ```bash
 BESLISMODEL_PUBLISH_CONFIRM=0.1.0-next.0 npm run check:package-publish-next -- --publish
 ```
+
+The publish command first dry-runs every package, verifies registry auth, and checks that none of
+the package versions already exist in Gitea before the first `npm publish` call.
 
 Smoke installed packages from Gitea:
 

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
+import { existsSync, lstatSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -9,7 +9,9 @@ const appOnlyPaths = extractionMap.appOnlyExclusions.map((path) => path.replace(
 const walk = (dir) =>
   readdirSync(dir).flatMap((entry) => {
     const path = join(dir, entry);
-    if (statSync(path).isDirectory()) return walk(path);
+    const stat = lstatSync(path);
+    if (stat.isSymbolicLink()) return path;
+    if (stat.isDirectory()) return walk(path);
     return path;
   });
 
@@ -39,7 +41,19 @@ try {
     }
   }
 
+  if (!existsSync(join(tempDir, "package-lock.json"))) {
+    throw new Error("Extracted framework must include package-lock.json so npm ci works in CI");
+  }
+
+  const gitignore = readFileSync(join(tempDir, ".gitignore"), "utf8");
+  for (const requiredGitignore of ["node_modules", "packages/**/dist", ".env", "*.tgz"]) {
+    if (!gitignore.includes(requiredGitignore)) {
+      throw new Error(`Extracted framework .gitignore is missing: ${requiredGitignore}`);
+    }
+  }
+
   const packageCi = readFileSync(join(tempDir, ".github/workflows/ci.yml"), "utf8");
+  const giteaPackageCi = readFileSync(join(tempDir, ".gitea/workflows/ci.yaml"), "utf8");
   for (const requiredGate of [
     "node-version: [20, 22, 24]",
     "npm ci",
@@ -52,6 +66,9 @@ try {
   ]) {
     if (!packageCi.includes(requiredGate)) {
       throw new Error(`Extracted framework CI is missing gate: ${requiredGate}`);
+    }
+    if (!giteaPackageCi.includes(requiredGate)) {
+      throw new Error(`Extracted framework Gitea CI is missing gate: ${requiredGate}`);
     }
   }
 

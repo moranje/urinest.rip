@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import {
   cpSync,
   existsSync,
@@ -173,6 +174,34 @@ function writeJson(path, value) {
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+function writeGitIgnore(target) {
+  writeFileSync(
+    join(target, ".gitignore"),
+    `node_modules
+packages/**/dist
+coverage
+.env
+.env.*
+*.tgz
+`,
+  );
+}
+
+function writePackageLock(target) {
+  const rootLockPath = join(root, "package-lock.json");
+  if (!existsSync(rootLockPath)) return;
+
+  copyFile(rootLockPath, join(target, "package-lock.json"));
+  execFileSync(
+    "npm",
+    ["install", "--package-lock-only", "--ignore-scripts", "--no-audit", "--fund=false"],
+    {
+      cwd: target,
+      stdio: "inherit",
+    },
+  );
+}
+
 function writeRootPackage(target) {
   writeJson(join(target, "package.json"), {
     name: "beslismodel-framework",
@@ -295,10 +324,7 @@ export default [
 }
 
 function writePackageCi(target) {
-  mkdirSync(join(target, ".github/workflows"), { recursive: true });
-  writeFileSync(
-    join(target, ".github/workflows/ci.yml"),
-    `name: Beslismodel Framework CI
+  const workflow = `name: Beslismodel Framework CI
 
 on:
   push:
@@ -333,12 +359,21 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - name: Secret scan
         run: |
-          ! git grep -nE '(service[_-]?role|VITE_SUPABASE|_authToken|app_logs)' -- packages scripts docs .github
-      - name: Keep env files untracked
+          BESLISMODEL_STRICT_NPMRC=true npm run check:package-release-config
+          npm run check:package-release-notes
+      - name: Keep env and npm auth files untracked
         run: |
-          ! git ls-files --error-unmatch .env
-`,
-  );
+          tracked_files="$(git ls-files -- .env ".env.*" .npmrc "**/.npmrc")"
+          if [ -n "$tracked_files" ]; then
+            echo "$tracked_files"
+            exit 1
+          fi
+`;
+
+  mkdirSync(join(target, ".github/workflows"), { recursive: true });
+  mkdirSync(join(target, ".gitea/workflows"), { recursive: true });
+  writeFileSync(join(target, ".github/workflows/ci.yml"), workflow);
+  writeFileSync(join(target, ".gitea/workflows/ci.yaml"), workflow);
 }
 
 function linkNodeModules(target) {
@@ -382,6 +417,8 @@ function main() {
   }
 
   writeRootPackage(target);
+  writeGitIgnore(target);
+  writePackageLock(target);
   writeTypeScriptConfigs(target);
   writeVitestConfig(target);
   writeEslintConfig(target);

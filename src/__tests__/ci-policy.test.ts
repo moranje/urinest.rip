@@ -256,13 +256,40 @@ describe("CI policy", () => {
       "scripts/package-extraction-map.mjs",
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      ".gitea/workflows/ci.yaml",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "package-lock.json",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      ".gitignore",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "docs/gitea-package-publishing.md",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "Extracted framework must include package-lock.json",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "Extracted framework Gitea CI is missing gate",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "Extracted framework .gitignore is missing",
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "getFrameworkPackages",
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "expectedPackageRegistry",
+    );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "BESLISMODEL_STRICT_NPMRC",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "npm whoami --registry",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "already exists",
     );
     expect(readFileSync(resolve("scripts/check-bundle-budget.mjs"), "utf8")).toContain(
       "appBundleBudgets",

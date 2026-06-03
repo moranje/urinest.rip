@@ -23,6 +23,11 @@ const parseNpmPackJson = (output) => {
   const jsonText = start >= 0 ? trimmed.slice(start).trim() : trimmed;
   return JSON.parse(jsonText)[0];
 };
+const errorDetail = (error) =>
+  [error?.stdout, error?.stderr, error?.message]
+    .map((value) => String(value ?? "").trim())
+    .filter(Boolean)
+    .join("\n");
 const manifests = packages.map((item) => ({
   ...item,
   manifest: readJson(resolve(root, item.dir, "package.json")),
@@ -76,9 +81,87 @@ if (isPublish && process.env.BESLISMODEL_PUBLISH_CONFIRM !== version) {
 const cacheDir = mkdtempSync(resolve(tmpdir(), "beslismodel-publish-cache-"));
 
 try {
+  const packPackage = ({ dir, name }) => {
+    const output = execFileSync(
+      "npm",
+      ["--cache", cacheDir, "pack", resolve(root, dir), "--dry-run", "--json"],
+      {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "inherit"],
+      },
+    );
+    const packResult = parseNpmPackJson(output);
+    if (packResult.name !== name || packResult.version !== version) {
+      fail(`${dir}: npm pack resolved ${packResult.name}@${packResult.version}`);
+    }
+    console.log(`Pack dry-run checked ${name}@${version} with dist-tag next`);
+  };
+
   for (const { dir, name } of packages) {
-    const args = isPublish
-      ? [
+    packPackage({ dir, name });
+  }
+
+  if (!isPublish) {
+    console.log(`Package next-publish dry-run passed for @beslismodel packages ${version}`);
+  } else {
+    try {
+      const whoami = execFileSync(
+        "npm",
+        ["--cache", cacheDir, "whoami", "--registry", expectedPackageRegistry],
+        {
+          cwd: root,
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "pipe"],
+        },
+      ).trim();
+      if (!whoami) {
+        fail(`npm whoami returned an empty user for ${expectedPackageRegistry}`);
+      }
+      console.log(`Registry auth verified for ${expectedPackageRegistry} as ${whoami}`);
+    } catch (error) {
+      fail(
+        `Publishing requires npm auth for ${expectedPackageRegistry}. ` +
+          `Run npm whoami --registry ${expectedPackageRegistry} first.\n${errorDetail(error)}`,
+      );
+    }
+
+    for (const { name } of packages) {
+      try {
+        const publishedVersion = execFileSync(
+          "npm",
+          [
+            "--cache",
+            cacheDir,
+            "view",
+            `${name}@${version}`,
+            "version",
+            "--registry",
+            expectedPackageRegistry,
+          ],
+          {
+            cwd: root,
+            encoding: "utf8",
+            stdio: ["ignore", "pipe", "pipe"],
+          },
+        ).trim();
+        if (publishedVersion === version) {
+          fail(`${name}@${version} already exists in ${expectedPackageRegistry}`);
+        }
+      } catch (error) {
+        const detail = errorDetail(error);
+        if (!/E404|404|not found/i.test(detail)) {
+          fail(
+            `Could not verify whether ${name}@${version} already exists in ${expectedPackageRegistry}.\n${detail}`,
+          );
+        }
+      }
+    }
+
+    for (const { dir, name } of packages) {
+      execFileSync(
+        "npm",
+        [
           "--cache",
           cacheDir,
           "publish",
@@ -87,30 +170,19 @@ try {
           "next",
           "--registry",
           expectedPackageRegistry,
-        ]
-      : ["--cache", cacheDir, "pack", resolve(root, dir), "--dry-run", "--json"];
-
-    const output = execFileSync("npm", args, {
-      cwd: root,
-      encoding: isPublish ? undefined : "utf8",
-      stdio: isPublish ? "inherit" : ["ignore", "pipe", "inherit"],
-    });
-    if (!isPublish) {
-      const packResult = parseNpmPackJson(output);
-      if (packResult.name !== name || packResult.version !== version) {
-        fail(`${dir}: npm pack resolved ${packResult.name}@${packResult.version}`);
-      }
+        ],
+        {
+          cwd: root,
+          stdio: "inherit",
+        },
+      );
+      console.log(`Published ${name}@${version} with dist-tag next`);
     }
+
     console.log(
-      `${isPublish ? "Published" : "Pack dry-run checked"} ${name}@${version} with dist-tag next`,
+      `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag next`,
     );
   }
-
-  console.log(
-    isPublish
-      ? `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag next`
-      : `Package next-publish dry-run passed for @beslismodel packages ${version}`,
-  );
 } finally {
   rmSync(cacheDir, { recursive: true, force: true });
 }

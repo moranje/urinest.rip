@@ -5,6 +5,13 @@ import { expectedPackageRegistry, getFrameworkPackages } from "./package-extract
 
 const packages = getFrameworkPackages();
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
+const strictNpmrc = process.env.BESLISMODEL_STRICT_NPMRC === "true";
+const forbiddenTrackedFile = (file) =>
+  file === ".npmrc" ||
+  file.endsWith("/.npmrc") ||
+  file === ".env" ||
+  (file.startsWith(".env.") && file !== ".env.example") ||
+  (file.includes("/.env.") && !file.endsWith("/.env.example"));
 
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
 
@@ -82,24 +89,38 @@ if (secretPattern.test(npmrcExample)) {
   violations.push(".npmrc.example must not contain auth material");
 }
 
-let trackedNpmrc = "";
+let trackedForbiddenFiles = [];
 try {
-  trackedNpmrc = execFileSync("git", ["ls-files", ".npmrc", "**/.npmrc"], {
+  trackedForbiddenFiles = execFileSync("git", ["ls-files"], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "ignore"],
-  }).trim();
+  })
+    .split("\n")
+    .map((file) => file.trim())
+    .filter(Boolean)
+    .filter(forbiddenTrackedFile);
 } catch {
-  trackedNpmrc = "";
+  trackedForbiddenFiles = [];
 }
-if (trackedNpmrc) {
+if (trackedForbiddenFiles.length > 0) {
   violations.push(
-    `.npmrc files must stay untracked; keep tokens in user-level ~/.npmrc:\n${trackedNpmrc}`,
+    `.npmrc and non-example .env files must stay untracked; keep tokens in user-level ~/.npmrc or CI secrets:\n${trackedForbiddenFiles.join("\n")}`,
   );
 }
 
 const projectNpmrcPath = join(process.cwd(), ".npmrc");
 if (existsSync(projectNpmrcPath)) {
   const projectNpmrc = readFileSync(projectNpmrcPath, "utf8");
+  if (strictNpmrc && projectNpmrc.includes("@beslismodel:registry=")) {
+    violations.push(
+      "Project .npmrc must not define @beslismodel registry when BESLISMODEL_STRICT_NPMRC=true; use .npmrc.example plus user-level npm auth.",
+    );
+  }
+  if (strictNpmrc && secretPattern.test(projectNpmrc)) {
+    violations.push(
+      "Project .npmrc must not contain auth material when BESLISMODEL_STRICT_NPMRC=true; use CI secret injection.",
+    );
+  }
   if (secretPattern.test(projectNpmrc)) {
     violations.push(
       "Project .npmrc contains auth material; move the token to user-level ~/.npmrc.",
