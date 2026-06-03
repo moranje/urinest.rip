@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
+const giteaCiWorkflow = readFileSync(resolve(".gitea/workflows/ci.yaml"), "utf8");
+const giteaReleaseWorkflow = readFileSync(resolve(".gitea/workflows/release.yaml"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const landingTemplateTest = readFileSync(
@@ -142,6 +144,8 @@ describe("CI policy", () => {
     expect(workflow).toContain("browser-actions/setup-chrome@v1");
     expect(workflow).toContain("CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}");
     expect(workflow).toContain("npm run check:lighthouse:only");
+    expect(workflow).toContain("sourcemaps/urinest.rip/${RELEASE_VERSION}/${NAME}");
+    expect(workflow).toContain('RELEASE_VERSION="${{ steps.release.outputs.version }}"');
     expect(workflow).toContain("node-version: [20, 22, 24]");
     expect(workflow).toContain("node-version: ${{ matrix.node-version }}");
     expect(workflow).toContain("npm run format:check");
@@ -173,6 +177,7 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:package-extraction-map");
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-extract");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-release-notes");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
     expect(packageJson.scripts["check:packages"]).toContain(
@@ -249,6 +254,9 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "scripts/package-extraction-map.mjs",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "docs/gitea-package-publishing.md",
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "getFrameworkPackages",
@@ -343,6 +351,8 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("dist-tag `next`");
     expect(releaseStrategy).toContain("Registry Smoke");
     expect(releaseStrategy).toContain("file-tarball install smoke");
+    expect(releaseStrategy).toContain("check:package-release-notes");
+    expect(releaseStrategy).toContain("docs/gitea-package-publishing.md");
     expect(releaseStrategy).toContain("Rollback");
     expect(releaseStrategy).toContain("Node `20`, `22` and `24`");
     expect(releaseStrategy).toContain("sibling folder `beslismodel-framework/`");
@@ -378,5 +388,32 @@ describe("CI policy", () => {
     expect(routeVisualContractTest).toContain(
       "keeps result and admin routes bounded by content tokens",
     );
+  });
+
+  it("keeps Gitea app workflows on baseline actions while package publishing stays npm-native", () => {
+    expect(giteaCiWorkflow).toContain(
+      "https://git.oranje.wtf/martien/baseline/actions/setup-npm-auth@v2.2.1",
+    );
+    expect(giteaCiWorkflow).toContain(
+      "https://git.oranje.wtf/martien/baseline/actions/setup-node@v2.2.1",
+    );
+    expect(giteaCiWorkflow).toContain("registry: https://git.oranje.wtf/api/packages/martien/npm/");
+    expect(giteaCiWorkflow).toContain('scopes: "@oranje,@xenia,@beslismodel"');
+    expect(giteaCiWorkflow).toContain("npm run check:app");
+    expect(giteaCiWorkflow).toContain("npm run check:package-release-config");
+
+    expect(giteaReleaseWorkflow).toContain(
+      "https://git.oranje.wtf/martien/baseline/actions/release-pr@v2.2.1",
+    );
+    expect(giteaReleaseWorkflow).toContain(
+      "https://git.oranje.wtf/martien/baseline/actions/upload-sourcemaps@v2.2.1",
+    );
+    expect(giteaReleaseWorkflow).toContain(
+      "https://git.oranje.wtf/martien/baseline/actions/release-finalize@v2.2.1",
+    );
+    expect(giteaReleaseWorkflow).toContain("app-name: urinest.rip");
+    expect(giteaReleaseWorkflow).toContain("release-version: ${{ needs.version.outputs.value }}");
+    expect(giteaReleaseWorkflow).toContain("nwtgck/actions-netlify@v3");
+    expect(giteaReleaseWorkflow).not.toContain("npm publish");
   });
 });

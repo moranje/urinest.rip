@@ -17,6 +17,12 @@ const fail = (message) => {
 };
 
 const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
+const parseNpmPackJson = (output) => {
+  const trimmed = output.trim();
+  const start = Math.max(trimmed.lastIndexOf("\n["), trimmed.lastIndexOf("[{"));
+  const jsonText = start >= 0 ? trimmed.slice(start).trim() : trimmed;
+  return JSON.parse(jsonText)[0];
+};
 const manifests = packages.map((item) => ({
   ...item,
   manifest: readJson(resolve(root, item.dir, "package.json")),
@@ -81,17 +87,8 @@ try {
           "next",
           "--registry",
           expectedPackageRegistry,
-          "--ignore-scripts",
         ]
-      : [
-          "--cache",
-          cacheDir,
-          "pack",
-          resolve(root, dir),
-          "--dry-run",
-          "--json",
-          "--ignore-scripts",
-        ];
+      : ["--cache", cacheDir, "pack", resolve(root, dir), "--dry-run", "--json"];
 
     const output = execFileSync("npm", args, {
       cwd: root,
@@ -99,7 +96,7 @@ try {
       stdio: isPublish ? "inherit" : ["ignore", "pipe", "inherit"],
     });
     if (!isPublish) {
-      const packResult = JSON.parse(output)[0];
+      const packResult = parseNpmPackJson(output);
       if (packResult.name !== name || packResult.version !== version) {
         fail(`${dir}: npm pack resolved ${packResult.name}@${packResult.version}`);
       }

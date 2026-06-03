@@ -1,9 +1,12 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const consumerRoots = ["src", "fixtures"];
 const sourceExtensions = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".vue"]);
-const packageNamePattern = "(?:core|vue|compiler|testing|cvrm-prevent)";
+const packageNamePattern = `(?:${getFrameworkPackages()
+  .map((item) => item.name.replace("@beslismodel/", ""))
+  .join("|")})`;
 const forbiddenPatterns = [
   new RegExp(
     String.raw`(?:^|["'\`])@beslismodel\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,

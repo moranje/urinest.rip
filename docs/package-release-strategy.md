@@ -152,3 +152,10 @@ Rollback must stay boring:
 - Keep previous working `package-lock.json` in git history.
 - Reinstall previous versions and rerun app gates before redeploy.
 - Document consumer-impact in release notes: exports, peer ranges, schema changes, migration steps, rollback version.
+- Keep `docs/package-release-notes-<version>.md` green with `npm run check:package-release-notes`; use that file as the content source for the Gitea release tag.
+
+## Gitea Operations
+
+Use `docs/gitea-package-publishing.md` as the concrete local Gitea/npm runbook. It captures the
+SSH remote, canonical registry URL, token handling and local proxy pattern found in the other
+Oranje projects.

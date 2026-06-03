@@ -1,0 +1,157 @@
+# Gitea release/deploy path for the Urinest app.
+# Framework package release remains a separate registry flow.
+
+name: Release & Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      first:
+        description: "Allereerste release zonder bestaande tag"
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-pr:
+    name: Open of update Release-PR
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-latest
+    container: public.ecr.aws/docker/library/node:24-bookworm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Open of update Release-PR
+        uses: https://git.oranje.wtf/martien/baseline/actions/release-pr@v2.2.1
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          first: ${{ github.event.inputs.first == 'true' && '1' || '0' }}
+
+  version:
+    name: Extract release version
+    if: startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    container: public.ecr.aws/docker/library/node:24-bookworm
+    outputs:
+      value: ${{ steps.extract.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Extract version
+        id: extract
+        run: |
+          set -eu
+          HEAD_MSG=$(git log -1 --format=%s)
+          VERSION=$(echo "$HEAD_MSG" | sed -nE 's/^chore\(release\): v([0-9]+\.[0-9]+\.[0-9]+).*/\1/p')
+          if [ -z "$VERSION" ]; then
+            echo "::error::Kon geen releaseversie uit head-commit halen: $HEAD_MSG"
+            exit 1
+          fi
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
+  build-and-deploy:
+    name: Build, sourcemaps, Netlify deploy
+    needs: version
+    if: startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    container: public.ecr.aws/docker/library/node:24-bookworm
+    env:
+      GITEA_NPM_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Configure private npm auth
+        uses: https://git.oranje.wtf/martien/baseline/actions/setup-npm-auth@v2.2.1
+        with:
+          npm-token: ${{ secrets.NPM_REGISTRY_TOKEN }}
+          registry: https://git.oranje.wtf/api/packages/martien/npm/
+          scopes: "@oranje,@xenia,@beslismodel"
+          preflight-package: "@oranje%2ftokens"
+
+      - name: Setup Node + install dependencies
+        uses: https://git.oranje.wtf/martien/baseline/actions/setup-node@v2.2.1
+        with:
+          node-version: "24"
+          cache-key-prefix: node24-bookworm
+
+      - name: App quality gates
+        run: npm run check:app
+
+      - name: Package release config preflight
+        run: npm run check:package-release-config
+        env:
+          BESLISMODEL_STRICT_NPMRC: "true"
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Bundle budget
+        run: npm run budget
+
+      - name: Upload sourcemaps to Supabase Storage
+        uses: https://git.oranje.wtf/martien/baseline/actions/upload-sourcemaps@v2.2.1
+        with:
+          source-dir: dist
+          supabase-url: ${{ secrets.VITE_SUPABASE_URL }}
+          supabase-service-key: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          bucket: sourcemaps
+          app-name: urinest.rip
+          release-version: ${{ needs.version.outputs.value }}
+          strip-after-upload: "1"
+
+      - name: Verify source maps stripped
+        run: |
+          if find dist -name '*.map' | grep -q .; then
+            echo "::error::Source maps still present in deploy artifact"
+            exit 1
+          fi
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: "./dist"
+          production-branch: master
+          production-deploy: true
+          github-token: ${{ secrets.RELEASE_TOKEN }}
+          deploy-message: "Deploy v${{ needs.version.outputs.value }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 2
+
+  finalize:
+    name: Tag + Gitea Release
+    needs: build-and-deploy
+    if: startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    container: public.ecr.aws/docker/library/node:24-bookworm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Finalize Gitea release
+        uses: https://git.oranje.wtf/martien/baseline/actions/release-finalize@v2.2.1
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}

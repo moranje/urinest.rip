@@ -399,6 +399,9 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke, landing-grid regressie, questionnaire-switch regressie en Urinestrip end-to-end fixture.
 - [x] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
 - [x] Package release-notes format gedocumenteerd met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
+- [x] Package release-notes draft toegevoegd en geborgd met `check:package-release-notes`: package set, public export hashes, consumer-impact, verificatie, migratie en rollback.
+- [x] Gitea/npm publish-runbook toegevoegd op basis van `abacus`, `patient-tracker`, `werkoverleg` en `labbie`: SSH remote, registry URL, tokenbeleid, local proxy en prerelease publish/smoke.
+- [x] Baseline app-integratie toegevoegd voor Gitea Actions: `setup-npm-auth`, `setup-node`, `release-pr`, `upload-sourcemaps` en `release-finalize`; package publish blijft npm-native.
 - [ ] Package release-notes in Gitea taggen zodra de prerelease packages bestaan.
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [ ] Rollback-plan uitvoeren en bewijzen met een echte registry-versie en Gitea tag.

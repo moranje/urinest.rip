@@ -11,7 +11,11 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expectedPackageRegistry, getFrameworkPackageNames } from "./package-extraction-map.mjs";
+import {
+  expectedPackageRegistry,
+  getFrameworkPackageNames,
+  getFrameworkPackages,
+} from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -21,6 +25,11 @@ const version = process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION;
 const isConfigCheck = process.argv.includes("--check-config");
 
 const packages = getFrameworkPackageNames(root);
+const packageManifests = getFrameworkPackages(root).map((item) =>
+  JSON.parse(readFileSync(join(root, item.packageJson), "utf8")),
+);
+const expectedVersions = new Set(packageManifests.map((manifest) => manifest.version));
+const [expectedVersion] = expectedVersions;
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
 
@@ -312,8 +321,17 @@ const dependencyVersion = (name) => {
 const assertVersion = () => {
   if (!version) {
     fail(
-      "BESLISMODEL_REGISTRY_SMOKE_VERSION is required, for example: BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0 npm run check:package-registry-smoke",
+      `BESLISMODEL_REGISTRY_SMOKE_VERSION is required, for example: BESLISMODEL_REGISTRY_SMOKE_VERSION=${expectedVersion} npm run check:package-registry-smoke`,
     );
+  }
+  if (expectedVersions.size !== 1) {
+    fail(`Registry smoke requires one package version, got ${[...expectedVersions].join(", ")}`);
+  }
+  if (version !== expectedVersion) {
+    fail(`BESLISMODEL_REGISTRY_SMOKE_VERSION must equal package version ${expectedVersion}`);
+  }
+  if (!/^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/u.test(version)) {
+    fail(`BESLISMODEL_REGISTRY_SMOKE_VERSION must be a semver prerelease, got ${version}`);
   }
 };
 

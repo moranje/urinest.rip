@@ -165,17 +165,21 @@ jobs:
       - name: Upload source maps
         run: |
           echo "Uploading source maps to Supabase Storage..."
+          RELEASE_VERSION="${{ steps.release.outputs.version }}"
+          if [ -z "$RELEASE_VERSION" ]; then
+            RELEASE_VERSION="${GITHUB_SHA}"
+          fi
           UPLOADED=0
           for f in $(find dist -name '*.map' 2>/dev/null); do
             NAME=$(basename "$f")
             STATUS=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
-              "${SUPABASE_URL}/storage/v1/object/sourcemaps/urinest.rip/${NAME}" \
+              "${SUPABASE_URL}/storage/v1/object/sourcemaps/urinest.rip/${RELEASE_VERSION}/${NAME}" \
               -H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" \
               -H "Content-Type: application/json" \
               -H "x-upsert: true" \
               --data-binary @"$f")
             if [ "$STATUS" = "200" ]; then
-              echo "  ✓ urinest.rip/${NAME}"
+              echo "  ✓ urinest.rip/${RELEASE_VERSION}/${NAME}"
               UPLOADED=$((UPLOADED + 1))
             else
               echo "  ✗ urinest.rip/${NAME} (HTTP $STATUS)"

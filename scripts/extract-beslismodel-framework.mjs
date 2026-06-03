@@ -31,6 +31,7 @@ const scriptFiles = [
   "scripts/check-package-publish-next.mjs",
   "scripts/check-package-registry-smoke.mjs",
   "scripts/check-package-release-config.mjs",
+  "scripts/check-package-release-notes.mjs",
   "scripts/check-package-tarballs.mjs",
   "scripts/check-testing-package.mjs",
   "scripts/check-vue-package.mjs",
@@ -73,11 +74,12 @@ const packageScripts = {
     "node scripts/check-package-registry-smoke.mjs --check-config",
   "check:package-bundle-budget": "node scripts/check-package-bundle-budget.mjs",
   "check:package-release-config": "node scripts/check-package-release-config.mjs",
+  "check:package-release-notes": "node scripts/check-package-release-notes.mjs",
   "check:package-tarballs": "node scripts/check-package-tarballs.mjs",
   "check:testing-package": "node scripts/check-testing-package.mjs",
   "check:vue-package": "node scripts/check-vue-package.mjs",
   "check:packages":
-    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
+    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run check:package-release-notes && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
   "budget:packages": "node scripts/check-package-bundle-budget.mjs",
   "format:check": "oxfmt --check packages/ scripts/",
   lint: "oxlint packages/ scripts/ --deny-warnings",
@@ -369,6 +371,15 @@ function main() {
     join(root, "docs/package-release-strategy.md"),
     join(target, "docs/package-release-strategy.md"),
   );
+  copyFile(
+    join(root, "docs/gitea-package-publishing.md"),
+    join(target, "docs/gitea-package-publishing.md"),
+  );
+  for (const docFile of readdirSync(join(root, "docs")).filter((file) =>
+    /^package-release-notes-.+\.md$/u.test(file),
+  )) {
+    copyFile(join(root, "docs", docFile), join(target, "docs", docFile));
+  }
 
   writeRootPackage(target);
   writeTypeScriptConfigs(target);
