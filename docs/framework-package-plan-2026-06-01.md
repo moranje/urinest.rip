@@ -372,10 +372,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [ ] Nieuwe package-map/repo maken voor framework als eigen sibling-map, bijv. `beslismodel-framework/`, zodat `urinest.rip` app-code en framework-code niet meer door elkaar lopen.
-- [ ] Package-map starten met dezelfde package boundaries als deze repo: core, compiler, cvrm-prevent, vue en testing; geen tijdelijke bundeling van app-only code.
+- [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, cvrm-prevent, vue en testing; geen tijdelijke bundeling van app-only code.
 - [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/vue`, `@beslismodel/compiler`, `@beslismodel/testing`.
-- [ ] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
-- [ ] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
+- [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
+- [x] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.

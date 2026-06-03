@@ -60,6 +60,7 @@ Target shape:
 
 - Create a separate package directory/repository, for example sibling folder `beslismodel-framework/`.
 - Keep the initial package boundaries identical: `core`, `compiler`, `cvrm-prevent`, `vue` and `testing`.
+- Keep `docs/package-extraction-map.json` and `check:package-extraction-map` green; it pins initial package roots, public export hashes and app-only exclusions before the sibling move.
 - Copy only framework package source, package tests, package build scripts, release docs and package CI.
 - Leave app-owned material in `urinest.rip`: YAML flows, Supabase logging/admin UI, Urinest taxonomy/icons, PWA branding, clinical Dutch copy and app config.
 - Preserve public exports exactly on the first move; export changes happen in later minor/major releases.

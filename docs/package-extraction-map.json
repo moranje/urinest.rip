@@ -1,0 +1,72 @@
+{
+  "targetSiblingFolder": "beslismodel-framework",
+  "policy": {
+    "mode": "extract-to-sibling-repository",
+    "registrySource": "local-gitea",
+    "publicExportParity": "sha256-of-current-src-index",
+    "appOnlyCodeMustStayInUrinestRip": true
+  },
+  "packages": [
+    {
+      "name": "@beslismodel/core",
+      "sourceRoot": "packages/core",
+      "destinationRoot": "packages/core",
+      "packageJson": "packages/core/package.json",
+      "publicExportFile": "packages/core/src/index.ts",
+      "publicExportLineCount": 129,
+      "publicExportSha256": "7aa8431aff41d3ff7f96ef0e59ebe0046a80930b717e3283e294bbba6d740205"
+    },
+    {
+      "name": "@beslismodel/compiler",
+      "sourceRoot": "packages/compiler",
+      "destinationRoot": "packages/compiler",
+      "packageJson": "packages/compiler/package.json",
+      "publicExportFile": "packages/compiler/src/index.ts",
+      "publicExportLineCount": 11,
+      "publicExportSha256": "86dec7f02c26e94e24527a3b4437b072671c7f3641993f1a76fb4d1c39478423"
+    },
+    {
+      "name": "@beslismodel/cvrm-prevent",
+      "sourceRoot": "packages/cvrm-prevent",
+      "destinationRoot": "packages/cvrm-prevent",
+      "packageJson": "packages/cvrm-prevent/package.json",
+      "publicExportFile": "packages/cvrm-prevent/src/index.ts",
+      "publicExportLineCount": 35,
+      "publicExportSha256": "95bf8837eca6fea1ad58b24d548cda773930dc259e94a3660395cff64e066228"
+    },
+    {
+      "name": "@beslismodel/vue",
+      "sourceRoot": "packages/vue",
+      "destinationRoot": "packages/vue",
+      "packageJson": "packages/vue/package.json",
+      "publicExportFile": "packages/vue/src/index.ts",
+      "publicExportLineCount": 67,
+      "publicExportSha256": "a8709639ae43e69fea4df7852815b82330ad0268fc328c7238e1be6aff4809ff"
+    },
+    {
+      "name": "@beslismodel/testing",
+      "sourceRoot": "packages/testing",
+      "destinationRoot": "packages/testing",
+      "packageJson": "packages/testing/package.json",
+      "publicExportFile": "packages/testing/src/index.ts",
+      "publicExportLineCount": 353,
+      "publicExportSha256": "08f3b12d717de559945913654376f362832bd3ed59c5fbc51d290ca97b60e92f"
+    }
+  ],
+  "appOnlyExclusions": [
+    "flows/",
+    "public/",
+    "src/components/CultureSvg.vue",
+    "src/components/DipslideSvg.vue",
+    "src/components/HealthySvg.vue",
+    "src/components/LogoSvg.vue",
+    "src/components/SedimentSvg.vue",
+    "src/components/StripSvg.vue",
+    "src/config/app-config.ts",
+    "src/lib/log-sink.ts",
+    "src/lib/supabase/",
+    "src/views/admin/",
+    "src/store/logStore.ts",
+    "supabase/"
+  ]
+}

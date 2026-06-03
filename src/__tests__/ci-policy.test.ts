@@ -23,6 +23,17 @@ const packageReleaseConfigScript = readFileSync(
   resolve("scripts/check-package-release-config.mjs"),
   "utf8",
 );
+const packageExtractionMapScript = readFileSync(
+  resolve("scripts/check-package-extraction-map.mjs"),
+  "utf8",
+);
+const packageExtractionMap = JSON.parse(
+  readFileSync(resolve("docs/package-extraction-map.json"), "utf8"),
+) as {
+  targetSiblingFolder?: string;
+  packages?: { name: string; publicExportSha256?: string }[];
+  appOnlyExclusions?: string[];
+};
 const clinicalCopyScript = readFileSync(resolve("scripts/check-clinical-dutch-copy.mjs"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
@@ -112,8 +123,12 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:framework-boundaries"]).toBe(
       "node scripts/check-framework-security-boundaries.mjs",
     );
+    expect(packageJson.scripts["check:package-extraction-map"]).toBe(
+      "node scripts/check-package-extraction-map.mjs",
+    );
     expect(packageJson.scripts["check:packages"]).toContain("check:consumer-imports");
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-boundaries");
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-extraction-map");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
@@ -143,6 +158,21 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:guidelines"]).toContain("check:clinical-copy");
     expect(packageReleaseConfigScript).toContain("Project .npmrc contains auth material");
     expect(packageReleaseConfigScript).not.toContain("console.warn");
+    expect(packageExtractionMapScript).toContain("publicExportSha256");
+    expect(packageExtractionMapScript).toContain("appOnlyExclusions");
+    expect(packageExtractionMapScript).toContain("targetSiblingFolder");
+    expect(packageExtractionMap.targetSiblingFolder).toBe("beslismodel-framework");
+    expect(packageExtractionMap.packages?.map((item) => item.name).sort()).toEqual([
+      "@beslismodel/compiler",
+      "@beslismodel/core",
+      "@beslismodel/cvrm-prevent",
+      "@beslismodel/testing",
+      "@beslismodel/vue",
+    ]);
+    expect(packageExtractionMap.packages?.every((item) => item.publicExportSha256)).toBe(true);
+    expect(packageExtractionMap.appOnlyExclusions).toEqual(
+      expect.arrayContaining(["flows/", "public/", "src/views/admin/", "src/lib/log-sink.ts"]),
+    );
     expect(clinicalCopyScript).toContain("../public/main.json");
     expect(clinicalCopyScript).toContain("visibleStringKeys");
     expect(clinicalCopyScript).toContain("blockedEnglishTerms");
