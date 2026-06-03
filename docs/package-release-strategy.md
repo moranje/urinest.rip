@@ -103,7 +103,8 @@ Required gates:
 Before moving `urinest.rip` to registry dependencies, create clean temp consumer:
 
 - run local packed-consumer smoke first: pack all framework packages, extract them into a clean
-  temp consumer and import only public `@beslismodel/*` exports;
+  temp consumer, import only public `@beslismodel/*` exports and run the real Urinestrip
+  runner/redirect/result checks;
 - fresh `package.json`
 - install packages from Gitea registry
 - compile minimal manifest runner

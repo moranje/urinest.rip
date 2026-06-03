@@ -375,7 +375,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.
-- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer en importeert alleen publieke `@beslismodel/*` exports.
+- [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks.
 - [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [ ] Registry smoke consumer maken die de packages via Gitea npm installeert in een schone temp-map en een minimale manifest-runner compileert.

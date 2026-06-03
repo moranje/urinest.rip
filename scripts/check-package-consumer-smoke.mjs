@@ -114,6 +114,147 @@ noopTelemetryAdapter.track({
 });
 `;
 
+const urinestripSmokeSource = `
+import { createPinia, setActivePinia } from "pinia";
+import { createCalculatorRegistry, determineOutcome } from "@beslismodel/core";
+import { compileFlowFiles } from "@beslismodel/compiler";
+import {
+  createBeslismodelDataReadyGuard,
+  createBeslismodelStore,
+  useQuestionnaireRunner,
+  useResultResolver,
+} from "@beslismodel/vue";
+
+const manifest = await compileFlowFiles(${JSON.stringify(resolve(root, "flows"))});
+const manifestIds = new Set(manifest.questionnaires.map((questionnaire) => questionnaire.id));
+for (const id of ["strip", "bacteriurie", "leukocyturie", "hematurie"]) {
+  if (!manifestIds.has(id)) {
+    throw new Error(\`Urinestrip packed consumer manifest missed questionnaire: \${id}\`);
+  }
+}
+
+const answer = (value, text = value) => ({ text, value });
+
+const createMemoryStorage = () => {
+  const values = new Map();
+  return {
+    getItem: (key) => values.get(key) ?? null,
+    removeItem: (key) => {
+      values.delete(key);
+    },
+    setItem: (key, value) => {
+      values.set(key, value);
+    },
+  };
+};
+
+const createStore = () => {
+  setActivePinia(createPinia());
+  const useStore = createBeslismodelStore({
+    answersStorage: createMemoryStorage(),
+    answersStorageKey: "packed-urinestrip-consumer-answers",
+    answersTtlMs: 60_000,
+    contextAliases: { role: "_role" },
+    contextProvider: () => ({ role: "behandelaar" }),
+    duplicateIdPolicy: "overwrite",
+    loadManifest: async () => manifest,
+    outcomeResolver: (answers, logic) => determineOutcome(answers, logic),
+  });
+  return useStore();
+};
+
+const store = createStore();
+const guard = createBeslismodelDataReadyGuard({ useStore: () => store });
+const guardResult = await guard({ fullPath: "/questionnaire/strip" }, {});
+if (guardResult !== true) {
+  throw new Error("Urinestrip packed consumer data-ready guard failed");
+}
+if (store.getQuestionnaireById("strip")?.title !== "Urinestrip") {
+  throw new Error("Urinestrip packed consumer store failed to load strip questionnaire");
+}
+
+const runner = useQuestionnaireRunner(store, { questionnaireId: "strip" });
+const start = runner.start();
+if (start.questionId !== "q_strip_nitrite" || runner.progress.value.text !== "Vraag 1/3") {
+  throw new Error("Urinestrip packed consumer runner failed at first strip question");
+}
+store.setAnswer("strip", "q_strip_nitrite", answer("negative"));
+const second = runner.advance();
+if (second.questionId !== "q_strip_leuko") {
+  throw new Error("Urinestrip packed consumer runner failed at leukocyte question");
+}
+store.setAnswer("strip", "q_strip_leuko", answer("negative"));
+const third = runner.advance();
+if (third.questionId !== "q_strip_ery" || runner.currentStep.value?.id !== "s_strip_3") {
+  throw new Error("Urinestrip packed consumer runner failed at erythrocyte question");
+}
+
+const resolveStrip = async (answers) => {
+  const currentStore = createStore();
+  await currentStore.loadInitialData();
+  for (const [questionId, value] of Object.entries(answers)) {
+    currentStore.setAnswer("strip", questionId, value);
+  }
+  return useResultResolver(currentStore).resolveResult("strip");
+};
+
+const nitritePositive = await resolveStrip({
+  q_strip_nitrite: answer("positive"),
+});
+if (nitritePositive.targetQuestionnaireId !== "bacteriurie") {
+  throw new Error("Urinestrip packed consumer nitrite-positive redirect failed");
+}
+
+const leukocytesPositive = await resolveStrip({
+  q_strip_nitrite: answer("negative"),
+  q_strip_leuko: answer("positive_1"),
+});
+if (leukocytesPositive.targetQuestionnaireId !== "leukocyturie") {
+  throw new Error("Urinestrip packed consumer leukocyturia redirect failed");
+}
+
+const erythrocytesPositive = await resolveStrip({
+  q_strip_nitrite: answer("negative"),
+  q_strip_leuko: answer("negative"),
+  q_strip_ery: answer("positive_1"),
+});
+if (erythrocytesPositive.targetQuestionnaireId !== "hematurie") {
+  throw new Error("Urinestrip packed consumer hematuria redirect failed");
+}
+
+const allNegative = await resolveStrip({
+  q_strip_nitrite: answer("negative"),
+  q_strip_leuko: answer("negative"),
+  q_strip_ery: answer("negative"),
+});
+if (allNegative.resultKey !== "other.noConclusiveAbnormality") {
+  throw new Error("Urinestrip packed consumer negative result failed");
+}
+
+const registry = createCalculatorRegistry([
+  {
+    id: "fixture.consumer-score",
+    version: "fixture-1",
+    label: "Consumer score",
+    validateInput: (input) =>
+      typeof input === "object" &&
+      input !== null &&
+      Array.isArray(input.values) &&
+      input.values.every((value) => typeof value === "number"),
+    calculate: (input, context) => ({
+      score: input.values.reduce((sum, value) => sum + value, 0),
+      role: context.role,
+    }),
+  },
+]);
+const score = await registry.run("fixture.consumer-score", { values: [1, 2, 3] }, {
+  role: "triagist",
+});
+if (score.score !== 6 || score.role !== "triagist") {
+  throw new Error("Urinestrip packed consumer calculator registration failed");
+}
+`;
+
 const tempDir = mkdtempSync(join(tmpdir(), "beslismodel-packed-consumer-"));
 
 try {
@@ -134,6 +275,7 @@ try {
   mkdirSync(join(consumerDir, "flows"), { recursive: true });
   writeFileSync(join(consumerDir, "flows", "fixture.yaml"), flowYaml);
   writeFileSync(join(consumerDir, "smoke.mjs"), smokeSource);
+  writeFileSync(join(consumerDir, "urinestrip-smoke.mjs"), urinestripSmokeSource);
 
   for (const dependency of externalDependencies) {
     const source = join(root, "node_modules", dependency);
@@ -176,8 +318,14 @@ try {
     cwd: consumerDir,
     stdio: "inherit",
   });
+  execFileSync(process.execPath, [join(consumerDir, "urinestrip-smoke.mjs")], {
+    cwd: consumerDir,
+    stdio: "inherit",
+  });
 
-  console.log("Packed package consumer smoke passed with public @beslismodel/* imports");
+  console.log(
+    "Packed package consumer smoke passed with public @beslismodel/* imports and Urinestrip flows",
+  );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });
 }
