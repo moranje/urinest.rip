@@ -7,5 +7,12 @@
     "packages/**/*.ts",
     "env.d.ts"
   ],
-  "exclude": ["src/**/*.test.ts", "src/**/*.vue", "src/stories/**", "node_modules", "dist"]
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.vue",
+    "src/stories/**",
+    "node_modules",
+    "dist",
+    "packages/**/dist"
+  ]
 }
