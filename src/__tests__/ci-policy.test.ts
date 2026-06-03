@@ -93,6 +93,10 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-boundaries");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
+    expect(packageJson.scripts["check:package-consumer-smoke"]).toBe(
+      "node scripts/check-package-consumer-smoke.mjs",
+    );
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
     expect(packageJson.scripts["budget:packages"]).toBe(
