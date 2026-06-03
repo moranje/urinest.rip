@@ -136,6 +136,9 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
+    expect(packageJson.scripts["check:packages"]).toContain(
+      "check:package-file-install-consumer-smoke",
+    );
     expect(packageJson.scripts["check:packages"]).toContain("check:cvrm-prevent-package");
     expect(packageJson.scripts["check:packages"]).toContain("check:mutation-pilot");
     expect(packageJson.scripts["check:mutation-pilot"]).toBe(
@@ -143,6 +146,9 @@ describe("CI policy", () => {
     );
     expect(packageJson.scripts["check:package-consumer-smoke"]).toBe(
       "node scripts/check-package-consumer-smoke.mjs",
+    );
+    expect(packageJson.scripts["check:package-file-install-consumer-smoke"]).toBe(
+      "node scripts/check-package-file-install-consumer-smoke.mjs",
     );
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
@@ -224,6 +230,7 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("publishConfig.registry");
     expect(releaseStrategy).toContain("dist-tag `next`");
     expect(releaseStrategy).toContain("Registry Smoke");
+    expect(releaseStrategy).toContain("file-tarball install smoke");
     expect(releaseStrategy).toContain("Rollback");
     expect(releaseStrategy).toContain("Node `20`, `22` and `24`");
     expect(releaseStrategy).toContain("sibling folder `beslismodel-framework/`");

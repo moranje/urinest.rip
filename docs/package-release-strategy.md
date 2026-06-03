@@ -108,6 +108,9 @@ Before moving `urinest.rip` to registry dependencies, create clean temp consumer
 - run local packed-consumer smoke first: pack all framework packages, extract them into a clean
   temp consumer, import only public `@beslismodel/*` exports and run the real Urinestrip
   runner/redirect/result checks plus CVRM SCORE2 calculator/outcome binding;
+- run local file-tarball install smoke next: install the packed framework packages through
+  `file:` dependencies in a clean npm consumer, execute the installed `beslismodel` CLI and import
+  only public `@beslismodel/*` exports;
 - fresh `package.json`
 - install packages from Gitea registry
 - compile minimal manifest runner
