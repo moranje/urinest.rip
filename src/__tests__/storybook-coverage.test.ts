@@ -67,6 +67,11 @@ const requiredStoryContracts = [
     title: 'title: "Templates/ResultTemplate"',
     exports: ["TreatmentResult", "LongClinicalCopy"],
   },
+  {
+    file: "src/stories/LandingTemplate.stories.ts",
+    title: 'title: "Templates/LandingTemplate"',
+    exports: ["FivePrimaryFlows", "SecondaryGuidelines"],
+  },
 ];
 
 describe("storybook coverage", () => {
@@ -92,7 +97,9 @@ describe("storybook coverage", () => {
       ]),
     );
     expect(stories).toEqual(expect.arrayContaining(["QuestionPanel.stories.ts"]));
-    expect(stories).toEqual(expect.arrayContaining(["ResultTemplate.stories.ts"]));
+    expect(stories).toEqual(
+      expect.arrayContaining(["ResultTemplate.stories.ts", "LandingTemplate.stories.ts"]),
+    );
   });
 
   it("keeps stories for critical states and long clinical copy", () => {

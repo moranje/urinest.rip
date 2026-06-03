@@ -39,7 +39,7 @@ const preview: Preview = {
           "Organisms",
           ["QuestionPanel"],
           "Templates",
-          ["ResultTemplate"],
+          ["LandingTemplate", "ResultTemplate"],
         ],
       },
     },
