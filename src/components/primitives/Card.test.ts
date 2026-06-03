@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import Card from "./Card.vue";
@@ -16,6 +17,15 @@ describe("Card primitive", () => {
   it("applies accent variant", () => {
     const wrapper = mount(Card, { props: { variant: "accent" }, slots: { default: "x" } });
     expect(wrapper.classes()).toContain("card--accent");
+  });
+
+  it("keeps accent variant free of full outline borders", () => {
+    const source = readFileSync("src/components/primitives/Card.vue", "utf8");
+    const accentCss = source.match(/\.card--accent\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(accentCss).toContain("padding: var(--spacing-lg)");
+    expect(accentCss).toContain("box-shadow: inset 4px 0 0 var(--md-sys-color-primary)");
+    expect(accentCss).not.toContain("border:");
   });
 
   it("applies outlined variant", () => {

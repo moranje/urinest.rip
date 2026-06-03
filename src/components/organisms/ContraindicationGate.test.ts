@@ -106,6 +106,8 @@ describe("ContraindicationGate", () => {
 
     expect(source).toContain("<Card");
     expect(source).toContain('variant="accent"');
+    expect(source).toContain('class="treatment-section"');
+    expect(source).not.toContain('class="result-section treatment-section"');
     expect(treatmentCss).not.toContain("border:");
     expect(treatmentCss).not.toContain("background:");
     expect(treatmentCss).not.toContain("border-radius:");

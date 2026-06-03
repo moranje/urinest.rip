@@ -67,7 +67,8 @@ describe("Notice", () => {
     const warningCss = source.match(/\.notice--warning\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
 
     expect(baseCss).toBeDefined();
-    expect(baseCss).toContain("padding: var(--spacing-lg)");
+    expect(baseCss).toContain("gap: var(--spacing-md)");
+    expect(baseCss).toContain("padding: var(--spacing-lg) var(--spacing-xl)");
     expect(warningCss).toBeDefined();
     expect(warningCss).toContain("--notice-bg");
     expect(warningCss).toContain("color-mix");

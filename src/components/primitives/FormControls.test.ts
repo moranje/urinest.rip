@@ -160,6 +160,25 @@ describe("form primitives", () => {
     expect(wrapper.emitted("update:modelValue")?.[0]).toEqual([true]);
   });
 
+  it("renders checkbox visuals without native accent borders", () => {
+    const source = readFileSync("src/components/primitives/Checkbox.vue", "utf8");
+    const controlCss =
+      source.match(/\.checkbox-field__control\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+    const boxCss =
+      source.match(/\.checkbox-field__box\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+    const checkedCss =
+      source.match(
+        /\.checkbox-field__control:checked \+ \.checkbox-field__box\s*\{(?<body>[\s\S]*?)\n\}/,
+      )?.groups?.body ?? "";
+
+    expect(source).toContain('class="checkbox-field__box"');
+    expect(controlCss).toContain("opacity: 0");
+    expect(controlCss).not.toContain("accent-color");
+    expect(boxCss).not.toContain("border:");
+    expect(checkedCss).toContain("background: var(--md-sys-color-primary-container)");
+    expect(checkedCss).not.toContain("border:");
+  });
+
   it("renders radio labels and emits option value", async () => {
     const wrapper = mount(Radio, {
       props: {

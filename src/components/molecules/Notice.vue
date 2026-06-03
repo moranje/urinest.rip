@@ -65,8 +65,8 @@ const ariaLive = computed(() => {
   );
 
   display: grid;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
   border-radius: var(--md-sys-shape-corner-medium);
   border: 1px solid var(--notice-border);
   border-left-width: 4px;
@@ -142,7 +142,7 @@ const ariaLive = computed(() => {
 
 @media (max-width: 599.98px) {
   .notice {
-    padding: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 }
 </style>

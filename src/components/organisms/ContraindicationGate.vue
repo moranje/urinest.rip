@@ -20,7 +20,7 @@
 
   <Card
     v-if="allChecked && treatmentText"
-    class="result-section treatment-section"
+    class="treatment-section"
     variant="accent"
     aria-live="polite"
   >
@@ -128,6 +128,12 @@ watch(
 }
 
 .result-section p {
+  margin: 0;
+  font: var(--md-sys-typescale-body-large);
+  line-height: 1.6;
+}
+
+.treatment-section p {
   margin: 0;
   font: var(--md-sys-typescale-body-large);
   line-height: 1.6;
