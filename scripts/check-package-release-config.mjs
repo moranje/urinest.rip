@@ -1,9 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { getFrameworkPackages } from "./package-extraction-map.mjs";
+import { expectedPackageRegistry, getFrameworkPackages } from "./package-extraction-map.mjs";
 
-const expectedRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
 const packageFiles = getFrameworkPackages().map((item) => item.packageJson);
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
 
@@ -13,13 +12,13 @@ const violations = [];
 
 for (const file of packageFiles) {
   const manifest = readJson(file);
-  if (manifest.publishConfig?.registry !== expectedRegistry) {
-    violations.push(`${file}: publishConfig.registry must be ${expectedRegistry}`);
+  if (manifest.publishConfig?.registry !== expectedPackageRegistry) {
+    violations.push(`${file}: publishConfig.registry must be ${expectedPackageRegistry}`);
   }
 }
 
 const npmrcExample = readFileSync(".npmrc.example", "utf8");
-if (!npmrcExample.includes(`@beslismodel:registry=${expectedRegistry}`)) {
+if (!npmrcExample.includes(`@beslismodel:registry=${expectedPackageRegistry}`)) {
   violations.push(".npmrc.example must define the @beslismodel Gitea registry");
 }
 if (secretPattern.test(npmrcExample)) {

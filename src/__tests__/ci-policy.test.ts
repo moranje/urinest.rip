@@ -227,6 +227,18 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "getFrameworkPackages",
     );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "expectedPackageRegistry",
+    );
+    expect(readFileSync(resolve("scripts/check-bundle-budget.mjs"), "utf8")).toContain(
+      "appBundleBudgets",
+    );
+    expect(readFileSync(resolve("scripts/check-package-bundle-budget.mjs"), "utf8")).toContain(
+      "packageBundleBudgets",
+    );
+    expect(readFileSync(resolve("scripts/package-extraction-map.mjs"), "utf8")).toContain(
+      "expectedPackageRegistry",
+    );
     expect(readFileSync(resolve("scripts/check-package-tarballs.mjs"), "utf8")).toContain(
       "getFrameworkPackages",
     );

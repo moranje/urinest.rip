@@ -1,34 +1,17 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import {
+  KB,
+  getFrameworkPackages,
+  packageAggregateBudget,
+  packageBundleBudgets,
+} from "./package-extraction-map.mjs";
 
-const KB = 1024;
-
-const packageBudgets = [
-  { name: "@beslismodel/core", dir: "packages/core/dist", jsTotal: 40 * KB, largestJs: 40 * KB },
-  {
-    name: "@beslismodel/compiler",
-    dir: "packages/compiler/dist",
-    jsTotal: 40 * KB,
-    largestJs: 32 * KB,
-  },
-  {
-    name: "@beslismodel/cvrm-prevent",
-    dir: "packages/cvrm-prevent/dist",
-    jsTotal: 40 * KB,
-    largestJs: 40 * KB,
-  },
-  { name: "@beslismodel/vue", dir: "packages/vue/dist", jsTotal: 80 * KB, largestJs: 80 * KB },
-  {
-    name: "@beslismodel/testing",
-    dir: "packages/testing/dist",
-    jsTotal: 24 * KB,
-    largestJs: 24 * KB,
-  },
-];
-
-const aggregateBudget = {
-  jsTotal: 200 * KB,
-};
+const packageBudgets = getFrameworkPackages().map((item) => {
+  const budget = packageBundleBudgets[item.name];
+  if (!budget) throw new Error(`Missing package bundle budget for ${item.name}`);
+  return { ...item, dir: `${item.dir}/dist`, ...budget };
+});
 
 function collectFiles(dir) {
   const files = [];
@@ -76,7 +59,7 @@ for (const packageBudget of packageBudgets) {
   reports.push(`${packageBudget.name} JS ${format(jsTotal)} largest ${format(largestJs)}`);
 }
 
-assertBudget("Package aggregate JS", aggregateJsTotal, aggregateBudget.jsTotal);
+assertBudget("Package aggregate JS", aggregateJsTotal, packageAggregateBudget.jsTotal);
 
 console.log(
   [`Package bundle budget OK`, ...reports, `aggregate ${format(aggregateJsTotal)}`].join(" | "),

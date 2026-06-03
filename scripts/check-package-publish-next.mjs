@@ -3,10 +3,9 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { getFrameworkPackages } from "./package-extraction-map.mjs";
+import { expectedPackageRegistry, getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const expectedRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
 const isPublish = process.argv.includes("--publish");
 const packages = getFrameworkPackages(root);
 
@@ -44,8 +43,8 @@ for (const { dir, manifest, name } of manifests) {
   if (manifest.private !== false) {
     fail(`${dir}: package must be publishable with private=false`);
   }
-  if (manifest.publishConfig?.registry !== expectedRegistry) {
-    fail(`${dir}: publishConfig.registry must be ${expectedRegistry}`);
+  if (manifest.publishConfig?.registry !== expectedPackageRegistry) {
+    fail(`${dir}: publishConfig.registry must be ${expectedPackageRegistry}`);
   }
   if (
     !Array.isArray(manifest.files) ||
@@ -81,7 +80,7 @@ try {
           "--tag",
           "next",
           "--registry",
-          expectedRegistry,
+          expectedPackageRegistry,
           "--ignore-scripts",
         ]
       : [
@@ -112,7 +111,7 @@ try {
 
   console.log(
     isPublish
-      ? `Published @beslismodel packages ${version} to ${expectedRegistry} with dist-tag next`
+      ? `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag next`
       : `Package next-publish dry-run passed for @beslismodel packages ${version}`,
   );
 } finally {

@@ -1,16 +1,9 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { KB, appBundleBudgets } from "./package-extraction-map.mjs";
 
 const DIST_DIR = "dist";
 const ASSETS_DIR = join(DIST_DIR, "assets");
-const KB = 1024;
-
-const budgets = {
-  jsTotal: 950 * KB,
-  largestJs: 550 * KB,
-  cssTotal: 160 * KB,
-  compressedTotal: 450 * KB,
-};
 
 function collectFiles(dir) {
   const files = [];
@@ -48,10 +41,10 @@ const largestJs = Math.max(0, ...jsFiles.map((file) => statSync(file).size));
 const cssTotal = sum(cssFiles);
 const compressedTotal = sum(compressedFiles);
 
-assertBudget("Total JS", jsTotal, budgets.jsTotal);
-assertBudget("Largest JS chunk", largestJs, budgets.largestJs);
-assertBudget("Total CSS", cssTotal, budgets.cssTotal);
-assertBudget("Compressed assets", compressedTotal, budgets.compressedTotal);
+assertBudget("Total JS", jsTotal, appBundleBudgets.jsTotal);
+assertBudget("Largest JS chunk", largestJs, appBundleBudgets.largestJs);
+assertBudget("Total CSS", cssTotal, appBundleBudgets.cssTotal);
+assertBudget("Compressed assets", compressedTotal, appBundleBudgets.compressedTotal);
 
 console.log(
   [

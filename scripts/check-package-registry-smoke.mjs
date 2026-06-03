@@ -11,11 +11,11 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { getFrameworkPackageNames } from "./package-extraction-map.mjs";
+import { expectedPackageRegistry, getFrameworkPackageNames } from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-const defaultRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
+const defaultRegistry = expectedPackageRegistry;
 const registry = process.env.BESLISMODEL_REGISTRY_URL ?? defaultRegistry;
 const version = process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION;
 const isConfigCheck = process.argv.includes("--check-config");
