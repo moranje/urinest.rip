@@ -1,6 +1,6 @@
 <template>
   <div v-if="checklistItems.length > 0" class="result-section contraindications-section">
-    <h3 class="section-title">Controleer Contra-indicaties</h3>
+    <h2 class="section-title">Controleer Contra-indicaties</h2>
     <div class="checklist">
       <div
         v-for="item in checklistItems"
@@ -24,7 +24,7 @@
     variant="accent"
     aria-live="polite"
   >
-    <h3 class="section-title">Behandeling</h3>
+    <h2 class="section-title">Behandeling</h2>
     <p>{{ treatmentText }}</p>
   </Card>
   <Notice

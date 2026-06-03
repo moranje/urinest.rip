@@ -17,7 +17,7 @@
   </div>
 
   <div v-if="result.additionalTests" class="result-section">
-    <h3 class="section-title">Aanvullend Onderzoek</h3>
+    <h2 class="section-title">Aanvullend Onderzoek</h2>
     <p>{{ result.additionalTests }}</p>
   </div>
 
@@ -28,19 +28,19 @@
   </Notice>
 
   <div v-if="result.testAfterTreatment" class="result-section">
-    <h3 class="section-title">Vervolgonderzoek</h3>
+    <h2 class="section-title">Vervolgonderzoek</h2>
     <p>{{ result.testAfterTreatment }}</p>
   </div>
 
   <Card v-if="result.explainer" class="result-section explainer-section" variant="plain">
-    <h3 class="section-title">Leg uit aan patiënt</h3>
+    <h2 class="section-title">Leg uit aan patiënt</h2>
     <p>{{ result.explainer }}</p>
   </Card>
 
   <slot />
 
   <div v-if="result.sources && result.sources.length > 0" class="result-section">
-    <h3 class="section-title">Bronnen</h3>
+    <h2 class="section-title">Bronnen</h2>
     <ul class="sources-list">
       <li v-for="(source, index) in result.sources" :key="index">
         <SourceChip :name="source.name" :url="source.url" />

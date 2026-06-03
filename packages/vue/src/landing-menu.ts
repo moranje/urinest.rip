@@ -201,7 +201,7 @@ export const LandingMenuGrid = defineComponent({
             ? h("section", { class: "bm-landing-menu-grid__secondary" }, [
                 props.secondaryHeading
                   ? h(
-                      "h3",
+                      "h2",
                       { class: "bm-landing-menu-grid__secondary-heading" },
                       props.secondaryHeading,
                     )

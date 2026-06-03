@@ -1,6 +1,6 @@
 <template>
   <section v-if="trimmedText" class="result-section documentation-section">
-    <h3 class="section-title">Documenteer (voor EPD)</h3>
+    <h2 class="section-title">Documenteer (voor EPD)</h2>
     <Card class="documentation-content" variant="outlined">
       <pre class="documentation-text">{{ trimmedText }}</pre>
       <CopyAction

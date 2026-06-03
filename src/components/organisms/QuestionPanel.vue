@@ -147,6 +147,13 @@ watch(
   font: var(--md-sys-typescale-body-medium);
 }
 
+.question-panel__description :deep(a) {
+  color: var(--md-sys-color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
 @container questionnaire (max-width: 37.5rem) {
   .question-panel {
     margin: var(--spacing-sm) 0;
