@@ -21,10 +21,13 @@ describe("Card primitive", () => {
 
   it("keeps accent variant free of full outline borders", () => {
     const source = readFileSync("src/components/primitives/Card.vue", "utf8");
+    const baseCss = source.match(/\.card\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
     const accentCss = source.match(/\.card--accent\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
 
-    expect(accentCss).toContain("padding-block: var(--spacing-lg)");
-    expect(accentCss).toContain("padding-inline: var(--spacing-xl)");
+    expect(baseCss).toContain("border: 0");
+    expect(baseCss).toContain("overflow: hidden");
+    expect(accentCss).toContain("padding-block: clamp(24px, 4vw, 36px)");
+    expect(accentCss).toContain("padding-inline: clamp(32px, 5vw, 48px)");
     expect(accentCss).toContain("box-shadow: inset 4px 0 0 var(--md-sys-color-primary)");
     expect(accentCss).not.toContain("border:");
   });

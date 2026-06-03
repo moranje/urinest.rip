@@ -176,17 +176,22 @@ describe("form primitives", () => {
       )?.groups?.body ?? "";
 
     expect(source).toContain('class="checkbox-field__box"');
+    expect(source).toContain("<Icon");
+    expect(source).not.toContain(".checkbox-field__box::after");
     expect(controlCss).toContain("appearance: none");
     expect(controlCss).toContain("opacity: 0");
     expect(controlCss).toContain("border: 0");
     expect(controlCss).toContain("outline: 0");
     expect(controlCss).not.toContain("accent-color");
+    expect(boxCss).toContain("border: 0");
+    expect(boxCss).toContain("border-radius: 999px");
+    expect(boxCss).toContain("outline: 0");
     expect(boxCss).toContain("box-shadow: none");
-    expect(boxCss).not.toContain("border:");
-    expect(checkedCss).toContain("background: var(--md-sys-color-primary-container)");
+    expect(checkedCss).toContain("color-mix(in srgb, var(--md-sys-color-primary) 18%");
     expect(checkedCss).not.toContain("border:");
     expect(focusCss).not.toContain("box-shadow");
     expect(focusCss).not.toContain("outline");
+    expect(source).not.toContain("border-width: 0 3px 3px 0");
     expect(source).toContain(
       ".checkbox-field:has(.checkbox-field__control:focus-visible) .checkbox-field__label",
     );

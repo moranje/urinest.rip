@@ -56,10 +56,11 @@ const ariaLive = computed(() => {
 <style scoped>
 .notice {
   --notice-accent: var(--md-sys-color-primary);
+  --notice-accent-width: 4px;
   --notice-bg: var(--md-sys-color-surface-container-low);
   --notice-fg: var(--md-sys-color-on-surface);
-  --notice-padding-block: var(--spacing-xl);
-  --notice-padding-inline: var(--spacing-xl);
+  --notice-padding-block: clamp(24px, 4vw, 36px);
+  --notice-padding-inline: clamp(32px, 5vw, 48px);
 
   display: grid;
   gap: var(--spacing-md);
@@ -69,7 +70,8 @@ const ariaLive = computed(() => {
   border: 0;
   color: var(--notice-fg);
   background: var(--notice-bg);
-  box-shadow: inset 4px 0 0 var(--notice-accent);
+  box-shadow: inset var(--notice-accent-width) 0 0 var(--notice-accent);
+  overflow: hidden;
 }
 
 .notice__header {
@@ -141,7 +143,7 @@ const ariaLive = computed(() => {
 @media (max-width: 599.98px) {
   .notice {
     --notice-padding-block: var(--spacing-lg);
-    --notice-padding-inline: var(--spacing-lg);
+    --notice-padding-inline: clamp(24px, 7vw, 32px);
   }
 }
 
