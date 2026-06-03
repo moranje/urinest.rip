@@ -174,9 +174,10 @@ describe("design tokens", () => {
 
   it("keeps questionnaire route switches inside the same component instance", () => {
     const app = read("src/App.vue");
+    const appShell = read("src/composables/useAppShell.ts");
 
     expect(app).toContain("routeViewKey(r)");
-    expect(app).toContain('viewRoute.name === "Questionnaire"');
+    expect(appShell).toContain('viewRoute.name === "Questionnaire"');
     expect(app).not.toContain(':key="r.fullPath"');
   });
 });
