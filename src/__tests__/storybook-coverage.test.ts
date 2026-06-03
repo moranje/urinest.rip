@@ -23,6 +23,11 @@ const requiredStoryContracts = [
     exports: ["Default", "ClampedOverMax"],
   },
   {
+    file: "src/stories/LogoSvg.stories.ts",
+    title: 'title: "Primitives/LogoSvg"',
+    exports: ["Default", "HeaderSize", "Animated"],
+  },
+  {
     file: "src/stories/FormControls.stories.ts",
     title: 'title: "Primitives/FormControls"',
     exports: ["Inputs", "SelectionControls", "IconButtonsAndTooltip", "AllControls"],
@@ -76,6 +81,7 @@ describe("storybook coverage", () => {
         "Chip.stories.ts",
         "TextLink.stories.ts",
         "FormControls.stories.ts",
+        "LogoSvg.stories.ts",
       ]),
     );
     expect(stories).toEqual(
