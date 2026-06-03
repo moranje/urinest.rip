@@ -130,6 +130,8 @@ No package-source imports allowed in consumer.
 Migration order:
 
 1. Publish prerelease packages to Gitea with `next`.
+   Pack dry-run first with `npm run check:package-publish-next`; real publish requires
+   `BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish`.
 2. Install exact prerelease versions in `urinest.rip`.
 3. Remove app aliases that point to package source.
 4. Run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`.

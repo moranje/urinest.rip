@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/cvrm-prevent",
-  "version": "0.1.0",
+  "version": "0.1.0-next.0",
   "private": false,
   "description": "Verified CVRM/U-Prevent calculator package with SCORE2, SCORE2-OP and SCORE2-Diabetes for beslismodel consumers.",
   "keywords": [
@@ -18,7 +18,7 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moranje/beslismodel-framework.git",
+    "url": "git+https://github.com/moranje/beslismodel-framework.git",
     "directory": "packages/cvrm-prevent"
   },
   "files": [
@@ -41,7 +41,7 @@
     "prepack": "npm --prefix ../.. run build:cvrm-prevent"
   },
   "dependencies": {
-    "@beslismodel/core": "0.1.0"
+    "@beslismodel/core": "0.1.0-next.0"
   },
   "engines": {
     "node": ">=20.19.0"

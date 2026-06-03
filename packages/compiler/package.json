@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/compiler",
-  "version": "0.1.0",
+  "version": "0.1.0-next.0",
   "private": false,
   "description": "YAML and JSON compiler, schema validator, CLI and Vite/Rolldown plugin for beslismodel flow manifests.",
   "keywords": [
@@ -16,7 +16,7 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moranje/beslismodel-framework.git",
+    "url": "git+https://github.com/moranje/beslismodel-framework.git",
     "directory": "packages/compiler"
   },
   "bin": {

@@ -1,7 +1,7 @@
 export const cvrmPreventPackageMetadata = Object.freeze({
   id: "cvrm-prevent",
   packageName: "@beslismodel/cvrm-prevent",
-  version: "0.1.0",
+  version: "0.1.0-next.0",
   status: "verified",
   domain: "CVRM/U-Prevent",
   sourcePolicy: {

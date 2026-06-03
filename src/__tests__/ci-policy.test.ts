@@ -143,6 +143,7 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain(
       "check:package-file-install-consumer-smoke",
     );
+    expect(packageJson.scripts["check:packages"]).toContain("check:package-publish-next");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-registry-smoke:config");
     expect(packageJson.scripts["check:packages"]).toContain("check:cvrm-prevent-package");
     expect(packageJson.scripts["check:packages"]).toContain("check:mutation-pilot");
@@ -154,6 +155,9 @@ describe("CI policy", () => {
     );
     expect(packageJson.scripts["check:package-file-install-consumer-smoke"]).toBe(
       "node scripts/check-package-file-install-consumer-smoke.mjs",
+    );
+    expect(packageJson.scripts["check:package-publish-next"]).toBe(
+      "node scripts/check-package-publish-next.mjs",
     );
     expect(packageJson.scripts["check:package-registry-smoke"]).toBe(
       "node scripts/check-package-registry-smoke.mjs",
@@ -210,6 +214,12 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "BESLISMODEL_REGISTRY_SMOKE_VERSION",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "BESLISMODEL_PUBLISH_CONFIRM",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "--tag",
     );
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "Registry package consumer smoke passed",

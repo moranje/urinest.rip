@@ -26,6 +26,7 @@ const scriptFiles = [
   "scripts/check-framework-security-boundaries.mjs",
   "scripts/check-package-extraction-map.mjs",
   "scripts/check-package-file-install-consumer-smoke.mjs",
+  "scripts/check-package-publish-next.mjs",
   "scripts/check-package-registry-smoke.mjs",
   "scripts/check-package-release-config.mjs",
   "scripts/check-package-tarballs.mjs",
@@ -57,6 +58,7 @@ const packageScripts = {
   "check:package-extraction-map": "node scripts/check-package-extraction-map.mjs",
   "check:package-file-install-consumer-smoke":
     "node scripts/check-package-file-install-consumer-smoke.mjs",
+  "check:package-publish-next": "node scripts/check-package-publish-next.mjs",
   "check:package-registry-smoke": "node scripts/check-package-registry-smoke.mjs",
   "check:package-registry-smoke:config":
     "node scripts/check-package-registry-smoke.mjs --check-config",
@@ -66,7 +68,7 @@ const packageScripts = {
   "check:testing-package": "node scripts/check-testing-package.mjs",
   "check:vue-package": "node scripts/check-vue-package.mjs",
   "check:packages":
-    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
+    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
   "budget:packages": "node scripts/check-package-bundle-budget.mjs",
   "format:check": "oxfmt --check packages/ scripts/",
   lint: "oxlint packages/ scripts/ --deny-warnings",

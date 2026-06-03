@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import packageManifest from "../package.json" with { type: "json" };
 import { cvrmPreventPackageMetadata } from "./package-metadata";
 
 describe("cvrm prevent package metadata", () => {
@@ -14,5 +15,9 @@ describe("cvrm prevent package metadata", () => {
         exportsClinicalCalculators: true,
       },
     });
+  });
+
+  it("keeps exported metadata aligned with the package manifest", () => {
+    expect(cvrmPreventPackageMetadata.version).toBe(packageManifest.version);
   });
 });
