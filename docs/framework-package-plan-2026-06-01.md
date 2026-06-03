@@ -66,6 +66,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 - [x] Role/context injection via pure `RuntimeContext`
 - [x] Domein-agnostisch calculator extensiecontract (`CalculatorDefinition` + `createCalculatorRegistry`)
 - [x] Domein-agnostische flow-calculatorbinding: antwoorden/context/literals naar calculatorinput, calculatoroutput naar virtuele answers, outcome-logica op scoreklasse
+- [x] Domein-agnostisch verified-calculator bewijscontract: formuleversie, bronverwijzingen en testvectors zijn verplicht valideerbaar voor domain packages zoals CVRM, COPD en DM
 - [x] Geen CVRM/PREVENT-specifieke calculator-API, extensiepunt of implementatie in core
 - [x] Deterministic audit trail model
 

@@ -13,8 +13,8 @@
       "destinationRoot": "packages/core",
       "packageJson": "packages/core/package.json",
       "publicExportFile": "packages/core/src/index.ts",
-      "publicExportLineCount": 129,
-      "publicExportSha256": "7aa8431aff41d3ff7f96ef0e59ebe0046a80930b717e3283e294bbba6d740205"
+      "publicExportLineCount": 136,
+      "publicExportSha256": "631b40766686551e61a151579333fa33792301f718bb6665d1cb9ab25f8dde3d"
     },
     {
       "name": "@beslismodel/compiler",

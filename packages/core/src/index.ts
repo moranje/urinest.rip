@@ -42,6 +42,13 @@ export type {
   CalculatorRegistry,
 } from "./calculator";
 export { createCalculatorRegistry } from "./calculator";
+export type {
+  CalculatorSourceReference,
+  CalculatorTestVector,
+  VerifiedCalculatorDefinition,
+  VerifiedCalculatorValidationResult,
+} from "./verified-calculator";
+export { isVerifiedCalculatorDefinition, validateVerifiedCalculator } from "./verified-calculator";
 export type { ConditionAnswers, ConditionValidationResult } from "./conditions";
 export { evaluateCondition, validateConditions } from "./conditions";
 export type {
