@@ -11,6 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getFrameworkPackageNames } from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -19,13 +20,7 @@ const registry = process.env.BESLISMODEL_REGISTRY_URL ?? defaultRegistry;
 const version = process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION;
 const isConfigCheck = process.argv.includes("--check-config");
 
-const packages = [
-  "@beslismodel/core",
-  "@beslismodel/compiler",
-  "@beslismodel/cvrm-prevent",
-  "@beslismodel/vue",
-  "@beslismodel/testing",
-];
+const packages = getFrameworkPackageNames(root);
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
 

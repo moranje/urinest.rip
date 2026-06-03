@@ -2,14 +2,9 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
-const packages = [
-  { dir: "packages/core", name: "@beslismodel/core" },
-  { dir: "packages/compiler", name: "@beslismodel/compiler" },
-  { dir: "packages/cvrm-prevent", name: "@beslismodel/cvrm-prevent" },
-  { dir: "packages/vue", name: "@beslismodel/vue" },
-  { dir: "packages/testing", name: "@beslismodel/testing" },
-];
+const packages = getFrameworkPackages();
 
 const allowedPackageFile = (path) => path === "package.json" || path.startsWith("dist/");
 const cacheDir = mkdtempSync(join(tmpdir(), "beslismodel-pack-cache-"));

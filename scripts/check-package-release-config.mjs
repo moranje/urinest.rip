@@ -1,15 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const expectedRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
-const packageFiles = [
-  "packages/core/package.json",
-  "packages/compiler/package.json",
-  "packages/cvrm-prevent/package.json",
-  "packages/vue/package.json",
-  "packages/testing/package.json",
-];
+const packageFiles = getFrameworkPackages().map((item) => item.packageJson);
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
 
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));

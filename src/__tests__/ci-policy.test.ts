@@ -221,6 +221,18 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "node-version: [20, 22, 24]",
     );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "scripts/package-extraction-map.mjs",
+    );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "getFrameworkPackages",
+    );
+    expect(readFileSync(resolve("scripts/check-package-tarballs.mjs"), "utf8")).toContain(
+      "getFrameworkPackages",
+    );
+    expect(
+      readFileSync(resolve("scripts/check-package-file-install-consumer-smoke.mjs"), "utf8"),
+    ).toContain("getFrameworkPackages");
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "BESLISMODEL_REGISTRY_SMOKE_VERSION",
     );

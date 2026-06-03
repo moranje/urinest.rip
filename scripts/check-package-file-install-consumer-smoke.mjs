@@ -3,16 +3,10 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-const packages = [
-  { dir: "packages/core", name: "@beslismodel/core" },
-  { dir: "packages/compiler", name: "@beslismodel/compiler" },
-  { dir: "packages/cvrm-prevent", name: "@beslismodel/cvrm-prevent" },
-  { dir: "packages/vue", name: "@beslismodel/vue" },
-  { dir: "packages/testing", name: "@beslismodel/testing" },
-];
+const packages = getFrameworkPackages(root);
 
 const externalDependencies = [
   "ajv",

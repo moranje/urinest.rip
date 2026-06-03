@@ -3,14 +3,12 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const expectedRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
 const isPublish = process.argv.includes("--publish");
-const extractionMap = JSON.parse(
-  readFileSync(resolve(root, "docs/package-extraction-map.json"), "utf8"),
-);
-const packages = extractionMap.packages.map((item) => ({ dir: item.sourceRoot, name: item.name }));
+const packages = getFrameworkPackages(root);
 
 const packageNames = new Set(packages.map((item) => item.name));
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;

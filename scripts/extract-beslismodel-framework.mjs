@@ -32,6 +32,7 @@ const scriptFiles = [
   "scripts/check-package-tarballs.mjs",
   "scripts/check-testing-package.mjs",
   "scripts/check-vue-package.mjs",
+  "scripts/package-extraction-map.mjs",
 ];
 
 const packageScripts = {
