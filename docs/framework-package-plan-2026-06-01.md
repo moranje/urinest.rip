@@ -136,7 +136,7 @@ App blijft eigenaar van domeindata en branding.
 ## Architectuur Checklist
 
 - [ ] `QuestionnairePage.vue` splitsen in runner composable + page shell + organisms.
-- [ ] `ResultPage.vue` splitsen in renderer composable + `ResultSection` organisms.
+- [x] `ResultPage.vue` splitsen in renderer composable + `ResultSection` organisms.
 - [x] `LandingPage.vue` genereren uit manifest/taxonomy, geen hard-coded flow links.
 - [x] Store hard-coded `/main.json` vervangen door injectable loader.
 - [x] Storage keys app-configurabel maken.
