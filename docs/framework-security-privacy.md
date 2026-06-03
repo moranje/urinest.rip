@@ -62,6 +62,8 @@ Verboden:
 Adapterregel: packages sturen alleen events naar een geinjecteerde telemetry adapter. Zonder adapter
 is telemetry no-op. Consumer apps zijn verantwoordelijk voor scrubber, batching, persistence,
 retentie en backendpolicy.
+Consumer adapters mogen telemetry-events niet blind verspreiden naar persistence. Bouw per eventtype
+een allowlist-context en drop onbekende runtime keys voordat de centrale scrubber/log-sink draait.
 
 ## No-PHI Storage Contract
 

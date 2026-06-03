@@ -9,6 +9,44 @@ export interface SupabaseTelemetryAdapterOptions {
 const levelForEvent = (event: BeslismodelTelemetryEvent): PersistTelemetryInput["level"] =>
   event.type.endsWith("_failed") ? "warn" : "info";
 
+const contextForEvent = (event: BeslismodelTelemetryEvent): Record<string, unknown> => {
+  switch (event.type) {
+    case "manifest.loaded":
+      return {
+        type: event.type,
+        storeId: event.storeId,
+        questionnaireCount: event.questionnaireCount,
+      };
+    case "manifest.load_failed":
+    case "answers.persist_failed":
+    case "answers.restore_failed":
+      return {
+        type: event.type,
+        phase: event.phase,
+        storeId: event.storeId,
+        errorClass: event.errorClass,
+      };
+    case "conditions.validate_failed":
+      return {
+        type: event.type,
+        phase: event.phase,
+        storeId: event.storeId,
+        questionnaireId: event.questionnaireId,
+        conditionCount: event.conditionCount,
+        errorClass: event.errorClass,
+      };
+    case "outcome.resolve_failed":
+      return {
+        type: event.type,
+        phase: event.phase,
+        storeId: event.storeId,
+        questionnaireId: event.questionnaireId,
+        logicCount: event.logicCount,
+        errorClass: event.errorClass,
+      };
+  }
+};
+
 export function createSupabaseTelemetryAdapter(
   options: SupabaseTelemetryAdapterOptions = {},
 ): BeslismodelTelemetryAdapter {
@@ -22,7 +60,7 @@ export function createSupabaseTelemetryAdapter(
           module,
           message: event.type,
           level: levelForEvent(event),
-          context: { ...event },
+          context: contextForEvent(event),
         });
       } catch {
         // Telemetry must never break a clinical decision flow.

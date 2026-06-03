@@ -74,6 +74,8 @@ describe("CI policy", () => {
     expect(workflow).toContain("Possible hardcoded JWT/key found in source code");
     expect(workflow).toContain("git ls-files --error-unmatch .env");
     expect(workflow).toContain("npm run check:packages");
+    expect(workflow).toContain("Package release config preflight");
+    expect(workflow).toContain('BESLISMODEL_STRICT_NPMRC: "true"');
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain("npm run build-storybook");
     expect(workflow).toContain("node-version: [20, 22, 24]");
