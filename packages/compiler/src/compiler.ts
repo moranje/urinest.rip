@@ -38,6 +38,7 @@ interface RawStep {
   readonly title?: string;
   readonly description?: string;
   readonly questions?: readonly string[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
 }
 
 interface RawResult {
@@ -57,6 +58,30 @@ interface RawLogicRule {
   readonly redirect?: string;
 }
 
+interface RawCalculatorInputBinding {
+  readonly source?: string;
+  readonly key?: string;
+  readonly value?: unknown;
+  readonly path?: string;
+  readonly required?: boolean;
+  readonly coerce?: string;
+}
+
+interface RawCalculatorOutputBinding {
+  readonly path?: string;
+  readonly text?: string;
+}
+
+interface RawCalculation {
+  readonly id?: string;
+  readonly calculator?: string;
+  readonly calculatorId?: string;
+  readonly input?: Readonly<Record<string, RawCalculatorInputBinding>>;
+  readonly outputs?: Readonly<Record<string, RawCalculatorOutputBinding>>;
+  readonly conditions?: readonly { readonly if: string }[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
+}
+
 interface RawFlow {
   readonly id: string;
   readonly version?: string;
@@ -74,6 +99,7 @@ interface RawFlow {
   readonly steps: readonly RawStep[];
   readonly results: Record<string, RawResult>;
   readonly logic: readonly RawLogicRule[];
+  readonly calculations?: Readonly<Record<string, RawCalculation>> | readonly RawCalculation[];
 }
 
 interface CompiledCondition {
@@ -93,6 +119,7 @@ interface CompiledStep {
   readonly title?: string;
   readonly description?: string;
   readonly questionIds: readonly string[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
 }
 
 interface CompiledResult extends Omit<RawResult, "contraindications"> {
@@ -109,6 +136,29 @@ interface CompiledLogicRule {
   readonly resultKey?: string;
   readonly redirectToQuestionnaire?: string;
   readonly conditions: readonly CompiledCondition[];
+}
+
+interface CompiledCalculatorInputBinding {
+  readonly source: "answer" | "context" | "literal";
+  readonly key?: string;
+  readonly value?: unknown;
+  readonly path?: string;
+  readonly required?: boolean;
+  readonly coerce?: "number" | "string" | "boolean";
+}
+
+interface CompiledCalculatorOutputBinding {
+  readonly path?: string;
+  readonly text?: string;
+}
+
+interface CompiledCalculation {
+  readonly id: string;
+  readonly calculatorId: string;
+  readonly input: Readonly<Record<string, CompiledCalculatorInputBinding>>;
+  readonly outputs: Readonly<Record<string, CompiledCalculatorOutputBinding>>;
+  readonly conditions: readonly CompiledCondition[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
 }
 
 export interface CompiledQuestionnaire {
@@ -128,6 +178,7 @@ export interface CompiledQuestionnaire {
   readonly steps: readonly CompiledStep[];
   readonly results: Readonly<Record<string, CompiledResult>>;
   readonly resultsLogic: readonly CompiledLogicRule[];
+  readonly calculations: readonly CompiledCalculation[];
 }
 
 export interface CompiledDecisionManifest {
@@ -427,6 +478,96 @@ function assertStrictAuthoringDefenses(flow: RawFlow): void {
   }
 }
 
+function normalizeCalculationEntries(flow: RawFlow): readonly [string, RawCalculation][] {
+  if (!flow.calculations) return [];
+  if (Array.isArray(flow.calculations)) {
+    return flow.calculations.map((calculation, index) => [
+      calculation.id ?? `${flow.id}-calculation-${index + 1}`,
+      calculation,
+    ]);
+  }
+  return Object.entries(flow.calculations);
+}
+
+function compileCalculatorInputBinding(
+  calculationId: string,
+  field: string,
+  binding: RawCalculatorInputBinding,
+  questionAliasMap: Readonly<Record<string, string>>,
+): CompiledCalculatorInputBinding {
+  const source = binding.source ?? "answer";
+  if (source !== "answer" && source !== "context" && source !== "literal") {
+    throw new Error(
+      `Calculation "${calculationId}" input "${field}" source must be answer, context or literal.`,
+    );
+  }
+
+  const coerce = binding.coerce;
+  if (coerce !== undefined && coerce !== "number" && coerce !== "string" && coerce !== "boolean") {
+    throw new Error(
+      `Calculation "${calculationId}" input "${field}" coerce must be number, string or boolean.`,
+    );
+  }
+
+  let key = binding.key;
+  if (source === "answer") {
+    if (!key) {
+      throw new Error(`Calculation "${calculationId}" input "${field}" must define key.`);
+    }
+    key = questionAliasMap[key] ?? key;
+  }
+
+  if (source === "context" && !key) {
+    throw new Error(`Calculation "${calculationId}" input "${field}" must define key.`);
+  }
+
+  return {
+    source,
+    key,
+    value: binding.value,
+    path: binding.path,
+    required: binding.required,
+    coerce,
+  };
+}
+
+function compileCalculations(
+  flow: RawFlow,
+  questionAliasMap: Readonly<Record<string, string>>,
+): readonly CompiledCalculation[] {
+  return normalizeCalculationEntries(flow).map(([alias, calculation], index) => {
+    const id = calculation.id ?? alias ?? `${flow.id}-calculation-${index + 1}`;
+    const calculatorId = calculation.calculatorId ?? calculation.calculator;
+    if (!calculatorId) {
+      throw new Error(`Calculation "${id}" must define calculatorId.`);
+    }
+    if (!calculation.input || Object.keys(calculation.input).length === 0) {
+      throw new Error(`Calculation "${id}" must define input bindings.`);
+    }
+    if (!calculation.outputs || Object.keys(calculation.outputs).length === 0) {
+      throw new Error(`Calculation "${id}" must define output bindings.`);
+    }
+
+    const input = Object.entries(calculation.input).reduce<
+      Record<string, CompiledCalculatorInputBinding>
+    >((acc, [field, binding]) => {
+      acc[field] = compileCalculatorInputBinding(id, field, binding, questionAliasMap);
+      return acc;
+    }, {});
+
+    return {
+      id,
+      calculatorId,
+      input,
+      outputs: calculation.outputs,
+      conditions: (calculation.conditions ?? []).map((condition) =>
+        parseCondition(condition.if, questionAliasMap),
+      ),
+      metadata: calculation.metadata,
+    };
+  });
+}
+
 function compileFlow(flow: RawFlow): CompiledQuestionnaire {
   assertUniqueOptionValues(flow);
   assertNoOrphanQuestions(flow);
@@ -470,6 +611,7 @@ function compileFlow(flow: RawFlow): CompiledQuestionnaire {
         id: step.id || `${flow.id}-s${index + 1}`,
         title: step.title,
         description: step.description,
+        metadata: step.metadata,
         questionIds: (step.questions || []).map((alias) => {
           const id = questionAliasMap[alias];
           if (!id) throw new Error(`Question alias "${alias}" in step "${step.title}" not found.`);
@@ -511,6 +653,8 @@ function compileFlow(flow: RawFlow): CompiledQuestionnaire {
     } satisfies CompiledLogicRule;
   });
 
+  const processedCalculations = compileCalculations(flow, questionAliasMap);
+
   return {
     id: flow.id,
     version: flow.version,
@@ -528,6 +672,7 @@ function compileFlow(flow: RawFlow): CompiledQuestionnaire {
     steps: processedSteps,
     results: processedResults,
     resultsLogic: processedLogic,
+    calculations: processedCalculations,
   };
 }
 

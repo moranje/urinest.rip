@@ -101,6 +101,7 @@ describe("app compatibility adapters", () => {
           metadata: { landingSection: "primary" },
           questions: [],
           steps: [],
+          calculations: [],
           results: {},
           resultsLogic: [],
         },
@@ -140,6 +141,7 @@ describe("app compatibility adapters", () => {
         questionIds: [],
         stepIds: [],
         resultsLogicIds: [],
+        calculationIds: [],
       },
     });
 

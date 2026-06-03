@@ -36,6 +36,9 @@ export const flowSchema = {
     },
     questions: { type: "object" },
     steps: { type: "array" },
+    calculations: {
+      anyOf: [{ type: "object" }, { type: "array" }],
+    },
     results: { type: "object" },
     logic: { type: "array" },
   },

@@ -1,4 +1,8 @@
-import type { ManifestCondition, ManifestQuestionOption } from "@beslismodel/core";
+import type {
+  ManifestCalculatorBinding,
+  ManifestCondition,
+  ManifestQuestionOption,
+} from "@beslismodel/core";
 import type { CSSProperties } from "vue";
 
 // Toast system
@@ -29,10 +33,11 @@ export type Condition = ManifestCondition;
 export interface Question {
   id: string;
   text: string;
-  type: "select" | "single" | "multiple" | "multi_select";
+  type: "select" | "single" | "multiple" | "multi_select" | "number" | "boolean";
   options: QuestionOption[];
   conditions?: Condition[];
   description?: string;
+  metadata?: Readonly<Record<string, unknown>>;
 }
 
 export interface Step {
@@ -40,6 +45,7 @@ export interface Step {
   title?: string;
   description?: string;
   questionIds: string[];
+  metadata?: Readonly<Record<string, unknown>>;
 }
 
 export interface ResultLogicRule {
@@ -66,12 +72,14 @@ export interface QuestionnaireMeta {
   questionIds: string[];
   stepIds: string[];
   resultsLogicIds: string[];
+  calculationIds: string[];
 }
 
 export interface FullQuestionnaire extends QuestionnaireMeta {
   questions: Question[];
   steps: Step[];
   resultsLogic: ResultLogicRule[];
+  calculations: ManifestCalculatorBinding[];
 }
 
 export interface Source {

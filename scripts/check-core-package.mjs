@@ -7,6 +7,7 @@ import {
   createAuditTrailEvent,
   createBreadcrumb,
   createMarkdownRenderer,
+  determineOutcomeWithCalculators,
   createRuntimeContext,
   determineOutcome,
   detectRedirectCycle,
@@ -68,6 +69,30 @@ const calculators = createCalculatorRegistry([
 ]);
 if ((await calculators.run("score.sum", { values: [1, 2, 3] })) !== 6) {
   throw new Error("createCalculatorRegistry export failed");
+}
+
+const calculatedOutcome = await determineOutcomeWithCalculators({
+  registry: calculators,
+  answers: { q_values: { value: [1, 2, 3], text: "1,2,3" } },
+  calculatorBindings: [
+    {
+      id: "sum",
+      calculatorId: "score.sum",
+      input: { values: { source: "answer", key: "q_values" } },
+      outputs: { _sum_total: {} },
+    },
+  ],
+  resultsLogic: [
+    {
+      id: "sum-is-six",
+      actionType: "showResult",
+      resultKey: "ok",
+      conditions: [{ questionId: "_sum_total", operator: "equals", value: 6 }],
+    },
+  ],
+});
+if (calculatedOutcome.outcome !== "result:ok") {
+  throw new Error("determineOutcomeWithCalculators export failed");
 }
 
 const auditEvent = createAuditTrailEvent(

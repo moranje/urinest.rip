@@ -1,11 +1,14 @@
 import {
   applyRuntimeContext,
+  runCalculatorBindings,
   createRuntimeContext,
   getErrorClass,
   normalizeDecisionManifest,
   validateConditions as validateConditionsCore,
+  type CalculatorRegistry,
   type DecisionManifest,
   type DuplicateManifestIdPolicy,
+  type ManifestCalculatorBinding,
   type ManifestCondition,
   type ManifestQuestion,
   type ManifestQuestionnaire,
@@ -68,12 +71,13 @@ export interface BeslismodelManifestInput<ResultData = Readonly<Record<string, u
 
 export interface BeslismodelQuestionnaireMeta extends Omit<
   NormalizedQuestionnaireMeta,
-  "name" | "questionIds" | "stepIds" | "resultsLogicIds"
+  "name" | "questionIds" | "stepIds" | "resultsLogicIds" | "calculationIds"
 > {
   readonly name: string;
   readonly questionIds: string[];
   readonly stepIds: string[];
   readonly resultsLogicIds: string[];
+  readonly calculationIds: string[];
 }
 
 export type BeslismodelFullQuestionnaire<
@@ -85,6 +89,7 @@ export type BeslismodelFullQuestionnaire<
   readonly questions: Question[];
   readonly steps: Step[];
   readonly resultsLogic: ResultLogicRule[];
+  readonly calculations: ManifestCalculatorBinding[];
 };
 
 export interface BeslismodelStoreErrorContext {
@@ -118,6 +123,7 @@ export interface CreateBeslismodelStoreOptions<
   readonly contextProvider?: () => RuntimeContext | RuntimeContextValues;
   readonly contextAliases?: Readonly<Record<string, string>>;
   readonly outcomeResolver?: BeslismodelOutcomeResolver<ResultLogicRule, Outcome>;
+  readonly calculatorRegistry?: CalculatorRegistry;
   readonly telemetry?: BeslismodelTelemetryAdapter;
   readonly onError?: (error: Error, context: BeslismodelStoreErrorContext) => void;
   readonly onManifestLoaded?: (
@@ -168,6 +174,7 @@ export function createBeslismodelStore<
     const steps = shallowRef<Record<string, Step>>({});
     const results = shallowRef<Record<string, ResultData>>({});
     const resultsLogic = shallowRef<Record<string, ResultLogicRule>>({});
+    const calculations = shallowRef<Record<string, ManifestCalculatorBinding>>({});
     const answers = shallowRef<Record<string, BeslismodelAnswerMap<Answer>>>({});
 
     const isLoading = ref(false);
@@ -267,6 +274,8 @@ export function createBeslismodelStore<
     const getStepById = (id: string): Step | undefined => steps.value[id];
     const getResultByKey = (key: string): ResultData | undefined => results.value[key];
     const getResultLogicById = (id: string): ResultLogicRule | undefined => resultsLogic.value[id];
+    const getCalculationById = (id: string): ManifestCalculatorBinding | undefined =>
+      calculations.value[id];
 
     const questionnaireList = computed(() => Object.values(questionnaires.value));
 
@@ -281,6 +290,7 @@ export function createBeslismodelStore<
         questions: meta.questionIds.map((id) => getQuestionById(id)!).filter(Boolean),
         steps: meta.stepIds.map((id) => getStepById(id)!).filter(Boolean),
         resultsLogic: meta.resultsLogicIds.map((id) => getResultLogicById(id)!).filter(Boolean),
+        calculations: meta.calculationIds.map((id) => getCalculationById(id)!).filter(Boolean),
       };
     };
 
@@ -318,6 +328,7 @@ export function createBeslismodelStore<
               questionIds: [...questionnaire.questionIds],
               stepIds: [...questionnaire.stepIds],
               resultsLogicIds: [...questionnaire.resultsLogicIds],
+              calculationIds: [...questionnaire.calculationIds],
             } as QuestionnaireMeta;
             const allowedQuestionIds = new Set(questionnaire.questionIds);
             newAnswers[id] = Object.fromEntries(
@@ -332,6 +343,7 @@ export function createBeslismodelStore<
           steps.value = { ...normalized.steps } as Record<string, Step>;
           results.value = { ...normalized.results };
           resultsLogic.value = { ...normalized.resultsLogic } as Record<string, ResultLogicRule>;
+          calculations.value = { ...normalized.calculations };
           answers.value = await restorePersistedAnswers(newAnswers);
           manifest.value = normalized;
           dataReady.value = true;
@@ -468,14 +480,66 @@ export function createBeslismodelStore<
       }
     };
 
+    const determineOutcomeForPathWithCalculators = async (
+      questionnaireId: string,
+      providedAnswers: BeslismodelAnswerMap<Answer>,
+      logic: readonly ResultLogicRule[],
+      calculatorBindings: readonly ManifestCalculatorBinding[] = [],
+    ): Promise<Outcome> => {
+      if (calculatorBindings.length === 0) {
+        return determineOutcomeForPath(questionnaireId, providedAnswers, logic);
+      }
+      if (!options.calculatorRegistry) {
+        throw new Error("Calculator registry required for questionnaire calculations.");
+      }
+      if (!options.outcomeResolver) {
+        throw new Error("No outcome resolver configured");
+      }
+
+      const currentContext = getRuntimeContext();
+      const enhanced = applyRuntimeContext(providedAnswers, currentContext, {
+        aliases: options.contextAliases,
+      });
+
+      try {
+        const calculated = await runCalculatorBindings({
+          answers: enhanced,
+          bindings: calculatorBindings,
+          context: currentContext.values,
+          registry: options.calculatorRegistry,
+        });
+        return options.outcomeResolver(calculated.answers, logic, currentContext);
+      } catch (caught) {
+        const outcomeError = toError(caught);
+        telemetry.track({
+          type: "outcome.resolve_failed",
+          phase: "outcome.resolve",
+          storeId,
+          questionnaireId,
+          logicCount: logic.length,
+          errorClass: getErrorClass(outcomeError),
+        });
+        options.onError?.(outcomeError, {
+          phase: "outcome.resolve",
+          storeId,
+          questionnaireId,
+          logicCount: logic.length,
+        });
+        throw outcomeError;
+      }
+    };
+
     return {
       answers,
+      calculations,
       clearAnswers,
       dataReady,
       determineOutcomeForPath,
+      determineOutcomeForPathWithCalculators,
       error,
       getAllAnswersForQuestionnaire,
       getAnswer,
+      getCalculationById,
       getEnhancedAnswers,
       getFullQuestionnaire,
       getQuestionById,

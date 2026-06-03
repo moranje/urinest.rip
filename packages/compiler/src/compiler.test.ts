@@ -192,6 +192,152 @@ describe("compiler package", () => {
     );
   });
 
+  it("compiles generic calculator bindings for score-driven guideline decisions", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: cvrm-score-flow
+version: "1"
+title: CVRM score flow
+category: cvrm
+audience: [arts, poh]
+domain: cvrm
+recommendedStart: true
+questions:
+  age:
+    id: q_age
+    text: Leeftijd
+    type: number
+    options: []
+  sex:
+    id: q_sex
+    text: Geslacht
+    type: select
+    options:
+      - text: Man
+        value: M
+      - text: Vrouw
+        value: F
+  smoking:
+    id: q_smoking
+    text: Roken
+    type: boolean
+    options:
+      - text: Ja
+        value: true
+      - text: Nee
+        value: false
+  systolic_bp:
+    id: q_sbp
+    text: Systolische bloeddruk
+    type: number
+    options: []
+  total_cholesterol:
+    id: q_total_cholesterol
+    text: Totaal cholesterol
+    type: number
+    options: []
+  hdl:
+    id: q_hdl
+    text: HDL
+    type: number
+    options: []
+steps:
+  - title: Start
+    metadata:
+      inputMode: group
+    questions: [age, sex, smoking, systolic_bp, total_cholesterol, hdl]
+calculations:
+  score2:
+    calculatorId: cvrm.score2
+    input:
+      age: { source: answer, key: age, coerce: number }
+      sex: { source: answer, key: sex }
+      smoking: { source: answer, key: smoking, coerce: boolean }
+      systolicBp: { source: answer, key: systolic_bp, coerce: number }
+      totalCholesterol: { source: answer, key: total_cholesterol, coerce: number }
+      hdlCholesterol: { source: answer, key: hdl, coerce: number }
+      region: { source: context, key: riskRegion, required: false }
+    outputs:
+      _score2_percent: { path: riskPercent }
+      _score2_class: { path: riskClass.label }
+results:
+  intensive_cvrm:
+    title: Intensief CVRM
+    sources:
+      - name: NHG CVRM
+        url: https://example.test/nhg-cvrm
+logic:
+  - when: ["_score2_class == hoog"]
+    show: intensive_cvrm
+`);
+
+    const manifest = await buildFlows(flowsDir, outputFile);
+    expect(manifest.questionnaires[0]?.calculations).toEqual([
+      {
+        id: "score2",
+        calculatorId: "cvrm.score2",
+        input: expect.objectContaining({
+          age: { source: "answer", key: "q_age", coerce: "number" },
+          systolicBp: { source: "answer", key: "q_sbp", coerce: "number" },
+          region: { source: "context", key: "riskRegion", required: false },
+        }),
+        outputs: {
+          _score2_percent: { path: "riskPercent" },
+          _score2_class: { path: "riskClass.label" },
+        },
+        conditions: [],
+        metadata: undefined,
+      },
+    ]);
+    expect(manifest.questionnaires[0]?.steps[0]).toEqual(
+      expect.objectContaining({
+        metadata: { inputMode: "group" },
+        questionIds: ["q_age", "q_sex", "q_smoking", "q_sbp", "q_total_cholesterol", "q_hdl"],
+      }),
+    );
+    expect(manifest.questionnaires[0]?.resultsLogic[0]?.conditions).toEqual([
+      { questionId: "_score2_class", operator: "equals", value: "hoog" },
+    ]);
+  });
+
+  it("rejects invalid calculator bindings", async () => {
+    const { flowsDir, outputFile } = await createFixture(`
+id: invalid-calculation-flow
+version: "1"
+title: Invalid calculation flow
+category: cvrm
+audience: [arts]
+domain: cvrm
+recommendedStart: true
+questions:
+  age:
+    text: Leeftijd
+    type: number
+    options: []
+steps:
+  - title: Start
+    questions: [age]
+calculations:
+  score2:
+    input:
+      age: { source: answer, key: age, coerce: integer }
+    outputs:
+      _score2_percent: { path: riskPercent }
+results:
+  ok:
+    title: Ok
+    sources:
+      - name: Test
+        url: https://example.test/test
+logic:
+  - when: ["_score2_percent == 1"]
+    show: ok
+`);
+
+    await expect(buildFlows(flowsDir, outputFile)).rejects.toThrow(
+      'Calculation "score2" must define calculatorId.',
+    );
+  });
+
   it.each([
     [
       "question purpose",

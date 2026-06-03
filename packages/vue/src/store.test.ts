@@ -1,4 +1,5 @@
 import { createPinia, setActivePinia } from "pinia";
+import { createCalculatorRegistry } from "@beslismodel/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createBeslismodelStore,
@@ -123,6 +124,7 @@ describe("createBeslismodelStore", () => {
     expect(store.getFullQuestionnaire("example-flow")?.resultsLogic[0]?.id).toBe(
       "example-flow-rule-0",
     );
+    expect(store.getFullQuestionnaire("example-flow")?.calculations).toEqual([]);
     expect(store.getAnswer("example-flow", "q1")).toEqual({ value: "stored", text: "Stored" });
     expect(store.getEnhancedAnswers("example-flow")).toEqual({
       q1: { value: "stored", text: "Stored" },
@@ -157,6 +159,80 @@ describe("createBeslismodelStore", () => {
       storeId: "beslismodel",
       questionnaireCount: 2,
     });
+  });
+
+  it("runs generic calculator bindings before resolving questionnaire outcomes", async () => {
+    const outcomeResolver = vi.fn((answers: Record<string, unknown>) => ({
+      outcome:
+        (answers._score_class as { value?: unknown } | undefined)?.value === "hoog"
+          ? "result:intensive"
+          : null,
+      ruleId: "rule-score",
+    }));
+    const registry = createCalculatorRegistry([
+      {
+        id: "score.example",
+        calculate: (input: { readonly age: number }) => ({
+          class: input.age >= 65 ? "hoog" : "laag",
+        }),
+      },
+    ]);
+    const useStore = createBeslismodelStore({
+      calculatorRegistry: registry,
+      loadManifest: async () => ({
+        questionnaires: [
+          {
+            id: "score-flow",
+            title: "Score flow",
+            questions: [{ id: "q_age", text: "Leeftijd", type: "number", options: [] }],
+            steps: [{ id: "step-input", questionIds: ["q_age"] }],
+            results: { intensive: { title: "Intensief beleid" } },
+            resultsLogic: [],
+            calculations: [
+              {
+                id: "score",
+                calculatorId: "score.example",
+                input: {
+                  age: { source: "answer", key: "q_age", coerce: "number" },
+                },
+                outputs: {
+                  _score_class: { path: "class" },
+                },
+              },
+            ],
+          },
+        ],
+      }),
+      outcomeResolver,
+    });
+
+    const store = useStore();
+    await store.loadInitialData();
+    store.setAnswer("score-flow", "q_age", { value: "70", text: "70" });
+    const fullQuestionnaire = store.getFullQuestionnaire("score-flow");
+
+    const outcome = await store.determineOutcomeForPathWithCalculators(
+      "score-flow",
+      store.getAllAnswersForQuestionnaire("score-flow"),
+      fullQuestionnaire?.resultsLogic ?? [],
+      fullQuestionnaire?.calculations ?? [],
+    );
+
+    expect(outcome).toEqual({ outcome: "result:intensive", ruleId: "rule-score" });
+    expect(outcomeResolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        _score_class: expect.objectContaining({
+          value: "hoog",
+          metadata: expect.objectContaining({
+            calculationId: "score",
+            calculatorId: "score.example",
+          }),
+        }),
+        q_age: { value: "70", text: "70" },
+      }),
+      [],
+      expect.any(Object),
+    );
   });
 
   it("routes load errors through typed telemetry without leaking Error objects", async () => {

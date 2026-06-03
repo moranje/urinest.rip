@@ -1,5 +1,9 @@
 import type { Component } from "vue";
-import { determineOutcome, type NormalizedDecisionManifest } from "@beslismodel/core";
+import {
+  determineOutcome,
+  type ManifestCalculatorBinding,
+  type NormalizedDecisionManifest,
+} from "@beslismodel/core";
 import type {
   BeslismodelManifestInput,
   BeslismodelStorageAdapter,
@@ -44,6 +48,7 @@ interface RawQuestionnaire {
   metadata?: Readonly<Record<string, unknown>>;
   questions?: Question[];
   steps?: Step[];
+  calculations?: ManifestCalculatorBinding[];
   results?: Record<string, ResultData>;
   resultsLogic?: Omit<ResultLogicRule, "id">[];
 }
@@ -117,6 +122,7 @@ export const loadQuestionnaireManifest = async (): Promise<
       metadata: questionnaire.metadata,
       questions: questionnaire.questions ?? [],
       steps: questionnaire.steps ?? [],
+      calculations: questionnaire.calculations ?? [],
       results: questionnaire.results ?? {},
       resultsLogic: questionnaire.resultsLogic ?? [],
     })),

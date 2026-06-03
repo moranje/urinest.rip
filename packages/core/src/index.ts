@@ -23,6 +23,19 @@ export type {
 } from "./breadcrumbs";
 export { appendBreadcrumb, cloneBreadcrumbs, createBreadcrumb } from "./breadcrumbs";
 export type {
+  CalculatedOutcomeResolution,
+  CalculatorBindingAnswer,
+  CalculatorBindingExecution,
+  DetermineOutcomeWithCalculatorsInput,
+  RunCalculatorBindingsInput,
+  RunCalculatorBindingsResult,
+} from "./calculator-bindings";
+export {
+  CalculatorBindingError,
+  determineOutcomeWithCalculators,
+  runCalculatorBindings,
+} from "./calculator-bindings";
+export type {
   CalculatorDefinition,
   CalculatorExecutionContext,
   CalculatorId,
@@ -61,6 +74,11 @@ export {
 export type {
   DecisionManifest,
   DuplicateManifestIdPolicy,
+  ManifestCalculatorBinding,
+  ManifestCalculatorInputBinding,
+  ManifestCalculatorInputCoercion,
+  ManifestCalculatorInputSource,
+  ManifestCalculatorOutputBinding,
   ManifestCondition,
   ManifestConditionOperator,
   ManifestId,

@@ -56,6 +56,7 @@ describe("manifest types", () => {
           questionIds: ["q1"],
           stepIds: ["step-1"],
           resultsLogicIds: ["rule-1"],
+          calculationIds: [],
         },
       },
       questions: {
@@ -75,6 +76,7 @@ describe("manifest types", () => {
           resultKey: "primary",
         },
       },
+      calculations: {},
     } satisfies NormalizedDecisionManifest<ExampleResult>;
 
     expect(normalized.questionnaires["example-flow"].questionIds).toEqual(["q1"]);
@@ -130,6 +132,7 @@ describe("manifest types", () => {
       questionIds: ["q1", "q2"],
       stepIds: ["step-1"],
       resultsLogicIds: ["example-flow-rule-0", "custom-rule"],
+      calculationIds: [],
       metadata: undefined,
     });
     expect(normalized.questions.q1?.text).toBe("Question");

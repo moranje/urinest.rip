@@ -47,6 +47,32 @@ export interface NormalizedResultLogicRule extends Omit<ManifestResultLogicRule,
   readonly id: ManifestId;
 }
 
+export type ManifestCalculatorInputSource = "answer" | "context" | "literal";
+export type ManifestCalculatorInputCoercion = "number" | "string" | "boolean";
+
+export interface ManifestCalculatorInputBinding {
+  readonly source: ManifestCalculatorInputSource;
+  readonly key?: ManifestId;
+  readonly value?: unknown;
+  readonly path?: string;
+  readonly required?: boolean;
+  readonly coerce?: ManifestCalculatorInputCoercion;
+}
+
+export interface ManifestCalculatorOutputBinding {
+  readonly path?: string;
+  readonly text?: string;
+}
+
+export interface ManifestCalculatorBinding {
+  readonly id: ManifestId;
+  readonly calculatorId: ManifestId;
+  readonly input: Readonly<Record<string, ManifestCalculatorInputBinding>>;
+  readonly outputs: Readonly<Record<ManifestId, ManifestCalculatorOutputBinding>>;
+  readonly conditions?: readonly ManifestCondition[];
+  readonly metadata?: Readonly<Record<string, unknown>>;
+}
+
 export interface ManifestQuestionnaire<ResultData = Readonly<Record<string, unknown>>> {
   readonly id: ManifestId;
   readonly version: string;
@@ -63,6 +89,7 @@ export interface ManifestQuestionnaire<ResultData = Readonly<Record<string, unkn
   readonly steps?: readonly ManifestStep[];
   readonly results?: Readonly<Record<ManifestId, ResultData>>;
   readonly resultsLogic?: readonly ManifestResultLogicRule[];
+  readonly calculations?: readonly ManifestCalculatorBinding[];
   readonly metadata?: Readonly<Record<string, unknown>>;
 }
 
@@ -86,6 +113,7 @@ export interface NormalizedQuestionnaireMeta {
   readonly questionIds: readonly ManifestId[];
   readonly stepIds: readonly ManifestId[];
   readonly resultsLogicIds: readonly ManifestId[];
+  readonly calculationIds: readonly ManifestId[];
   readonly metadata?: Readonly<Record<string, unknown>>;
 }
 
@@ -95,6 +123,7 @@ export interface NormalizedDecisionManifest<ResultData = Readonly<Record<string,
   readonly steps: Readonly<Record<ManifestId, ManifestStep>>;
   readonly results: Readonly<Record<ManifestId, ResultData>>;
   readonly resultsLogic: Readonly<Record<ManifestId, NormalizedResultLogicRule>>;
+  readonly calculations: Readonly<Record<ManifestId, ManifestCalculatorBinding>>;
 }
 
 export type DuplicateManifestIdPolicy = "throw" | "overwrite";
@@ -132,6 +161,7 @@ export function normalizeDecisionManifest<ResultData = Readonly<Record<string, u
   const steps: Record<ManifestId, ManifestStep> = {};
   const results: Record<ManifestId, ResultData> = {};
   const resultsLogic: Record<ManifestId, NormalizedResultLogicRule> = {};
+  const calculations: Record<ManifestId, ManifestCalculatorBinding> = {};
 
   for (const questionnaire of manifest.questionnaires) {
     const questionIds: ManifestId[] = [];
@@ -157,6 +187,18 @@ export function normalizeDecisionManifest<ResultData = Readonly<Record<string, u
       resultsLogicIds.push(id);
     });
 
+    const calculationIds: ManifestId[] = [];
+    for (const calculation of questionnaire.calculations ?? []) {
+      setNormalizedEntity(
+        "calculation",
+        calculation.id,
+        calculation,
+        calculations,
+        duplicateIdPolicy,
+      );
+      calculationIds.push(calculation.id);
+    }
+
     setNormalizedEntity(
       "questionnaire",
       questionnaire.id,
@@ -175,6 +217,7 @@ export function normalizeDecisionManifest<ResultData = Readonly<Record<string, u
         questionIds,
         stepIds,
         resultsLogicIds,
+        calculationIds,
         metadata: questionnaire.metadata,
       },
       questionnaires,
@@ -188,5 +231,6 @@ export function normalizeDecisionManifest<ResultData = Readonly<Record<string, u
     steps: Object.freeze(steps),
     results: Object.freeze(results),
     resultsLogic: Object.freeze(resultsLogic),
+    calculations: Object.freeze(calculations),
   });
 }
