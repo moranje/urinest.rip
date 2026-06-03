@@ -35,6 +35,15 @@
       "publicExportSha256": "95bf8837eca6fea1ad58b24d548cda773930dc259e94a3660395cff64e066228"
     },
     {
+      "name": "@beslismodel/dm-care",
+      "sourceRoot": "packages/dm-care",
+      "destinationRoot": "packages/dm-care",
+      "packageJson": "packages/dm-care/package.json",
+      "publicExportFile": "packages/dm-care/src/index.ts",
+      "publicExportLineCount": 21,
+      "publicExportSha256": "68d2d4b7afa8cbb39158d1d11b7b109e53471512773f46ddac5ed57b7dbec4a4"
+    },
+    {
       "name": "@beslismodel/vue",
       "sourceRoot": "packages/vue",
       "destinationRoot": "packages/vue",

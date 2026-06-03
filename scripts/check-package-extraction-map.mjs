@@ -9,6 +9,7 @@ const expectedPackages = new Map([
   ["@beslismodel/core", "packages/core"],
   ["@beslismodel/compiler", "packages/compiler"],
   ["@beslismodel/cvrm-prevent", "packages/cvrm-prevent"],
+  ["@beslismodel/dm-care", "packages/dm-care"],
   ["@beslismodel/vue", "packages/vue"],
   ["@beslismodel/testing", "packages/testing"],
 ]);

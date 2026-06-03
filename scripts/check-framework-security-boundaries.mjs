@@ -5,6 +5,7 @@ const packageRoots = [
   "packages/core",
   "packages/compiler",
   "packages/cvrm-prevent",
+  "packages/dm-care",
   "packages/vue",
   "packages/testing",
 ];
@@ -26,6 +27,12 @@ const packageRules = {
     ["runtime storage global", directStoragePattern],
   ],
   "packages/cvrm-prevent": [
+    ["browser global", /(?:^|[^A-Za-z0-9_])(?:window|document)\s*\./i],
+    ["direct fetch", /(?:^|[^A-Za-z0-9_])fetch\s*\(/i],
+    ["direct storage sink", directStoragePattern],
+    ["production telemetry sink", /(?:app_logs|log-sink|insert_app_logs)/i],
+  ],
+  "packages/dm-care": [
     ["browser global", /(?:^|[^A-Za-z0-9_])(?:window|document)\s*\./i],
     ["direct fetch", /(?:^|[^A-Za-z0-9_])fetch\s*\(/i],
     ["direct storage sink", directStoragePattern],

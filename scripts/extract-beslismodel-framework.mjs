@@ -23,6 +23,7 @@ const scriptFiles = [
   "scripts/check-core-mutation-pilot.mjs",
   "scripts/check-core-package.mjs",
   "scripts/check-cvrm-prevent-package.mjs",
+  "scripts/check-dm-care-package.mjs",
   "scripts/check-framework-security-boundaries.mjs",
   "scripts/check-package-extraction-map.mjs",
   "scripts/check-package-file-install-consumer-smoke.mjs",
@@ -42,18 +43,21 @@ const packageScripts = {
     "vite build --config packages/compiler/vite.config.ts && tsc -p packages/compiler/tsconfig.json",
   "build:cvrm-prevent":
     "vite build --config packages/cvrm-prevent/vite.config.ts && tsc -p packages/cvrm-prevent/tsconfig.json",
+  "build:dm-care":
+    "vite build --config packages/dm-care/vite.config.ts && tsc -p packages/dm-care/tsconfig.json",
   "build:testing":
     "vite build --config packages/testing/vite.config.ts && tsc -p packages/testing/tsconfig.json",
   "build:vue:only":
     "vite build --config packages/vue/vite.config.ts && tsc -p packages/vue/tsconfig.json",
   "build:vue": "npm run build:core && npm run build:vue:only",
   "build:packages":
-    "npm run build:core && npm run build:compiler && npm run build:vue:only && npm run build:testing && npm run build:cvrm-prevent",
+    "npm run build:core && npm run build:compiler && npm run build:vue:only && npm run build:testing && npm run build:cvrm-prevent && npm run build:dm-care",
   check: "tsc --noEmit",
   "check:tsgo": "tsgo --noEmit --project tsconfig.tsgo.json",
   "check:compiler-package": "node scripts/check-compiler-package.mjs",
   "check:core-package": "node scripts/check-core-package.mjs",
   "check:cvrm-prevent-package": "node scripts/check-cvrm-prevent-package.mjs",
+  "check:dm-care-package": "node scripts/check-dm-care-package.mjs",
   "check:framework-boundaries": "node scripts/check-framework-security-boundaries.mjs",
   "check:mutation-pilot": "node scripts/check-core-mutation-pilot.mjs",
   "check:package-extraction-map": "node scripts/check-package-extraction-map.mjs",
@@ -69,7 +73,7 @@ const packageScripts = {
   "check:testing-package": "node scripts/check-testing-package.mjs",
   "check:vue-package": "node scripts/check-vue-package.mjs",
   "check:packages":
-    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
+    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
   "budget:packages": "node scripts/check-package-bundle-budget.mjs",
   "format:check": "oxfmt --check packages/ scripts/",
   lint: "oxlint packages/ scripts/ --deny-warnings",
@@ -196,6 +200,7 @@ function writeTypeScriptConfigs(target) {
         "@beslismodel/compiler": ["./packages/compiler/src/index.ts"],
         "@beslismodel/core": ["./packages/core/src/index.ts"],
         "@beslismodel/cvrm-prevent": ["./packages/cvrm-prevent/src/index.ts"],
+        "@beslismodel/dm-care": ["./packages/dm-care/src/index.ts"],
         "@beslismodel/testing": ["./packages/testing/src/index.ts"],
         "@beslismodel/vue": ["./packages/vue/src/index.ts"],
       },
@@ -223,6 +228,7 @@ export default defineConfig({
       "@beslismodel/compiler": new URL("./packages/compiler/src/index.ts", import.meta.url).pathname,
       "@beslismodel/core": new URL("./packages/core/src/index.ts", import.meta.url).pathname,
       "@beslismodel/cvrm-prevent": new URL("./packages/cvrm-prevent/src/index.ts", import.meta.url).pathname,
+      "@beslismodel/dm-care": new URL("./packages/dm-care/src/index.ts", import.meta.url).pathname,
       "@beslismodel/testing": new URL("./packages/testing/src/index.ts", import.meta.url).pathname,
       "@beslismodel/vue": new URL("./packages/vue/src/index.ts", import.meta.url).pathname,
     },

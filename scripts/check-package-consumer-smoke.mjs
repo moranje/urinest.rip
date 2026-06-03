@@ -67,6 +67,7 @@ import {
 } from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
 import { createCvrmPreventCalculatorRegistry } from "@beslismodel/cvrm-prevent";
+import { createDmCareCalculatorRegistry } from "@beslismodel/dm-care";
 import { createManifestSnapshot } from "@beslismodel/testing";
 import { createBeslismodelLandingMenuSections, noopTelemetryAdapter } from "@beslismodel/vue";
 
@@ -152,6 +153,15 @@ const cvrmOutcome = await determineOutcomeWithCalculators({
 });
 if (cvrmOutcome.outcome !== "result:intensive_cvrm") {
   throw new Error("cvrm-prevent score-driven outcome failed from packed consumer");
+}
+
+const dmCareRegistry = createDmCareCalculatorRegistry();
+const hba1cResult = await dmCareRegistry.run("dm.hba1c_conversion", {
+  unit: "ifcc_mmol_mol",
+  value: 53,
+});
+if (hba1cResult.ngspPercent !== 7 || hba1cResult.eAgMmolL !== 8.6) {
+  throw new Error("dm-care HbA1c conversion failed from packed consumer");
 }
 
 const progress = getQuestionProgress({
@@ -394,7 +404,7 @@ try {
   });
 
   console.log(
-    "Packed package consumer smoke passed with public @beslismodel/* imports, CVRM calculator and Urinestrip flows",
+    "Packed package consumer smoke passed with public @beslismodel/* imports, CVRM and DM calculators, and Urinestrip flows",
   );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });

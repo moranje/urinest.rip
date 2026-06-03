@@ -17,12 +17,13 @@ export const packageBundleBudgets = {
   "@beslismodel/core": { jsTotal: 40 * KB, largestJs: 40 * KB },
   "@beslismodel/compiler": { jsTotal: 40 * KB, largestJs: 32 * KB },
   "@beslismodel/cvrm-prevent": { jsTotal: 40 * KB, largestJs: 40 * KB },
+  "@beslismodel/dm-care": { jsTotal: 24 * KB, largestJs: 24 * KB },
   "@beslismodel/vue": { jsTotal: 80 * KB, largestJs: 80 * KB },
   "@beslismodel/testing": { jsTotal: 24 * KB, largestJs: 24 * KB },
 };
 
 export const packageAggregateBudget = {
-  jsTotal: 200 * KB,
+  jsTotal: 224 * KB,
 };
 
 export function readPackageExtractionMap(root = repoRoot) {

@@ -78,6 +78,19 @@ const cvrmPreventPackage = JSON.parse(
   publishConfig?: Record<string, string>;
   scripts?: Record<string, string>;
 };
+const dmCarePackage = JSON.parse(
+  readFileSync(resolve("packages/dm-care/package.json"), "utf8"),
+) as {
+  name: string;
+  version: string;
+  description?: string;
+  license?: string;
+  files?: string[];
+  dependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  publishConfig?: Record<string, string>;
+  scripts?: Record<string, string>;
+};
 const testingPackage = JSON.parse(
   readFileSync(resolve("packages/testing/package.json"), "utf8"),
 ) as {
@@ -262,6 +275,7 @@ describe("CI policy", () => {
       "@beslismodel/compiler",
       "@beslismodel/core",
       "@beslismodel/cvrm-prevent",
+      "@beslismodel/dm-care",
       "@beslismodel/testing",
       "@beslismodel/vue",
     ]);
@@ -276,18 +290,27 @@ describe("CI policy", () => {
   });
 
   it("keeps framework package release policy explicit and lockstep", () => {
-    const packages = [corePackage, compilerPackage, cvrmPreventPackage, testingPackage, vuePackage];
+    const packages = [
+      corePackage,
+      compilerPackage,
+      cvrmPreventPackage,
+      dmCarePackage,
+      testingPackage,
+      vuePackage,
+    ];
     const versions = new Set(packages.map((manifest) => manifest.version));
 
     expect(packages.map((manifest) => manifest.name).sort()).toEqual([
       "@beslismodel/compiler",
       "@beslismodel/core",
       "@beslismodel/cvrm-prevent",
+      "@beslismodel/dm-care",
       "@beslismodel/testing",
       "@beslismodel/vue",
     ]);
     expect(versions.size).toBe(1);
     expect(cvrmPreventPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
+    expect(dmCarePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(testingPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(vuePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     for (const manifest of packages) {
@@ -298,7 +321,7 @@ describe("CI policy", () => {
       expect(manifest.publishConfig?.registry).toBe(expectedPackageRegistry);
       expect(manifest.scripts?.prepack).toContain("run build:");
     }
-    expect(releaseStrategy).toContain("All five packages use same version");
+    expect(releaseStrategy).toContain("All six packages use same version");
     expect(releaseStrategy).toContain("publishConfig.registry");
     expect(releaseStrategy).toContain("dist-tag `next`");
     expect(releaseStrategy).toContain("Registry Smoke");

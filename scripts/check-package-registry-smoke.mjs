@@ -67,6 +67,7 @@ import {
 } from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
 import { createCvrmPreventCalculatorRegistry } from "@beslismodel/cvrm-prevent";
+import { createDmCareCalculatorRegistry } from "@beslismodel/dm-care";
 import { createManifestSnapshot } from "@beslismodel/testing";
 import {
   createBeslismodelLandingMenuSections,
@@ -170,6 +171,15 @@ const outcome = await determineOutcomeWithCalculators({
 });
 if (outcome.outcome !== "result:intensive_cvrm") {
   throw new Error("registry calculator-bound outcome failed");
+}
+
+const dmCareRegistry = createDmCareCalculatorRegistry();
+const hba1cResult = await dmCareRegistry.run("dm.hba1c_conversion", {
+  unit: "ifcc_mmol_mol",
+  value: 53,
+});
+if (hba1cResult.ngspPercent !== 7 || hba1cResult.eAgMmolL !== 8.6) {
+  throw new Error("registry dm-care HbA1c conversion failed");
 }
 
 const urinestripManifest = await compileFlowFiles(new URL("./urinestrip-flows", import.meta.url).pathname);
@@ -371,7 +381,9 @@ try {
     stdio: "inherit",
   });
 
-  console.log("Registry package consumer smoke passed with Gitea-installed @beslismodel/*");
+  console.log(
+    "Registry package consumer smoke passed with Gitea-installed @beslismodel/*, CVRM and DM calculators",
+  );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });
 }
