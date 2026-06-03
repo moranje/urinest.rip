@@ -8,6 +8,9 @@ import { expectedPackageRegistry, getFrameworkPackages } from "./package-extract
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const isPublish = process.argv.includes("--publish");
 const packages = getFrameworkPackages(root);
+const registryUrl = new URL(expectedPackageRegistry);
+const registryAuthConfigKey = `//${registryUrl.host}${registryUrl.pathname}:_authToken`;
+const tokenEnvNames = ["NODE_AUTH_TOKEN", "NPM_TOKEN", "NPM_REGISTRY_TOKEN", "GITEA_NPM_TOKEN"];
 
 const packageNames = new Set(packages.map((item) => item.name));
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
@@ -28,6 +31,91 @@ const errorDetail = (error) =>
     .map((value) => String(value ?? "").trim())
     .filter(Boolean)
     .join("\n");
+const npmWhoamiUnsupported = (detail) => /E404|404|not found|\/-\/whoami/i.test(detail);
+const tokenFromNpmConfig = (cacheDir) => {
+  try {
+    const value = execFileSync(
+      "npm",
+      ["--cache", cacheDir, "config", "get", registryAuthConfigKey],
+      {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      },
+    ).trim();
+    if (value && value !== "undefined" && value !== "null") return value;
+  } catch {
+    return "";
+  }
+  return "";
+};
+const resolvePublishToken = (cacheDir) => {
+  for (const name of tokenEnvNames) {
+    const value = process.env[name]?.trim();
+    if (value) return { source: name, token: value };
+  }
+  const token = tokenFromNpmConfig(cacheDir);
+  if (token) return { source: "npm config", token };
+  return { source: "", token: "" };
+};
+
+async function verifyGiteaApiAuth(tokenSource, token) {
+  const userEndpoint = new URL("/api/v1/user", registryUrl.origin).toString();
+  for (const scheme of ["token", "Bearer"]) {
+    const response = await fetch(userEndpoint, {
+      headers: {
+        Authorization: `${scheme} ${token}`,
+      },
+    });
+    if (response.ok) {
+      const user = await response.json();
+      console.log(
+        `Registry auth verified through Gitea API using ${tokenSource} as ${user.login ?? "unknown"}`,
+      );
+      return;
+    }
+    if (response.status !== 401 && response.status !== 403) {
+      fail(`Gitea API auth preflight failed with HTTP ${response.status} at ${userEndpoint}`);
+    }
+  }
+  fail(`Gitea API rejected publish token from ${tokenSource} for ${registryUrl.origin}`);
+}
+
+async function verifyPublishAuth(cacheDir) {
+  try {
+    const whoami = execFileSync(
+      "npm",
+      ["--cache", cacheDir, "whoami", "--registry", expectedPackageRegistry],
+      {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      },
+    ).trim();
+    if (!whoami) {
+      fail(`npm whoami returned an empty user for ${expectedPackageRegistry}`);
+    }
+    console.log(`Registry auth verified for ${expectedPackageRegistry} as ${whoami}`);
+    return;
+  } catch (error) {
+    const detail = errorDetail(error);
+    const { source, token } = resolvePublishToken(cacheDir);
+    if (!npmWhoamiUnsupported(detail) && !token) {
+      fail(
+        `Publishing requires npm auth for ${expectedPackageRegistry}. ` +
+          `Run npm whoami --registry ${expectedPackageRegistry} first.\n${detail}`,
+      );
+    }
+
+    if (!token) {
+      fail(
+        `Gitea registry does not support npm whoami at ${expectedPackageRegistry}; ` +
+          `set ${tokenEnvNames.join(", ")} or user-level npm auth for ${registryAuthConfigKey}.`,
+      );
+    }
+    await verifyGiteaApiAuth(source, token);
+  }
+}
 const manifests = packages.map((item) => ({
   ...item,
   manifest: readJson(resolve(root, item.dir, "package.json")),
@@ -105,26 +193,7 @@ try {
   if (!isPublish) {
     console.log(`Package next-publish dry-run passed for @beslismodel packages ${version}`);
   } else {
-    try {
-      const whoami = execFileSync(
-        "npm",
-        ["--cache", cacheDir, "whoami", "--registry", expectedPackageRegistry],
-        {
-          cwd: root,
-          encoding: "utf8",
-          stdio: ["ignore", "pipe", "pipe"],
-        },
-      ).trim();
-      if (!whoami) {
-        fail(`npm whoami returned an empty user for ${expectedPackageRegistry}`);
-      }
-      console.log(`Registry auth verified for ${expectedPackageRegistry} as ${whoami}`);
-    } catch (error) {
-      fail(
-        `Publishing requires npm auth for ${expectedPackageRegistry}. ` +
-          `Run npm whoami --registry ${expectedPackageRegistry} first.\n${errorDetail(error)}`,
-      );
-    }
+    await verifyPublishAuth(cacheDir);
 
     for (const { name } of packages) {
       try {

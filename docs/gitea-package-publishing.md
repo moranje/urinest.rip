@@ -52,9 +52,11 @@ Patterns found in sibling repos:
 - `NPM_REGISTRY_TOKEN`: Gitea Actions build/deploy token passed to baseline actions.
 - `GITEA_NPM_TOKEN`: Renovate/private registry token name.
 
-For framework package publishing, local scripts rely on npm's own auth lookup and verify it with
-`npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/` before publish. Keep the
-token in user-level npm config; do not create project-local npm auth files.
+For framework package publishing, local scripts rely on npm's own auth lookup. They verify auth
+with `npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/` when supported. If
+Gitea returns `404` for npm's `/-/whoami` endpoint, the script falls back to Gitea's `/api/v1/user`
+using `NODE_AUTH_TOKEN`, `NPM_TOKEN`, `NPM_REGISTRY_TOKEN`, `GITEA_NPM_TOKEN`, or user-level npm
+auth. Do not create project-local npm auth files.
 
 ## Baseline Actions
 

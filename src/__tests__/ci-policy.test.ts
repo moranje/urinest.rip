@@ -298,6 +298,12 @@ describe("CI policy", () => {
       "npm whoami --registry",
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "/api/v1/user",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "NODE_AUTH_TOKEN",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "already exists",
     );
     expect(readFileSync(resolve("scripts/check-bundle-budget.mjs"), "utf8")).toContain(
