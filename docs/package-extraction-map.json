@@ -26,6 +26,15 @@
       "publicExportSha256": "86dec7f02c26e94e24527a3b4437b072671c7f3641993f1a76fb4d1c39478423"
     },
     {
+      "name": "@beslismodel/copd-care",
+      "sourceRoot": "packages/copd-care",
+      "destinationRoot": "packages/copd-care",
+      "packageJson": "packages/copd-care/package.json",
+      "publicExportFile": "packages/copd-care/src/index.ts",
+      "publicExportLineCount": 23,
+      "publicExportSha256": "e3223bbc9d7121ad44422eeff7bab12748e5afd7929be0017a2b350bf1fd31fe"
+    },
+    {
       "name": "@beslismodel/cvrm-prevent",
       "sourceRoot": "packages/cvrm-prevent",
       "destinationRoot": "packages/cvrm-prevent",

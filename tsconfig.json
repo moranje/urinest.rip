@@ -10,6 +10,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
+      "@beslismodel/copd-care": ["./packages/copd-care/src/index.ts"],
       "@beslismodel/cvrm-prevent": ["./packages/cvrm-prevent/src/index.ts"],
       "@beslismodel/core": ["./packages/core/src/index.ts"],
       "@beslismodel/dm-care": ["./packages/dm-care/src/index.ts"],

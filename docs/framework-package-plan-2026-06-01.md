@@ -76,7 +76,7 @@ Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buite
 
 - [x] Urinestrip consumer fixture bewijst dat een consumer lokaal calculators kan registreren via publieke core exports
 - [x] CVRM/U-Prevent calculatorpakket als consumer/domain package: `@beslismodel/cvrm-prevent` met SCORE2, SCORE2-OP en SCORE2-Diabetes uit labbie + U-Prevent testvectors; AHA PREVENT-equations nog niet aanwezig in labbie-data
-- [ ] COPD calculatorpakket als consumer/domain package
+- [x] COPD calculatorpakket als consumer/domain package: `@beslismodel/copd-care` met GOLD 2026 ABE-classificatie, officiële GOLD bronverwijzingen, testvectors en consumer-smoke via publieke exports
 - [x] DM calculatorpakket als consumer/domain package: `@beslismodel/dm-care` met HbA1c IFCC/NGSP/eAG conversie, officiële NGSP/IFCC bronverwijzing, testvectors en consumer-smoke via publieke exports
 
 ### `@beslismodel/compiler`

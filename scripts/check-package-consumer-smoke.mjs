@@ -66,6 +66,7 @@ import {
   getQuestionProgress,
 } from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
+import { createCopdCareCalculatorRegistry } from "@beslismodel/copd-care";
 import { createCvrmPreventCalculatorRegistry } from "@beslismodel/cvrm-prevent";
 import { createDmCareCalculatorRegistry } from "@beslismodel/dm-care";
 import { createManifestSnapshot } from "@beslismodel/testing";
@@ -162,6 +163,16 @@ const hba1cResult = await dmCareRegistry.run("dm.hba1c_conversion", {
 });
 if (hba1cResult.ngspPercent !== 7 || hba1cResult.eAgMmolL !== 8.6) {
   throw new Error("dm-care HbA1c conversion failed from packed consumer");
+}
+
+const copdCareRegistry = createCopdCareCalculatorRegistry();
+const goldAbeResult = await copdCareRegistry.run("copd.gold_abe", {
+  moderateExacerbationsPastYear: 1,
+  severeExacerbationsPastYear: 0,
+  catScore: 4,
+});
+if (goldAbeResult.group !== "E" || goldAbeResult.exacerbationRisk !== "elevated") {
+  throw new Error("copd-care GOLD ABE classification failed from packed consumer");
 }
 
 const progress = getQuestionProgress({
@@ -404,7 +415,7 @@ try {
   });
 
   console.log(
-    "Packed package consumer smoke passed with public @beslismodel/* imports, CVRM and DM calculators, and Urinestrip flows",
+    "Packed package consumer smoke passed with public @beslismodel/* imports, CVRM, DM and COPD calculators, and Urinestrip flows",
   );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });

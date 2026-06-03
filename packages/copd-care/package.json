@@ -1,0 +1,48 @@
+{
+  "name": "@beslismodel/copd-care",
+  "version": "0.1.0-next.0",
+  "private": false,
+  "description": "Verified COPD care calculator package with GOLD ABE classification for beslismodel consumers.",
+  "keywords": [
+    "clinical-decision-support",
+    "copd",
+    "decision-engine",
+    "gold",
+    "respiratory-care"
+  ],
+  "homepage": "https://github.com/moranje/beslismodel-framework",
+  "bugs": {
+    "url": "https://github.com/moranje/beslismodel-framework/issues"
+  },
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moranje/beslismodel-framework.git",
+    "directory": "packages/copd-care"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://git.oranje.wtf/api/packages/martien/npm/"
+  },
+  "scripts": {
+    "prepack": "npm --prefix ../.. run build:copd-care"
+  },
+  "dependencies": {
+    "@beslismodel/core": "0.1.0-next.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

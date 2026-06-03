@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      "@beslismodel/copd-care": new URL("./packages/copd-care/src/index.ts", import.meta.url)
+        .pathname,
       "@beslismodel/cvrm-prevent": new URL("./packages/cvrm-prevent/src/index.ts", import.meta.url)
         .pathname,
       "@beslismodel/core": new URL("./packages/core/src/index.ts", import.meta.url).pathname,

@@ -8,12 +8,13 @@ Initial lockstep set:
 
 - `@beslismodel/core`
 - `@beslismodel/compiler`
+- `@beslismodel/copd-care`
 - `@beslismodel/cvrm-prevent`
 - `@beslismodel/dm-care`
 - `@beslismodel/vue`
 - `@beslismodel/testing`
 
-All six packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
+All seven packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
 
 Package manifests must include:
 
@@ -46,6 +47,7 @@ Example publish order:
 ```bash
 npm publish packages/core --tag next
 npm publish packages/compiler --tag next
+npm publish packages/copd-care --tag next
 npm publish packages/cvrm-prevent --tag next
 npm publish packages/dm-care --tag next
 npm publish packages/vue --tag next
@@ -66,7 +68,7 @@ Target shape:
   smoke gates.
 - Generate package CI in the extracted target with Node `20`, `22` and `24`, package tests,
   package smoke checks, package bundle budget, npm audit and secret scan before first push.
-- Keep the initial package boundaries identical: `core`, `compiler`, `cvrm-prevent`, `dm-care`, `vue` and `testing`.
+- Keep the initial package boundaries identical: `core`, `compiler`, `copd-care`, `cvrm-prevent`, `dm-care`, `vue` and `testing`.
 - Keep `docs/package-extraction-map.json` and `check:package-extraction-map` green; it pins initial package roots, public export hashes and app-only exclusions before the sibling move.
 - Copy only framework package source, package tests, package build scripts, release docs and package CI.
 - Leave app-owned material in `urinest.rip`: YAML flows, Supabase logging/admin UI, Urinest taxonomy/icons, PWA branding, clinical Dutch copy and app config.
@@ -114,7 +116,7 @@ Before moving `urinest.rip` to registry dependencies, create clean temp consumer
 
 - run local packed-consumer smoke first: pack all framework packages, extract them into a clean
   temp consumer, import only public `@beslismodel/*` exports and run the real Urinestrip
-  runner/redirect/result checks plus CVRM SCORE2 calculator/outcome binding and DM HbA1c calculator smoke;
+  runner/redirect/result checks plus CVRM SCORE2 calculator/outcome binding, DM HbA1c calculator smoke and COPD GOLD ABE classifier smoke;
 - run local file-tarball install smoke next: install the packed framework packages through
   `file:` dependencies in a clean npm consumer, execute the installed `beslismodel` CLI and import
   only public `@beslismodel/*` exports;

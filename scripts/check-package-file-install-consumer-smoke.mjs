@@ -61,6 +61,7 @@ import {
   getQuestionProgress,
 } from "@beslismodel/core";
 import { compileFlowFiles } from "@beslismodel/compiler";
+import { createCopdCareCalculatorRegistry } from "@beslismodel/copd-care";
 import { createCvrmPreventCalculatorRegistry } from "@beslismodel/cvrm-prevent";
 import { createDmCareCalculatorRegistry } from "@beslismodel/dm-care";
 import { createManifestSnapshot } from "@beslismodel/testing";
@@ -175,6 +176,16 @@ const hba1cResult = await dmCareRegistry.run("dm.hba1c_conversion", {
 });
 if (hba1cResult.ngspPercent !== 7 || hba1cResult.eAgMmolL !== 8.6) {
   throw new Error("installed dm-care HbA1c conversion failed");
+}
+
+const copdCareRegistry = createCopdCareCalculatorRegistry();
+const goldAbeResult = await copdCareRegistry.run("copd.gold_abe", {
+  moderateExacerbationsPastYear: 1,
+  severeExacerbationsPastYear: 0,
+  catScore: 4,
+});
+if (goldAbeResult.group !== "E" || goldAbeResult.exacerbationRisk !== "elevated") {
+  throw new Error("installed copd-care GOLD ABE classification failed");
 }
 
 const createMemoryStorage = () => {
@@ -323,7 +334,7 @@ try {
   });
 
   console.log(
-    "File-tarball install consumer smoke passed with npm-installed @beslismodel/* packages, CVRM and DM calculators",
+    "File-tarball install consumer smoke passed with npm-installed @beslismodel/* packages, CVRM, DM and COPD calculators",
   );
 } finally {
   rmSync(tempDir, { recursive: true, force: true });
