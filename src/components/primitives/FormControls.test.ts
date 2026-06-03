@@ -170,13 +170,26 @@ describe("form primitives", () => {
       source.match(
         /\.checkbox-field__control:checked \+ \.checkbox-field__box\s*\{(?<body>[\s\S]*?)\n\}/,
       )?.groups?.body ?? "";
+    const focusCss =
+      source.match(
+        /\.checkbox-field__control:focus-visible \+ \.checkbox-field__box\s*\{(?<body>[\s\S]*?)\n\}/,
+      )?.groups?.body ?? "";
 
     expect(source).toContain('class="checkbox-field__box"');
+    expect(controlCss).toContain("appearance: none");
     expect(controlCss).toContain("opacity: 0");
+    expect(controlCss).toContain("border: 0");
+    expect(controlCss).toContain("outline: 0");
     expect(controlCss).not.toContain("accent-color");
+    expect(boxCss).toContain("box-shadow: none");
     expect(boxCss).not.toContain("border:");
     expect(checkedCss).toContain("background: var(--md-sys-color-primary-container)");
     expect(checkedCss).not.toContain("border:");
+    expect(focusCss).not.toContain("box-shadow");
+    expect(focusCss).not.toContain("outline");
+    expect(source).toContain(
+      ".checkbox-field:has(.checkbox-field__control:focus-visible) .checkbox-field__label",
+    );
   });
 
   it("renders radio labels and emits option value", async () => {

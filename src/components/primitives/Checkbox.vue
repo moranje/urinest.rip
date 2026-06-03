@@ -65,12 +65,15 @@ const descriptionId = computed(() => `${fieldId.value}-description`);
 }
 
 .checkbox-field__control {
+  appearance: none;
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
   width: 22px;
   height: 22px;
   margin: calc((var(--min-touch-target) - 22px) / 2);
+  border: 0;
+  outline: 0;
   opacity: 0;
   cursor: inherit;
 }
@@ -82,9 +85,10 @@ const descriptionId = computed(() => `${fieldId.value}-description`);
   margin: calc((var(--min-touch-target) - 28px) / 2);
   border-radius: var(--md-sys-shape-corner-extra-small);
   background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  box-shadow: none;
+  overflow: hidden;
   transition:
     background-color var(--motion-duration-short) var(--motion-easing-standard),
-    box-shadow var(--motion-duration-short) var(--motion-easing-standard),
     transform var(--motion-duration-short) var(--motion-easing-standard);
 }
 
@@ -115,7 +119,17 @@ const descriptionId = computed(() => `${fieldId.value}-description`);
 }
 
 .checkbox-field__control:focus-visible + .checkbox-field__box {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 36%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 56%,
+    var(--md-sys-color-on-surface) 8%
+  );
+}
+
+.checkbox-field:has(.checkbox-field__control:focus-visible) .checkbox-field__label {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .checkbox-field:active .checkbox-field__box {

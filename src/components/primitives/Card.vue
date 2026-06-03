@@ -41,7 +41,8 @@ withDefaults(
 
 .card--accent {
   background: var(--md-sys-color-surface-container-low);
-  padding: var(--spacing-lg);
+  padding-block: var(--spacing-lg);
+  padding-inline: var(--spacing-xl);
   box-shadow: inset 4px 0 0 var(--md-sys-color-primary);
 }
 </style>

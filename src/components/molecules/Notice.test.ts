@@ -68,7 +68,11 @@ describe("Notice", () => {
 
     expect(baseCss).toBeDefined();
     expect(baseCss).toContain("gap: var(--spacing-md)");
-    expect(baseCss).toContain("padding: var(--spacing-lg) var(--spacing-xl)");
+    expect(baseCss).toContain("--notice-padding-block: var(--spacing-xl)");
+    expect(baseCss).toContain("padding-block: var(--notice-padding-block)");
+    expect(baseCss).toContain("padding-inline: var(--notice-padding-inline)");
+    expect(baseCss).toContain("border: 0");
+    expect(baseCss).toContain("box-shadow: inset 4px 0 0 var(--notice-accent)");
     expect(warningCss).toBeDefined();
     expect(warningCss).toContain("--notice-bg");
     expect(warningCss).toContain("color-mix");

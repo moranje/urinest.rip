@@ -23,7 +23,8 @@ describe("Card primitive", () => {
     const source = readFileSync("src/components/primitives/Card.vue", "utf8");
     const accentCss = source.match(/\.card--accent\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
 
-    expect(accentCss).toContain("padding: var(--spacing-lg)");
+    expect(accentCss).toContain("padding-block: var(--spacing-lg)");
+    expect(accentCss).toContain("padding-inline: var(--spacing-xl)");
     expect(accentCss).toContain("box-shadow: inset 4px 0 0 var(--md-sys-color-primary)");
     expect(accentCss).not.toContain("border:");
   });

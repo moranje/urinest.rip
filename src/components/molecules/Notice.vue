@@ -58,20 +58,18 @@ const ariaLive = computed(() => {
   --notice-accent: var(--md-sys-color-primary);
   --notice-bg: var(--md-sys-color-surface-container-low);
   --notice-fg: var(--md-sys-color-on-surface);
-  --notice-border: color-mix(
-    in srgb,
-    var(--notice-accent) 28%,
-    var(--md-sys-color-outline-variant)
-  );
+  --notice-padding-block: var(--spacing-xl);
+  --notice-padding-inline: var(--spacing-xl);
 
   display: grid;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg) var(--spacing-xl);
+  padding-block: var(--notice-padding-block);
+  padding-inline: var(--notice-padding-inline);
   border-radius: var(--md-sys-shape-corner-medium);
-  border: 1px solid var(--notice-border);
-  border-left-width: 4px;
+  border: 0;
   color: var(--notice-fg);
   background: var(--notice-bg);
+  box-shadow: inset 4px 0 0 var(--notice-accent);
 }
 
 .notice__header {
@@ -142,7 +140,15 @@ const ariaLive = computed(() => {
 
 @media (max-width: 599.98px) {
   .notice {
-    padding: var(--spacing-md) var(--spacing-lg);
+    --notice-padding-block: var(--spacing-lg);
+    --notice-padding-inline: var(--spacing-lg);
+  }
+}
+
+@media (forced-colors: active) {
+  .notice {
+    border: 1px solid CanvasText;
+    box-shadow: none;
   }
 }
 </style>
