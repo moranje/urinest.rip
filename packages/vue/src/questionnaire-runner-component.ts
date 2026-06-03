@@ -21,10 +21,14 @@ export interface BeslismodelQuestionnaireRunnerSlotProps {
   readonly transition: BeslismodelRunnerTransition | null;
   readonly question: BeslismodelQuestionnaireRunnerInstance["currentQuestion"]["value"];
   readonly step: BeslismodelQuestionnaireRunnerInstance["currentStep"]["value"];
+  readonly stepQuestions: BeslismodelQuestionnaireRunnerInstance["currentStepQuestions"]["value"];
+  readonly isStepGrouped: BeslismodelQuestionnaireRunnerInstance["isCurrentStepGrouped"]["value"];
   readonly progress: BeslismodelQuestionnaireRunnerInstance["progress"]["value"];
   readonly start: (options?: StartQuestionnaireRunnerOptions) => BeslismodelRunnerTransition;
   readonly advance: (branch?: string) => BeslismodelRunnerTransition;
+  readonly advanceCurrentStep: (branch?: string) => BeslismodelRunnerTransition;
   readonly goBack: () => BeslismodelRunnerTransition;
+  readonly setAnswerForQuestion: (questionId: string, answer: unknown) => void;
   readonly selectOption: (option: BeslismodelRunnerSelectableOption) => BeslismodelRunnerTransition;
   readonly toggleOption: (
     option: BeslismodelRunnerSelectableOption,
@@ -85,7 +89,12 @@ export const QuestionnaireRunner = defineComponent({
       );
 
     const advance = (branch?: string) => emitTransition(runner.advance(branch));
+    const advanceCurrentStep = (branch?: string) =>
+      emitTransition(runner.advanceCurrentStep(branch));
     const goBack = () => emitTransition(runner.goBack());
+    const setAnswerForQuestion = (questionId: string, answer: unknown) => {
+      runner.setAnswerForQuestion(questionId, answer);
+    };
     const selectOption = (option: BeslismodelRunnerSelectableOption) =>
       emitTransition(runner.selectOption(option));
     const toggleOption = (option: BeslismodelRunnerSelectableOption) => runner.toggleOption(option);
@@ -100,15 +109,19 @@ export const QuestionnaireRunner = defineComponent({
 
     const slotProps = computed<BeslismodelQuestionnaireRunnerSlotProps>(() => ({
       advance,
+      advanceCurrentStep,
       confirmMultipleChoice,
       goBack,
+      isStepGrouped: runner.isCurrentStepGrouped.value,
       progress: runner.progress.value,
       question: runner.currentQuestion.value,
       runner,
       selectOption,
+      setAnswerForQuestion,
       start,
       state: state.value,
       step: runner.currentStep.value,
+      stepQuestions: runner.currentStepQuestions.value,
       toggleOption,
       transition: transition.value,
     }));
@@ -125,10 +138,12 @@ export const QuestionnaireRunner = defineComponent({
 
     expose({
       advance,
+      advanceCurrentStep,
       confirmMultipleChoice,
       goBack,
       runner,
       selectOption,
+      setAnswerForQuestion,
       start,
       toggleOption,
     });

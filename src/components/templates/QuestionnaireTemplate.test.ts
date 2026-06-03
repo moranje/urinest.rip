@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import QuestionnaireTemplate from "./QuestionnaireTemplate.vue";
-import type { Question, QuestionOption } from "../../types";
+import type { Answer, Question, QuestionOption } from "../../types";
 
 const options: QuestionOption[] = [
   {
@@ -94,6 +94,60 @@ const questionPanelStub = {
   `,
 };
 
+const multiInputPanelStub = {
+  props: [
+    "title",
+    "questions",
+    "answers",
+    "stepDescription",
+    "hasHistory",
+    "progressValue",
+    "progressMax",
+  ],
+  emits: ["restart", "update-answer", "submit"],
+  template: `
+    <article
+      class="multi-input-panel-stub"
+      :data-title="title"
+      :data-question-ids="questions.map((question) => question.id).join(',')"
+      :data-answer-count="Object.keys(answers).length"
+      :data-step-description="stepDescription"
+      :data-has-history="String(hasHistory)"
+      :data-progress-value="progressValue"
+      :data-progress-max="progressMax"
+    >
+      <button class="group-restart" type="button" @click="$emit('restart')">Opnieuw</button>
+      <button
+        class="group-update"
+        type="button"
+        @click="$emit('update-answer', questions[0].id, { value: '70', text: '70' })"
+      >
+        Update
+      </button>
+      <button class="group-submit" type="button" @click="$emit('submit')">Verder</button>
+    </article>
+  `,
+};
+
+const groupQuestions: Question[] = [
+  {
+    id: "q-leeftijd",
+    text: "Leeftijd",
+    type: "number",
+    options: [],
+  },
+  {
+    id: "q-roken",
+    text: "Rookt de patiënt?",
+    type: "boolean",
+    options: [],
+  },
+];
+
+const groupAnswers: Record<string, Answer> = {
+  "q-leeftijd": { value: "70", text: "70" },
+};
+
 const infoPopoverStub = {
   props: ["activeOptionId", "html", "popoverStyle"],
   emits: ["cancelClose", "scheduleClose", "close"],
@@ -138,6 +192,7 @@ function mountTemplate(
     global: {
       stubs: {
         InfoPopover: infoPopoverStub,
+        MultiInputPanel: multiInputPanelStub,
         QuestionPanel: questionPanelStub,
         Skeleton: skeletonStub,
         Transition: false,
@@ -187,6 +242,32 @@ describe("QuestionnaireTemplate", () => {
     expect(popover.attributes("data-active-option-id")).toBe("o-ja");
     expect(popover.attributes("data-html")).toBe("<p>Optie-uitleg</p>");
     expect(popover.attributes("style")).toContain("left: 10px");
+  });
+
+  it("renders grouped multi-input steps and relays group events", async () => {
+    const wrapper = mountTemplate({
+      groupAnswers,
+      groupQuestions,
+      groupTitle: "CVRM risicogegevens",
+      isGroupedStep: true,
+    });
+    const panel = wrapper.get(".multi-input-panel-stub");
+
+    expect(panel.attributes("data-title")).toBe("CVRM risicogegevens");
+    expect(panel.attributes("data-question-ids")).toBe("q-leeftijd,q-roken");
+    expect(panel.attributes("data-answer-count")).toBe("1");
+    expect(wrapper.find(".question-panel-stub").exists()).toBe(false);
+
+    await wrapper.get(".group-restart").trigger("click");
+    await wrapper.get(".group-update").trigger("click");
+    await wrapper.get(".group-submit").trigger("click");
+
+    expect(wrapper.emitted("restart")).toHaveLength(1);
+    expect(wrapper.emitted("updateGroupAnswer")?.[0]).toEqual([
+      "q-leeftijd",
+      { value: "70", text: "70" },
+    ]);
+    expect(wrapper.emitted("submitGroup")).toHaveLength(1);
   });
 
   it("renders result-pending state when loaded without current question", () => {

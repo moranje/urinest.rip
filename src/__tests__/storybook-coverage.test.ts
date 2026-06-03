@@ -63,6 +63,11 @@ const requiredStoryContracts = [
     exports: ["SingleSelect", "MultiSelectLongCopy"],
   },
   {
+    file: "src/stories/MultiInputPanel.stories.ts",
+    title: 'title: "Organisms/MultiInputPanel"',
+    exports: ["CvrmInputs", "Incomplete", "LongClinicalLabels"],
+  },
+  {
     file: "src/stories/ResultTemplate.stories.ts",
     title: 'title: "Templates/ResultTemplate"',
     exports: ["TreatmentResult", "LongClinicalCopy"],
@@ -96,7 +101,9 @@ describe("storybook coverage", () => {
         "SegmentedControl.stories.ts",
       ]),
     );
-    expect(stories).toEqual(expect.arrayContaining(["QuestionPanel.stories.ts"]));
+    expect(stories).toEqual(
+      expect.arrayContaining(["QuestionPanel.stories.ts", "MultiInputPanel.stories.ts"]),
+    );
     expect(stories).toEqual(
       expect.arrayContaining(["ResultTemplate.stories.ts", "LandingTemplate.stories.ts"]),
     );

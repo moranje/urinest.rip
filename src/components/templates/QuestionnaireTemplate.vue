@@ -19,31 +19,45 @@
         </div>
       </Card>
       <Transition v-else name="question-fade" mode="out-in">
-        <QuestionPanel
-          v-if="question"
-          :key="question.id"
-          :question="question"
-          :step-description="stepDescription"
-          :description-html="descriptionHtml"
-          :has-history="hasHistory"
-          :progress-value="progressValue"
-          :progress-max="progressMax"
-          :progress-label="progressLabel"
-          :progress-text="progressText"
-          :selected-option-ids="selectedOptionIds"
-          :selected-count="selectedCount"
-          :has-selected-options="hasSelectedOptions"
-          :multi-select="multiSelect"
-          :non-touch="nonTouch"
-          :active-popover-option-id="activePopoverOptionId"
-          @restart="emit('restart')"
-          @choose="emit('choose', $event)"
-          @show-popover="(option, event) => emit('showPopover', option, event)"
-          @toggle-popover="(option, event) => emit('togglePopover', option, event)"
-          @schedule-popover-close="emit('schedulePopoverClose')"
-          @close-popover="emit('closePopover')"
-          @confirm="emit('confirm')"
-        />
+        <div v-if="question" :key="panelKey" class="questionnaire-template__panel">
+          <MultiInputPanel
+            v-if="isGroupedStep"
+            :title="groupTitle || question.text"
+            :questions="groupQuestions"
+            :answers="groupAnswers"
+            :step-description="stepDescription"
+            :has-history="hasHistory"
+            :progress-value="progressValue"
+            :progress-max="progressMax"
+            @restart="emit('restart')"
+            @update-answer="(questionId, answer) => emit('updateGroupAnswer', questionId, answer)"
+            @submit="emit('submitGroup')"
+          />
+          <QuestionPanel
+            v-else
+            :question="question"
+            :step-description="stepDescription"
+            :description-html="descriptionHtml"
+            :has-history="hasHistory"
+            :progress-value="progressValue"
+            :progress-max="progressMax"
+            :progress-label="progressLabel"
+            :progress-text="progressText"
+            :selected-option-ids="selectedOptionIds"
+            :selected-count="selectedCount"
+            :has-selected-options="hasSelectedOptions"
+            :multi-select="multiSelect"
+            :non-touch="nonTouch"
+            :active-popover-option-id="activePopoverOptionId"
+            @restart="emit('restart')"
+            @choose="emit('choose', $event)"
+            @show-popover="(option, event) => emit('showPopover', option, event)"
+            @toggle-popover="(option, event) => emit('togglePopover', option, event)"
+            @schedule-popover-close="emit('schedulePopoverClose')"
+            @close-popover="emit('closePopover')"
+            @confirm="emit('confirm')"
+          />
+        </div>
         <div v-else class="questionnaire-template__pending">
           <div class="questionnaire-template__spinner motion-spin" />
           Resultaat bepalen...
@@ -63,16 +77,22 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import InfoPopover from "../molecules/InfoPopover.vue";
+import MultiInputPanel from "../organisms/MultiInputPanel.vue";
 import QuestionPanel from "../organisms/QuestionPanel.vue";
 import Card from "../primitives/Card.vue";
 import Skeleton from "../primitives/Skeleton.vue";
-import type { PopoverStyle, Question, QuestionOption } from "../../types";
+import type { Answer, AnswerValue, PopoverStyle, Question, QuestionOption } from "../../types";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isLoading: boolean;
     question?: Question | null;
+    groupQuestions?: readonly Question[];
+    groupAnswers?: Readonly<Record<string, Answer | undefined>>;
+    groupTitle?: string;
+    isGroupedStep?: boolean;
     stepDescription?: string;
     descriptionHtml?: string;
     hasHistory: boolean;
@@ -91,6 +111,10 @@ withDefaults(
   }>(),
   {
     question: null,
+    groupQuestions: () => [],
+    groupAnswers: () => ({}),
+    groupTitle: "",
+    isGroupedStep: false,
     stepDescription: "",
     descriptionHtml: "",
     activePopoverOptionId: null,
@@ -99,9 +123,17 @@ withDefaults(
   },
 );
 
+const panelKey = computed(() =>
+  props.isGroupedStep
+    ? `group-${props.groupQuestions.map((question) => question.id).join("-")}`
+    : `question-${props.question?.id ?? "pending"}`,
+);
+
 const emit = defineEmits<{
   restart: [];
   choose: [option: QuestionOption];
+  updateGroupAnswer: [questionId: string, answer: AnswerValue];
+  submitGroup: [];
   showPopover: [option: QuestionOption, event: MouseEvent | FocusEvent];
   togglePopover: [option: QuestionOption, event: MouseEvent | FocusEvent];
   schedulePopoverClose: [];
@@ -164,6 +196,13 @@ const emit = defineEmits<{
   border: 2px solid var(--md-sys-color-outline-variant);
   border-top-color: var(--md-sys-color-primary);
   border-radius: var(--md-sys-shape-corner-full);
+}
+
+.questionnaire-template__panel {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .question-fade-enter-active {

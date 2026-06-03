@@ -2,6 +2,10 @@
   <QuestionnaireTemplate
     :is-loading="isLoading"
     :question="currentQuestion"
+    :group-questions="isCurrentStepGrouped ? currentStepQuestions : []"
+    :group-answers="groupAnswers"
+    :group-title="currentStep?.title ?? currentQuestion?.text ?? ''"
+    :is-grouped-step="isCurrentStepGrouped"
     :step-description="currentStep?.description"
     :description-html="compiledMarkdown(currentQuestion?.description)"
     :has-history="hasHistory"
@@ -19,6 +23,8 @@
     :popover-style="popoverStyle"
     @restart="restartQuestionnaire"
     @choose="isMultiSelect ? toggleOption($event) : selectOption($event)"
+    @update-group-answer="updateGroupAnswer"
+    @submit-group="submitGroupedStep"
     @show-popover="showPopover"
     @toggle-popover="togglePopover"
     @schedule-popover-close="schedulePopoverClose"
@@ -55,7 +61,7 @@ import {
 import { appendStoredRedirectTrail, clearStoredRedirectTrail } from "../lib/redirect-trail";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { useRoleStore } from "../store/roleStore";
-import type { QuestionOption as QuestionOptionData, AnswerValue } from "../types";
+import type { Answer, QuestionOption as QuestionOptionData, AnswerValue } from "../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -75,9 +81,11 @@ const {
   currentQuestionId,
   currentQuestion,
   currentStep,
+  currentStepQuestions,
   hasHistory,
   hasSelectedOptions,
   isMultiSelect,
+  isCurrentStepGrouped,
   findNextQuestionId,
   progress,
   questionnaire,
@@ -85,9 +93,11 @@ const {
   replaceHistory,
   resetNavigation,
   selectedCount,
+  setAnswerForQuestion,
   setCurrentQuestion,
   start: startQuestionnaire,
   advance: advanceQuestion,
+  advanceCurrentStep,
 } = runner;
 
 const {
@@ -114,6 +124,14 @@ const selectedOptionIds = computed(
       .filter((option) => isOptionSelected(option))
       .map((option) => option.id) ?? [],
 );
+
+const groupAnswers = computed<Record<string, Answer | undefined>>(() => {
+  const entries = currentStepQuestions.value.map((question) => [
+    question.id,
+    questionnaireStore.getAnswer(props.id, question.id),
+  ]);
+  return Object.fromEntries(entries);
+});
 
 // --- Lifecycle Hooks ---
 
@@ -208,7 +226,9 @@ const loadStateAndDetermineStart = async (options: { reset?: boolean } = {}): Pr
     });
     syncQuestionRoute(transition.questionId, "replace");
   } else if (transition.type === "complete") {
-    nextTick(() => determineResult({ backTarget: "/" }));
+    nextTick(() => {
+      void determineResult({ backTarget: "/" });
+    });
   }
 };
 
@@ -265,7 +285,7 @@ const syncQuestionRoute = (questionId: string | null, mode: QuestionRouteMode): 
   });
 };
 
-const advanceQuestionState = (branch?: string): void => {
+const advanceQuestionState = (branch?: string, mode: "question" | "step" = "question"): void => {
   const previousQuestionId = currentQuestionId.value;
   if (previousQuestionId) {
     recordFlowStep({
@@ -277,9 +297,9 @@ const advanceQuestionState = (branch?: string): void => {
       role: roleStore.role,
     });
   }
-  const transition = advanceQuestion(branch);
+  const transition = mode === "step" ? advanceCurrentStep(branch) : advanceQuestion(branch);
   if (transition.type === "complete") {
-    determineResult();
+    void determineResult();
     return;
   }
   if (transition.type === "question") {
@@ -302,7 +322,7 @@ const goToNextQuestion = (branch?: string): void => {
   advanceQuestionState(branch);
 };
 
-const determineResult = (options: { backTarget?: string } = {}): void => {
+const determineResult = async (options: { backTarget?: string } = {}): Promise<void> => {
   if (isNavigating.value) return;
   isNavigating.value = true;
 
@@ -315,10 +335,11 @@ const determineResult = (options: { backTarget?: string } = {}): void => {
     }
 
     answers = questionnaireStore.getAllAnswersForQuestionnaire(props.id);
-    const resolvedOutcome = questionnaireStore.determineOutcomeForPath(
+    const resolvedOutcome = await questionnaireStore.determineOutcomeForPathWithCalculators(
       props.id,
       answers,
       fullQuestionnaire.resultsLogic,
+      fullQuestionnaire.calculations,
     );
     outcome = resolvedOutcome.outcome;
 
@@ -464,6 +485,19 @@ const confirmMultipleChoice = (): void => {
   goToNextQuestion();
 };
 
+const updateGroupAnswer = (questionId: string, answer: AnswerValue): void => {
+  setAnswerForQuestion(questionId, answer);
+};
+
+const submitGroupedStep = (): void => {
+  breadcrumbClick("question-group-confirmed", {
+    flowId: props.id,
+    questionIds: currentStepQuestions.value.map((question) => question.id),
+    role: roleStore.role,
+  });
+  advanceQuestionState("group", "step");
+};
+
 const isOptionSelected = (option: QuestionOptionData): boolean => {
   return runner.isOptionSelected(option);
 };
@@ -481,7 +515,7 @@ const handleKeyDown = (e: KeyboardEvent): void => {
     }
   }
 
-  if (!currentQuestion.value?.options) return;
+  if (isCurrentStepGrouped.value || !currentQuestion.value?.options) return;
   const key = e.key.toUpperCase();
   if (key.length === 1 && key >= "A" && key <= "Z") {
     const index = key.charCodeAt(0) - 65;

@@ -1,6 +1,7 @@
 import {
   findNextQuestionId as findNextQuestionIdCore,
   getQuestionProgress,
+  validateConditions,
   type ManifestQuestion,
   type ManifestStep,
   type QuestionProgress,
@@ -124,6 +125,20 @@ export function useQuestionnaireRunner<
     )?.id;
     return stepId ? (store.getStepById(stepId) ?? null) : null;
   });
+  const currentStepQuestions = computed(() => {
+    if (!currentStep.value) return [];
+    const answers = store.getEnhancedAnswers(questionnaireId.value);
+    return currentStep.value.questionIds
+      .map((questionId) => store.getQuestionById(questionId))
+      .filter((question): question is Question => {
+        if (!question) return false;
+        return validateConditions(answers, question.conditions).isValid;
+      });
+  });
+  const isCurrentStepGrouped = computed(() => {
+    const inputMode = currentStep.value?.metadata?.inputMode;
+    return inputMode === "group" && currentStepQuestions.value.length > 1;
+  });
   const hasHistory = computed(() => questionHistory.value.length > 0);
   const isMultiSelect = computed(() => {
     const type = currentQuestion.value?.type;
@@ -201,6 +216,11 @@ export function useQuestionnaireRunner<
     answerRevision.value += 1;
   };
 
+  const setAnswerForQuestion = (questionId: string, answer: Answer): void => {
+    store.setAnswer(questionnaireId.value, questionId, answer);
+    answerRevision.value += 1;
+  };
+
   const start = (
     startOptions: StartQuestionnaireRunnerOptions = {},
   ): BeslismodelRunnerTransition => {
@@ -243,6 +263,19 @@ export function useQuestionnaireRunner<
     const previousQuestionId = currentQuestionId.value;
     pushHistory(previousQuestionId);
     currentQuestionId.value = findNextQuestionId(previousQuestionId);
+    return transitionFor(currentQuestionId.value, previousQuestionId, branch);
+  };
+
+  const advanceCurrentStep = (branch?: string): BeslismodelRunnerTransition => {
+    if (!fullQuestionnaire.value) {
+      return { type: "missing", questionnaireId: questionnaireId.value };
+    }
+
+    const previousQuestionId = currentQuestionId.value;
+    pushHistory(previousQuestionId);
+    const stepQuestions = currentStepQuestions.value;
+    const lastStepQuestionId = stepQuestions.at(-1)?.id ?? previousQuestionId;
+    currentQuestionId.value = findNextQuestionId(lastStepQuestionId);
     return transitionFor(currentQuestionId.value, previousQuestionId, branch);
   };
 
@@ -311,17 +344,20 @@ export function useQuestionnaireRunner<
 
   return {
     advance,
+    advanceCurrentStep,
     confirmMultipleChoice,
     currentAnswer,
     currentQuestion,
     currentQuestionId,
     currentStep,
+    currentStepQuestions,
     findNextQuestionId,
     fullQuestionnaire,
     goBack,
     hasHistory,
     hasSelectedOptions,
     isMultiSelect,
+    isCurrentStepGrouped,
     isOptionSelected,
     progress,
     pushHistory,
@@ -332,6 +368,7 @@ export function useQuestionnaireRunner<
     resetNavigation,
     selectedCount,
     setCurrentQuestion,
+    setAnswerForQuestion,
     selectOption,
     start,
     toggleOption,

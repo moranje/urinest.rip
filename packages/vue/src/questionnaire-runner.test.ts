@@ -62,6 +62,51 @@ const createStore = (
   }),
 });
 
+const createGroupedStore = (
+  answers: Record<string, TestAnswer | TestAnswer[]> = {},
+): BeslismodelQuestionnaireRunnerStore<TestAnswer | TestAnswer[]> => {
+  const groupedQuestions = [
+    { id: "q-age", text: "Leeftijd", type: "number", options: [] },
+    { id: "q-smoker", text: "Roker", type: "boolean", options: [] },
+    { id: "q-review", text: "Controle", type: "select", options: [] },
+  ];
+  const groupedSteps = [
+    {
+      id: "step-cvrm-inputs",
+      title: "CVRM risicogegevens",
+      questionIds: ["q-age", "q-smoker"],
+      metadata: { inputMode: "group" },
+    },
+    { id: "step-review", questionIds: ["q-review"] },
+  ];
+  const groupedQuestionnaire = {
+    id: "cvrm",
+    version: "1",
+    questionIds: ["q-age", "q-smoker", "q-review"],
+    stepIds: ["step-cvrm-inputs", "step-review"],
+  };
+  const groupedFullQuestionnaire = {
+    ...groupedQuestionnaire,
+    questions: groupedQuestions,
+    steps: groupedSteps,
+  };
+
+  return {
+    getAllAnswersForQuestionnaire: vi.fn(() => answers),
+    getAnswer: vi.fn((_questionnaireId: string, questionId: string) => answers[questionId]),
+    getEnhancedAnswers: vi.fn(() => answers),
+    getFullQuestionnaire: vi.fn(() => groupedFullQuestionnaire),
+    getQuestionById: vi.fn((questionId: string) =>
+      groupedQuestions.find((question) => question.id === questionId),
+    ),
+    getQuestionnaireById: vi.fn(() => groupedQuestionnaire),
+    getStepById: vi.fn((stepId: string) => groupedSteps.find((step) => step.id === stepId)),
+    setAnswer: vi.fn((_: string, questionId: string, answer: TestAnswer | TestAnswer[]) => {
+      answers[questionId] = answer;
+    }),
+  };
+};
+
 describe("useQuestionnaireRunner", () => {
   it("starts at the first visible question and reports progress", () => {
     const runner = useQuestionnaireRunner(createStore(), { questionnaireId: "example-flow" });
@@ -117,6 +162,37 @@ describe("useQuestionnaireRunner", () => {
     });
     expect(runner.questionHistory.value).toEqual(["q1", "q2"]);
     expect(runner.hasHistory.value).toBe(true);
+  });
+
+  it("groups multiple input questions and advances to the next step at once", () => {
+    const answers: Record<string, TestAnswer | TestAnswer[]> = {};
+    const runner = useQuestionnaireRunner(createGroupedStore(answers), { questionnaireId: "cvrm" });
+
+    expect(runner.start()).toEqual({
+      previousQuestionId: null,
+      questionId: "q-age",
+      type: "question",
+    });
+    expect(runner.currentStep.value?.id).toBe("step-cvrm-inputs");
+    expect(runner.currentStepQuestions.value.map((question) => question.id)).toEqual([
+      "q-age",
+      "q-smoker",
+    ]);
+    expect(runner.isCurrentStepGrouped.value).toBe(true);
+
+    runner.setAnswerForQuestion("q-age", { value: "68", text: "68" });
+    runner.setAnswerForQuestion("q-smoker", { value: "false", text: "Nee" });
+
+    expect(runner.advanceCurrentStep("group")).toEqual({
+      branch: "group",
+      previousQuestionId: "q-age",
+      questionId: "q-review",
+      type: "question",
+    });
+    expect(answers).toMatchObject({
+      "q-age": { value: "68", text: "68" },
+      "q-smoker": { value: "false", text: "Nee" },
+    });
   });
 
   it("goes back through question history", () => {
@@ -220,6 +296,50 @@ describe("QuestionnaireRunner", () => {
       branch: "o_show",
       previousQuestionId: "q1",
       questionId: "q2",
+      type: "question",
+    });
+  });
+
+  it("exposes grouped step controls to consumer-owned UI", async () => {
+    const answers: Record<string, TestAnswer | TestAnswer[]> = {};
+    const wrapper = mount(QuestionnaireRunner, {
+      props: {
+        store: createGroupedStore(answers),
+        questionnaireId: "cvrm",
+      },
+      slots: {
+        question: `
+          <template #question="{ isStepGrouped, stepQuestions, setAnswerForQuestion, advanceCurrentStep }">
+            <button
+              class="group"
+              :data-grouped="String(isStepGrouped)"
+              :data-questions="stepQuestions.map((question) => question.id).join(',')"
+              @click="
+                setAnswerForQuestion('q-age', { value: '68', text: '68' });
+                setAnswerForQuestion('q-smoker', { value: 'false', text: 'Nee' });
+                advanceCurrentStep('group');
+              "
+            >
+              Vul CVRM in
+            </button>
+          </template>
+        `,
+      },
+    });
+
+    expect(wrapper.get(".group").attributes("data-grouped")).toBe("true");
+    expect(wrapper.get(".group").attributes("data-questions")).toBe("q-age,q-smoker");
+
+    await wrapper.get(".group").trigger("click");
+
+    expect(answers).toMatchObject({
+      "q-age": { value: "68", text: "68" },
+      "q-smoker": { value: "false", text: "Nee" },
+    });
+    expect(wrapper.emitted("transition")?.at(-1)?.[0]).toEqual({
+      branch: "group",
+      previousQuestionId: "q-age",
+      questionId: "q-review",
       type: "question",
     });
   });
