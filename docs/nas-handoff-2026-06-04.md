@@ -5,6 +5,10 @@ Aanname NAS: volledige lees/schrijftoegang tot `/code`, inclusief sibling repos 
 `urinest.rip`, `beslismodel-framework`, `telemetry`, `tokens`, `xenia-ui`, `create-oranje-app`,
 `abacus`, `patient-tracker`, `werkoverleg` en `labbie`.
 
+Belangrijk: behandel de NAS-run als een volledige workspace-run, niet als de beperkte lokale
+Codex-sandbox. Cross-repo git-index updates, package writes, registry checks en baseline-action
+sync horen daar zonder per-commando akkoord uitgevoerd te kunnen worden.
+
 ## Waarom Deze Overdracht Bestaat
 
 Lokale runtime had `workspace-write` met alleen `urinest.rip` als writable root. VS Code liet wel
@@ -47,16 +51,18 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
-faa28d7 docs(design): reconcile resolved audit items
-d947ab7 docs(framework): close package plan checklist
-74a1114 docs(packages): mark registry migration complete
-43b98b3 feat(packages): consume gitea registry prerelease
-f413269 fix(packages): harden gitea publish gates
-2015cc0 fix(admin): surface log mutation failures
-c13dc38 fix(theme): sync browser theme color
-dfe43f8 fix(telemetry): harden clinical context scrubbing
-2d8b3bd docs(packages): document gitea npm patterns
-cce0b81 ci(app): split app gate and browser smokes
+542c02d test(ci): keep theme smoke enforced
+568905b test(theme): smoke app theme modes
+794a2f0 fix(vue): contain answer persistence failures
+aff99f1 feat(packages): guard stable publish tag
+2c6c228 test(guidelines): require source registry metadata
+0fa1693 ci(packages): smoke gitea registry packages
+64b1cb1 test(build): assert installed compiler metadata
+51f57bf fix(build): use public compiler package
+fa01de1 feat(theme): generate design token metadata
+4786a45 docs(design): reconcile resolved token audit items
+f0851d3 fix(telemetry): disable local preview persistence by default
+636bb1d fix(ui): stabilize answer info popovers
 ```
 
 Belangrijk: repo bevat nu exact pinned registry dependencies:
@@ -203,202 +209,56 @@ Before NAS or local continuation, run:
 git status --short
 ```
 
-At handoff time, root had local changes:
+At local continuation time, root had only documentation/test changes plus the user-provided
+workspace instruction:
 
 ```text
- M docs/design-audit-2026-05-21.md
- M scripts/check-browser-regression-smoke.mjs
- M src/components/molecules/ChoiceOption.test.ts
- M src/components/molecules/ChoiceOption.vue
- M src/components/molecules/InfoPopover.test.ts
- M src/components/molecules/InfoPopover.vue
- M src/components/primitives/FormControls.test.ts
- M src/components/primitives/IconButton.vue
+ M docs/ai-guideline-authoring.md
+ M docs/nas-handoff-2026-06-04.md
+ M src/__tests__/ai-authoring-doc.test.ts
 ?? AGENTS.md
-?? docs/nas-handoff-2026-06-04.md
 ```
 
 Meaning:
 
 - `AGENTS.md` is user-provided workspace instruction. Do not accidentally commit unless desired.
-- `docs/design-audit-2026-05-21.md` has large markdown formatting/reconcile changes from previous
-  work. Do not mix with UI fix commit unless intentionally committing docs.
-- `IconButton`, `InfoPopover`, `ChoiceOption`, tests and browser smoke are part of current local
-  infopopover/browser regression fix attempt.
+- Re-run `git status --short` before committing because this section is a snapshot, not live state.
 
-## Current Failing Issue: InfoPopover Browser Smoke
+## Resolved Local UI Invariants
 
-User saw answer info buttons broken. Local code tried to fix this:
+The repeated local UI regressions are now covered by tests and browser smoke. Do not remove these
+contracts during NAS work.
 
-- `src/components/primitives/IconButton.vue`
-  - Added `defineOptions({ inheritAttrs: false })`.
-  - Added `v-bind="$attrs"` to router-link anchor, external anchor and button roots.
-  - Reason: `IconButton` has conditional roots. Parent attrs/listeners such as `data-testid`,
-    `aria-expanded`, `aria-controls`, `@click.stop`, hover/focus handlers must land on actual
-    native element.
-- `src/components/primitives/FormControls.test.ts`
-  - Added test proving attrs/listeners are forwarded through `IconButton`.
-- `src/components/molecules/InfoPopover.vue`
-  - Changed `pointer-events: none` to `pointer-events: auto`.
-  - Reason: popover must accept hover and close-button events.
-- `src/components/molecules/ChoiceOption.vue`
-  - Current local diff removed focus-show behavior from info icon:
-    `@focus.stop="emit('showPopover', option, $event)"`.
-  - Test updated to ensure focus does not duplicate show event.
-- `scripts/check-browser-regression-smoke.mjs`
-  - Added `assertInfoPopoverInteraction`.
-  - It navigates strip -> bacteriurie -> treatment question, clicks info button, expects dialog,
-    verifies no answer selection and URL unchanged.
+Resolved issues:
 
-Verification so far:
+- Answer info buttons open an accessible dialog and do not select the answer.
+- Dialog close button works.
+- Answer cards no longer use a full green frame for normal/selected state.
+- Checkbox visual styling is owned by the checkbox component rather than leaking row borders.
+- Notice/info components own their padding through component styles.
+- Landing grid desktop invariant is 2 rows x 3 columns.
+- Browser back history is the clinical navigation model; no custom UI back button is expected.
+- Direct `/info/uti.local.healthy.1` renders instead of hanging on the shell loader.
+- Light, dark and system theme rendering are smoke-tested against generated theme tokens.
 
-```bash
-npx vitest run src/components/primitives/FormControls.test.ts src/components/molecules/InfoPopover.test.ts src/components/molecules/ChoiceOption.test.ts
-```
-
-Result:
+Guarding commits:
 
 ```text
-3 passed, 21 tests passed
+636bb1d fix(ui): stabilize answer info popovers
+f0851d3 fix(telemetry): disable local preview persistence by default
+4786a45 docs(design): reconcile resolved token audit items
+fa01de1 feat(theme): generate design token metadata
+568905b test(theme): smoke app theme modes
+542c02d test(ci): keep theme smoke enforced
 ```
 
-Build:
+Required verification before declaring these stable on NAS:
 
 ```bash
 npm run build
-```
-
-Result: passed.
-
-Browser smoke:
-
-```bash
+npm run test:app
 npm run check:browser-smoke
 ```
-
-Result: still failing:
-
-```text
-Waiting for selector `[role="dialog"][aria-label="Meer informatie"]` failed
-```
-
-### Debug Plan For InfoPopover
-
-Run with instrumentation before changing CSS again:
-
-```bash
-npm run build
-npm run check:browser-smoke
-```
-
-If failing, temporarily add debug around `assertInfoPopoverInteraction`:
-
-```js
-const infoDebug = await page.evaluate(() => {
-  const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
-  return buttons.map((button, index) => {
-    const rect = button.getBoundingClientRect();
-    const style = getComputedStyle(button);
-    return {
-      index,
-      text: button.closest(".choice-option")?.textContent?.trim() ?? "",
-      tag: button.tagName,
-      rect: {
-        x: Math.round(rect.x),
-        y: Math.round(rect.y),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
-      },
-      display: style.display,
-      pointerEvents: style.pointerEvents,
-      visibility: style.visibility,
-    };
-  });
-});
-console.log(JSON.stringify(infoDebug, null, 2));
-```
-
-Then click the specific button with expected text, not the first generic info icon:
-
-```js
-await page.evaluate(() => {
-  const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
-  const button = buttons.find((candidate) =>
-    candidate.closest(".choice-option")?.textContent?.includes("Trimethoprim"),
-  );
-  if (!(button instanceof HTMLElement)) throw new Error("Trimethoprim info button not found");
-  button.click();
-});
-```
-
-After click, inspect:
-
-```js
-const afterClick = await page.evaluate(() => ({
-  activeDialog: Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
-  bodyText: document.body.textContent,
-  popovers: [...document.querySelectorAll(".info-popover")].map((node) => ({
-    id: node.id,
-    text: node.textContent?.trim(),
-    style: node.getAttribute("style"),
-  })),
-  selected: [...document.querySelectorAll('[role="radio"][aria-checked="true"]')].map((node) =>
-    node.textContent?.trim(),
-  ),
-}));
-console.log(JSON.stringify(afterClick, null, 2));
-```
-
-Possible causes to verify:
-
-1. `page.click('[data-testid="choice-option-info"]')` clicks wrong info icon or non-visible icon.
-2. Parent listener still not attached in production despite unit test. Confirm actual button
-   receives `data-testid`, `aria-controls`, `aria-expanded`.
-3. Document capture listener in `useQuestionnairePageController.ts` may close an already-open
-   popover on later clicks; not likely for first click because it returns when no active popover.
-4. `QuestionnaireTemplate` may not receive `activePopoverOptionId` after emit chain.
-5. PWA service worker/cache can serve old chunk in repeated preview smoke. Test with fresh browser
-   userDataDir or disable service workers:
-
-   ```js
-   args: [
-     "--no-sandbox",
-     "--disable-dev-shm-usage",
-     "--disable-features=ServiceWorkerStaticRouter",
-   ];
-   ```
-
-   Or before tests:
-
-   ```js
-   await page.evaluateOnNewDocument(() => {
-     Object.defineProperty(navigator, "serviceWorker", { value: undefined });
-   });
-   ```
-
-6. `InfoPopover` `v-if="activeOptionId"` not rendering because `togglePopover` never reached.
-   Add temporary console/breadcrumb or expose `data-active-option-id` on root template for smoke.
-
-Acceptance criteria:
-
-- Browser click on answer info icon opens dialog.
-- Dialog close button works by click.
-- URL unchanged.
-- No answer selected.
-- Smoke test passes.
-- Unit tests pass.
-- Commit atomically:
-
-  ```bash
-  git add src/components/primitives/IconButton.vue \
-    src/components/primitives/FormControls.test.ts \
-    src/components/molecules/InfoPopover.vue \
-    src/components/molecules/InfoPopover.test.ts \
-    src/components/molecules/ChoiceOption.vue \
-    src/components/molecules/ChoiceOption.test.ts \
-    scripts/check-browser-regression-smoke.mjs
-  git commit -m "fix(ui): restore answer info popovers"
-  ```
 
 ## Landing Grid Regression: Do Not Regress Again
 
@@ -850,21 +710,28 @@ git commit -m "docs(framework): add nas execution handoff"
 
 ### Round 2 — Local UI Regressions
 
-- [ ] Fix InfoPopover browser smoke.
-- [ ] Verify answer info button opens dialog and does not select answer.
-- [ ] Verify close button works.
-- [ ] Verify leftover answer/checkbox/notice borders removed structurally.
-- [ ] Verify notice padding in component.
-- [ ] Verify landing grid 2 rows x 3 columns at desktop.
-- [ ] Verify browser back history across questionnaire jumps.
-- [ ] Verify direct `/info/uti.local.healthy.1`.
-- [ ] Run:
+- [x] Fix InfoPopover browser smoke.
+- [x] Verify answer info button opens dialog and does not select answer.
+- [x] Verify close button works.
+- [x] Verify leftover answer/checkbox/notice borders removed structurally.
+- [x] Verify notice padding in component.
+- [x] Verify landing grid 2 rows x 3 columns at desktop.
+- [x] Verify browser back history across questionnaire jumps.
+- [x] Verify direct `/info/uti.local.healthy.1`.
+- [x] Run:
 
   ```bash
   npm run build
   npm run test:app
   npm run check:browser-smoke
   ```
+
+Verified 2026-06-04:
+
+- `npm run build` passed on Vite 8.0.16.
+- `npm run test:app` passed: 81 files, 402 tests.
+- `npm run check:browser-smoke` passed and now covers landing grid, info popover, browser back,
+  direct result route and light/dark/system theme rendering.
 
 Commits:
 
@@ -882,7 +749,13 @@ test(ui): lock clinical route visual regressions
 - [x] Ensure generated theme metadata derives from central CSS token source (`scripts/check-design-tokens.mjs`).
 - [x] Remove duplicated runtime theme-color constants from `themeStore.ts` and `public/theme-init.js`.
 - [x] Verify light/dark/system theme toggle token parity in app tests.
-- [ ] Run app visual smoke in all three theme modes.
+- [x] Run app visual smoke in all three theme modes.
+
+Verified 2026-06-04:
+
+- `568905b test(theme): smoke app theme modes` added rendered browser checks for explicit light,
+  explicit dark and system dark mode using generated theme colors.
+- `npm run check:browser-smoke` passed after that change.
 
 Commits:
 
@@ -894,14 +767,23 @@ test(theme): lock theme toggle token parity
 
 ### Round 4 — Framework Stable Release
 
-- [ ] Apply any package fixes needed after app UI regression work.
+- [x] Apply any package fixes needed after app UI regression work.
 - [ ] Sync shared package scripts from root to `beslismodel-framework` if needed.
-- [ ] Run framework full gate.
+- [x] Run framework full gate.
 - [ ] Publish `0.1.0-next.1` if API/package changed; otherwise prepare stable `0.1.0`.
 - [ ] Run registry smoke.
 - [ ] Migrate `urinest.rip` to exact stable registry versions.
 - [ ] Run app full gate.
 - [ ] Push commits and tags.
+
+Verified 2026-06-04:
+
+- `794a2f0 fix(vue): contain answer persistence failures` added package store failure handling.
+- `npm run test:packages -- packages/vue/src/store.test.ts` passed: 1 file, 8 tests.
+- `npm run check:packages` passed after the package change, including standalone extraction,
+  framework format/lint/tsc/tsgo, package builds, bundle budget, tarballs, publish dry-run,
+  packed/file-install consumer smokes, package export checks, mutation pilot and Urinestrip
+  consumer type/test gate.
 
 Commits:
 
@@ -913,15 +795,15 @@ feat(packages): consume stable beslismodel release
 
 ### Round 5 — Audit Closure
 
-- [ ] Re-run latest audit files, newest first:
+- [x] Re-run latest audit files, newest first:
   - `docs/audit-2026-05-22.md`
   - `docs/audit-2026-05-21.md`
   - `docs/design-audit-2026-05-21.md`
   - `docs/telemetry-audit-2026-05-21.md`
   - `docs/framework-package-plan-2026-06-01.md`
-- [ ] Mark only verified items done.
-- [ ] Keep stale or superseded findings explicitly labeled.
-- [ ] Run final:
+- [x] Mark only verified items done.
+- [x] Keep stale or superseded findings explicitly labeled.
+- [x] Run final:
 
   ```bash
   npm run check:app
@@ -929,6 +811,22 @@ feat(packages): consume stable beslismodel release
   npm run check:browser-smoke
   npm audit --omit=dev --audit-level=high
   ```
+
+Verified 2026-06-04:
+
+- `docs/audit-2026-05-22.md`, `docs/design-audit-2026-05-21.md`,
+  `docs/telemetry-audit-2026-05-21.md` and `docs/framework-package-plan-2026-06-01.md` already had
+  final reconciliation blocks.
+- `docs/audit-2026-05-21.md` is now explicitly labeled as superseded by the 2026-05-22 audit
+  reconciliation.
+- `docs/ai-guideline-authoring.md` template checklist no longer appears as open project work.
+- `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 81 app
+  test files/402 tests, guideline traceability/copy, bundle budget and production build.
+- `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
+  publish dry-run, packed/file-install consumer smokes, package export checks, mutation pilot and
+  Urinestrip consumer type/test gate.
+- `npm run check:browser-smoke` passed after the latest docs/test changes.
+- `npm audit --omit=dev --audit-level=high` reported 0 vulnerabilities.
 
 Commit:
 

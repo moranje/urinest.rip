@@ -429,7 +429,7 @@ Examples:
 
 ## Done Criteria
 
-- [x] Alle checklistitems hierboven afgevinkt of vervangen door concreter item; hercontrole op 2026-06-04 met `rg -- "- [ ]" docs/framework-package-plan-2026-06-01.md`.
+- [x] Alle checklistitems hierboven afgevinkt of vervangen door concreter item; hercontrole op 2026-06-04 met `rg -- "- \\[ \\]" docs/framework-package-plan-2026-06-01.md`.
 - [x] AI-agents hebben een gedetailleerde authoring-guide voor nieuwe richtlijnwebsites en domeinpakketten.
 - [x] Urinestrip fixture werkt als package consumer.
 - [x] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.

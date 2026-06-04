@@ -7,6 +7,9 @@ describe("AI guideline authoring documentation", () => {
   it("documents evidence, role, language, telemetry and validation requirements", () => {
     for (const requiredPhrase of [
       "Geen klinische claim komt in de UI zonder bronverdediging.",
+      "Per-Domein Acceptatiechecklisttemplate",
+      "geen open",
+      "projectstatus voor deze repo",
       "Question Defense Matrix",
       "authoringContract: guideline-v1",
       "`publisher`",

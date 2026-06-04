@@ -510,28 +510,32 @@ Rapporteer gaps als blokkerend. Gebruik geen algemene uitspraak als 'conform ric
 zonder bron-ID en concrete claim.
 ```
 
-## Acceptatiechecklist
+## Per-Domein Acceptatiechecklisttemplate
 
-- [ ] Bronregister compleet met versies, URLs, beperkingen en reviewdatums.
-- [ ] Iedere vraag heeft een Question Defense Matrix-record.
-- [ ] Iedere antwoordoptie heeft bron, betekenis, veilige route en testdekking.
-- [ ] Iedere info-knop heeft reden, tekst, rollen en bron.
-- [ ] Iedere zichtbare claim heeft bronverdediging.
-- [ ] Iedere resultkaart heeft HTTPS-bronlinks.
-- [ ] Iedere redirect is inhoudelijk verantwoord.
-- [ ] Role Responsibility Matrix dekt arts, triagist, doktersassistent, verpleegkundige, POH en
-      domeinspecifieke rollen.
-- [ ] Rolschakelaar toont alleen verantwoordelijkheid-passende vragen en acties.
-- [ ] Geen rol krijgt behandeladvies buiten verantwoordelijkheid.
-- [ ] Gebruikerstaal is getest op ambiguiteit en onnodig jargon.
-- [ ] Calculators zitten in domeinpackages, niet in core.
-- [ ] Calculatorinputs hebben bron, eenheid, validatierange en tests.
-- [ ] Telemetry bevat geen PHI, ruwe antwoorden of calculatorinputs.
-- [ ] Storage bevat geen PHI en heeft configureerbare keys/TTL waar nodig.
-- [ ] Compiler en traceability-gate zijn groen.
-- [ ] Role/context matrix tests zijn groen.
-- [ ] A11y en keyboardroute zijn gecontroleerd.
-- [ ] Klinisch eigenaar heeft scope, bronnen, vragen, resultaten en beperkingen goedgekeurd.
+Deze lijst is een template voor iedere nieuwe richtlijn of behandelprotocol. Het is geen open
+projectstatus voor deze repo; kopieer de items naar het domeindossier en vink ze daar af met
+bronverwijzingen, testnamen en klinische eigenaar.
+
+- Bronregister compleet met versies, URLs, beperkingen en reviewdatums.
+- Iedere vraag heeft een Question Defense Matrix-record.
+- Iedere antwoordoptie heeft bron, betekenis, veilige route en testdekking.
+- Iedere info-knop heeft reden, tekst, rollen en bron.
+- Iedere zichtbare claim heeft bronverdediging.
+- Iedere resultkaart heeft HTTPS-bronlinks.
+- Iedere redirect is inhoudelijk verantwoord.
+- Role Responsibility Matrix dekt arts, triagist, doktersassistent, verpleegkundige, POH en
+  domeinspecifieke rollen.
+- Rolschakelaar toont alleen verantwoordelijkheid-passende vragen en acties.
+- Geen rol krijgt behandeladvies buiten verantwoordelijkheid.
+- Gebruikerstaal is getest op ambiguiteit en onnodig jargon.
+- Calculators zitten in domeinpackages, niet in core.
+- Calculatorinputs hebben bron, eenheid, validatierange en tests.
+- Telemetry bevat geen PHI, ruwe antwoorden of calculatorinputs.
+- Storage bevat geen PHI en heeft configureerbare keys/TTL waar nodig.
+- Compiler en traceability-gate zijn groen.
+- Role/context matrix tests zijn groen.
+- A11y en keyboardroute zijn gecontroleerd.
+- Klinisch eigenaar heeft scope, bronnen, vragen, resultaten en beperkingen goedgekeurd.
 
 ## Blokkerende Rode Vlaggen
 
