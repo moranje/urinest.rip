@@ -29,6 +29,7 @@ sync vroegen vaak akkoord. NAS-run moet dit oplossen door volledige `/code` toeg
    ```
 
    Enige match was unrelated: `abacus/Financien/Waarnemers-contact-preview.md`.
+
 3. `docs/framework-package-plan-2026-06-01.md`.
 4. `docs/package-release-strategy.md`.
 5. `docs/gitea-package-publishing.md`.
@@ -360,7 +361,11 @@ Possible causes to verify:
    userDataDir or disable service workers:
 
    ```js
-   args: ["--no-sandbox", "--disable-dev-shm-usage", "--disable-features=ServiceWorkerStaticRouter"]
+   args: [
+     "--no-sandbox",
+     "--disable-dev-shm-usage",
+     "--disable-features=ServiceWorkerStaticRouter",
+   ];
    ```
 
    Or before tests:
@@ -545,8 +550,8 @@ Relevant files:
 Smoke asserts:
 
 ```js
-progress.ariaLabel === "Indicatieve voortgang door vragenlijst"
-progress.text === ""
+progress.ariaLabel === "Indicatieve voortgang door vragenlijst";
+progress.text === "";
 ```
 
 Future smarter option:
@@ -686,8 +691,9 @@ Remaining package-quality gap from agent audit:
 
 - Strong CSS variables exist.
 - `light-dark()` tokens exist.
-- DTCG JSON/component-token export not complete.
-- `themeStore.ts`, `public/theme-init.js` and tests may still duplicate theme-color hex values.
+- DTCG-compatible JSON export now exists for the web runtime (`src/styles/beslismodel.tokens.json`).
+- Component-token distribution is still intentionally light; most UI consumes semantic tokens directly.
+- `themeStore.ts`, `public/theme-init.js`, Vite PWA config and tests now share generated theme metadata via `public/theme-tokens.js` and `src/styles/themeColors.ts`.
 
 NAS cross-repo task:
 
@@ -705,11 +711,12 @@ Expected design architecture:
 - theme toggle reads/writes one centralized model
 - PWA theme-color uses same tokens or a generated map
 
-Possible deliverable:
+Delivered in `urinest.rip`:
 
-- `tokens` repo exports DTCG JSON.
-- `urinest.rip` consumes generated CSS or typed token metadata.
-- `public/theme-init.js`, `themeStore.ts`, tests share generated theme-color constants.
+- `src/styles/tokens.css` remains runtime source-of-truth.
+- `scripts/check-design-tokens.mjs` generates/checks `src/styles/beslismodel.tokens.json`.
+- `scripts/check-design-tokens.mjs` generates/checks `public/theme-tokens.js`.
+- `public/theme-init.js`, `themeStore.ts`, Vite PWA manifest config and tests consume/check generated theme-color metadata.
 
 Commit split:
 
@@ -866,11 +873,11 @@ test(ui): lock clinical route visual regressions
 ### Round 3 — Cross-Repo Token/Theme Architecture
 
 - [ ] Inspect `tokens`, `xenia-ui`, `create-oranje-app`.
-- [ ] Decide source of truth for DTCG tokens.
-- [ ] Generate or import DTCG token JSON.
-- [ ] Ensure CSS variables derive from central token source.
-- [ ] Remove duplicated theme-color constants.
-- [ ] Verify light/dark/system theme toggle.
+- [x] Decide source of truth for app token export: `src/styles/tokens.css` is runtime source; DTCG JSON is generated parity artefact.
+- [x] Generate DTCG-compatible token JSON (`src/styles/beslismodel.tokens.json`).
+- [x] Ensure generated theme metadata derives from central CSS token source (`scripts/check-design-tokens.mjs`).
+- [x] Remove duplicated runtime theme-color constants from `themeStore.ts` and `public/theme-init.js`.
+- [x] Verify light/dark/system theme toggle token parity in app tests.
 - [ ] Run app visual smoke in all three theme modes.
 
 Commits:
@@ -985,4 +992,3 @@ NAS environment is better for:
 - checking `telemetry`, `tokens`, `xenia-ui`, `create-oranje-app`
 - baseline action integration
 - broad audit closure across repos
-

@@ -164,6 +164,7 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:tsgo");
     expect(packageJson.engines?.node).toBe(">=20.19.0");
     expect(packageJson.scripts["check:app"]).toContain("build:flows");
+    expect(packageJson.scripts["check:app"]).toContain("check:design-tokens");
     expect(packageJson.scripts["check:app"]).toContain("format:check");
     expect(packageJson.scripts["check:app"]).toContain("lint:all");
     expect(packageJson.scripts["check:app"]).toContain("check:guidelines");

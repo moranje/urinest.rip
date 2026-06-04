@@ -23,17 +23,17 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 
 ## Huidige Score
 
-| Domein            | Huidig | Target | Belangrijkste gap                                                     |
-| ----------------- | -----: | -----: | --------------------------------------------------------------------- |
-| Architectuur      |  3.2/5 |  4.8/5 | App-, store-, router- en frameworklogica zitten door elkaar           |
-| Package readiness |  1.5/5 |  4.8/5 | Geen exports, package boundaries, library build, consumer fixture     |
-| Compiler/schema   |  2.5/5 |  4.9/5 | Build errors worden geslikt; random rule IDs; type drift              |
-| UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet   |
-| Design tokens     |  4.0/5 |  4.8/5 | Sterke CSS tokens, geen DTCG/component-token export                   |
-| Telemetry         |  3.7/5 |  4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt                 |
-| Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken |
-| Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite      |
-| Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken  |
+| Domein            | Huidig | Target | Belangrijkste gap                                                                        |
+| ----------------- | -----: | -----: | ---------------------------------------------------------------------------------------- |
+| Architectuur      |  3.2/5 |  4.8/5 | App-, store-, router- en frameworklogica zitten door elkaar                              |
+| Package readiness |  1.5/5 |  4.8/5 | Geen exports, package boundaries, library build, consumer fixture                        |
+| Compiler/schema   |  2.5/5 |  4.9/5 | Build errors worden geslikt; random rule IDs; type drift                                 |
+| UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet                      |
+| Design tokens     |  4.4/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export; component-token distributie nog beperkt |
+| Telemetry         |  3.7/5 |  4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt                                    |
+| Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken                    |
+| Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite                         |
+| Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken                     |
 
 ## Kritieke Bevindingen Uit Agent-Ronde
 

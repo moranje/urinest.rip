@@ -1,11 +1,15 @@
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { decisionEngine } from "./scripts/flow-compiler.mjs";
 import viteCompression from "vite-plugin-compression";
 import { VitePWA } from "vite-plugin-pwa";
 
+const require = createRequire(import.meta.url);
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
+const designTokens = require("./src/styles/beslismodel.tokens.json");
+const themeTokens = designTokens.$extensions["wtf.oranje.beslismodel"].theme;
 
 export default defineConfig({
   build: {
@@ -30,8 +34,8 @@ export default defineConfig({
         name: "urinest.rip — Beslishulp urineonderzoek",
         short_name: "urinest.rip",
         description: "Beslishulp urineonderzoek voor huisartsen",
-        theme_color: "#16a34a",
-        background_color: "#fdfcff",
+        theme_color: themeTokens.themeColor.light,
+        background_color: themeTokens.backgroundColor.light,
         display: "standalone",
         start_url: "/",
         icons: [

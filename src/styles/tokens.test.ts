@@ -11,6 +11,10 @@ function read(path: string): string {
   return readFileSync(resolve(repoRoot, path), "utf8");
 }
 
+function readJson<T>(path: string): T {
+  return JSON.parse(read(path)) as T;
+}
+
 function walk(dir: string): string[] {
   return readdirSync(resolve(repoRoot, dir)).flatMap((entry) => {
     const absolute = resolve(repoRoot, dir, entry);
@@ -50,10 +54,88 @@ describe("design tokens", () => {
       ...walk("src/styles"),
       ...walk(".storybook"),
     ].filter((file) => !file.endsWith("src/styles/tokens.css"));
-    const checkedFiles = files.filter((file) => !file.endsWith("src/styles/tokens.test.ts"));
+    const checkedFiles = files.filter(
+      (file) =>
+        !file.endsWith("src/styles/tokens.test.ts") &&
+        !file.endsWith("src/styles/beslismodel.tokens.json"),
+    );
     const offenders = checkedFiles.filter((file) => colorLiteral.test(read(file)));
 
     expect(offenders).toEqual([]);
+  });
+
+  it("keeps the generated DTCG export and theme bootstrap metadata in sync", () => {
+    type ThemeMode = "dark" | "light";
+    type TokenExport = {
+      $extensions: {
+        "wtf.oranje.beslismodel": {
+          generatedBy: string;
+          skippedCssVariables: string[];
+          source: string;
+          specification: string;
+          theme: {
+            backgroundColor: Record<ThemeMode, string>;
+            themeColor: Record<ThemeMode, string>;
+          };
+        };
+      };
+      md: {
+        ref: {
+          palette: {
+            clinical: { green: Record<string, { $value: { hex: string } }> };
+          };
+        };
+        sys: {
+          color: {
+            background: Record<ThemeMode, { $value: string }>;
+            primary: {
+              container: Record<ThemeMode, { $value: string }>;
+            } & Record<ThemeMode, { $value: string }>;
+          };
+        };
+      };
+    };
+
+    const tokenExport = readJson<TokenExport>("src/styles/beslismodel.tokens.json");
+    const extension = tokenExport.$extensions["wtf.oranje.beslismodel"];
+    const themeScript = read("public/theme-tokens.js");
+    const themeInit = read("public/theme-init.js");
+    const index = read("index.html");
+    const themeColors = read("src/styles/themeColors.ts");
+    const themeStore = read("src/store/themeStore.ts");
+    const viteConfig = read("vite.config.js");
+
+    expect(extension.generatedBy).toBe("scripts/check-design-tokens.mjs");
+    expect(extension.source).toBe("src/styles/tokens.css");
+    expect(extension.specification).toBe("https://www.designtokens.org/TR/2025.10/format/");
+    expect(extension.skippedCssVariables).not.toContain("--md-sys-color-primary");
+    expect(extension.skippedCssVariables).not.toContain("--md-ref-palette-clinical-green-40");
+    expect(tokenExport.md.ref.palette.clinical.green["40"].$value.hex).toBe("#16a34a");
+    expect(tokenExport.md.ref.palette.clinical.green["30"].$value.hex).toBe("#005a2b");
+    expect(tokenExport.md.sys.color.primary.light.$value).toBe(
+      "{md.ref.palette.clinical.green.40}",
+    );
+    expect(tokenExport.md.sys.color.primary.container.dark.$value).toBe(
+      "{md.ref.palette.clinical.green.30}",
+    );
+    expect(extension.theme).toEqual({
+      backgroundColor: { dark: "#1a1c1e", light: "#fcfcff" },
+      themeColor: { dark: "#005a2b", light: "#16a34a" },
+    });
+    expect(themeScript).toContain("window.__BESLISMODEL_THEME_TOKENS__");
+    expect(themeScript).toContain('light: "#16a34a"');
+    expect(themeScript).toContain('dark: "#005a2b"');
+    expect(themeInit).toContain("window.__BESLISMODEL_THEME_TOKENS__");
+    expect(themeInit).not.toContain("#16a34a");
+    expect(themeInit).not.toContain("#005a2b");
+    expect(index).toContain('src="/theme-tokens.js"');
+    expect(index.indexOf('src="/theme-tokens.js"')).toBeLessThan(
+      index.indexOf('src="/theme-init.js"'),
+    );
+    expect(themeColors).toContain("beslismodel.tokens.json");
+    expect(themeStore).toContain('from "../styles/themeColors"');
+    expect(viteConfig).toContain("themeTokens.themeColor.light");
+    expect(viteConfig).toContain("themeTokens.backgroundColor.light");
   });
 
   it("keeps legacy md component classes out of runtime UI", () => {

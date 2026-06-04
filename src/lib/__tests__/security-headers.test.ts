@@ -29,15 +29,21 @@ describe("security headers", () => {
 
   it("keeps index free of inline scripts and inline event handlers", () => {
     const index = read("index.html");
+    const themeTokens = read("public/theme-tokens.js");
     const themeInit = read("public/theme-init.js");
 
+    expect(index).toContain('src="/theme-tokens.js"');
     expect(index).toContain('src="/theme-init.js"');
     expect(index).not.toMatch(/<script>\s*\(function/);
     expect(index).not.toContain("onload=");
+    expect(themeTokens).toContain("window.__BESLISMODEL_THEME_TOKENS__");
+    expect(themeTokens).toContain("#16a34a");
+    expect(themeTokens).toContain("#005a2b");
     expect(themeInit).toContain("localStorage.getItem");
+    expect(themeInit).toContain("window.__BESLISMODEL_THEME_TOKENS__");
     expect(themeInit).toContain("data-theme");
     expect(themeInit).toContain("theme-color");
-    expect(themeInit).toContain("#16a34a");
-    expect(themeInit).toContain("#005a2b");
+    expect(themeInit).not.toContain("#16a34a");
+    expect(themeInit).not.toContain("#005a2b");
   });
 });

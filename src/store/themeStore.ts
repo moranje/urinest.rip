@@ -3,13 +3,10 @@ import { computed, ref } from "vue";
 import type { ThemePreference } from "../types";
 import { handleError } from "../lib/errors";
 import { readStorage, writeStorage } from "../lib/storage";
+import { THEME_COLORS } from "../styles/themeColors";
 
 const STORAGE_KEY = "urinest-theme";
 const QUERY = "(prefers-color-scheme: dark)";
-const THEME_COLORS = {
-  dark: "#005a2b",
-  light: "#16a34a",
-} as const;
 
 function readStoredTheme(): ThemePreference {
   const value = readStorage("local", STORAGE_KEY);

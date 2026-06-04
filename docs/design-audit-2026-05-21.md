@@ -26,20 +26,20 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 
 ## Context Summary
 
-| Aspect                | Detail                                                                                                                                                                                                                                                        |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Framework**         | Vue 3.5.24, Vue Router 4.6, Pinia 3.0, Vite 7.2                                                                                                                                                                                                               |
-| **Styling**           | Plain CSS scoped per component + `src/styles/tokens.css`, `themes.css`, `components.css`, `main.css`                                                                                                                                                          |
-| **Design tokens**     | MD3-stijl CSS custom properties (`--md-sys-*` + eigen `--spacing-*`, `--motion-*`, `--z-*`). Geen DTCG-JSON, geen Style Dictionary, geen primitive-laag (`--color-green-500`)                                                                                 |
-| **Component library** | Eigen primitives: Button, Badge, Card, ProgressBar, Skeleton, BackButton (`src/components/primitives/`). Geen Radix / Headless UI                                                                                                                             |
-| **Icon set**          | Inline SVG-paths (mix Lucide-stijl + Material Icons). Geen single-source iconset; SVG-illustraties als losse `*Svg.vue` componenten                                                                                                                           |
-| **Dark mode**         | 3-state theme toggle (light/dark/system), bootstrap-script, `data-theme` override en `light-dark()` semantic tokens                                                                                                                                           |
-| **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief (toegevoegd in commit `3fca561`), `axe-core` + `vitest-axe` voor unit-tests (`src/components/primitives/a11y.test.ts`). Geen runtime axe in CI                                                                     |
-| **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                             |
-| **Storybook**         | v9 met `@storybook/vue3-vite`, stories voor 6 primitives + DesignTokens-showcase, CI-build step toegevoegd                                                                                                                                                    |
-| **Lighthouse**        | Niet gedraaid in deze sessie — `lighthouse` CLI niet geïnstalleerd, npx-fallback geblokkeerd (sandbox + tijdsbudget). Hergebruik 2026-05-03 desktop scores (Perf 98-100, A11y 100, BP 100) als indicatief; nieuwe a11y-fixes maken regressie onwaarschijnlijk |
-| **CWV**               | Niet vers gemeten; vorige meting LCP <1s desktop, <2.5s mobile (PWA, vooraf gecachte JSON-flow)                                                                                                                                                               |
-| **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                        |
+| Aspect                | Detail                                                                                                                                                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework**         | Vue 3.5.24, Vue Router 4.6, Pinia 3.0, Vite 7.2                                                                                                                                                                                                                        |
+| **Styling**           | Plain CSS scoped per component + `src/styles/tokens.css`, `motion.css` en `main.css`                                                                                                                                                                                   |
+| **Design tokens**     | MD3-stijl CSS custom properties (`--md-ref-*`, `--md-sys-*` + eigen `--spacing-*`, `--motion-*`, `--z-*`) met gegenereerde DTCG-compatible export (`src/styles/beslismodel.tokens.json`) en theme bootstrap (`public/theme-tokens.js`). Geen Style Dictionary-pipeline |
+| **Component library** | Eigen primitives: Button, Badge, Card, ProgressBar, Skeleton, BackButton (`src/components/primitives/`). Geen Radix / Headless UI                                                                                                                                      |
+| **Icon set**          | Inline SVG-paths (mix Lucide-stijl + Material Icons). Geen single-source iconset; SVG-illustraties als losse `*Svg.vue` componenten                                                                                                                                    |
+| **Dark mode**         | 3-state theme toggle (light/dark/system), bootstrap-script, `data-theme` override en `light-dark()` semantic tokens                                                                                                                                                    |
+| **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief (toegevoegd in commit `3fca561`), `axe-core` + `vitest-axe` voor unit-tests (`src/components/primitives/a11y.test.ts`). Geen runtime axe in CI                                                                              |
+| **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                                      |
+| **Storybook**         | v9 met `@storybook/vue3-vite`, stories voor 6 primitives + DesignTokens-showcase, CI-build step toegevoegd                                                                                                                                                             |
+| **Lighthouse**        | Niet gedraaid in deze sessie — `lighthouse` CLI niet geïnstalleerd, npx-fallback geblokkeerd (sandbox + tijdsbudget). Hergebruik 2026-05-03 desktop scores (Perf 98-100, A11y 100, BP 100) als indicatief; nieuwe a11y-fixes maken regressie onwaarschijnlijk          |
+| **CWV**               | Niet vers gemeten; vorige meting LCP <1s desktop, <2.5s mobile (PWA, vooraf gecachte JSON-flow)                                                                                                                                                                        |
+| **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                                 |
 
 ---
 
@@ -114,7 +114,7 @@ Drie grote thema's:
 
 | #           | Dimensie                          | Score           | Delta      | Notes                                                                                                                                                        |
 | ----------- | --------------------------------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1           | Design Tokens & Centralisatie     | **3.5**         | =          | MD3-tokens zijn gecentraliseerd met `light-dark()` en cascade layers; DTCG/primitive-exportlaag ontbreekt nog                                                |
+| 1           | Design Tokens & Centralisatie     | **4.2**         | ▲ +0.7     | MD3-tokens zijn gecentraliseerd met `light-dark()`, cascade layers en gegenereerde DTCG-compatible export; Style Dictionary/Figma-pipeline ontbreekt nog     |
 | 2           | Component Architectuur            | **4.0**         | ▲ +1.5     | 6 primitives met variant-API, a11y-tests, Storybook. Question-options nog niet uitgepakt naar `QuestionOption.vue`                                           |
 | 3           | Accessibility (WCAG 2.2 AA)       | **4.0**         | ▲ +2.0     | Skip-link, h1, Space-toets, aria-checked, forced-colors, eslint-plugin-vuejs-accessibility, axe-core in primitives-tests. Mist: runtime axe in CI            |
 | 4           | Motion & Microinteracties         | **4.5**         | ▲ +1.0     | View Transitions API, `view-transition-name`, reduced-motion overal, OfflineBanner motion. Mist: spring-physics voor primary feedback                        |
@@ -124,29 +124,30 @@ Drie grote thema's:
 | 8           | Forms & Input UX                  | **3.0**         | ▲ +0.5     | AdminLogin nog steeds enige echte form; Button primitive met loading/disabled/aria-busy is nu form-ready. Geen passkey, geen autocomplete-audit deze sessie  |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
 | 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en theme toggle aanwezig; platformvalidatie blijft vervolgpunt             |
-| **Overall** |                                   | **4.0/5 (80%)** | **▲ +0.9** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
+| **Overall** |                                   | **4.1/5 (82%)** | **▲ +1.0** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
-**Gewogen** (Dim 5+6 dubbel voor clinical): (3.5 + 4 + 4 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3 + 4 + 3.5) ÷ 12 = **4.04 / 5.00** ✅
+**Gewogen** (Dim 5+6 dubbel voor clinical): (4.2 + 4 + 4 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3 + 4 + 3.5) ÷ 12 = **4.10 / 5.00** ✅
 
 ---
 
 ## Per-Dimensie Analyse
 
-### 1. Design Tokens & Centralisatie — 3.5/5
+### 1. Design Tokens & Centralisatie — 4.2/5
 
 **Strengths:**
 
 - MD3-tokens volledig in `src/styles/tokens.css:1-147` (kleuren, typografie, elevation, shape, state-layers, spacing, motion, z-index)
-- Dark-theme override in `src/styles/themes.css:1-55` met FOUC-prevent in `index.html:8-13`
+- Dark/light/system thema loopt via `light-dark()` tokens, `data-theme` override en FOUC-prevent scripts in `index.html`
 - 0 hardcoded hex in components (StripSvg fix uit vorige cycle gehouden — grep src/ excl logger/tokens = 0)
 - Breakpoint-tokens toegevoegd in commit `747e7c6 feat(styles): design tokens, breakpoint system en motion-utility uitbreiding`
+- DTCG-compatible exchange export aanwezig: `src/styles/beslismodel.tokens.json`, bewaakt door `npm run check:design-tokens` en opgenomen in `check:app`
+- Theme bootstrap gebruikt gegenereerde metadata: `public/theme-tokens.js`, `public/theme-init.js`, `src/styles/themeColors.ts`, `src/store/themeStore.ts` en `vite.config.js` delen dezelfde waarden
 
 **Remaining issues:**
 
-- Geen primitive-laag (`--color-green-500` → `--md-sys-color-primary` ladder ontbreekt) — alle tokens direct semantisch
-- 0 DTCG-JSON / Style Dictionary; tokens niet exporteerbaar voor Figma
+- Geen Style Dictionary/Figma-pipeline; de DTCG-compatible JSON is een web exchange artefact, geen volledige design-tool distributie
+- Component-token export is beperkt; componenten consumeren grotendeels semantische tokens rechtstreeks
 - `--md-sys-color-warning` is eigen extensie buiten MD3-standaard — markeer dat in docs
-- DTCG/Style Dictionary-export ontbreekt nog; tokens zijn wel centraal via `light-dark()` en cascade layers
 
 ### 2. Component Architectuur — 4.0/5
 
@@ -324,7 +325,7 @@ Drie grote thema's:
 
 - Platformvalidatie blijft beperkt tot statische checks en browser-smoke; aparte Windows High Contrast/manual device smoke ontbreekt nog
 - Geen speculation-rules of INP/LCP CI-meting gekoppeld aan route-overgangen
-- Theme toggle en `light-dark()` zijn aanwezig, maar design-token export naar Figma/DTCG ontbreekt nog
+- Theme toggle en `light-dark()` zijn aanwezig; DTCG-compatible web export is aanwezig, maar Figma/Style-Dictionary distributie ontbreekt nog
 - Mobile-vs-desktop tile-layout pas net gefixt (commit `5a33a2e fix(landing): square mobile tiles without row overlap`)
 - `accent-color: var(--color-brand)` op `:root` niet bevestigd
 
@@ -581,13 +582,14 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 | 8. Forms                       | 2.5                 | 3.0             | ▲ +0.5      |
 | 9. Performance                 | 4.0                 | 4.0             | =           |
 | 10. Responsive/Dark            | 3.0                 | 3.5             | ▲ +0.5      |
-| **Overall (gewogen clinical)** | **3.13**            | **4.04**        | **▲ +0.91** |
+| **Overall (gewogen clinical)** | **3.13**            | **4.10**        | **▲ +0.97** |
 
-Sprong van **3.13 → 4.04** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
+Sprong van **3.13 → 4.10** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
 
 ## Resolution Update — 2026-06-04
 
 - [x] Theme toggle is volledig gekoppeld aan centrale theme tokens en synchroniseert browser/PWA `theme-color` vóór en na Vue-hydration (`public/theme-init.js`, `src/store/themeStore.ts`).
 - [x] Moderne tokenpunten uit deze audit zijn gereconcilieerd: `@layer` staat in `src/styles/main.css`, `light-dark()` semantic tokens staan in `src/styles/tokens.css`, en `svh`/`dvh`/`lvh` viewport-units staan in `src/components/templates/PageShell.vue`.
+- [x] DTCG-compatible design-token export is aanwezig en bewaakt in `check:app` (`src/styles/beslismodel.tokens.json`, `scripts/check-design-tokens.mjs`); `public/theme-tokens.js`, `themeStore.ts` en `vite.config.js` gebruiken dezelfde gegenereerde theme metadata.
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.

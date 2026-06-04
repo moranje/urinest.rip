@@ -1,0 +1,2858 @@
+{
+  "$description": "Generated DTCG-compatible exchange export for beslismodel web runtime tokens. CSS remains runtime source; this file is checked for parity.",
+  "$extensions": {
+    "wtf.oranje.beslismodel": {
+      "generatedBy": "scripts/check-design-tokens.mjs",
+      "source": "src/styles/tokens.css",
+      "specification": "https://www.designtokens.org/TR/2025.10/format/",
+      "skippedCssVariables": [
+        "--md-sys-elevation-0",
+        "--md-sys-elevation-1",
+        "--md-sys-elevation-2",
+        "--md-sys-elevation-3",
+        "--spacing-md",
+        "--spacing-lg",
+        "--spacing-xl",
+        "--spacing-xxl",
+        "--safe-top",
+        "--safe-bottom",
+        "--safe-left",
+        "--safe-right"
+      ],
+      "theme": {
+        "backgroundColor": {
+          "dark": "#1a1c1e",
+          "light": "#fcfcff"
+        },
+        "themeColor": {
+          "dark": "#005a2b",
+          "light": "#16a34a"
+        }
+      }
+    }
+  },
+  "md": {
+    "ref": {
+      "palette": {
+        "clinical": {
+          "green": {
+            "10": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-10",
+                  "cssValue": "#052e16"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0.0196, 0.1804, 0.0863],
+                "hex": "#052e16"
+              }
+            },
+            "20": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-20",
+                  "cssValue": "#003d1a"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0, 0.2392, 0.102],
+                "hex": "#003d1a"
+              }
+            },
+            "30": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-30",
+                  "cssValue": "#005a2b"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0, 0.3529, 0.1686],
+                "hex": "#005a2b"
+              }
+            },
+            "40": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-40",
+                  "cssValue": "#16a34a"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0.0863, 0.6392, 0.2902],
+                "hex": "#16a34a"
+              }
+            },
+            "80": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-80",
+                  "cssValue": "#86efac"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0.5255, 0.9373, 0.6745],
+                "hex": "#86efac"
+              }
+            },
+            "90": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-clinical-green-90",
+                  "cssValue": "#dcfce7"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0.8627, 0.9882, 0.9059],
+                "hex": "#dcfce7"
+              }
+            }
+          }
+        },
+        "secondary": {
+          "10": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-10",
+                "cssValue": "#101c2b"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.0627, 0.1098, 0.1686],
+              "hex": "#101c2b"
+            }
+          },
+          "20": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-20",
+                "cssValue": "#253140"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1451, 0.1922, 0.251],
+              "hex": "#253140"
+            }
+          },
+          "30": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-30",
+                "cssValue": "#3b4858"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.2314, 0.2824, 0.3451],
+              "hex": "#3b4858"
+            }
+          },
+          "40": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-40",
+                "cssValue": "#535f70"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.3255, 0.3725, 0.4392],
+              "hex": "#535f70"
+            }
+          },
+          "80": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-80",
+                "cssValue": "#bbc7db"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.7333, 0.7804, 0.8588],
+              "hex": "#bbc7db"
+            }
+          },
+          "90": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-secondary-90",
+                "cssValue": "#d7e3f7"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.8431, 0.8902, 0.9686],
+              "hex": "#d7e3f7"
+            }
+          }
+        },
+        "tertiary": {
+          "10": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-10",
+                "cssValue": "#251431"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1451, 0.0784, 0.1922],
+              "hex": "#251431"
+            }
+          },
+          "20": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-20",
+                "cssValue": "#3b2948"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.2314, 0.1608, 0.2824],
+              "hex": "#3b2948"
+            }
+          },
+          "30": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-30",
+                "cssValue": "#523f5f"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.3216, 0.2471, 0.3725],
+              "hex": "#523f5f"
+            }
+          },
+          "40": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-40",
+                "cssValue": "#6b5778"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.4196, 0.3412, 0.4706],
+              "hex": "#6b5778"
+            }
+          },
+          "80": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-80",
+                "cssValue": "#d6bee4"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.8392, 0.7451, 0.8941],
+              "hex": "#d6bee4"
+            }
+          },
+          "90": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-tertiary-90",
+                "cssValue": "#f2daff"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.949, 0.8549, 1],
+              "hex": "#f2daff"
+            }
+          }
+        },
+        "red": {
+          "20": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-20",
+                "cssValue": "#410002"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.2549, 0, 0.0078],
+              "hex": "#410002"
+            }
+          },
+          "30": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-30",
+                "cssValue": "#690005"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.4118, 0, 0.0196],
+              "hex": "#690005"
+            }
+          },
+          "35": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-35",
+                "cssValue": "#93000a"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.5765, 0, 0.0392],
+              "hex": "#93000a"
+            }
+          },
+          "40": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-40",
+                "cssValue": "#ba1a1a"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.7294, 0.102, 0.102],
+              "hex": "#ba1a1a"
+            }
+          },
+          "80": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-80",
+                "cssValue": "#ffb4ab"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [1, 0.7059, 0.6706],
+              "hex": "#ffb4ab"
+            }
+          },
+          "90": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-red-90",
+                "cssValue": "#ffdad6"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [1, 0.8549, 0.8392],
+              "hex": "#ffdad6"
+            }
+          }
+        },
+        "amber": {
+          "20": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-amber-20",
+                "cssValue": "#422006"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.2588, 0.1255, 0.0235],
+              "hex": "#422006"
+            }
+          },
+          "30": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-amber-30",
+                "cssValue": "#713f12"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.4431, 0.2471, 0.0706],
+              "hex": "#713f12"
+            }
+          },
+          "40": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-amber-40",
+                "cssValue": "#ca8a04"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.7922, 0.5412, 0.0157],
+              "hex": "#ca8a04"
+            }
+          },
+          "80": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-amber-80",
+                "cssValue": "#fde047"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9922, 0.8784, 0.2784],
+              "hex": "#fde047"
+            }
+          },
+          "90": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-amber-90",
+                "cssValue": "#fef9c3"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9961, 0.9765, 0.7647],
+              "hex": "#fef9c3"
+            }
+          }
+        },
+        "neutral": {
+          "0": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-0",
+                "cssValue": "#ffffff"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [1, 1, 1],
+              "hex": "#ffffff"
+            }
+          },
+          "4": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-4",
+                "cssValue": "#0c0e11"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.0471, 0.0549, 0.0667],
+              "hex": "#0c0e11"
+            }
+          },
+          "6": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-6",
+                "cssValue": "#1a1c1e"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.102, 0.1098, 0.1176],
+              "hex": "#1a1c1e"
+            }
+          },
+          "8": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-8",
+                "cssValue": "#1c1e21"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1098, 0.1176, 0.1294],
+              "hex": "#1c1e21"
+            }
+          },
+          "10": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-10",
+                "cssValue": "#2f3033"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1843, 0.1882, 0.2],
+              "hex": "#2f3033"
+            }
+          },
+          "12": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-12",
+                "cssValue": "#202225"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1255, 0.1333, 0.1451],
+              "hex": "#202225"
+            }
+          },
+          "17": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-17",
+                "cssValue": "#2a2c30"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.1647, 0.1725, 0.1882],
+              "hex": "#2a2c30"
+            }
+          },
+          "22": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-22",
+                "cssValue": "#353739"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.2078, 0.2157, 0.2235],
+              "hex": "#353739"
+            }
+          },
+          "90": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-90",
+                "cssValue": "#e2e2e6"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.8863, 0.8863, 0.902],
+              "hex": "#e2e2e6"
+            }
+          },
+          "93": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-93",
+                "cssValue": "#eaedf3"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9176, 0.9294, 0.9529],
+              "hex": "#eaedf3"
+            }
+          },
+          "95": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-95",
+                "cssValue": "#f0f3f7"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9412, 0.9529, 0.9686],
+              "hex": "#f0f3f7"
+            }
+          },
+          "96": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-96",
+                "cssValue": "#f1f0f4"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9451, 0.9412, 0.9569],
+              "hex": "#f1f0f4"
+            }
+          },
+          "97": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-97",
+                "cssValue": "#f6f8fb"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9647, 0.9725, 0.9843],
+              "hex": "#f6f8fb"
+            }
+          },
+          "98": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-neutral-98",
+                "cssValue": "#fcfcff"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.9882, 0.9882, 1],
+              "hex": "#fcfcff"
+            }
+          }
+        },
+        "outline": {
+          "40": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-outline-40",
+                "cssValue": "#73777f"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.451, 0.4667, 0.498],
+              "hex": "#73777f"
+            }
+          },
+          "50": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-outline-50",
+                "cssValue": "#8d9199"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.5529, 0.5686, 0.6],
+              "hex": "#8d9199"
+            }
+          },
+          "80": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-outline-80",
+                "cssValue": "#c3c7cf"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.7647, 0.7804, 0.8118],
+              "hex": "#c3c7cf"
+            }
+          },
+          "87": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-outline-87",
+                "cssValue": "#dfe2eb"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.8745, 0.8863, 0.9216],
+              "hex": "#dfe2eb"
+            }
+          },
+          "variant": {
+            "dark": {
+              "$description": "Reference palette color token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-ref-palette-outline-variant-dark",
+                  "cssValue": "#43474e"
+                }
+              },
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [0.2627, 0.2784, 0.3059],
+                "hex": "#43474e"
+              }
+            }
+          }
+        },
+        "purple": {
+          "50": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-purple-50",
+                "cssValue": "#a855f7"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.6588, 0.3333, 0.9686],
+              "hex": "#a855f7"
+            }
+          },
+          "70": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-purple-70",
+                "cssValue": "#c084fc"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0.7529, 0.5176, 0.9882],
+              "hex": "#c084fc"
+            }
+          }
+        },
+        "scrim": {
+          "light": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-scrim-light",
+                "cssValue": "rgba(0, 0, 0, 0.32)"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "alpha": 0.32,
+              "colorSpace": "srgb",
+              "components": [0, 0, 0]
+            }
+          },
+          "dark": {
+            "$description": "Reference palette color token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-palette-scrim-dark",
+                "cssValue": "rgba(0, 0, 0, 0.56)"
+              }
+            },
+            "$type": "color",
+            "$value": {
+              "alpha": 0.56,
+              "colorSpace": "srgb",
+              "components": [0, 0, 0]
+            }
+          }
+        }
+      },
+      "typeface": {
+        "brand": {
+          "$description": "Typeface family token.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-ref-typeface-brand",
+              "cssValue": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", sans-serif"
+            }
+          },
+          "$type": "fontFamily",
+          "$value": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", sans-serif"
+        },
+        "plain": {
+          "$description": "Typeface family token.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-ref-typeface-plain",
+              "cssValue": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", sans-serif"
+            }
+          },
+          "$type": "fontFamily",
+          "$value": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", sans-serif"
+        },
+        "weight": {
+          "regular": {
+            "$description": "Numeric runtime token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-typeface-weight-regular",
+                "cssValue": "400"
+              }
+            },
+            "$type": "number",
+            "$value": 400
+          },
+          "medium": {
+            "$description": "Numeric runtime token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-typeface-weight-medium",
+                "cssValue": "500"
+              }
+            },
+            "$type": "number",
+            "$value": 500
+          },
+          "bold": {
+            "$description": "Numeric runtime token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-ref-typeface-weight-bold",
+                "cssValue": "700"
+              }
+            },
+            "$type": "number",
+            "$value": 700
+          }
+        }
+      }
+    },
+    "sys": {
+      "color": {
+        "primary": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-primary",
+              "cssValue": "light-dark( var(--md-ref-palette-clinical-green-40), var(--md-ref-palette-clinical-green-80) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-primary",
+                "cssValue": "var(--md-ref-palette-clinical-green-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.clinical.green.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-primary",
+                "cssValue": "var(--md-ref-palette-clinical-green-80)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.clinical.green.80}"
+          },
+          "container": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-primary-container",
+                "cssValue": "light-dark( var(--md-ref-palette-clinical-green-90), var(--md-ref-palette-clinical-green-30) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-primary-container",
+                  "cssValue": "var(--md-ref-palette-clinical-green-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.clinical.green.90}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-primary-container",
+                  "cssValue": "var(--md-ref-palette-clinical-green-30)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.clinical.green.30}"
+            }
+          }
+        },
+        "on": {
+          "primary": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-primary",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-clinical-green-20) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-primary",
+                  "cssValue": "var(--md-ref-palette-neutral-0)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.0}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-primary",
+                  "cssValue": "var(--md-ref-palette-clinical-green-20)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.clinical.green.20}"
+            },
+            "container": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-primary-container",
+                  "cssValue": "light-dark( var(--md-ref-palette-clinical-green-10), var(--md-ref-palette-clinical-green-90) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-primary-container",
+                    "cssValue": "var(--md-ref-palette-clinical-green-10)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.clinical.green.10}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-primary-container",
+                    "cssValue": "var(--md-ref-palette-clinical-green-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.clinical.green.90}"
+              }
+            }
+          },
+          "secondary": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-secondary",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-secondary-20) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-secondary",
+                  "cssValue": "var(--md-ref-palette-neutral-0)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.0}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-secondary",
+                  "cssValue": "var(--md-ref-palette-secondary-20)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.secondary.20}"
+            },
+            "container": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-secondary-container",
+                  "cssValue": "light-dark( var(--md-ref-palette-secondary-10), var(--md-ref-palette-secondary-90) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-secondary-container",
+                    "cssValue": "var(--md-ref-palette-secondary-10)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.secondary.10}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-secondary-container",
+                    "cssValue": "var(--md-ref-palette-secondary-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.secondary.90}"
+              }
+            }
+          },
+          "tertiary": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-tertiary",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-tertiary-20) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-tertiary",
+                  "cssValue": "var(--md-ref-palette-neutral-0)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.0}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-tertiary",
+                  "cssValue": "var(--md-ref-palette-tertiary-20)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.tertiary.20}"
+            },
+            "container": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-tertiary-container",
+                  "cssValue": "light-dark( var(--md-ref-palette-tertiary-10), var(--md-ref-palette-tertiary-90) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-tertiary-container",
+                    "cssValue": "var(--md-ref-palette-tertiary-10)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.tertiary.10}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-tertiary-container",
+                    "cssValue": "var(--md-ref-palette-tertiary-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.tertiary.90}"
+              }
+            }
+          },
+          "error": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-error",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-red-30) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-error",
+                  "cssValue": "var(--md-ref-palette-neutral-0)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.0}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-error",
+                  "cssValue": "var(--md-ref-palette-red-30)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.red.30}"
+            },
+            "container": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-error-container",
+                  "cssValue": "light-dark( var(--md-ref-palette-red-20), var(--md-ref-palette-red-90) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-error-container",
+                    "cssValue": "var(--md-ref-palette-red-20)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.red.20}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-error-container",
+                    "cssValue": "var(--md-ref-palette-red-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.red.90}"
+              }
+            }
+          },
+          "warning": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-warning",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-amber-20) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-warning",
+                  "cssValue": "var(--md-ref-palette-neutral-0)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.0}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-warning",
+                  "cssValue": "var(--md-ref-palette-amber-20)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.amber.20}"
+            },
+            "container": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-warning-container",
+                  "cssValue": "light-dark( var(--md-ref-palette-amber-30), var(--md-ref-palette-amber-90) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-warning-container",
+                    "cssValue": "var(--md-ref-palette-amber-30)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.amber.30}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-warning-container",
+                    "cssValue": "var(--md-ref-palette-amber-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.amber.90}"
+              }
+            }
+          },
+          "background": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-background",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-6), var(--md-ref-palette-neutral-90) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-background",
+                  "cssValue": "var(--md-ref-palette-neutral-6)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.6}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-background",
+                  "cssValue": "var(--md-ref-palette-neutral-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.90}"
+            }
+          },
+          "surface": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-on-surface",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-6), var(--md-ref-palette-neutral-90) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-surface",
+                  "cssValue": "var(--md-ref-palette-neutral-6)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.6}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-surface",
+                  "cssValue": "var(--md-ref-palette-neutral-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.90}"
+            },
+            "variant": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-on-surface-variant",
+                  "cssValue": "light-dark( var(--md-ref-palette-outline-variant-dark), var(--md-ref-palette-outline-80) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-surface-variant",
+                    "cssValue": "var(--md-ref-palette-outline-variant-dark)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.outline.variant.dark}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-on-surface-variant",
+                    "cssValue": "var(--md-ref-palette-outline-80)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.outline.80}"
+              }
+            }
+          }
+        },
+        "secondary": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-secondary",
+              "cssValue": "light-dark( var(--md-ref-palette-secondary-40), var(--md-ref-palette-secondary-80) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-secondary",
+                "cssValue": "var(--md-ref-palette-secondary-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.secondary.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-secondary",
+                "cssValue": "var(--md-ref-palette-secondary-80)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.secondary.80}"
+          },
+          "container": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-secondary-container",
+                "cssValue": "light-dark( var(--md-ref-palette-secondary-90), var(--md-ref-palette-secondary-30) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-secondary-container",
+                  "cssValue": "var(--md-ref-palette-secondary-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.secondary.90}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-secondary-container",
+                  "cssValue": "var(--md-ref-palette-secondary-30)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.secondary.30}"
+            }
+          }
+        },
+        "tertiary": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-tertiary",
+              "cssValue": "light-dark( var(--md-ref-palette-tertiary-40), var(--md-ref-palette-tertiary-80) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-tertiary",
+                "cssValue": "var(--md-ref-palette-tertiary-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.tertiary.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-tertiary",
+                "cssValue": "var(--md-ref-palette-tertiary-80)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.tertiary.80}"
+          },
+          "container": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-tertiary-container",
+                "cssValue": "light-dark( var(--md-ref-palette-tertiary-90), var(--md-ref-palette-tertiary-30) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-tertiary-container",
+                  "cssValue": "var(--md-ref-palette-tertiary-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.tertiary.90}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-tertiary-container",
+                  "cssValue": "var(--md-ref-palette-tertiary-30)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.tertiary.30}"
+            }
+          }
+        },
+        "indicator": {
+          "positive": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-indicator-positive",
+                "cssValue": "light-dark( var(--md-ref-palette-purple-50), var(--md-ref-palette-purple-70) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-indicator-positive",
+                  "cssValue": "var(--md-ref-palette-purple-50)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.purple.50}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-indicator-positive",
+                  "cssValue": "var(--md-ref-palette-purple-70)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.purple.70}"
+            }
+          }
+        },
+        "error": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-error",
+              "cssValue": "light-dark(var(--md-ref-palette-red-40), var(--md-ref-palette-red-80))"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-error",
+                "cssValue": "var(--md-ref-palette-red-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.red.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-error",
+                "cssValue": "var(--md-ref-palette-red-80)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.red.80}"
+          },
+          "container": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-error-container",
+                "cssValue": "light-dark( var(--md-ref-palette-red-90), var(--md-ref-palette-red-35) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-error-container",
+                  "cssValue": "var(--md-ref-palette-red-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.red.90}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-error-container",
+                  "cssValue": "var(--md-ref-palette-red-35)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.red.35}"
+            }
+          }
+        },
+        "warning": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-warning",
+              "cssValue": "light-dark( var(--md-ref-palette-amber-40), var(--md-ref-palette-amber-80) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-warning",
+                "cssValue": "var(--md-ref-palette-amber-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.amber.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-warning",
+                "cssValue": "var(--md-ref-palette-amber-80)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.amber.80}"
+          },
+          "container": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-warning-container",
+                "cssValue": "light-dark( var(--md-ref-palette-amber-90), var(--md-ref-palette-amber-30) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-warning-container",
+                  "cssValue": "var(--md-ref-palette-amber-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.amber.90}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-warning-container",
+                  "cssValue": "var(--md-ref-palette-amber-30)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.amber.30}"
+            }
+          }
+        },
+        "background": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-background",
+              "cssValue": "light-dark( var(--md-ref-palette-neutral-98), var(--md-ref-palette-neutral-6) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-background",
+                "cssValue": "var(--md-ref-palette-neutral-98)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.neutral.98}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-background",
+                "cssValue": "var(--md-ref-palette-neutral-6)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.neutral.6}"
+          }
+        },
+        "surface": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-surface",
+              "cssValue": "light-dark( var(--md-ref-palette-neutral-98), var(--md-ref-palette-neutral-6) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-surface",
+                "cssValue": "var(--md-ref-palette-neutral-98)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.neutral.98}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-surface",
+                "cssValue": "var(--md-ref-palette-neutral-6)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.neutral.6}"
+          },
+          "variant": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-surface-variant",
+                "cssValue": "light-dark( var(--md-ref-palette-outline-87), var(--md-ref-palette-outline-variant-dark) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-variant",
+                  "cssValue": "var(--md-ref-palette-outline-87)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.outline.87}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-variant",
+                  "cssValue": "var(--md-ref-palette-outline-variant-dark)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.outline.variant.dark}"
+            }
+          },
+          "container": {
+            "lowest": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container-lowest",
+                  "cssValue": "light-dark( var(--md-ref-palette-neutral-0), var(--md-ref-palette-neutral-4) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-lowest",
+                    "cssValue": "var(--md-ref-palette-neutral-0)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.0}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-lowest",
+                    "cssValue": "var(--md-ref-palette-neutral-4)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.4}"
+              }
+            },
+            "low": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container-low",
+                  "cssValue": "light-dark( var(--md-ref-palette-neutral-97), var(--md-ref-palette-neutral-8) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-low",
+                    "cssValue": "var(--md-ref-palette-neutral-97)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.97}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-low",
+                    "cssValue": "var(--md-ref-palette-neutral-8)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.8}"
+              }
+            },
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-surface-container",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-95), var(--md-ref-palette-neutral-12) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container",
+                  "cssValue": "var(--md-ref-palette-neutral-95)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.95}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container",
+                  "cssValue": "var(--md-ref-palette-neutral-12)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.12}"
+            },
+            "high": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container-high",
+                  "cssValue": "light-dark( var(--md-ref-palette-neutral-93), var(--md-ref-palette-neutral-17) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-high",
+                    "cssValue": "var(--md-ref-palette-neutral-93)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.93}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-high",
+                    "cssValue": "var(--md-ref-palette-neutral-17)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.17}"
+              }
+            },
+            "highest": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-surface-container-highest",
+                  "cssValue": "light-dark( var(--md-ref-palette-neutral-90), var(--md-ref-palette-neutral-22) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-highest",
+                    "cssValue": "var(--md-ref-palette-neutral-90)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.90}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-surface-container-highest",
+                    "cssValue": "var(--md-ref-palette-neutral-22)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.22}"
+              }
+            }
+          }
+        },
+        "outline": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-outline",
+              "cssValue": "light-dark( var(--md-ref-palette-outline-40), var(--md-ref-palette-outline-50) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-outline",
+                "cssValue": "var(--md-ref-palette-outline-40)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.outline.40}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-outline",
+                "cssValue": "var(--md-ref-palette-outline-50)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.outline.50}"
+          },
+          "variant": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-outline-variant",
+                "cssValue": "light-dark( var(--md-ref-palette-outline-80), var(--md-ref-palette-outline-variant-dark) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-outline-variant",
+                  "cssValue": "var(--md-ref-palette-outline-80)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.outline.80}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-outline-variant",
+                  "cssValue": "var(--md-ref-palette-outline-variant-dark)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.outline.variant.dark}"
+            }
+          }
+        },
+        "inverse": {
+          "surface": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-inverse-surface",
+                "cssValue": "light-dark( var(--md-ref-palette-neutral-10), var(--md-ref-palette-neutral-90) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-inverse-surface",
+                  "cssValue": "var(--md-ref-palette-neutral-10)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.10}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-inverse-surface",
+                  "cssValue": "var(--md-ref-palette-neutral-90)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.neutral.90}"
+            }
+          },
+          "on": {
+            "surface": {
+              "$description": "Semantic color role with light and dark modes.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-inverse-on-surface",
+                  "cssValue": "light-dark( var(--md-ref-palette-neutral-96), var(--md-ref-palette-neutral-10) )"
+                }
+              },
+              "light": {
+                "$description": "Light theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-inverse-on-surface",
+                    "cssValue": "var(--md-ref-palette-neutral-96)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.96}"
+              },
+              "dark": {
+                "$description": "Dark theme color value.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-color-inverse-on-surface",
+                    "cssValue": "var(--md-ref-palette-neutral-10)"
+                  }
+                },
+                "$type": "color",
+                "$value": "{md.ref.palette.neutral.10}"
+              }
+            }
+          },
+          "primary": {
+            "$description": "Semantic color role with light and dark modes.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-inverse-primary",
+                "cssValue": "light-dark( var(--md-ref-palette-clinical-green-80), var(--md-ref-palette-clinical-green-40) )"
+              }
+            },
+            "light": {
+              "$description": "Light theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-inverse-primary",
+                  "cssValue": "var(--md-ref-palette-clinical-green-80)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.clinical.green.80}"
+            },
+            "dark": {
+              "$description": "Dark theme color value.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-color-inverse-primary",
+                  "cssValue": "var(--md-ref-palette-clinical-green-40)"
+                }
+              },
+              "$type": "color",
+              "$value": "{md.ref.palette.clinical.green.40}"
+            }
+          }
+        },
+        "scrim": {
+          "$description": "Semantic color role with light and dark modes.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--md-sys-color-scrim",
+              "cssValue": "light-dark( var(--md-ref-palette-scrim-light), var(--md-ref-palette-scrim-dark) )"
+            }
+          },
+          "light": {
+            "$description": "Light theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-scrim",
+                "cssValue": "var(--md-ref-palette-scrim-light)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.scrim.light}"
+          },
+          "dark": {
+            "$description": "Dark theme color value.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-color-scrim",
+                "cssValue": "var(--md-ref-palette-scrim-dark)"
+              }
+            },
+            "$type": "color",
+            "$value": "{md.ref.palette.scrim.dark}"
+          }
+        }
+      },
+      "typescale": {
+        "display": {
+          "large": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-display-large",
+                "cssValue": "400 3.5rem/1.15 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 3.5
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.15
+            }
+          },
+          "medium": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-display-medium",
+                "cssValue": "400 2.75rem/1.2 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 2.75
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.2
+            }
+          },
+          "small": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-display-small",
+                "cssValue": "400 2.25rem/1.25 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 2.25
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.25
+            }
+          }
+        },
+        "headline": {
+          "large": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-headline-large",
+                "cssValue": "400 2rem/1.3 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 2
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.3
+            }
+          },
+          "medium": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-headline-medium",
+                "cssValue": "400 1.75rem/1.35 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 1.75
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.35
+            }
+          },
+          "small": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-headline-small",
+                "cssValue": "400 1.5rem/1.35 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 1.5
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.35
+            }
+          }
+        },
+        "title": {
+          "large": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-title-large",
+                "cssValue": "500 1.375rem/1.4 var(--md-ref-typeface-brand)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.brand}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 1.375
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.4
+            }
+          },
+          "medium": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-title-medium",
+                "cssValue": "500 1rem/1.5 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 1
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.5
+            }
+          },
+          "small": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-title-small",
+                "cssValue": "500 0.9375rem/1.5 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.9375
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.5
+            }
+          }
+        },
+        "body": {
+          "large": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-body-large",
+                "cssValue": "400 1rem/1.6 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 1
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.6
+            }
+          },
+          "medium": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-body-medium",
+                "cssValue": "400 0.9375rem/1.55 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.9375
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.55
+            }
+          },
+          "small": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-body-small",
+                "cssValue": "400 0.875rem/1.5 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.875
+              },
+              "fontWeight": 400,
+              "lineHeight": 1.5
+            }
+          }
+        },
+        "label": {
+          "large": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-label-large",
+                "cssValue": "500 0.9375rem/1.45 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.9375
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.45
+            }
+          },
+          "medium": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-label-medium",
+                "cssValue": "500 0.8125rem/1.4 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.8125
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.4
+            }
+          },
+          "small": {
+            "$description": "Typography scale token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-typescale-label-small",
+                "cssValue": "500 0.75rem/1.4 var(--md-ref-typeface-plain)"
+              }
+            },
+            "$type": "typography",
+            "$value": {
+              "fontFamily": "{md.ref.typeface.plain}",
+              "fontSize": {
+                "unit": "rem",
+                "value": 0.75
+              },
+              "fontWeight": 500,
+              "lineHeight": 1.4
+            }
+          }
+        }
+      },
+      "shape": {
+        "corner": {
+          "none": {
+            "$description": "Runtime dimension token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-shape-corner-none",
+                "cssValue": "0px"
+              }
+            },
+            "$type": "dimension",
+            "$value": {
+              "unit": "px",
+              "value": 0
+            }
+          },
+          "extra": {
+            "small": {
+              "$description": "Runtime dimension token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-shape-corner-extra-small",
+                  "cssValue": "4px"
+                }
+              },
+              "$type": "dimension",
+              "$value": {
+                "unit": "px",
+                "value": 4
+              }
+            },
+            "large": {
+              "$description": "Runtime dimension token.",
+              "$extensions": {
+                "wtf.oranje.beslismodel": {
+                  "cssName": "--md-sys-shape-corner-extra-large",
+                  "cssValue": "28px"
+                }
+              },
+              "$type": "dimension",
+              "$value": {
+                "unit": "px",
+                "value": 28
+              }
+            }
+          },
+          "small": {
+            "$description": "Runtime dimension token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-shape-corner-small",
+                "cssValue": "8px"
+              }
+            },
+            "$type": "dimension",
+            "$value": {
+              "unit": "px",
+              "value": 8
+            }
+          },
+          "medium": {
+            "$description": "Runtime dimension token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-shape-corner-medium",
+                "cssValue": "12px"
+              }
+            },
+            "$type": "dimension",
+            "$value": {
+              "unit": "px",
+              "value": 12
+            }
+          },
+          "large": {
+            "$description": "Runtime dimension token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-shape-corner-large",
+                "cssValue": "16px"
+              }
+            },
+            "$type": "dimension",
+            "$value": {
+              "unit": "px",
+              "value": 16
+            }
+          },
+          "full": {
+            "$description": "Runtime dimension token.",
+            "$extensions": {
+              "wtf.oranje.beslismodel": {
+                "cssName": "--md-sys-shape-corner-full",
+                "cssValue": "9999px"
+              }
+            },
+            "$type": "dimension",
+            "$value": {
+              "unit": "px",
+              "value": 9999
+            }
+          }
+        }
+      },
+      "state": {
+        "hover": {
+          "state": {
+            "layer": {
+              "opacity": {
+                "$description": "Numeric runtime token.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-state-hover-state-layer-opacity",
+                    "cssValue": "0.08"
+                  }
+                },
+                "$type": "number",
+                "$value": 0.08
+              }
+            }
+          }
+        },
+        "focus": {
+          "state": {
+            "layer": {
+              "opacity": {
+                "$description": "Numeric runtime token.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-state-focus-state-layer-opacity",
+                    "cssValue": "0.12"
+                  }
+                },
+                "$type": "number",
+                "$value": 0.12
+              }
+            }
+          }
+        },
+        "pressed": {
+          "state": {
+            "layer": {
+              "opacity": {
+                "$description": "Numeric runtime token.",
+                "$extensions": {
+                  "wtf.oranje.beslismodel": {
+                    "cssName": "--md-sys-state-pressed-state-layer-opacity",
+                    "cssValue": "0.12"
+                  }
+                },
+                "$type": "number",
+                "$value": 0.12
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "header": {
+      "height": {
+        "$description": "Runtime dimension token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--layout-header-height",
+            "cssValue": "56px"
+          }
+        },
+        "$type": "dimension",
+        "$value": {
+          "unit": "px",
+          "value": 56
+        }
+      }
+    },
+    "content": {
+      "max": {
+        "width": {
+          "$description": "Runtime dimension token.",
+          "$extensions": {
+            "wtf.oranje.beslismodel": {
+              "cssName": "--layout-content-max-width",
+              "cssValue": "900px"
+            }
+          },
+          "$type": "dimension",
+          "$value": {
+            "unit": "px",
+            "value": 900
+          }
+        }
+      }
+    }
+  },
+  "spacing": {
+    "xs": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--spacing-xs",
+          "cssValue": "4px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 4
+      }
+    },
+    "sm": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--spacing-sm",
+          "cssValue": "8px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 8
+      }
+    }
+  },
+  "min": {
+    "touch": {
+      "target": {
+        "$description": "Runtime dimension token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--min-touch-target",
+            "cssValue": "44px"
+          }
+        },
+        "$type": "dimension",
+        "$value": {
+          "unit": "px",
+          "value": 44
+        }
+      }
+    }
+  },
+  "motion": {
+    "duration": {
+      "short": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-short",
+            "cssValue": "100ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 100
+        }
+      },
+      "medium": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-medium",
+            "cssValue": "200ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 200
+        }
+      },
+      "long": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-long",
+            "cssValue": "300ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 300
+        }
+      },
+      "enter": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-enter",
+            "cssValue": "250ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 250
+        }
+      },
+      "exit": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-exit",
+            "cssValue": "200ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 200
+        }
+      },
+      "press": {
+        "$description": "Motion duration token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-duration-press",
+            "cssValue": "50ms"
+          }
+        },
+        "$type": "duration",
+        "$value": {
+          "unit": "ms",
+          "value": 50
+        }
+      }
+    },
+    "easing": {
+      "standard": {
+        "$description": "Motion easing token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-easing-standard",
+            "cssValue": "cubic-bezier(0.2, 0, 0, 1)"
+          }
+        },
+        "$type": "cubicBezier",
+        "$value": [0.2, 0, 0, 1]
+      },
+      "emphasized": {
+        "$description": "Motion easing token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-easing-emphasized",
+            "cssValue": "cubic-bezier(0.2, 0, 0, 1)"
+          }
+        },
+        "$type": "cubicBezier",
+        "$value": [0.2, 0, 0, 1]
+      },
+      "out": {
+        "$description": "Motion easing token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-easing-out",
+            "cssValue": "cubic-bezier(0.16, 1, 0.3, 1)"
+          }
+        },
+        "$type": "cubicBezier",
+        "$value": [0.16, 1, 0.3, 1]
+      },
+      "spring": {
+        "$description": "Motion easing token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--motion-easing-spring",
+            "cssValue": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+          }
+        },
+        "$type": "cubicBezier",
+        "$value": [0.34, 1.56, 0.64, 1]
+      }
+    }
+  },
+  "z": {
+    "header": {
+      "$description": "Numeric runtime token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--z-header",
+          "cssValue": "100"
+        }
+      },
+      "$type": "number",
+      "$value": 100
+    },
+    "update": {
+      "banner": {
+        "$description": "Numeric runtime token.",
+        "$extensions": {
+          "wtf.oranje.beslismodel": {
+            "cssName": "--z-update-banner",
+            "cssValue": "200"
+          }
+        },
+        "$type": "number",
+        "$value": 200
+      }
+    },
+    "toast": {
+      "$description": "Numeric runtime token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--z-toast",
+          "cssValue": "300"
+        }
+      },
+      "$type": "number",
+      "$value": 300
+    }
+  },
+  "bp": {
+    "sm": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--bp-sm",
+          "cssValue": "480px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 480
+      }
+    },
+    "md": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--bp-md",
+          "cssValue": "600px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 600
+      }
+    },
+    "lg": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--bp-lg",
+          "cssValue": "900px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 900
+      }
+    },
+    "xl": {
+      "$description": "Runtime dimension token.",
+      "$extensions": {
+        "wtf.oranje.beslismodel": {
+          "cssName": "--bp-xl",
+          "cssValue": "1200px"
+        }
+      },
+      "$type": "dimension",
+      "$value": {
+        "unit": "px",
+        "value": 1200
+      }
+    }
+  }
+}
