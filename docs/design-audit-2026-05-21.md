@@ -7,6 +7,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - Native option control: `ChoiceOption.vue` gebruikt een native button met ARIA radio/checkbox state en sibling info-popover; `ChoiceGroup.vue` owns radiogroup/listbox navigation.
 - UI iconen lopen via `src/components/primitives/Icon.vue`; overgebleven SVG's zijn illustraties/logo's.
 - `.md-button` usages zijn gemigreerd naar `Button.vue`; legacy CSS blijft alleen als historische compatibility-style.
+- Storybook runtime-a11y is actief via `@storybook/addon-a11y`; route-level axe-smoke dekt landing, questionnaire, result, error en admin login.
 - 3-state theme toggle, light/dark/system bootstrap, `light-dark()`, cascade layers, forced-colors en prefers-contrast zijn aanwezig.
 - Result treatment reveal heeft `aria-live`; copy, update prompt, info-popover en retry states zijn toegankelijker gemaakt.
 - Landing/questionnaire/result layouts gebruiken container-query cleanup waar dit relevant is.
@@ -34,9 +35,9 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 | **Component library** | Eigen primitives: Button, Badge, Card, ProgressBar, Skeleton, BackButton (`src/components/primitives/`). Geen Radix / Headless UI                                                                                                                                      |
 | **Icon set**          | Inline SVG-paths (mix Lucide-stijl + Material Icons). Geen single-source iconset; SVG-illustraties als losse `*Svg.vue` componenten                                                                                                                                    |
 | **Dark mode**         | 3-state theme toggle (light/dark/system), bootstrap-script, `data-theme` override en `light-dark()` semantic tokens                                                                                                                                                    |
-| **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief (toegevoegd in commit `3fca561`), `axe-core` + `vitest-axe` voor unit-tests (`src/components/primitives/a11y.test.ts`). Geen runtime axe in CI                                                                              |
+| **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief, `axe-core` + `vitest-axe` voor primitives, `src/__tests__/accessibility-route.test.ts` voor samengestelde routes, `@storybook/addon-a11y` in Storybook en build-storybook in CI                                  |
 | **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                                      |
-| **Storybook**         | v9 met `@storybook/vue3-vite`, stories voor 6 primitives + DesignTokens-showcase, CI-build step toegevoegd                                                                                                                                                             |
+| **Storybook**         | v10 met `@storybook/vue3-vite`, `@storybook/addon-a11y`, stories voor primitives/molecules/organisms/templates + DesignTokens-showcase, CI-build step toegevoegd                                                                                                        |
 | **Lighthouse**        | Niet gedraaid in deze sessie — `lighthouse` CLI niet geïnstalleerd, npx-fallback geblokkeerd (sandbox + tijdsbudget). Hergebruik 2026-05-03 desktop scores (Perf 98-100, A11y 100, BP 100) als indicatief; nieuwe a11y-fixes maken regressie onwaarschijnlijk          |
 | **CWV**               | Niet vers gemeten; vorige meting LCP <1s desktop, <2.5s mobile (PWA, vooraf gecachte JSON-flow)                                                                                                                                                                        |
 | **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                                 |
@@ -75,11 +76,11 @@ Drie grote thema's:
 | **Mediaqueries-breakpoint chaos (479/599/600/640/767/900)** | **Gedeeltelijk**                                                                                                             | Commit `747e7c6 feat(styles): design tokens, breakpoint system` voegde breakpoint-tokens toe; verifieer adoptie                                                  |
 | **Geen `light-dark()`**                                     | **Opgelost 2026-06-04**                                                                                                      | 42 `light-dark()` occurrences in `src/styles/tokens.css`                                                                                                         |
 | **Geen `@layer`**                                           | **Opgelost 2026-06-04**                                                                                                      | `src/styles/main.css` declareert named layers `tokens`, `base` en `utilities`                                                                                    |
-| **`v-html` markdown zonder DOMPurify**                      | **DONE/SUPERSEDED 2026-06-01**                                                                                               | YAML-bron uit eigen build = beheerst risico                                                                                                                      |
+| **`v-html` markdown zonder DOMPurify**                      | **Opgelost 2026-06-01**                                                                                                      | Markdown loopt via `src/lib/markdown-renderer.ts` met DOMPurify-sanitizer voordat componenten `v-html` gebruiken                                                 |
 
 **Resolved sinds vorige audit:** ~10 van ~14 — buitengewoon sterke release. Friction-issues uit klinische context grotendeels weggewerkt.
 
-**Nieuwe bevindingen deze audit:** 4 — DSN-U01 (skeleton gradient-shimmer), DSN-U02 (light-dark adoption), DSN-U03 (skeleton-card geen reduced-motion), DSN-U04 (Storybook a11y-addon mist).
+**Nieuwe bevindingen deze audit:** 4 — DSN-U01 (skeleton gradient-shimmer), DSN-U02 (light-dark adoption), DSN-U03 (skeleton-card geen reduced-motion), DSN-U04 (Storybook a11y-addon ontbrak; opgelost 2026-06-04).
 
 ---
 
@@ -116,7 +117,7 @@ Drie grote thema's:
 | ----------- | --------------------------------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1           | Design Tokens & Centralisatie     | **4.2**         | ▲ +0.7     | MD3-tokens zijn gecentraliseerd met `light-dark()`, cascade layers en gegenereerde DTCG-compatible export; Style Dictionary/Figma-pipeline ontbreekt nog     |
 | 2           | Component Architectuur            | **4.2**         | ▲ +1.7     | 6 primitives met variant-API, a11y-tests, Storybook. Question-options zitten in molecule `ChoiceOption.vue` en group-nav in `ChoiceGroup.vue`                 |
-| 3           | Accessibility (WCAG 2.2 AA)       | **4.0**         | ▲ +2.0     | Skip-link, h1, Space-toets, aria-checked, forced-colors, eslint-plugin-vuejs-accessibility, axe-core in primitives-tests. Mist: runtime axe in CI            |
+| 3           | Accessibility (WCAG 2.2 AA)       | **4.5**         | ▲ +2.5     | Skip-link, h1, Space-toets, aria-checked, forced-colors, vuejs-accessibility lint, Storybook a11y-addon, route-level axe en primitives-tests                |
 | 4           | Motion & Microinteracties         | **4.5**         | ▲ +1.0     | View Transitions API, `view-transition-name`, reduced-motion overal, OfflineBanner motion. Mist: spring-physics voor primary feedback                        |
 | 5           | Frictieloze UX & Smart Defaults   | **4.5**         | ▲ +1.5     | ProgressBar, Space-toets, multi-counter, restart-button, OfflineBanner, terug-knop met Esc/Backspace label. Friction in klinische flow grotendeels opgelost  |
 | 6           | Visuele Feedback                  | **4.5**         | ▲ +1.5     | ProgressBar (waar ben ik in flow), multi-counter live region, skeleton-card, OfflineBanner, fade-transition op question-card, view-transition op title-morph |
@@ -124,9 +125,9 @@ Drie grote thema's:
 | 8           | Forms & Input UX                  | **3.0**         | ▲ +0.5     | AdminLogin nog steeds enige echte form; Button primitive met loading/disabled/aria-busy is nu form-ready. Geen passkey, geen autocomplete-audit deze sessie  |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
 | 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en theme toggle aanwezig; platformvalidatie blijft vervolgpunt             |
-| **Overall** |                                   | **4.1/5 (82%)** | **▲ +1.0** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
+| **Overall** |                                   | **4.2/5 (84%)** | **▲ +1.1** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
-**Gewogen** (Dim 5+6 dubbel voor clinical): (4.2 + 4 + 4 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3 + 4 + 3.5) ÷ 12 = **4.10 / 5.00** ✅
+**Gewogen** (Dim 5+6 dubbel voor clinical): (4.2 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3 + 4 + 3.5) ÷ 12 = **4.16 / 5.00** ✅
 
 ---
 
@@ -166,7 +167,7 @@ Drie grote thema's:
 - Geen `OptionList.vue` voor radiogroup-pattern; herhaalt zich in andere views potentieel
 - Geen `asChild`/polymorphic `as`-prop op Button (Link-variant kan niet gerenderd worden zonder copy-paste)
 
-### 3. Accessibility (WCAG 2.2 AA) — 4.0/5 (KRITIEK voor clinical)
+### 3. Accessibility (WCAG 2.2 AA) — 4.5/5 (KRITIEK voor clinical)
 
 **Strengths:**
 
@@ -178,17 +179,19 @@ Drie grote thema's:
 - Multi-counter met `aria-live="polite"` (`QuestionnairePage.vue:155-158`) bevestigt selectie-state aan screen reader
 - `eslint-plugin-vuejs-accessibility` in CI-pipeline (commit `3fca561`)
 - `vitest-axe` runtime a11y-tests op alle primitives (`primitives/a11y.test.ts`)
+- `@storybook/addon-a11y` actief in `.storybook/main.ts` en fail-on-error geconfigureerd in `.storybook/preview.ts`
+- Route-level axe-smoke in `src/__tests__/accessibility-route.test.ts` dekt landing, questionnaire, result en error route
+- Admin login route heeft eigen axe-test in `src/views/admin/AdminLogin.test.ts`
+- Markdown wordt via `src/lib/markdown-renderer.ts` met DOMPurify gesanitized voordat `v-html` rendert
+- Headerlinks zetten `aria-current="page"` via `AppHeader.vue` en `AppHeader.test.ts`
+- Info-popover sluit via Escape, close-knop, hover/focus leave en document click-outside in `useQuestionnairePageController.ts`
 - `:focus-visible` globaal met 2px outline (`main.css:78-85`); `outline: none` alleen binnen `:focus:not(:focus-visible)` (correct)
 - 83 aria-\* attributen (was 29) — coverage flink uitgebreid
 
 **Remaining issues:**
 
-- **Runtime axe in Storybook/CI ontbreekt nog** — primitives hebben vitest-axe, maar visuele regressies krijgen nog geen live Storybook-a11y paneel
-- **Runtime axe-core in CI ontbreekt** — primitives hebben unit-tests maar geen E2E axe-scan op samengestelde routes
-- `v-html` voor markdown (`QuestionnairePage.vue:173`) — geen DOMPurify; risico beperkt omdat bron eigen YAML is, maar bij user-content (toekomst) is dit XSS-vector
-- AdminLogin niet hertest deze cycle; `outline:none` op input gereconcilieerd
-- Info-popover (`QuestionnairePage.vue:137`) heeft Escape (regel 139) maar geen click-outside-to-close
-- Geen `aria-current="page"` op router-link in header (niet bevestigd in dit diff)
+- Geen handmatige screenreader-matrix per route vastgelegd; automatische axe/lint/browser-smoke dekt regressies, maar niet alle SR-UX.
+- Geen aparte Windows High Contrast/manual-device smoke buiten forced-colors CSS en browser-smoke.
 
 ### 4. Motion & Microinteracties — 4.5/5
 
@@ -218,7 +221,7 @@ Drie grote thema's:
 - **Multi-counter live** (`QuestionnairePage.vue:155-158`) — "X geselecteerd" zichtbaar én aangekondigd
 - **Bevestigen-knop toont count** ("Bevestigen (3)" `QuestionnairePage.vue:166`) — actie-consequence vooraf zichtbaar
 - **Restart-knop in toolbar** (`QuestionnairePage.vue:48-54`) — escape uit verkeerde flow
-- **Back-button label "Vorige vraag (Esc of Backspace)"** (`:27`) — keyboard shortcut in aria-label
+- **Native browsergeschiedenis voor vorige stap** — synthetische UI-terugknoppen zijn verwijderd; route- en browser-smoke-tests borgen vraagstap/back gedrag
 - **Single-select advance** behouden (auto-progress na keuze)
 - **A-Z keyboard shortcuts** voor antwoorden (`QuestionnairePage.vue` keydown handler)
 - **OfflineBanner** waarschuwt bij verlies van connectiviteit (`feat(feedback): offline-banner-component`)
@@ -228,8 +231,6 @@ Drie grote thema's:
 
 **Remaining issues:**
 
-- Info-popover heeft Escape maar geen click-outside (`QuestionnairePage.vue:141-143`) — tap-outside sluit niet, hover-leave wel
-- `questionnaireStore.clearAnswers(props.id)` bij `loadStateAndDetermineStart` (vorige bevinding) — moet bevestigd worden of state nu persist
 - Geen Cmd+K / global search (NB: klein domein, mogelijk niet nodig)
 
 ### 6. Visuele Feedback — 4.5/5 (KRITIEK voor clinical)
@@ -443,7 +444,7 @@ Voeg expliciete `animation: none` (niet alleen duration) toe in reduced-motion-b
 | **Effort** | S (1 uur — install + config + verify 6 primitives)                                                                                                                                        |
 
 **Problem:**
-[`.storybook/main.ts`](`.storybook/main.ts`) is recent toegevoegd (commit `42d715d chore(storybook): voeg storybook setup met vue3-vite framework toe`) maar bevat geen `@storybook/addon-a11y`. Tokens-showcase + 6 primitive-stories renderen zonder runtime a11y-validatie. `vitest-axe` test-only is reactief — addon is preventief.
+Deze finding is opgelost. [`.storybook/main.ts`](`.storybook/main.ts`) bevat `@storybook/addon-a11y`; [`.storybook/preview.ts`](`.storybook/preview.ts`) zet `parameters.a11y.test = "error"` en forceert `color-contrast`; [src/__tests__/ci-policy.test.ts](src/__tests__/ci-policy.test.ts) bewaakt deze configuratie.
 
 **Solution:**
 Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts`. Configureer in `.storybook/preview.ts` met `parameters.a11y.config` voor WCAG 2.2 AA-ruleset. Verifieer op alle 6 primitive-stories.
@@ -582,9 +583,9 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 | 8. Forms                       | 2.5                 | 3.0             | ▲ +0.5      |
 | 9. Performance                 | 4.0                 | 4.0             | =           |
 | 10. Responsive/Dark            | 3.0                 | 3.5             | ▲ +0.5      |
-| **Overall (gewogen clinical)** | **3.13**            | **4.10**        | **▲ +0.97** |
+| **Overall (gewogen clinical)** | **3.13**            | **4.16**        | **▲ +1.03** |
 
-Sprong van **3.13 → 4.10** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
+Sprong van **3.13 → 4.16** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
 
 ## Resolution Update — 2026-06-04
 
