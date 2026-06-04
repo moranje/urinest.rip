@@ -588,6 +588,13 @@ describe("CI policy", () => {
     expect(routeAccessibilityTest).toContain('"landing route has no axe violations"');
     expect(routeAccessibilityTest).toContain('"questionnaire route has no axe violations"');
     expect(routeAccessibilityTest).toContain('"result route has no axe violations"');
+    expect(routeAccessibilityTest).toContain(
+      "direct result URL resolves data without leaving the shell loader visible",
+    );
+    expect(routeAccessibilityTest).toContain(
+      "direct missing result URL renders an error instead of a persistent loader",
+    );
+    expect(routeAccessibilityTest).toContain("/info/uti.local.healthy.1");
     expect(routeAccessibilityTest).toContain('"error route has no axe violations"');
     expect(routeAccessibilityTest).toContain(
       'runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]',
