@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -6,8 +7,10 @@ const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const giteaCiWorkflow = readFileSync(resolve(".gitea/workflows/ci.yaml"), "utf8");
 const giteaReleaseWorkflow = readFileSync(resolve(".gitea/workflows/release.yaml"), "utf8");
 const readme = readFileSync(resolve("README.md"), "utf8");
+const claudeInstructions = readFileSync(resolve("CLAUDE.md"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
+const gitignore = readFileSync(resolve(".gitignore"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const landingTemplateTest = readFileSync(
   resolve("src/components/templates/LandingTemplate.test.ts"),
@@ -558,6 +561,16 @@ describe("CI policy", () => {
     expect(agentInstructions).not.toContain("decision-engine-core");
     expect(agentInstructions).not.toContain("decision-engine-core-1.0.0.tgz");
     expect(agentInstructions).not.toContain("src/views/AboutPage.vue");
+    expect(claudeInstructions).toContain("AGENTS.md");
+    expect(claudeInstructions).toContain("Vue 3 + Vite 8");
+    expect(claudeInstructions).toContain("@beslismodel/compiler");
+    expect(claudeInstructions).toContain("src/lib/guidelines.ts");
+    expect(claudeInstructions).toContain("0.1.0-next.1");
+    expect(claudeInstructions).toContain("Desktop landing grid");
+    expect(claudeInstructions).not.toContain("Vite 7");
+    expect(claudeInstructions).not.toContain("decision-engine-core");
+    expect(claudeInstructions).not.toContain("decision-engine-core-1.0.0.tgz");
+    expect(claudeInstructions).not.toContain("src/views/AboutPage.vue");
   });
 
   it("keeps README aligned with current app and framework workflow", () => {
@@ -578,6 +591,15 @@ describe("CI policy", () => {
     expect(readme).not.toContain("pnpm install");
     expect(readme).not.toContain("No judgement");
     expect(readme).not.toContain("decision-engine-core");
+  });
+
+  it("keeps obsolete local compiler tarballs out of the repository", () => {
+    expect(gitignore).toContain("*.tgz");
+    expect(
+      execFileSync("git", ["ls-files", "decision-engine-core-1.0.0.tgz"], {
+        encoding: "utf8",
+      }).trim(),
+    ).toBe("");
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {

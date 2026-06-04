@@ -5,6 +5,7 @@ dist
 .npmrc
 .DS_Store
 *.local
+*.tgz
 stats.html
 *.br
 *.gz

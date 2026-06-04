@@ -1,64 +1,60 @@
-# urinest.rip — Beslishulp urineonderzoek
+# urinest.rip — Agent Context
 
-## Project
+Primary agent instructions live in [AGENTS.md](AGENTS.md). Keep this file aligned with that source.
 
-Vue 3 + Vite SPA voor huisartsen. Klinische beslisbomen in YAML (`flows/`), gecompileerd door de lokale beslismodel compiler naar `public/main.json`.
+## Current Architecture
 
-## Tech stack
+- Vue 3 + Vite 8 app for Dutch urine-test decision support.
+- Flows live in `flows/`.
+- `@beslismodel/compiler` builds `public/main.json`.
+- App consumes published `@beslismodel/*` packages from Gitea.
+- Package source remains in `packages/` while `beslismodel-framework` publish/migration work is staged.
 
-- Vue 3, Vue Router, Pinia
-- TypeScript 6, TypeScript Go native preview (`tsgo`), Vite 8/Rolldown
-- `@beslismodel/*` packages: core runtime, compiler, Vue runtime en testing utilities
-- Supabase (auth + structured logging)
-- PWA (vite-plugin-pwa)
+## Required Gates
 
-## Commands
+Use app gate for local app/doc/test changes:
 
-- `npm run dev` — lokale dev server
-- `npm run build` — productie build
-- `npm run check` — vue-tsc type-check
-- `npm run check:tsgo` — TypeScript Go/native preview check voor TS-only lagen
-- `npm run check:guidelines` — valideert richtlijntraceerbaarheid voor alle UI-flowstappen
-- `npm run lint` — oxlint
-- `npm run lint:eslint` — eslint (security rules)
-- `npm run lint:all` — oxlint + eslint
-- `npm run test` — vitest
+```bash
+npm run check:app
+```
 
-## CI/CD
+Use framework gate for package changes:
 
-GitHub Actions (`.github/workflows/ci.yml`):
+```bash
+npm run check:framework
+```
 
-1. **CI**: lint + type-check + test (parallel), npm audit, secret scanning
-2. **Deploy**: conventional changelog, semver bump, Netlify deploy, GitHub Release
+Use browser smoke for UI/navigation regressions:
 
-Netlify auto-builds zijn uitgeschakeld; deploy gaat uitsluitend via GitHub Actions.
+```bash
+npm run check:browser-smoke
+```
 
-## Conventions
+## Clinical Flow Changes
 
-### Commits
+For any substantive `flows/` change:
 
-Conventional commits (commitlint). Types: feat, fix, docs, chore, ci, refactor, test.
+- verify source guideline currency;
+- update review metadata in `src/lib/guidelines.ts`;
+- update `docs/guideline-traceability.json` and role evidence if visible question/result logic changes;
+- run `npm run check:guidelines`.
 
-### Richtlijn review-datums
+## Non-Negotiable UI Invariants
 
-Bij inhoudelijke wijzigingen aan flows MOET de `reviewed` datum in `src/views/AboutPage.vue` gecontroleerd en bijgewerkt worden voor de betreffende richtlijn(en). De build-datum (`__BUILD_DATE__`) wordt automatisch ingevuld door Vite.
-Elke zichtbare vraag, antwoordset, resultaatkaart en redirect moet ook in `docs/guideline-traceability.json` onderbouwd zijn. Draai na flowwijzigingen `npm run build` en `npm run check:guidelines`.
+- Desktop landing grid: five primary flows stay 2 rows x 3 columns.
+- Browser back is clinical navigation model; no duplicate flow back button.
+- Direct `/info/:resultKey` route must render without loader hang.
+- Progressbar does not show misleading numeric text.
+- Answer, checkbox and notice components must not regain extra full-frame borders.
+- Theme toggle uses central generated design token metadata.
 
-### Flows
+## Package Status
 
-YAML bestanden in `flows/`. Elke flow heeft: id, version, title, description, questions, steps, results, resultsLogic. Validatie vindt plaats tijdens build via de beslismodel compiler.
+- Consumed registry version: `0.1.0-next.0`.
+- Prepared local prerelease: `0.1.0-next.1`.
+- NAS handoff for publish/migration: [docs/nas-handoff-2026-06-04.md](docs/nas-handoff-2026-06-04.md).
 
-### Rollen
+## Commit Rules
 
-De app kent twee rollen (toggle in header):
-
-- **Behandelaar** (arts/verpleegkundige): behandelopties, doseringen, documentatie
-- **Triage** (triagist/doktersassistent): vervolgonderzoek, verwijscriteria
-
-### Environment variables
-
-`VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY` worden als GitHub secrets doorgegeven aan de build step. Lokaal via `.env`.
-
-### Design tokens
-
-Kleur-tokens gebruiken `light-dark(light, dark)` in `src/styles/tokens.css` met `@supports` fallback voor oudere browsers. `data-theme` zet uitsluitend `color-scheme`; alle primitieve en semantische kleurrollen blijven in `tokens.css`.
+Atomic conventional commits only. Do not mix package version bumps, UI fixes, docs cleanup and
+registry migration in one commit.
