@@ -78,8 +78,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@beslismodel/core": "0.1.0-next.1",
-    "@beslismodel/vue": "0.1.0-next.1",
+    "@beslismodel/core": "0.1.0",
+    "@beslismodel/vue": "0.1.0",
     "@supabase/supabase-js": "^2.97.0",
     "dompurify": "^3.4.7",
     "marked": "^17.0.3",
@@ -88,11 +88,11 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@beslismodel/compiler": "0.1.0-next.1",
-    "@beslismodel/copd-care": "0.1.0-next.1",
-    "@beslismodel/cvrm-prevent": "0.1.0-next.1",
-    "@beslismodel/dm-care": "0.1.0-next.1",
-    "@beslismodel/testing": "0.1.0-next.1",
+    "@beslismodel/compiler": "0.1.0",
+    "@beslismodel/copd-care": "0.1.0",
+    "@beslismodel/cvrm-prevent": "0.1.0",
+    "@beslismodel/dm-care": "0.1.0",
+    "@beslismodel/testing": "0.1.0",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
     "@lhci/cli": "^0.15.1",
