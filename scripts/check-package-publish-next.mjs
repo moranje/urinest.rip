@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -82,6 +82,7 @@ async function verifyGiteaApiAuth(tokenSource, token) {
 }
 
 async function verifyPublishAuth(cacheDir) {
+  const resolvedToken = resolvePublishToken(cacheDir);
   try {
     const whoami = execFileSync(
       "npm",
@@ -96,10 +97,10 @@ async function verifyPublishAuth(cacheDir) {
       fail(`npm whoami returned an empty user for ${expectedPackageRegistry}`);
     }
     console.log(`Registry auth verified for ${expectedPackageRegistry} as ${whoami}`);
-    return;
+    return resolvedToken;
   } catch (error) {
     const detail = errorDetail(error);
-    const { source, token } = resolvePublishToken(cacheDir);
+    const { source, token } = resolvedToken;
     if (!npmWhoamiUnsupported(detail) && !token) {
       fail(
         `Publishing requires npm auth for ${expectedPackageRegistry}. ` +
@@ -114,7 +115,28 @@ async function verifyPublishAuth(cacheDir) {
       );
     }
     await verifyGiteaApiAuth(source, token);
+    return resolvedToken;
   }
+}
+
+function createPublishEnv(cacheDir, token) {
+  if (!token) return process.env;
+  const npmrcPath = resolve(cacheDir, "publish.npmrc");
+  writeFileSync(
+    npmrcPath,
+    [
+      `@beslismodel:registry=${expectedPackageRegistry}`,
+      `${registryAuthConfigKey}=${token}`,
+      "",
+    ].join("\n"),
+  );
+  return {
+    ...process.env,
+    GITEA_NPM_TOKEN: process.env.GITEA_NPM_TOKEN || token,
+    NODE_AUTH_TOKEN: process.env.NODE_AUTH_TOKEN || token,
+    NPM_TOKEN: process.env.NPM_TOKEN || token,
+    npm_config_userconfig: npmrcPath,
+  };
 }
 const manifests = packages.map((item) => ({
   ...item,
@@ -169,7 +191,7 @@ if (isPublish && process.env.BESLISMODEL_PUBLISH_CONFIRM !== version) {
 const cacheDir = mkdtempSync(resolve(tmpdir(), "beslismodel-publish-cache-"));
 
 try {
-  const findExistingPublishedPackages = () =>
+  const findExistingPublishedPackages = (npmEnv = process.env) =>
     packages.map(({ name }) => {
       try {
         const publishedVersion = execFileSync(
@@ -186,6 +208,7 @@ try {
           {
             cwd: root,
             encoding: "utf8",
+            env: npmEnv,
             stdio: ["ignore", "pipe", "pipe"],
           },
         ).trim();
@@ -223,9 +246,10 @@ try {
   if (!isPublish) {
     console.log(`Package next-publish dry-run passed for @beslismodel packages ${version}`);
   } else {
-    await verifyPublishAuth(cacheDir);
+    const publishAuth = await verifyPublishAuth(cacheDir);
+    const publishEnv = createPublishEnv(cacheDir, publishAuth.token);
 
-    const existingPackages = findExistingPublishedPackages();
+    const existingPackages = findExistingPublishedPackages(publishEnv);
     const alreadyPublished = existingPackages.filter((item) => item.exists);
     if (alreadyPublished.length === packages.length) {
       console.log(
@@ -257,6 +281,7 @@ try {
         ],
         {
           cwd: root,
+          env: publishEnv,
           stdio: "inherit",
         },
       );

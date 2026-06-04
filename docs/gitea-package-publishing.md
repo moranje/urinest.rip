@@ -67,7 +67,9 @@ Gitea returns `404` for npm's `/-/whoami` endpoint, the script falls back to Git
 using `NODE_AUTH_TOKEN`, `NPM_TOKEN`, `NPM_REGISTRY_TOKEN`, `GITEA_NPM_TOKEN`, or user-level npm
 auth. `check:package-publish-next -- --publish` follows the sibling package pattern: all versions
 already present means skip-and-continue, a partial existing set fails hard. Do not create
-project-local npm auth files.
+project-local npm auth files. During publish the script writes a temporary npm userconfig inside
+the publish cache so env tokens such as `GITEA_NPM_TOKEN` reach `npm publish`; that file is removed
+after the command.
 
 ## Baseline Actions
 

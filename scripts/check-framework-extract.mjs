@@ -76,6 +76,12 @@ try {
       );
     }
   }
+  if (
+    !publishScript.includes("publish.npmrc") ||
+    !publishScript.includes("npm_config_userconfig")
+  ) {
+    throw new Error("Extracted framework publish script must propagate token auth to npm publish");
+  }
   if (!packageCi.includes("permissions:\n  contents: read")) {
     throw new Error("Extracted framework CI must keep contents: read permissions");
   }
