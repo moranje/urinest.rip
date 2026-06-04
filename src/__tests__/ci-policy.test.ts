@@ -266,6 +266,10 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:guidelines"]).toContain("build:flows");
     expect(packageJson.scripts["check:guidelines"]).toContain("check:guideline-traceability");
     expect(packageJson.scripts["check:guidelines"]).toContain("check:clinical-copy");
+    expect(packageJson.scripts["check:modern-toolchain"]).toBe(
+      "node scripts/check-modern-toolchain.mjs",
+    );
+    expect(packageJson.scripts["check:app"]).toContain("check:modern-toolchain");
     expect(packageJson.scripts["check:app"]).toContain("check:tsgo:app");
     expect(packageJson.scripts["check:app"]).toContain("test:app");
     expect(packageJson.scripts["check:app"]).not.toContain("npm run check:tsgo && npm run test");
@@ -401,6 +405,14 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/migrate-to-beslismodel-registry.mjs"), "utf8")).toContain(
       "tsconfig.tsgo.json",
     );
+    const modernToolchainScript = readFileSync(
+      resolve("scripts/check-modern-toolchain.mjs"),
+      "utf8",
+    );
+    expect(modernToolchainScript).toContain("oxfmt");
+    expect(modernToolchainScript).toContain("oxlint");
+    expect(modernToolchainScript).toContain("@typescript/native-preview");
+    expect(modernToolchainScript).toContain("node_modules/rolldown");
     expect(readFileSync(resolve("scripts/check-bundle-budget.mjs"), "utf8")).toContain(
       "appBundleBudgets",
     );
