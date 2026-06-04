@@ -432,6 +432,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `test(guidelines): require strip option defenses` maakt Urinestrip de eerste volledig uitgewerkte testcase voor antwoordoptieverdediging: `optionDefenseRequiredForFlows` activeert `optionClaims` per antwoordoptie, de traceability-gate valideert claim/verdict/bron-ID en de authoring-doc noemt het contract; verificatie: `npm run check:guidelines` en app authoring-doc test groen.
 - [x] `feat(testing): add guideline traceability assertions` verplaatst het option-defense contract naar herbruikbare package-API in `@beslismodel/testing`: consumers kunnen manifest, bronmatrix, results, redirects en `optionClaims` buiten Urinest.rip valideren; verificatie: package test/build, release-notes en extraction-map gates.
 - [x] `test(core): keep calculator bindings domain neutral` vervangt CVRM/SCORE2-voorbeelden in core-tests door neutrale scorebindingen, zodat core alleen generieke calculatorcontracten demonstreert en medische calculatorlogica aantoonbaar in domain packages blijft; verificatie: core package-tests en core export-smoke.
+- [x] `test(packages): run package unit tests in framework gate` voegt `test:packages` toe aan root `check:packages` en aan de geëxtraheerde frameworkrepo, zodat core boundary-tests, domain calculator-tests, package Vue-tests en `@beslismodel/testing` traceability-tests standaard meelopen vóór publish/smoke; verificatie: app CI-policy test en package Vitest-run.
 
 ## Commit Discipline
 

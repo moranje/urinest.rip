@@ -86,13 +86,14 @@ const packageScripts = {
   "check:testing-package": "node scripts/check-testing-package.mjs",
   "check:vue-package": "node scripts/check-vue-package.mjs",
   "check:packages":
-    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run check:package-release-notes && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-consumer-smoke && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
+    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run check:package-release-notes && npm run build:packages && npm run test:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-consumer-smoke && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
   "budget:packages": "node scripts/check-package-bundle-budget.mjs",
   "format:check": "oxfmt --check packages/ scripts/",
   lint: "oxlint packages/ scripts/ --deny-warnings",
   "lint:eslint": "eslint packages/ scripts/",
   "lint:all": "npm run lint && npm run lint:eslint",
   test: "vitest run",
+  "test:packages": "vitest run --config vitest.config.ts",
 };
 
 const dependencyNames = [

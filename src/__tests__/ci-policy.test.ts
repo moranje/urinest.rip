@@ -49,6 +49,10 @@ const packageExtractionMapScript = readFileSync(
   resolve("scripts/check-package-extraction-map.mjs"),
   "utf8",
 );
+const frameworkExtractScript = readFileSync(
+  resolve("scripts/extract-beslismodel-framework.mjs"),
+  "utf8",
+);
 const packageExtractionMap = JSON.parse(
   readFileSync(resolve("docs/package-extraction-map.json"), "utf8"),
 ) as {
@@ -200,6 +204,7 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:packages"]).toContain("check:framework-extract");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-config");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-release-notes");
+    expect(packageJson.scripts["check:packages"]).toContain("test:packages");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-tarballs");
     expect(packageJson.scripts["check:packages"]).toContain("check:package-consumer-smoke");
     expect(packageJson.scripts["check:packages"]).toContain(
@@ -217,6 +222,10 @@ describe("CI policy", () => {
     expect(packageJson.scripts["test:packages"]).toBe(
       "vitest run --config vitest.config.packages.ts",
     );
+    expect(frameworkExtractScript).toContain(
+      '"test:packages": "vitest run --config vitest.config.ts"',
+    );
+    expect(frameworkExtractScript).toContain("npm run build:packages && npm run test:packages");
     expect(packageVitestConfig).toContain('include: ["packages/**/*.test.ts"]');
     expect(packageVitestConfig).toContain("@beslismodel/core");
     expect(mutationPilotScript).toContain("vitest.config.packages.ts");
