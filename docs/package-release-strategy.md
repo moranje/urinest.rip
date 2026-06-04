@@ -88,6 +88,8 @@ Local npm setup:
 - Project `.npmrc` may define the scope registry but must not contain a token; package release preflight fails on project-level auth material.
 - Package manifests get `publishConfig.registry` only after the local Gitea registry URL is known.
 - Prereleases publish with `--tag next`; `latest` waits until registry smoke and app smoke pass.
+- After real publish or idempotent skip, `check:package-publish-next -- --publish` verifies every
+  package dist-tag (`next` or `latest`) resolves to the exact manifest version in Gitea npm.
 
 `urinest.rip` stays runnable during the move:
 
@@ -99,11 +101,27 @@ Local npm setup:
 - During the transition, source packages and registry packages may be selected only through package manager configuration, not divergent application imports.
 - The old package source is removed from the app repository only after the registry-installed app passes `check:packages`, tests, build, budget, PWA smoke, telemetry smoke, landing-grid regression and the Urinestrip end-to-end fixture.
 
-## CI Matrix
+## CI Gates
+
+### Standalone package CI
 
 Package CI must pass on Node `20`, `22` and `24`.
 
 Required gates:
+
+- `npm ci`
+- `npm run format:check`
+- `npm run lint:all`
+- `npm run check`
+- `npm run check:tsgo`
+- `npm run test:packages`
+- `npm run check:packages`
+- `npm audit --omit=dev --audit-level=high`
+- secret scan and `.env` tracked-file guard
+
+### App consumer CI
+
+`urinest.rip` must also prove the published packages in the clinical app:
 
 - `npm ci`
 - `npm run build:flows`
@@ -118,8 +136,13 @@ Required gates:
 - `npm run build`
 - `npm run budget`
 - `npm run check:guidelines`
+- `npm run check:package-registry-smoke:current`
+- `npm run check:browser-smoke`
 - `npm audit --omit=dev --audit-level=high`
 - secret scan and `.env` tracked-file guard
+
+Gitea PR-CI must run for package release docs and runbooks too; docs-only changes to
+`docs/package-release-*`, `docs/gitea-package-publishing.md` and extraction metadata are not ignored.
 
 ## Registry Smoke
 

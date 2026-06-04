@@ -477,6 +477,8 @@ Historische planning, afgerond op 2026-06-04: de prerelease-, stable-, registry-
 - [x] Alle zeven package manifests gebruiken Gitea als canonical repository metadata (`homepage`, `bugs.url`, `repository.url`) in plaats van de oude GitHub placeholder.
 - [x] `check-package-release-config` faalt wanneer package metadata afwijkt van de Gitea frameworkrepo of wanneer `publishConfig.registry` afwijkt van de Gitea npm registry.
 - [x] CI-policy verifieert dat de app-lockfile iedere `@beslismodel/*` dependency resolveert naar de canonical Gitea npm tarball voor exact dezelfde versie als het package manifest.
+- [x] `check-package-publish-next -- --publish` verifieert na publicatie of idempotente skip dat de gebruikte dist-tag (`next` of `latest`) voor elk package naar exact de manifestversie wijst.
+- [x] Gitea PR-CI negeert docs niet meer, zodat package release-notes, registry-runbooks en extractiemetadata door app/framework/package gates lopen.
 
 ## Commit Discipline
 

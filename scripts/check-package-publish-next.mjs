@@ -245,6 +245,41 @@ try {
       }
     });
 
+  const verifyPublishedDistTags = (npmEnv) => {
+    for (const { name } of packages) {
+      try {
+        const taggedVersion = execFileSync(
+          "npm",
+          [
+            "--cache",
+            cacheDir,
+            "view",
+            `${name}@${publishTag}`,
+            "version",
+            "--registry",
+            expectedPackageRegistry,
+          ],
+          {
+            cwd: root,
+            encoding: "utf8",
+            env: npmEnv,
+            stdio: ["ignore", "pipe", "pipe"],
+          },
+        ).trim();
+        if (taggedVersion !== version) {
+          fail(
+            `${name}@${publishTag} resolves to ${taggedVersion || "empty response"}; expected ${version}`,
+          );
+        }
+        console.log(`Verified ${name}@${publishTag} dist-tag resolves to ${version}`);
+      } catch (error) {
+        fail(
+          `Could not verify ${name}@${publishTag} dist-tag in ${expectedPackageRegistry}.\n${errorDetail(error)}`,
+        );
+      }
+    }
+  };
+
   const packPackage = ({ dir, name }) => {
     const output = execFileSync(
       "npm",
@@ -277,6 +312,7 @@ try {
     const existingPackages = findExistingPublishedPackages(publishEnv);
     const alreadyPublished = existingPackages.filter((item) => item.exists);
     if (alreadyPublished.length === packages.length) {
+      verifyPublishedDistTags(publishEnv);
       console.log(
         `All @beslismodel packages ${version} already exist in ${expectedPackageRegistry}; publish step skipped`,
       );
@@ -313,6 +349,7 @@ try {
       console.log(`Published ${name}@${version} with dist-tag ${publishTag}`);
     }
 
+    verifyPublishedDistTags(publishEnv);
     console.log(
       `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag ${publishTag}`,
     );

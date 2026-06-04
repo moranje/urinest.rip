@@ -706,6 +706,10 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease>");
     expect(releaseStrategy).toContain("BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease>");
     expect(releaseStrategy).toContain("check:modern-toolchain");
+    expect(releaseStrategy).toContain("### Standalone package CI");
+    expect(releaseStrategy).toContain("### App consumer CI");
+    expect(releaseStrategy).toContain("verifies every");
+    expect(releaseStrategy).toContain("package dist-tag");
     expect(releaseStrategy).toContain("Project `.npmrc` may define the scope registry");
     expect(releaseStrategy).toContain("must not contain a token");
     expect(releaseStrategy).toContain("exact registry versions");
@@ -927,6 +931,15 @@ describe("CI policy", () => {
     expect(giteaCiWorkflow).toContain("browser-actions/setup-chrome@v1");
     expect(giteaCiWorkflow).toContain("npm run check:browser-smoke");
     expect(giteaCiWorkflow).toContain("npm run check:package-release-config");
+    expect(giteaCiWorkflow).not.toContain("paths-ignore:");
+    expect(giteaCiWorkflow).not.toContain("docs/**");
+
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "verifyPublishedDistTags",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "dist-tag resolves to",
+    );
 
     expect(giteaReleaseWorkflow).toContain(
       "https://git.oranje.wtf/martien/baseline/actions/release-pr@v2.2.1",
