@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const giteaCiWorkflow = readFileSync(resolve(".gitea/workflows/ci.yaml"), "utf8");
 const giteaReleaseWorkflow = readFileSync(resolve(".gitea/workflows/release.yaml"), "utf8");
+const readme = readFileSync(resolve("README.md"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
@@ -557,6 +558,26 @@ describe("CI policy", () => {
     expect(agentInstructions).not.toContain("decision-engine-core");
     expect(agentInstructions).not.toContain("decision-engine-core-1.0.0.tgz");
     expect(agentInstructions).not.toContain("src/views/AboutPage.vue");
+  });
+
+  it("keeps README aligned with current app and framework workflow", () => {
+    expect(readme).toContain("Vue 3 + Vite 8 SPA");
+    expect(readme).toContain("@beslismodel/compiler");
+    expect(readme).toContain("0.1.0-next.1");
+    expect(readme).toContain("npm ci");
+    expect(readme).toContain("http://localhost:5173");
+    expect(readme).toContain("npm run check:app");
+    expect(readme).toContain("npm run check:framework");
+    expect(readme).toContain("npm run check:browser-smoke");
+    expect(readme).toContain("npm run check:guidelines");
+    expect(readme).toContain("src/lib/guidelines.ts");
+    expect(readme).toContain("docs/nas-handoff-2026-06-04.md");
+    expect(readme).toContain("AGENTS.md");
+    expect(readme).not.toContain("http://localhost:3000");
+    expect(readme).not.toContain("yarn install");
+    expect(readme).not.toContain("pnpm install");
+    expect(readme).not.toContain("No judgement");
+    expect(readme).not.toContain("decision-engine-core");
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {
