@@ -232,6 +232,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Storybook en componenttests voor lange klinische multi-input labels.
 - [x] Route-level visual contractgate voor landing/questionnaire/result/admin.
 - [x] Design-token distributiecontract voor Style Dictionary v4, Tokens Studio/Figma, web-runtime CSS en theme bootstrap: `docs/design-token-distribution.json`, `docs/design-token-distribution.md` en `npm run check:design-token-distribution` draaien mee in `check:app`.
+- [x] Theme runtime contract getest voor storage, OS media changes, `theme-color` metas en failure paths (`src/store/themeStore.test.ts`).
 
 ## Telemetry Checklist
 

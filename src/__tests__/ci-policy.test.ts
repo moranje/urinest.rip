@@ -33,6 +33,7 @@ const routeTransitionPolicyTest = readFileSync(
 const viewTransitionTest = readFileSync(resolve("src/lib/view-transition.test.ts"), "utf8");
 const progressTest = readFileSync(resolve("packages", "core", "src", "progress.test.ts"), "utf8");
 const tokenPolicyTest = readFileSync(resolve("src/styles/tokens.test.ts"), "utf8");
+const themeStoreTest = readFileSync(resolve("src/store/themeStore.test.ts"), "utf8");
 const designTokenDistributionScript = readFileSync(
   resolve("scripts/check-design-token-distribution.mjs"),
   "utf8",
@@ -763,6 +764,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
     expect(browserRegressionSmokeScript).toContain("assertThemeModes");
     expect(browserRegressionSmokeScript).toContain("Light mode theme-color mismatch");
+    expect(themeStoreTest).toContain("reacts to OS theme changes only while preference is system");
+    expect(themeStoreTest).toContain("reports storage write failure but still applies DOM theme");
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
     expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");
