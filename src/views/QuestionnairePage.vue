@@ -18,6 +18,7 @@
     :has-selected-options="hasSelectedOptions"
     :multi-select="isMultiSelect"
     :non-touch="isNonTouchDevice"
+    :is-submitting="isSubmitting"
     :active-popover-option-id="activePopoverOptionId"
     :popover-html="compiledMarkdown(popoverDescription)"
     :popover-style="popoverStyle"
@@ -58,6 +59,7 @@ const {
   isLoading,
   isMultiSelect,
   isNonTouchDevice,
+  isSubmitting,
   popoverDescription,
   popoverStyle,
   progressLabel,

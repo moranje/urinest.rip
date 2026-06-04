@@ -72,4 +72,25 @@ describe("ChoiceGroup", () => {
     await wrapper.get(".choice-group__confirm").trigger("click");
     expect(wrapper.emitted("confirm")).toHaveLength(1);
   });
+
+  it("shows pending feedback and blocks repeated multi-select confirmation", async () => {
+    const wrapper = mount(ChoiceGroup, {
+      props: {
+        ...baseProps,
+        multiSelect: true,
+        selectedOptionIds: ["a"],
+        selectedCount: 1,
+        hasSelectedOptions: true,
+        submitting: true,
+      },
+    });
+
+    const confirm = wrapper.get<HTMLButtonElement>(".choice-group__confirm");
+    expect(confirm.attributes("disabled")).toBeDefined();
+    expect(confirm.attributes("aria-busy")).toBe("true");
+    expect(confirm.find(".btn-spinner").exists()).toBe(true);
+
+    await confirm.trigger("click");
+    expect(wrapper.emitted("confirm")).toBeUndefined();
+  });
 });

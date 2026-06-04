@@ -58,6 +58,7 @@ const choiceGroupStub = {
     "hasSelectedOptions",
     "multiSelect",
     "nonTouch",
+    "submitting",
     "labelledBy",
     "describedBy",
     "activePopoverOptionId",
@@ -80,6 +81,7 @@ const choiceGroupStub = {
       :data-selected-count="selectedCount"
       :data-has-selected-options="String(hasSelectedOptions)"
       :data-non-touch="String(nonTouch)"
+      :data-submitting="String(submitting)"
       :data-active-popover="activePopoverOptionId"
     >
       <button type="button" class="choose" @click="$emit('choose', options[0])">Kies</button>
@@ -114,6 +116,7 @@ const mountPanel = () =>
       hasSelectedOptions: true,
       multiSelect: true,
       nonTouch: true,
+      submitting: true,
       activePopoverOptionId: "yes",
     },
     global: {
@@ -171,6 +174,7 @@ describe("QuestionPanel", () => {
     expect(choiceGroup.attributes("data-selected-count")).toBe("1");
     expect(choiceGroup.attributes("data-has-selected-options")).toBe("true");
     expect(choiceGroup.attributes("data-non-touch")).toBe("true");
+    expect(choiceGroup.attributes("data-submitting")).toBe("true");
     expect(choiceGroup.attributes("data-active-popover")).toBe("yes");
   });
 

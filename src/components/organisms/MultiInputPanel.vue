@@ -57,7 +57,9 @@
         <span class="multi-input-panel__status" aria-live="polite">
           {{ completedCount }}/{{ questions.length }} ingevuld
         </span>
-        <Button type="submit" size="lg" :disabled="!canSubmit">Bereken resultaat</Button>
+        <Button type="submit" size="lg" :disabled="submitting || !canSubmit" :loading="submitting">
+          Bereken resultaat
+        </Button>
       </div>
     </form>
   </Card>
@@ -87,6 +89,7 @@ const props = defineProps<{
   canRestart: boolean;
   progressValue: number;
   progressMax: number;
+  submitting?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -144,6 +147,7 @@ const isWide = (question: Question): boolean =>
 
 const submit = (): void => {
   attempted.value = true;
+  if (props.submitting) return;
   if (!canSubmit.value) return;
   emit("submit");
 };

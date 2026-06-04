@@ -32,7 +32,8 @@
     <Button
       v-if="multiSelect"
       class="choice-group__confirm confirm-button"
-      :disabled="!hasSelectedOptions"
+      :disabled="submitting || !hasSelectedOptions"
+      :loading="submitting"
       full-width
       size="lg"
       @click="emit('confirm')"
@@ -56,6 +57,7 @@ const props = withDefaults(
     hasSelectedOptions?: boolean;
     multiSelect: boolean;
     nonTouch: boolean;
+    submitting?: boolean;
     labelledBy: string;
     describedBy?: string;
     activePopoverOptionId?: string | null;
@@ -64,6 +66,7 @@ const props = withDefaults(
     selectedOptionIds: () => [],
     selectedCount: 0,
     hasSelectedOptions: false,
+    submitting: false,
     describedBy: undefined,
     activePopoverOptionId: null,
   },

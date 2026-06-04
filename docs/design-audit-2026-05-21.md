@@ -120,14 +120,14 @@ Drie grote thema's:
 | 3           | Accessibility (WCAG 2.2 AA)       | **4.5**         | ▲ +2.5     | Skip-link, h1, Space-toets, aria-checked, forced-colors, vuejs-accessibility lint, Storybook a11y-addon, route-level axe en primitives-tests                |
 | 4           | Motion & Microinteracties         | **4.5**         | ▲ +1.0     | View Transitions API, `view-transition-name`, reduced-motion overal, OfflineBanner motion. Mist: spring-physics voor primary feedback                        |
 | 5           | Frictieloze UX & Smart Defaults   | **4.5**         | ▲ +1.5     | ProgressBar, Space-toets, multi-counter, restart-button, OfflineBanner, terug-knop met Esc/Backspace label. Friction in klinische flow grotendeels opgelost  |
-| 6           | Visuele Feedback                  | **4.5**         | ▲ +1.5     | ProgressBar (waar ben ik in flow), multi-counter live region, skeleton-card, OfflineBanner, fade-transition op question-card, view-transition op title-morph |
+| 6           | Visuele Feedback                  | **4.6**         | ▲ +1.6     | ProgressBar, multi-counter live region, submit-button pending feedback, skeleton-card, OfflineBanner, fade-transition en view-transition                  |
 | 7           | Typografie & Hiërarchie           | **4.0**         | =          | Inter, fluid clamp(), text-wrap: balance op h1, h1 per route. Mist: letter-spacing-tokens, tabular-nums alleen 4 sites                                       |
 | 8           | Forms & Input UX                  | **3.4**         | ▲ +0.9     | AdminLogin heeft Input-primitive validation wiring, `aria-invalid`, `aria-describedby`, `inputmode`, `enterkeyhint` en password-manager hints                |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
 | 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en theme toggle aanwezig; platformvalidatie blijft vervolgpunt             |
 | **Overall** |                                   | **4.2/5 (84%)** | **▲ +1.1** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
-**Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3.4 + 4 + 3.5) ÷ 12 = **4.21 / 5.00** ✅
+**Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.6×2 + 4 + 3.4 + 4 + 3.5) ÷ 12 = **4.23 / 5.00** ✅
 
 ---
 
@@ -243,6 +243,7 @@ Drie grote thema's:
 - **Skeleton-loaders** met `aria-busy="true" aria-label="Vragenlijst laden"` (`QuestionnairePage.vue:7-8`)
 - **Skeleton primitive** met variants (title/short/option) — content-aware skeleton (`QuestionnairePage.vue:11-17`)
 - **`view-transition-name`** maakt question-progression visueel onmiskenbaar
+- **Submit pending feedback** op multi-select confirm en grouped-input submit: button loading/disabled via `isSubmitting`, geborgd in `ChoiceGroup.test.ts`, `MultiInputPanel.test.ts`, `QuestionPanel.test.ts` en `QuestionnaireTemplate.test.ts`
 - **OfflineBanner** als feedback-component voor connectiviteit-state
 - **Toast** met `role="alert"` + `aria-live="polite"` voor copy-to-EPD
 - **Fade-out-in** op question-card mode="out-in" voorkomt overlap (`:20`)
@@ -253,7 +254,6 @@ Drie grote thema's:
 
 - Skeleton-shimmer is opacity-pulse (`main.css:43-50`), niet gradient-sweep — markeer als upgrade (DSN-U01)
 - Copy-button geeft toast maar geen haptic-feedback (mobile `navigator.vibrate(10)` zou primary-confirms ondersteunen)
-- Geen pending-state op multi-select Bevestigen-knop tussen click en navigatie
 - ProgressBar `progressMax` is "ongeveer Y" — onbekend einde maakt determinate-progress impossibel; documenteer als bewuste keuze
 
 ### 7. Typografie & Hiërarchie — 4.0/5
@@ -577,14 +577,14 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 | 3. A11y                        | 2.0                 | 4.5             | ▲ +2.5      |
 | 4. Motion                      | 3.5                 | 4.5             | ▲ +1.0      |
 | 5. Frictie                     | 3.0                 | 4.5             | ▲ +1.5      |
-| 6. Feedback                    | 3.0                 | 4.5             | ▲ +1.5      |
+| 6. Feedback                    | 3.0                 | 4.6             | ▲ +1.6      |
 | 7. Typografie                  | 4.0                 | 4.0             | =           |
 | 8. Forms                       | 2.5                 | 3.4             | ▲ +0.9      |
 | 9. Performance                 | 4.0                 | 4.0             | =           |
 | 10. Responsive/Dark            | 3.0                 | 3.5             | ▲ +0.5      |
-| **Overall (gewogen clinical)** | **3.13**            | **4.21**        | **▲ +1.08** |
+| **Overall (gewogen clinical)** | **3.13**            | **4.23**        | **▲ +1.10** |
 
-Sprong van **3.13 → 4.21** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
+Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
 
 ## Resolution Update — 2026-06-04
 
@@ -595,3 +595,4 @@ Sprong van **3.13 → 4.21** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] Forced-colors/high-contrast runtimegedrag is geborgd in `scripts/check-browser-regression-smoke.mjs` met Chrome `Emulation.setEmulatedMedia` op de directe resultaatroute.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
 - [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.
+- [x] Multi-select en grouped-input submits tonen pending feedback en blokkeren dubbele submits via `isSubmitting`, Button `loading` en componenttestdekking.

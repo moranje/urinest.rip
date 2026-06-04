@@ -46,6 +46,7 @@ const questionPanelStub = {
     "hasSelectedOptions",
     "multiSelect",
     "nonTouch",
+    "submitting",
     "activePopoverOptionId",
   ],
   emits: [
@@ -73,6 +74,7 @@ const questionPanelStub = {
       :data-has-selected-options="String(hasSelectedOptions)"
       :data-multi-select="String(multiSelect)"
       :data-non-touch="String(nonTouch)"
+      :data-submitting="String(submitting)"
       :data-active-popover-option-id="activePopoverOptionId"
     >
       <button class="restart" type="button" @click="$emit('restart')">Opnieuw</button>
@@ -103,6 +105,7 @@ const multiInputPanelStub = {
     "canRestart",
     "progressValue",
     "progressMax",
+    "submitting",
   ],
   emits: ["restart", "update-answer", "submit"],
   template: `
@@ -115,6 +118,7 @@ const multiInputPanelStub = {
       :data-can-restart="String(canRestart)"
       :data-progress-value="progressValue"
       :data-progress-max="progressMax"
+      :data-submitting="String(submitting)"
     >
       <button class="group-restart" type="button" @click="$emit('restart')">Opnieuw</button>
       <button
@@ -184,6 +188,7 @@ function mountTemplate(
       hasSelectedOptions: true,
       multiSelect: false,
       nonTouch: true,
+      isSubmitting: true,
       activePopoverOptionId: "o-ja",
       popoverHtml: "<p>Optie-uitleg</p>",
       popoverStyle: { left: "10px", top: "20px" },
@@ -238,6 +243,7 @@ describe("QuestionnaireTemplate", () => {
     expect(panel.attributes("data-description-html")).toBe("<p>Beschrijving</p>");
     expect(panel.attributes("data-progress-label")).toBe("Vraag 1 van 4");
     expect(panel.attributes("data-selected-option-ids")).toBe("o-ja");
+    expect(panel.attributes("data-submitting")).toBe("true");
     expect(panel.attributes("data-active-popover-option-id")).toBe("o-ja");
     expect(popover.attributes("data-active-option-id")).toBe("o-ja");
     expect(popover.attributes("data-html")).toBe("<p>Optie-uitleg</p>");
@@ -256,6 +262,7 @@ describe("QuestionnaireTemplate", () => {
     expect(panel.attributes("data-title")).toBe("CVRM risicogegevens");
     expect(panel.attributes("data-question-ids")).toBe("q-leeftijd,q-roken");
     expect(panel.attributes("data-answer-count")).toBe("1");
+    expect(panel.attributes("data-submitting")).toBe("true");
     expect(wrapper.find(".question-panel-stub").exists()).toBe(false);
 
     await wrapper.get(".group-restart").trigger("click");

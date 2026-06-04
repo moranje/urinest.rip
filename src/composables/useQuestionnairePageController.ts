@@ -39,6 +39,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
   const isLoading = ref(true);
   const isNonTouchDevice = ref(false);
   const isNavigating = ref(false);
+  const isSubmitting = ref(false);
   const runner = useQuestionnaireRunner(questionnaireStore, { questionnaireId: () => id.value });
   const {
     currentQuestionId,
@@ -329,9 +330,13 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
     }
     if (transition.type === "question") {
       syncQuestionRoute(transition.questionId, "push");
+      void nextTick(() => {
+        isSubmitting.value = false;
+      });
       return;
     }
     if (transition.type === "missing") {
+      isSubmitting.value = false;
       handleError(
         new Error(`Questionnaire not found: ${transition.questionnaireId}`),
         "questionnaire:not-found",
@@ -356,6 +361,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
     ) {
       return;
     }
+    isSubmitting.value = false;
     clearFlowTrail();
     clearStoredRedirectTrail();
     void loadStateAndDetermineStart({ reset: true });
@@ -399,7 +405,9 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
   };
 
   const confirmMultipleChoice = (): void => {
+    if (isSubmitting.value) return;
     if (currentQuestion.value) {
+      isSubmitting.value = true;
       const currentAnswer = questionnaireStore.getAnswer(id.value, currentQuestion.value.id);
       const selectedValues = new Set(
         (Array.isArray(currentAnswer) ? currentAnswer : [])
@@ -420,6 +428,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
       goToNextQuestion(branch || undefined);
       return;
     }
+    isSubmitting.value = true;
     goToNextQuestion();
   };
 
@@ -428,6 +437,8 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
   };
 
   const submitGroupedStep = (): void => {
+    if (isSubmitting.value) return;
+    isSubmitting.value = true;
     breadcrumbClick("question-group-confirmed", {
       flowId: id.value,
       questionIds: currentStepQuestions.value.map((question) => question.id),
@@ -518,6 +529,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
 
   watch(id, async () => {
     isNavigating.value = false;
+    isSubmitting.value = false;
     resetNavigation();
     await loadStateAndDetermineStart({ reset: true });
   });
@@ -566,6 +578,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
     isLoading,
     isMultiSelect,
     isNonTouchDevice,
+    isSubmitting,
     popoverDescription,
     popoverStyle,
     progressLabel,

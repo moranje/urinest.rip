@@ -29,6 +29,7 @@
             :can-restart="canRestart"
             :progress-value="progressValue"
             :progress-max="progressMax"
+            :submitting="isSubmitting"
             @restart="emit('restart')"
             @update-answer="(questionId, answer) => emit('updateGroupAnswer', questionId, answer)"
             @submit="emit('submitGroup')"
@@ -48,6 +49,7 @@
             :has-selected-options="hasSelectedOptions"
             :multi-select="multiSelect"
             :non-touch="nonTouch"
+            :submitting="isSubmitting"
             :active-popover-option-id="activePopoverOptionId"
             @restart="emit('restart')"
             @choose="emit('choose', $event)"
@@ -105,6 +107,7 @@ const props = withDefaults(
     hasSelectedOptions: boolean;
     multiSelect: boolean;
     nonTouch: boolean;
+    isSubmitting?: boolean;
     activePopoverOptionId?: string | null;
     popoverHtml?: string;
     popoverStyle?: PopoverStyle;
@@ -118,6 +121,7 @@ const props = withDefaults(
     stepDescription: "",
     descriptionHtml: "",
     activePopoverOptionId: null,
+    isSubmitting: false,
     popoverHtml: "",
     popoverStyle: () => ({}),
   },

@@ -23,6 +23,7 @@
       :has-selected-options="hasSelectedOptions"
       :multi-select="multiSelect"
       :non-touch="nonTouch"
+      :submitting="submitting"
       :labelled-by="titleId"
       :described-by="stepDescription ? stepId : undefined"
       :active-popover-option-id="activePopoverOptionId"
@@ -67,11 +68,13 @@ const props = withDefaults(
     hasSelectedOptions: boolean;
     multiSelect: boolean;
     nonTouch: boolean;
+    submitting?: boolean;
     activePopoverOptionId?: string | null;
   }>(),
   {
     stepDescription: "",
     descriptionHtml: "",
+    submitting: false,
     activePopoverOptionId: null,
   },
 );

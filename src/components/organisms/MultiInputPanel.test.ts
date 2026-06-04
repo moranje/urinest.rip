@@ -90,4 +90,23 @@ describe("MultiInputPanel", () => {
 
     expect(wrapper.emitted("submit")).toHaveLength(1);
   });
+
+  it("shows pending feedback and blocks repeated grouped submit", async () => {
+    const wrapper = mountPanel({
+      answers: {
+        "q-age": { value: "65", text: "65" },
+        "q-smoker": { value: "true", text: "Ja" },
+        "q-region": { value: "low", text: "Laag" },
+      },
+      submitting: true,
+    });
+
+    const submit = wrapper.get<HTMLButtonElement>("button[type='submit']");
+    expect(submit.attributes("disabled")).toBeDefined();
+    expect(submit.attributes("aria-busy")).toBe("true");
+    expect(submit.find(".btn-spinner").exists()).toBe(true);
+
+    await wrapper.get("form").trigger("submit");
+    expect(wrapper.emitted("submit")).toBeUndefined();
+  });
 });
