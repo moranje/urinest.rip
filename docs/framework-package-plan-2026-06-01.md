@@ -392,6 +392,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, en draait daarna registry-smoke.
 - [x] Gitea app- en release-workflows draaien `npm run check:framework`, zodat package/extractie regressies niet alleen lokaal of in GitHub CI worden gevangen.
 - [x] Browser-regressiesmoke toegevoegd voor landing-grid 2x3, progressbar zonder misleidende tekst, questionnaire-switch/back en directe result-route zonder loader-hang.
+- [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.

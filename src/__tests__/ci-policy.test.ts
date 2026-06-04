@@ -26,6 +26,10 @@ const browserRegressionSmokeScript = readFileSync(
   resolve("scripts/check-browser-regression-smoke.mjs"),
   "utf8",
 );
+const registryMigrationScript = readFileSync(
+  resolve("scripts/migrate-to-beslismodel-registry.mjs"),
+  "utf8",
+);
 const packageReleaseConfigScript = readFileSync(
   resolve("scripts/check-package-release-config.mjs"),
   "utf8",
@@ -214,6 +218,9 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:browser-smoke"]).toBe(
       "node scripts/check-browser-regression-smoke.mjs",
     );
+    expect(packageJson.scripts["migrate:registry-deps"]).toBe(
+      "node scripts/migrate-to-beslismodel-registry.mjs",
+    );
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
     expect(packageJson.scripts["budget:packages"]).toBe(
@@ -333,6 +340,11 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "BESLISMODEL_REGISTRY_SMOKE_VERSION",
     );
+    expect(registryMigrationScript).toContain("BESLISMODEL_REGISTRY_MIGRATION_VERSION");
+    expect(registryMigrationScript).toContain("migratePackageJson");
+    expect(registryMigrationScript).toContain("migrateTsconfig");
+    expect(registryMigrationScript).toContain("removePackageAliasEntries");
+    expect(registryMigrationScript).toContain("Re-run with --write");
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "BESLISMODEL_PUBLISH_CONFIRM",
     );
@@ -412,6 +424,9 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("exact registry versions");
     expect(releaseStrategy).toContain("landing-grid regression");
     expect(releaseStrategy).toContain("Urinestrip end-to-end fixture");
+    expect(readFileSync(resolve("docs/gitea-package-publishing.md"), "utf8")).toContain(
+      "npm run migrate:registry-deps -- --write",
+    );
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {

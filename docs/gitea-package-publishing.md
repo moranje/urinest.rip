@@ -117,4 +117,13 @@ BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0 \
 npm run check:package-registry-smoke
 ```
 
+Prepare `urinest.rip` as a registry consumer only after publish and smoke pass:
+
+```bash
+BESLISMODEL_REGISTRY_MIGRATION_VERSION=0.1.0-next.0 npm run migrate:registry-deps -- --write
+npm install
+npm run check:app
+npm run check:browser-smoke
+```
+
 Promote to `latest` only after registry smoke and `urinest.rip` app smoke pass.
