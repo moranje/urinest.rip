@@ -126,13 +126,11 @@ questions:
   # Treatment selection questions — one per namespace with multiple options
 
   treatmentLocalHealthy:
-    # Intentionally visible to triagists: this healthy, non-catheter local cystitis
-    # branch can redirect to the dedicated gezonde-vrouwen flow before treatment
-    # choices become clinically actionable.
     id: q_bac_tx_local_healthy
     text: Welke behandeling kan patiënt krijgen?
     type: select
     conditions:
+      - if: "_role != triagist"
       - if: "tissueInvasion == local"
       - if: "riskAssessment == healthy"
       - if: "urinaryCatheter == no"
@@ -1102,6 +1100,8 @@ logic:
 
   # Triagist + local + healthy + catheter → U3 same-day referral
   - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == yes"]
+    show: triage.u3
+  - when: ["_role == triagist", "tissueInvasion == local", "riskAssessment == healthy", "urinaryCatheter == no"]
     show: triage.u3
 
   # === Direct results (no treatment selection) ===

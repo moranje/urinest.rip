@@ -1,0 +1,111 @@
+{
+  "schema": "role-responsibility-matrix-v1",
+  "reviewedOn": "2026-06-04",
+  "scope": "Urinest.rip urineonderzoek en urineweginfectie beslisondersteuning",
+  "runtimeRoles": {
+    "behandelaar": {
+      "label": "Arts",
+      "exposedInApp": true,
+      "careRoles": ["arts", "verpleegkundige"],
+      "canSeeTreatment": true,
+      "canDocumentTreatment": true,
+      "responsibilities": [
+        "diagnostiek interpreteren",
+        "behandeling kiezen binnen bevoegdheid en lokaal protocol",
+        "contra-indicaties controleren",
+        "beleid documenteren"
+      ],
+      "forbiddenActions": []
+    },
+    "triagist": {
+      "label": "Triage",
+      "exposedInApp": true,
+      "careRoles": ["triagist", "doktersassistent"],
+      "canSeeTreatment": false,
+      "canDocumentTreatment": false,
+      "responsibilities": [
+        "veiligheids- en urgentiesignalen herkennen",
+        "vervolgonderzoek voorbereiden",
+        "overleg- en verwijscriteria volgen"
+      ],
+      "forbiddenActions": [
+        "zelfstandig antibiotica of voorschrijfbeleid kiezen",
+        "behandeling documenteren als afgerond beleid"
+      ]
+    }
+  },
+  "careRoles": {
+    "arts": {
+      "label": "Arts",
+      "status": "covered-by-runtime-mode",
+      "runtimeRole": "behandelaar",
+      "canSeeTreatment": true,
+      "canDocumentTreatment": true,
+      "responsibilities": [
+        "diagnose stellen",
+        "behandeling voorschrijven",
+        "medisch eindverantwoordelijk beleid bepalen"
+      ],
+      "mustEscalateWhen": []
+    },
+    "triagist": {
+      "label": "Triagist",
+      "status": "covered-by-runtime-mode",
+      "runtimeRole": "triagist",
+      "canSeeTreatment": false,
+      "canDocumentTreatment": false,
+      "responsibilities": [
+        "urgentiecategorie bepalen",
+        "alarmsymptomen uitvragen",
+        "artscontact of vervolgroute organiseren"
+      ],
+      "mustEscalateWhen": ["red_flags", "unclear_answers", "outside_triage_protocol"]
+    },
+    "doktersassistent": {
+      "label": "Doktersassistent",
+      "status": "covered-by-runtime-mode",
+      "runtimeRole": "triagist",
+      "canSeeTreatment": false,
+      "canDocumentTreatment": false,
+      "responsibilities": [
+        "intake en triagevoorbereiding uitvoeren",
+        "meet- en testinformatie verzamelen",
+        "overlegcriteria herkennen"
+      ],
+      "mustEscalateWhen": ["red_flags", "unclear_answers", "outside_protocol"]
+    },
+    "verpleegkundige": {
+      "label": "Verpleegkundige",
+      "status": "covered-by-runtime-mode",
+      "runtimeRole": "behandelaar",
+      "canSeeTreatment": true,
+      "canDocumentTreatment": true,
+      "responsibilities": [
+        "geprotocolleerde zorg uitvoeren",
+        "contra-indicaties controleren",
+        "beleid binnen lokaal protocol documenteren"
+      ],
+      "mustEscalateWhen": ["red_flags", "outside_protocol", "unclear_contraindications"]
+    },
+    "poh": {
+      "label": "POH",
+      "status": "not-exposed",
+      "runtimeRole": null,
+      "canSeeTreatment": false,
+      "canDocumentTreatment": false,
+      "responsibilities": [
+        "niet zichtbaar in de huidige urineonderzoek-implementatie",
+        "voor chronische zorg alleen toevoegen met domeinspecifieke matrix"
+      ],
+      "mustEscalateWhen": ["domain_not_exposed"]
+    }
+  },
+  "questionnaireAudiencePolicy": {
+    "allowedAudienceValues": ["behandelaar", "triagist"],
+    "notExposedCareRoles": ["poh"],
+    "treatmentHiddenForRuntimeRoles": ["triagist"],
+    "forbiddenTreatmentQuestionPatterns": ["welke behandeling"],
+    "forbiddenTreatmentResultFields": ["treatment"],
+    "requireResolvedOutcomeForRuntimeRoles": true
+  }
+}
