@@ -22,6 +22,10 @@ const routeVisualContractTest = readFileSync(
   resolve("src/__tests__/route-visual-contract.test.ts"),
   "utf8",
 );
+const browserRegressionSmokeScript = readFileSync(
+  resolve("scripts/check-browser-regression-smoke.mjs"),
+  "utf8",
+);
 const packageReleaseConfigScript = readFileSync(
   resolve("scripts/check-package-release-config.mjs"),
   "utf8",
@@ -137,6 +141,8 @@ describe("CI policy", () => {
     expect(workflow).toContain("Possible hardcoded JWT/key found in source code");
     expect(workflow).toContain("git ls-files --error-unmatch .env");
     expect(workflow).toContain("npm run check:framework");
+    expect(workflow).toContain("Browser regression smoke");
+    expect(workflow).toContain("npm run check:browser-smoke");
     expect(workflow).toContain("Package release config preflight");
     expect(workflow).toContain('BESLISMODEL_STRICT_NPMRC: "true"');
     expect(workflow).toContain("npm run budget");
@@ -204,6 +210,9 @@ describe("CI policy", () => {
     );
     expect(packageJson.scripts["check:package-registry-smoke:config"]).toBe(
       "node scripts/check-package-registry-smoke.mjs --check-config",
+    );
+    expect(packageJson.scripts["check:browser-smoke"]).toBe(
+      "node scripts/check-browser-regression-smoke.mjs",
     );
     expect(packageJson.scripts.budget).toContain("budget:app");
     expect(packageJson.scripts.budget).toContain("budget:packages");
@@ -430,6 +439,11 @@ describe("CI policy", () => {
     expect(routeVisualContractTest).toContain(
       "keeps result and admin routes bounded by content tokens",
     );
+    expect(browserRegressionSmokeScript).toContain("Expected 2 desktop landing rows");
+    expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
+    expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
+    expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
+    expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
   });
 
   it("keeps Gitea app workflows on baseline actions while package publishing stays npm-native", () => {
@@ -442,6 +456,7 @@ describe("CI policy", () => {
     expect(giteaCiWorkflow).toContain("registry: https://git.oranje.wtf/api/packages/martien/npm/");
     expect(giteaCiWorkflow).toContain('scopes: "@oranje,@xenia,@beslismodel"');
     expect(giteaCiWorkflow).toContain("npm run check:app");
+    expect(giteaCiWorkflow).toContain("npm run check:framework");
     expect(giteaCiWorkflow).toContain("npm run check:package-release-config");
 
     expect(giteaReleaseWorkflow).toContain(
@@ -455,6 +470,7 @@ describe("CI policy", () => {
     );
     expect(giteaReleaseWorkflow).toContain("app-name: urinest.rip");
     expect(giteaReleaseWorkflow).toContain("release-version: ${{ needs.version.outputs.value }}");
+    expect(giteaReleaseWorkflow).toContain("npm run check:framework");
     expect(giteaReleaseWorkflow).toContain("nwtgck/actions-netlify@v3");
     expect(giteaReleaseWorkflow).not.toContain("npm publish");
   });
