@@ -82,6 +82,8 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+a0e395b test(ci): enforce modern toolchain contract
+0ea08f2 docs(framework): refresh local gate evidence
 117a45a test(flows): update triage result snapshot
 35e66e4 docs(framework): record next prerelease handoff
 d022544 chore(packages): bump next prerelease
@@ -222,6 +224,8 @@ Expected pattern: user-level npm auth or CI secret. Never commit `_authToken`.
 - Seven packages published to Gitea npm as `0.1.0-next.0` with dist-tag `next`.
 - Local package source bumped to `0.1.0-next.1` for the next prerelease after Vue store
   persistence hardening.
+- `scripts/check-modern-toolchain.mjs` enforces the requested modern stack contract: `oxfmt`,
+  `oxlint`, `tsgo`, Vite 8 and Rolldown must stay wired into dependencies/scripts/gates.
 - Root app migrated to exact registry dependencies.
 - Package release docs added.
 - Package publish script hardened for Gitea:
@@ -937,6 +941,9 @@ Verified 2026-06-04:
 - `docs/audit-2026-05-21.md` is now explicitly labeled as superseded by the 2026-05-22 audit
   reconciliation.
 - `docs/ai-guideline-authoring.md` template checklist no longer appears as open project work.
+- `a0e395b test(ci): enforce modern toolchain contract` added `npm run check:modern-toolchain`
+  to `check:app`; it verifies `oxfmt`, `oxlint`, `@typescript/native-preview`/`tsgo`, Vite 8
+  and Rolldown package-lock presence.
 - `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 82 app
   test files/409 tests, guideline traceability/copy/role gates, bundle budget and production build.
 - `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
