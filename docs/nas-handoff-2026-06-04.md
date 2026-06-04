@@ -481,8 +481,8 @@ Current protections:
 - `ChoiceOption.test.ts` asserts answer cards have no full-frame accent border:
   - `.choice-option { border: 0 }`
   - selected/focus uses inset left accent, not full border.
-- `Checkbox.test.ts` asserts checkbox styling is scoped to the primitive and does not create a
-  second row/label frame.
+- `FormControls.test.ts` asserts checkbox styling is scoped to the primitive and does not create
+  native accent borders or a second row/label frame.
 - `Notice.test.ts` asserts notice padding is owned by the component and stays large enough for
   dense result content.
 - `LandingTemplate.test.ts` and route visual contracts protect landing grid.
