@@ -81,6 +81,9 @@ if (releaseNotes) {
     if (mapItem?.publicExportSha256 && !releaseNotes.includes(mapItem.publicExportSha256)) {
       fail(`release notes missing public export hash ${name}`);
     }
+    if (mapItem?.sourceTreeSha256 && !releaseNotes.includes(mapItem.sourceTreeSha256)) {
+      fail(`release notes missing source tree hash ${name}`);
+    }
   }
 
   const secretPattern =

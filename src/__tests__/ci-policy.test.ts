@@ -295,6 +295,7 @@ describe("CI policy", () => {
     expect(packageReleaseConfigScript).toContain("Project .npmrc contains auth material");
     expect(packageReleaseConfigScript).not.toContain("console.warn");
     expect(packageExtractionMapScript).toContain("publicExportSha256");
+    expect(packageExtractionMapScript).toContain("sourceTreeSha256");
     expect(packageExtractionMapScript).toContain("appOnlyExclusions");
     expect(packageExtractionMapScript).toContain("targetSiblingFolder");
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
@@ -489,6 +490,8 @@ describe("CI policy", () => {
       "@beslismodel/vue",
     ]);
     expect(packageExtractionMap.packages?.every((item) => item.publicExportSha256)).toBe(true);
+    expect(packageExtractionMap.packages?.every((item) => item.sourceTreeSha256)).toBe(true);
+    expect(packageExtractionMap.packages?.every((item) => item.sourceTreeFileCount > 0)).toBe(true);
     expect(packageExtractionMap.appOnlyExclusions).toEqual(
       expect.arrayContaining(["flows/", "public/", "src/views/admin/", "src/lib/log-sink.ts"]),
     );

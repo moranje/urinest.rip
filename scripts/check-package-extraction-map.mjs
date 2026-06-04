@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 
 const map = JSON.parse(
   readFileSync(new URL("../docs/package-extraction-map.json", import.meta.url), "utf8"),
@@ -61,6 +62,50 @@ function lineCount(value) {
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function packageSourceFiles(root) {
+  const files = [];
+
+  function walk(dir) {
+    for (const entry of readdirSync(dir).sort((left, right) => left.localeCompare(right))) {
+      if (
+        entry === ".DS_Store" ||
+        entry === "dist" ||
+        entry === "node_modules" ||
+        entry === "coverage"
+      ) {
+        continue;
+      }
+      const path = join(dir, entry);
+      const stat = statSync(path);
+      if (stat.isDirectory()) {
+        walk(path);
+        continue;
+      }
+      if (!stat.isFile()) continue;
+      files.push(path);
+    }
+  }
+
+  walk(root);
+  return files;
+}
+
+function sourceTreeFingerprint(root) {
+  const files = packageSourceFiles(root);
+  const manifest = files
+    .map((path) => {
+      const relativePath = path.replace(/\\/gu, "/");
+      const source = normalizeSource(readFileSync(path, "utf8"));
+      return `${relativePath}\0${lineCount(source)}\0${sha256(source)}`;
+    })
+    .join("\n");
+
+  return {
+    fileCount: files.length,
+    sha256: sha256(manifest),
+  };
 }
 
 function startsWithPackageRoot(path) {
@@ -145,6 +190,16 @@ for (const pkg of packages) {
       fail(`${pkg.name}: public export line count changed; update extraction map intentionally`);
     }
   }
+
+  if (existsSync(pkg.sourceRoot)) {
+    const actualFingerprint = sourceTreeFingerprint(pkg.sourceRoot);
+    if (pkg.sourceTreeSha256 !== actualFingerprint.sha256) {
+      fail(`${pkg.name}: source tree hash changed; update extraction map intentionally`);
+    }
+    if (pkg.sourceTreeFileCount !== actualFingerprint.fileCount) {
+      fail(`${pkg.name}: source tree file count changed; update extraction map intentionally`);
+    }
+  }
 }
 
 const exclusions = new Set(map.appOnlyExclusions ?? []);
@@ -168,4 +223,4 @@ if (violations.length > 0) {
   );
 }
 
-console.log("Package extraction map preserves package boundaries and public export parity");
+console.log("Package extraction map preserves package boundaries, public exports and source trees");

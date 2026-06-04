@@ -374,6 +374,8 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [x] Nieuwe package-map/repo reproduceerbaar gemaakt met `extract-beslismodel-framework.mjs` en `check:framework-extract`, zodat framework-code als eigen `beslismodel-framework/` target zonder app-only code gebouwd kan worden.
 - [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, copd-care, cvrm-prevent, dm-care, vue en testing; geen tijdelijke bundeling van app-only code.
+- [x] Package-extractie-map gehard: naast public-export hashes pinnen `sourceTreeSha256` en `sourceTreeFileCount` nu de volledige packagebron inclusief tests, configs en calculator-data, zodat bron/data-regressies niet buiten de framework-extractie vallen.
+- [x] Package release-notes taggen dezelfde source-tree hashes mee; `check:package-release-notes` faalt nu als Gitea release notes alleen public exports noemen.
 - [x] Packages als zelfstandige Gitea-repo geëxtraheerd en gepusht: `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/copd-care`, `@beslismodel/cvrm-prevent`, `@beslismodel/dm-care`, `@beslismodel/vue`, `@beslismodel/testing` staan in `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`.
 - [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [x] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
