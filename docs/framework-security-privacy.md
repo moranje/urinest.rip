@@ -76,6 +76,8 @@ Eisen:
 - TTL verplicht voor antwoorden, redirect trails en recovery state;
 - storage degradeert naar memory/no-op wanneer browser storage faalt;
 - geen vrije tekst, patient-ID, geboortedatum, BSN, contactdata of ruwe calculatorinputs;
+- geselecteerde antwoordstate mag alleen bestaan uit gestructureerde optie-data voor actuele
+  manifestvragen; stale vraagkeys worden bij restore verwijderd;
 - rol en flowvoortgang mogen alleen als technische context worden bewaard;
 - localStorage alleen voor niet-klinische voorkeuren zoals thema of rol;
 - sessionStorage voor tijdelijke flowstate wanneer persistence nodig is;
@@ -161,7 +163,8 @@ Eisen voor consumer apps:
 - [x] No-PHI telemetry contract is getest (`telemetry-privacy`, `log-sink`, `error-matrix`).
 - [x] Telemetry context hasht/dropt raw clinical identifiers voordat Supabase persistence draait (`sanitizeTelemetryContext`, `log-sink`).
 - [x] Anon log-ingest RPC weigert raw clinical telemetry keys en token/PHI patronen server-side (`007_harden_log_access.sql`).
-- [x] No-PHI storage contract is getest (`storage`, `redirect-trail`, package boundary checks).
+- [x] No-PHI storage contract is getest (`storage`, `redirect-trail`, app answer-storage adapter,
+      package store restore filtering, package boundary checks).
 - [x] CSP headers zijn enforcing en getest (`security-headers`).
 - [x] Source maps worden prive geupload en uit deploy artifact verwijderd (`.github/workflows/ci.yml`).
 - [x] Admin routes zijn app-only, lazy en auth-gated (`router/index.ts`, package boundary checks).

@@ -151,6 +151,15 @@ const toDecisionManifest = <ResultData>(
   })),
 });
 
+function filterAnswersByQuestionIds<Answer>(
+  storedAnswers: Record<string, unknown>,
+  allowedQuestionIds: ReadonlySet<string>,
+): BeslismodelAnswerMap<Answer> {
+  return Object.fromEntries(
+    Object.entries(storedAnswers).filter(([questionId]) => allowedQuestionIds.has(questionId)),
+  ) as BeslismodelAnswerMap<Answer>;
+}
+
 export function createBeslismodelStore<
   ResultData = Readonly<Record<string, unknown>>,
   Answer = unknown,
@@ -237,6 +246,7 @@ export function createBeslismodelStore<
 
     const restorePersistedAnswers = async (
       baseAnswers: Record<string, BeslismodelAnswerMap<Answer>>,
+      allowedQuestionIdsByQuestionnaire: Readonly<Record<string, ReadonlySet<string>>>,
     ): Promise<Record<string, BeslismodelAnswerMap<Answer>>> => {
       if (!answersStorage || !answersStorageKey || !answersTtlMs) return baseAnswers;
 
@@ -259,7 +269,10 @@ export function createBeslismodelStore<
         for (const questionnaireId of Object.keys(baseAnswers)) {
           const storedAnswers = parsed.answers[questionnaireId];
           if (isRecord(storedAnswers)) {
-            restored[questionnaireId] = storedAnswers as BeslismodelAnswerMap<Answer>;
+            restored[questionnaireId] = filterAnswersByQuestionIds(
+              storedAnswers,
+              allowedQuestionIdsByQuestionnaire[questionnaireId] ?? new Set(),
+            );
           }
         }
         return restored;
@@ -326,6 +339,7 @@ export function createBeslismodelStore<
           });
           const newQuestionnaires: Record<string, QuestionnaireMeta> = {};
           const newAnswers: Record<string, BeslismodelAnswerMap<Answer>> = {};
+          const allowedQuestionIdsByQuestionnaire: Record<string, ReadonlySet<string>> = {};
 
           for (const [id, questionnaire] of Object.entries(normalized.questionnaires)) {
             newQuestionnaires[id] = {
@@ -337,11 +351,11 @@ export function createBeslismodelStore<
               calculationIds: [...questionnaire.calculationIds],
             } as QuestionnaireMeta;
             const allowedQuestionIds = new Set(questionnaire.questionIds);
-            newAnswers[id] = Object.fromEntries(
-              Object.entries(answers.value[id] ?? {}).filter(([questionId]) =>
-                allowedQuestionIds.has(questionId),
-              ),
-            ) as BeslismodelAnswerMap<Answer>;
+            allowedQuestionIdsByQuestionnaire[id] = allowedQuestionIds;
+            newAnswers[id] = filterAnswersByQuestionIds(
+              answers.value[id] ?? {},
+              allowedQuestionIds,
+            );
           }
 
           questionnaires.value = newQuestionnaires;
@@ -350,7 +364,10 @@ export function createBeslismodelStore<
           results.value = { ...normalized.results };
           resultsLogic.value = { ...normalized.resultsLogic } as Record<string, ResultLogicRule>;
           calculations.value = { ...normalized.calculations };
-          answers.value = await restorePersistedAnswers(newAnswers);
+          answers.value = await restorePersistedAnswers(
+            newAnswers,
+            allowedQuestionIdsByQuestionnaire,
+          );
           manifest.value = normalized;
           dataReady.value = true;
 

@@ -2,14 +2,17 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getQuestionnaireRoleContext,
+  handleQuestionnaireStoreError,
   landingIconKeys,
   loadQuestionnaireManifest,
+  questionnaireAnswersStorage,
   questionnairePath,
   renderAppMarkdown,
   reportQuestionnaireVersions,
   resolveLandingIconComponent,
 } from "../app-compatibility";
 import { breadcrumbApi } from "../breadcrumbs";
+import { handleError } from "../errors";
 import { persistTelemetry } from "../log-sink";
 import { useRoleStore } from "../../store/roleStore";
 
@@ -22,6 +25,14 @@ vi.mock("../breadcrumbs", () => ({
 vi.mock("../log-sink", () => ({
   persistTelemetry: vi.fn(),
 }));
+
+vi.mock("../errors", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../errors")>();
+  return {
+    ...actual,
+    handleError: vi.fn(),
+  };
+});
 
 const createStorageMock = (): Storage => {
   const items = new Map<string, string>();
@@ -114,6 +125,46 @@ describe("app compatibility adapters", () => {
     roleStore.setRole("triagist");
 
     expect(getQuestionnaireRoleContext()).toEqual({ role: "triagist" });
+  });
+
+  it("adapts questionnaire answer storage to session storage", () => {
+    questionnaireAnswersStorage.setItem("answers", '{"flow":{}}');
+    expect(window.sessionStorage.getItem("answers")).toBe('{"flow":{}}');
+
+    questionnaireAnswersStorage.removeItem("answers");
+    expect(window.sessionStorage.getItem("answers")).toBeNull();
+  });
+
+  it("throws a framework-readable error when questionnaire answer storage is unavailable", () => {
+    Object.defineProperty(window, "sessionStorage", {
+      configurable: true,
+      value: {
+        ...createStorageMock(),
+        setItem: vi.fn(() => {
+          throw new Error("blocked session storage");
+        }),
+      },
+    });
+
+    expect(() => questionnaireAnswersStorage.setItem("answers", "{}")).toThrow(
+      "Questionnaire answer storage unavailable",
+    );
+  });
+
+  it("routes answer storage errors through app error contexts", () => {
+    const error = new Error("storage blocked");
+
+    handleQuestionnaireStoreError(error, {
+      phase: "answers.persist",
+      storeId: "questionnaire",
+    });
+    handleQuestionnaireStoreError(error, {
+      phase: "answers.restore",
+      storeId: "questionnaire",
+    });
+
+    expect(handleError).toHaveBeenCalledWith(error, "answers:write-storage");
+    expect(handleError).toHaveBeenCalledWith(error, "answers:read-storage");
   });
 
   it("keeps landing taxonomy and icon mapping app-owned", () => {

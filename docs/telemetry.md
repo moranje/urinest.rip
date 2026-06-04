@@ -20,7 +20,9 @@ pipeline heeft:
 ## Privacyregels
 
 - Vrije tekst en technische context gaan altijd door `scrubValue()` voordat ze naar `app_logs` gaan.
-- Questionnaire-progress wordt alleen in `sessionStorage` bewaard, met TTL, en bevat alleen flow-/antwoordkeys.
+- Questionnaire-progress wordt alleen in `sessionStorage` bewaard, met TTL, en bevat per flow de
+  geselecteerde antwoordobjecten (`value`/`text`) voor actuele manifestvragen. De huidige flows
+  vragen geen vrije tekst of patientidentificatoren; stale vraagkeys worden bij restore gefilterd.
 - Er worden geen namen, geboortedata, BSN's of patiëntidentificatoren gevraagd of opgeslagen.
 - Bij storage-blokkades degradeert de app functioneel door zonder crash.
 
@@ -43,3 +45,5 @@ Verplicht groen:
 - `src/lib/__tests__/flow-trail.test.ts`
 - `src/lib/__tests__/log-sink.test.ts`
 - `src/lib/__tests__/storage.test.ts`
+- `src/lib/__tests__/app-compatibility.test.ts`
+- `packages/vue/src/store.test.ts`
