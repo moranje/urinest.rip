@@ -15,6 +15,13 @@ function readJson<T>(path: string): T {
   return JSON.parse(read(path)) as T;
 }
 
+function readCompilerBundle(): string {
+  const distPath = resolve(repoRoot, "node_modules/@beslismodel/compiler/dist");
+  const bundleName = readdirSync(distPath).find((entry) => /^compiler-.*\.js$/u.test(entry));
+  if (!bundleName) throw new Error("Could not locate installed @beslismodel/compiler bundle");
+  return readFileSync(resolve(distPath, bundleName), "utf8");
+}
+
 function walk(dir: string): string[] {
   return readdirSync(resolve(repoRoot, dir)).flatMap((entry) => {
     const absolute = resolve(repoRoot, dir, entry);
@@ -245,20 +252,27 @@ describe("design tokens", () => {
   it("keeps the app build on the public compiler package without dropping landing taxonomy", () => {
     const viteConfig = read("vite.config.js");
     const buildFlowsScript = read("scripts/build-flows.mjs");
-    const compilerSchema = read("packages/compiler/src/schema.ts");
-    const compiler = read("packages/compiler/src/compiler.ts");
+    const compilerPackage = read("node_modules/@beslismodel/compiler/package.json");
+    const compilerTypes = read("node_modules/@beslismodel/compiler/dist/schema.d.ts");
+    const compilerBundle = readCompilerBundle();
 
     expect(viteConfig).toContain('from "@beslismodel/compiler"');
     expect(viteConfig).not.toContain("./scripts/flow-compiler.mjs");
     expect(buildFlowsScript).toContain('from "@beslismodel/compiler"');
     expect(buildFlowsScript).not.toContain("./flow-compiler.mjs");
-    expect(compilerSchema).toContain('icon: { type: "string" }');
-    expect(compilerSchema).toContain("metadata: {");
-    expect(compilerSchema).toContain("additionalProperties");
-    expect(compilerSchema).toContain("landingDescription");
-    expect(compilerSchema).toContain("landingSection");
-    expect(compiler).toContain("icon: flow.icon");
-    expect(compiler).toContain("metadata: flow.metadata");
+    expect(compilerPackage).toContain('"name": "@beslismodel/compiler"');
+    expect(compilerPackage).toContain('"exports"');
+    expect(compilerTypes).toContain("readonly icon");
+    expect(compilerTypes).toContain("readonly metadata");
+    expect(compilerTypes).toContain("readonly landingDescription");
+    expect(compilerTypes).toContain("readonly landingSection");
+    expect(compilerBundle).toContain('icon: { type: "string" }');
+    expect(compilerBundle).toContain("metadata: {");
+    expect(compilerBundle).toContain("additionalProperties");
+    expect(compilerBundle).toContain("landingDescription");
+    expect(compilerBundle).toContain("landingSection");
+    expect(compilerBundle).toContain("icon: e.icon");
+    expect(compilerBundle).toContain("metadata: e.metadata");
   });
 
   it("keeps questionnaire route switches inside the same component instance", () => {
