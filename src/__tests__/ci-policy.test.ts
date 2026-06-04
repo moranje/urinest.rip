@@ -725,10 +725,20 @@ describe("CI policy", () => {
     expect(readme).not.toContain("decision-engine-core");
   });
 
-  it("keeps obsolete local compiler tarballs out of the repository", () => {
+  it("keeps obsolete local compiler artifacts out of the repository", () => {
     expect(gitignore).toContain("*.tgz");
     expect(
       execFileSync("git", ["ls-files", "decision-engine-core-1.0.0.tgz"], {
+        encoding: "utf8",
+      }).trim(),
+    ).toBe("");
+    expect(
+      execFileSync("git", ["ls-files", "scripts/flow-compiler.mjs"], {
+        encoding: "utf8",
+      }).trim(),
+    ).toBe("");
+    expect(
+      execFileSync("git", ["ls-files", "scripts/flow-compiler.test.mjs"], {
         encoding: "utf8",
       }).trim(),
     ).toBe("");

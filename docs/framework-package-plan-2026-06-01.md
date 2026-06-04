@@ -413,6 +413,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] App/framework gates gesplitst: `check:app` gebruikt app-only tsgo/vitest configs; `check:framework` blijft package checks draaien.
 - [x] `urinest.rip` package.json omgezet van monorepo source imports naar exacte registry dependencies `@beslismodel/*@0.1.0-next.0`.
 - [x] `urinest.rip` Vite/TS/Vitest aliases verwijderd of gesplitst: app-configs gebruiken registry packages, package-tests gebruiken een aparte package-vitestconfig voor bronpakkettests.
+- [x] Legacy app-local `scripts/flow-compiler.mjs` en bijbehorende test verwijderd; compilerlogica leeft alleen nog in `@beslismodel/compiler` en package-tests.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
 - [x] `urinest.rip` app- en frameworkchecks gesplitst: `check:app` bevat geen package-build of `check:packages`, terwijl CI frameworkextractie apart via `check:framework` draait.
