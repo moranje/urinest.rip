@@ -96,6 +96,7 @@ const packageExtractionMap = JSON.parse(
 const clinicalCopyScript = readFileSync(resolve("scripts/check-clinical-dutch-copy.mjs"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
+  dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   engines?: Record<string, string>;
 };
@@ -627,6 +628,13 @@ describe("CI policy", () => {
       "@beslismodel/vue",
     ]);
     expect(versions.size).toBe(1);
+    const appFrameworkDependencies = {
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies,
+    };
+    for (const manifest of packages) {
+      expect(appFrameworkDependencies[manifest.name]).toBe(manifest.version);
+    }
     expect(copdCarePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(cvrmPreventPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(dmCarePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);

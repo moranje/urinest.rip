@@ -427,6 +427,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
       met dist-tag `latest`, `check:package-registry-smoke:current` installeert de Gitea packages
       inclusief CLI, `urinest.rip` gebruikt exacte `0.1.0` registry dependencies en de app-,
       framework-, browser-, Lighthouse- en productie-audit gates zijn groen.
+- [x] Root app-pins voor alle zeven `@beslismodel/*` dependencies worden in `src/__tests__/ci-policy.test.ts` vergeleken met de package-manifestversies, zodat registry-smoke niet stil kan afwijken van wat de app installeert.
 - [x] Na extractie `urinest.rip` draaiend gehouden via gepinde registry dependencies, lockfile-update, productiebuild/PWA-build, guideline/copy checks, package registry-smoke, landing-grid regressie, questionnaire-switch/back regressie en Urinestrip end-to-end fixture.
 - [x] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
 - [x] Package release-notes format gedocumenteerd met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
