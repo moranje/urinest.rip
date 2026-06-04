@@ -8,7 +8,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - UI iconen lopen via `src/components/primitives/Icon.vue`; overgebleven SVG's zijn illustraties/logo's.
 - `.md-button` usages zijn gemigreerd naar `Button.vue`; legacy CSS blijft alleen als historische compatibility-style.
 - Storybook runtime-a11y is actief via `@storybook/addon-a11y`; route-level axe-smoke dekt landing, questionnaire, result, error en admin login.
-- 3-state theme toggle, light/dark/system bootstrap, `light-dark()`, cascade layers, forced-colors en prefers-contrast zijn aanwezig.
+- System-only theme bootstrap, `light-dark()`, cascade layers, forced-colors en prefers-contrast zijn aanwezig; de UI theme switch is bewust verwijderd en browser-smoke borgt dat die niet terugkomt.
 - Result treatment reveal heeft `aria-live`; copy, update prompt, info-popover en retry states zijn toegankelijker gemaakt.
 - Answer cards, checkboxes, result notices en info-popovers hebben browser-smoke regressiecontracten voor ongewenste randen, voldoende padding, viewport-fit en stale-popover cleanup.
 - Landing artwork is lazy-loaded; landing grid blijft via unit-, token-, route-contract- en browser-smoke op desktop 2 rijen x 3 kolommen.
@@ -36,7 +36,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 | **Design tokens**     | MD3-stijl CSS custom properties (`--md-ref-*`, `--md-sys-*` + eigen `--spacing-*`, `--motion-*`, `--z-*`) met gegenereerde DTCG-compatible export (`src/styles/beslismodel.tokens.json`), distributiemanifest (`docs/design-token-distribution.json`) en theme bootstrap (`public/theme-tokens.js`) |
 | **Component library** | Eigen primitives: Button, Badge, Card, ProgressBar, Skeleton, BackButton (`src/components/primitives/`). Geen Radix / Headless UI                                                                                                                                      |
 | **Icon set**          | Inline SVG-paths (mix Lucide-stijl + Material Icons). Geen single-source iconset; SVG-illustraties als losse `*Svg.vue` componenten                                                                                                                                    |
-| **Dark mode**         | 3-state theme toggle (light/dark/system), bootstrap-script, `data-theme` override en `light-dark()` semantic tokens                                                                                                                                                    |
+| **Dark mode**         | System-only bootstrap-script, generated token metadata, OS preference handling en `light-dark()` semantic tokens; geen UI theme switch                                                                                                                                  |
 | **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief, `axe-core` + `vitest-axe` voor primitives, `src/__tests__/accessibility-route.test.ts` voor samengestelde routes, `@storybook/addon-a11y` in Storybook en build-storybook in CI                                  |
 | **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                                      |
 | **Storybook**         | v10 met `@storybook/vue3-vite`, `@storybook/addon-a11y`, stories voor primitives/molecules/organisms/templates + DesignTokens-showcase, CI-build step toegevoegd                                                                                                        |
@@ -126,7 +126,7 @@ Drie grote thema's:
 | 7           | Typografie & Hiërarchie           | **4.0**         | =          | Inter, fluid clamp(), text-wrap: balance op h1, h1 per route. Mist: letter-spacing-tokens, tabular-nums alleen 4 sites                                       |
 | 8           | Forms & Input UX                  | **3.4**         | ▲ +0.9     | AdminLogin heeft Input-primitive validation wiring, `aria-invalid`, `aria-describedby`, `inputmode`, `enterkeyhint` en password-manager hints                |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
-| 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en theme toggle aanwezig; platformvalidatie blijft vervolgpunt             |
+| 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en system-only bootstrap aanwezig; platformvalidatie blijft vervolgpunt    |
 | **Overall** |                                   | **4.2/5 (84%)** | **▲ +1.1** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
 **Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.6×2 + 4 + 3.4 + 4 + 3.5) ÷ 12 = **4.23 / 5.00** ✅

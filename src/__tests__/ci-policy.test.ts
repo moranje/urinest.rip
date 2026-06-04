@@ -9,6 +9,9 @@ const giteaReleaseWorkflow = readFileSync(resolve(".gitea/workflows/release.yaml
 const readme = readFileSync(resolve("README.md"), "utf8");
 const claudeInstructions = readFileSync(resolve("CLAUDE.md"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
+const latestCodeAudit = readFileSync(resolve("docs/audit-2026-05-22.md"), "utf8");
+const latestDesignAudit = readFileSync(resolve("docs/design-audit-2026-05-21.md"), "utf8");
+const nasHandoff = readFileSync(resolve("docs/nas-handoff-2026-06-04.md"), "utf8");
 const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const gitignore = readFileSync(resolve(".gitignore"), "utf8");
 const envExample = readFileSync(resolve(".env.example"), "utf8");
@@ -750,6 +753,29 @@ describe("CI policy", () => {
     expect(claudeInstructions).not.toContain("decision-engine-core");
     expect(claudeInstructions).not.toContain("decision-engine-core-1.0.0.tgz");
     expect(claudeInstructions).not.toContain("src/views/AboutPage.vue");
+  });
+
+  it("keeps the latest code audit reconciled instead of reopening historical issues", () => {
+    expect(latestCodeAudit).toContain("## Final Reconciliation -- 2026-06-01");
+    expect(latestCodeAudit).toContain("## Current Reconciled Status");
+    expect(latestCodeAudit).toContain("## Historical Context Summary");
+    expect(latestCodeAudit).toContain("## Historical Scorecard");
+    expect(latestCodeAudit).toContain("Original 2026-05-22 snapshot below is superseded");
+    expect(latestCodeAudit).toContain("SPEC-UR01 t/m SPEC-UR11 reconciled");
+    expect(latestCodeAudit).not.toContain("| 1 | Architecture | 4/5 | 4/5 | = | Tarball dep");
+    expect(latestCodeAudit).not.toContain("still no clinical test infra |");
+    expect(latestCodeAudit).not.toContain("pregnancy warning still missing (51 days)");
+  });
+
+  it("keeps active docs aligned with system-only theme and popover invariants", () => {
+    expect(readme).toContain("answer-info popovers open without selecting answers");
+    expect(readme).toContain("system theme is selected before first paint");
+    expect(latestDesignAudit).toContain("System-only theme bootstrap");
+    expect(latestDesignAudit).toContain("UI theme switch is bewust verwijderd");
+    expect(nasHandoff).toContain("no UI theme switch is expected");
+    expect(nasHandoff).toContain("answer-info popovers open/close without answer selection");
+    expect(nasHandoff).toContain("Stable `0.1.0` is now the current");
+    expect(nasHandoff).not.toContain("keeps stable `0.1.0` as the next");
   });
 
   it("keeps README aligned with current app and framework workflow", () => {

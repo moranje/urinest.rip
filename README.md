@@ -144,6 +144,7 @@ Important regressions are covered by tests and browser smoke:
 - direct `/info/:resultKey` renders without loader hang;
 - progressbar avoids misleading numeric text;
 - answer, checkbox and notice components avoid unwanted extra borders;
+- answer-info popovers open without selecting answers, restore focus, stay inside viewport and clean up stale popover state;
 - system theme is selected before first paint from generated central design token metadata.
 
 ## Documentation For Agents

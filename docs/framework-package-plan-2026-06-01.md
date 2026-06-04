@@ -21,7 +21,10 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
   - `24e9d05 fix(telemetry): suppress dev transition noise`
   - `5190210 fix(landing): constrain questionnaire tiles`
 
-## Huidige Score
+## Beginscore 2026-06-01
+
+Deze score was de startmeting voor het framework-traject. Actuele afronding staat in de rondechecklist
+hieronder en in `docs/nas-handoff-2026-06-04.md`.
 
 | Domein            | Huidig | Target | Belangrijkste gap                                                                        |
 | ----------------- | -----: | -----: | ---------------------------------------------------------------------------------------- |
@@ -378,7 +381,7 @@ Exit criteria:
 ### Ronde 6 — Extractie Naar Gitea En Lokale NPM
 
 Doel: framework uit `urinest.rip` halen naar eigen package-map/repo, publishen naar lokale Gitea npm registry, en `urinest.rip` als consumer draaiend houden.
-Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en package-gates groen zijn, en elke stap bewijzen met een registry consumer smoke voordat app-source uit deze repo verdwijnt.
+Historische planning, afgerond op 2026-06-04: de prerelease-, stable-, registry-smoke- en app-consumerstappen hieronder zijn uitgevoerd en blijven als audittrail staan.
 
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [x] Nieuwe package-map/repo reproduceerbaar gemaakt met `extract-beslismodel-framework.mjs` en `check:framework-extract`, zodat framework-code als eigen `beslismodel-framework/` target zonder app-only code gebouwd kan worden.
@@ -388,7 +391,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Packages als zelfstandige Gitea-repo geëxtraheerd en gepusht: `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/copd-care`, `@beslismodel/cvrm-prevent`, `@beslismodel/dm-care`, `@beslismodel/vue`, `@beslismodel/testing` staan in `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`.
 - [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [x] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
-- [x] Gitea remote toegevoegd en gepusht: `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`, `master` staat op `f177fa4`.
+- [x] Gitea remote toegevoegd en eerste push bewezen: `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`, historische verificatie `master` op `f177fa4`.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.
 - [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding, DM HbA1c en COPD GOLD ABE.
@@ -411,7 +414,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.
 - [x] Registry migratie checkt bij `--write` iedere exacte package-versie in Gitea npm, tenzij `--skip-registry-check` expliciet wordt gebruikt voor testfixtures.
 - [x] App/framework gates gesplitst: `check:app` gebruikt app-only tsgo/vitest configs; `check:framework` blijft package checks draaien.
-- [x] `urinest.rip` package.json omgezet van monorepo source imports naar exacte registry dependencies `@beslismodel/*@0.1.0-next.0`.
+- [x] Historische prerelease-stap: `urinest.rip` package.json tijdelijk omgezet van monorepo source imports naar exacte registry dependencies `@beslismodel/*@0.1.0-next.0`; superseded door stable `0.1.0` hieronder.
 - [x] `urinest.rip` Vite/TS/Vitest aliases verwijderd of gesplitst: app-configs gebruiken registry packages, package-tests gebruiken een aparte package-vitestconfig voor bronpakkettests.
 - [x] Legacy app-local `scripts/flow-compiler.mjs` en bijbehorende test verwijderd; compilerlogica leeft alleen nog in `@beslismodel/compiler` en package-tests.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
@@ -435,7 +438,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Gitea/npm publish-runbook toegevoegd op basis van `abacus`, `patient-tracker`, `werkoverleg` en `labbie`: SSH remote, registry URL, tokenbeleid, local proxy en prerelease publish/smoke.
 - [x] Baseline app-integratie toegevoegd voor Gitea Actions: `setup-npm-auth`, `setup-node`, `release-pr`, `upload-sourcemaps` en `release-finalize`; package publish blijft npm-native.
 - [x] GitHub Actions configureert de Gitea npm registry vóór `npm ci` met `NPM_REGISTRY_TOKEN`, `@beslismodel/@oranje/@xenia` scopes en een `npm view @beslismodel/core@0.1.0` preflight, zodat private registry installs niet afhangen van lokale `.npmrc`.
-- [x] Package release-notes in Gitea getagd zodra de prerelease packages bestaan: `beslismodel-v0.1.0-next.0` is gepusht naar `beslismodel-framework` op commit `e296808`.
+- [x] Package release-notes in Gitea historisch getagd zodra de prerelease packages bestonden: `beslismodel-v0.1.0-next.0` is gepusht naar `beslismodel-framework` op commit `e296808`; stable `0.1.0` is daarna de actuele release.
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
 

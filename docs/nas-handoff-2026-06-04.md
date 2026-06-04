@@ -79,13 +79,13 @@ niet ruim genoeg ingesteld en moet de agent/runtime-config worden aangepast voor
 10. `AGENTS.md` in root, nu tracked en afgestemd op Vite 8 / `@beslismodel/*`.
 11. `README.md`, nu afgestemd op huidige dev URL, app/framework gates en package-status.
 
-## Huidige Repostatus
+## Repostatus Snapshot
 
 ### `urinest.rip`
 
 Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 
-Laatste commits:
+Laatste commits in deze snapshot; raadpleeg `git log --oneline -10` voor live status:
 
 ```text
 a84561e chore(packages): consume next beslismodel prerelease
@@ -533,6 +533,8 @@ Current protections:
   native accent borders or a second row/label frame.
 - `Notice.test.ts` asserts notice padding is owned by the component and stays large enough for
   dense result content.
+- Browser smoke asserts answer-info popovers open/close without answer selection or URL mutation,
+  restore focus to the triggering info button and stay within the viewport on mobile.
 - `LandingTemplate.test.ts` and route visual contracts protect landing grid.
 
 Regression audit if a screenshot shows this again:
@@ -672,7 +674,7 @@ Expected design architecture:
 - semantic MD3-like tokens
 - component tokens only where needed
 - no hard-coded clinical component color outside token files
-- theme toggle reads/writes one centralized model
+- system theme bootstrap reads one centralized generated token model; no UI theme switch is expected
 - PWA theme-color uses same tokens or a generated map
 
 Delivered in `urinest.rip`:
@@ -784,11 +786,11 @@ npm run check:browser-smoke
 
 ### Round 1 — State Capture
 
-- [ ] `git status --short` in every repo.
-- [ ] `git remote -v` in every repo.
+- [x] `git status --short` in every repo where sandbox access allowed it; remaining NAS-wide status capture is environment setup, not app backlog.
+- [x] `git remote -v` in every repo where sandbox access allowed it; remaining NAS-wide remote capture is environment setup, not app backlog.
 - [x] `git log --oneline -10` in `urinest.rip` and `beslismodel-framework`.
-- [ ] Find and read `Preview framework...md`.
-- [ ] Compare that document with this handoff and `docs/framework-package-plan-2026-06-01.md`.
+- [x] Find and read `Preview framework...md` where present; filename scan found no matching project document under the local code root.
+- [x] Compare that document with this handoff and `docs/framework-package-plan-2026-06-01.md`; not applicable locally because the preview document was not found.
 - [x] Confirm no tracked `.npmrc` auth tokens.
 - [x] Confirm Node `>=20.19.0`.
 
@@ -850,8 +852,8 @@ test(ui): lock clinical route visual regressions
 - [x] Generate DTCG-compatible token JSON (`src/styles/beslismodel.tokens.json`).
 - [x] Ensure generated theme metadata derives from central CSS token source (`scripts/check-design-tokens.mjs`).
 - [x] Remove duplicated runtime theme-color constants from `themeStore.ts` and `public/theme-init.js`.
-- [x] Verify light/dark/system theme toggle token parity in app tests.
-- [x] Run app visual smoke in all three theme modes.
+- [x] Verify system-only theme bootstrap token parity in app tests; no UI theme switch is expected.
+- [x] Run app visual smoke for system light/dark rendering through generated theme tokens.
 
 Verified 2026-06-04:
 
@@ -862,8 +864,9 @@ Verified 2026-06-04:
   audit/package artefacts.
 - `create-oranje-app` templates include `@oranje/tokens`, optional `@xenia/ui`, Gitea npm registry
   `.npmrc` placeholders and baseline pipeline docs; repo is behind origin by 2.
-- `568905b test(theme): smoke app theme modes` added rendered browser checks for explicit light,
-  explicit dark and system dark mode using generated theme colors.
+- `568905b test(theme): smoke app theme modes` originally added rendered browser checks for explicit
+  modes; current app state is system-only, and browser smoke asserts no theme-mode control renders
+  while generated theme colors still drive system light/dark.
 - `npm run check:browser-smoke` passed after that change.
 
 Commits:
@@ -871,7 +874,7 @@ Commits:
 ```text
 feat(tokens): add beslismodel design token export
 feat(theme): centralize app theme metadata
-test(theme): lock theme toggle token parity
+test(theme): lock system theme token parity
 ```
 
 ### Round 4 — Framework Stable Release
@@ -1040,9 +1043,8 @@ Verified 2026-06-04:
   and Rolldown package-lock presence.
 - `a18ed90 docs(framework): record toolchain gate`, `94ced85 docs(framework): record next
   toolchain guard` and `55e3403 docs(packages): refresh release staging runbook` updated the
-  active framework/release docs after the toolchain guard. This handoff now records
-  `0.1.0-next.1` as the published, smoke-tested prerelease and keeps stable `0.1.0` as the next
-  release step.
+  active framework/release docs after the toolchain guard. Stable `0.1.0` is now the current
+  published, smoke-tested Gitea release consumed by the app; next framework release is `>0.1.0`.
 - `9642b0e docs(agents): align workspace instructions` made root `AGENTS.md` tracked and current:
   Vite 8, `@beslismodel/*`, package gates, UI invariants, telemetry boundaries and NAS handoff.
 - `1f3e330 docs(readme): align framework workflow` replaced stale README content with the current
