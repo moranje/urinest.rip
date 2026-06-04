@@ -4,6 +4,14 @@ import { isSkippedViewTransition, observeViewTransition } from "./view-transitio
 describe("view-transition helpers", () => {
   it("classifies skipped transitions as benign", () => {
     expect(isSkippedViewTransition(new Error("Transition was skipped"))).toBe(true);
+    expect(
+      isSkippedViewTransition(new DOMException("View transition was skipped", "AbortError")),
+    ).toBe(true);
+    expect(
+      isSkippedViewTransition(
+        new DOMException("Active transition snapshot was interrupted", "InvalidStateError"),
+      ),
+    ).toBe(true);
     expect(isSkippedViewTransition(new Error("real render failure"))).toBe(false);
   });
 
@@ -25,5 +33,22 @@ describe("view-transition helpers", () => {
 
     await Promise.resolve();
     expect(onUnexpectedError).toHaveBeenCalledWith(error);
+  });
+
+  it("observes ready and updateCallbackDone promise rejections", async () => {
+    const onUnexpectedError = vi.fn();
+    const readyError = new Error("ready failed");
+    const updateError = new Error("update failed");
+    observeViewTransition(
+      {
+        ready: Promise.reject(readyError),
+        updateCallbackDone: Promise.reject(updateError),
+      },
+      onUnexpectedError,
+    );
+
+    await Promise.resolve();
+    expect(onUnexpectedError).toHaveBeenCalledWith(readyError);
+    expect(onUnexpectedError).toHaveBeenCalledWith(updateError);
   });
 });

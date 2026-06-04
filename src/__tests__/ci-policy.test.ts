@@ -769,6 +769,11 @@ describe("CI policy", () => {
     expect(themeStoreTest).toContain("reports storage write failure but still applies DOM theme");
     expect(themeInitTest).toContain("applies stored light before Vue can hydrate");
     expect(themeInitTest).toContain("uses existing meta colors when generated theme tokens");
+    expect(browserRegressionSmokeScript).toContain("assertReducedMotionRouteTransitions");
+    expect(browserRegressionSmokeScript).toContain("prefers-reduced-motion");
+    expect(browserRegressionSmokeScript).toContain(
+      "Reduced motion route transition used View Transitions",
+    );
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
     expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");

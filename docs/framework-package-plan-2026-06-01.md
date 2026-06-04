@@ -407,6 +407,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, draait registry-smoke en tagt daarna `beslismodel-v<version>` met `RELEASE_TOKEN`.
 - [x] Gitea app- en release-workflows draaien `npm run check:framework`, zodat package/extractie regressies niet alleen lokaal of in GitHub CI worden gevangen.
 - [x] Browser-regressiesmoke toegevoegd voor landing-grid 2x3, progressbar zonder misleidende tekst, questionnaire-switch/back en directe result-route zonder loader-hang.
+- [x] Browser-regressiesmoke dekt reduced-motion route transitions door `prefers-reduced-motion: reduce` te emuleren en `document.startViewTransition` calls te tellen.
 - [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.
 - [x] Registry migratie checkt bij `--write` iedere exacte package-versie in Gitea npm, tenzij `--skip-registry-check` expliciet wordt gebruikt voor testfixtures.
 - [x] App/framework gates gesplitst: `check:app` gebruikt app-only tsgo/vitest configs; `check:framework` blijft package checks draaien.

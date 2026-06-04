@@ -15,10 +15,25 @@ describe("route view transition policy", () => {
     ).toBe(false);
   });
 
+  it("keeps same-path route updates out of route-level view transitions", () => {
+    expect(shouldUseRouteViewTransition(route("/over", "About"), route("/over", "About"))).toBe(
+      false,
+    );
+  });
+
   it("keeps result navigation out of route-level view transitions", () => {
     expect(
       shouldUseRouteViewTransition(
         route("/info/uti.local", "Result"),
+        route("/questionnaire/strip", "Questionnaire"),
+      ),
+    ).toBe(false);
+  });
+
+  it("keeps navigation away from clinical routes out of route-level view transitions", () => {
+    expect(
+      shouldUseRouteViewTransition(
+        route("/over", "About"),
         route("/questionnaire/strip", "Questionnaire"),
       ),
     ).toBe(false);

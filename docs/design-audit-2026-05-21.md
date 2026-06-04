@@ -595,6 +595,7 @@ Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] DTCG-compatible design-token export en distributie zijn aanwezig en bewaakt in `check:app` (`src/styles/beslismodel.tokens.json`, `docs/design-token-distribution.json`, `scripts/check-design-tokens.mjs`, `scripts/check-design-token-distribution.mjs`); `public/theme-tokens.js`, `themeStore.ts` en `vite.config.js` gebruiken dezelfde gegenereerde theme metadata.
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
 - [x] Forced-colors/high-contrast runtimegedrag is geborgd in `scripts/check-browser-regression-smoke.mjs` met Chrome `Emulation.setEmulatedMedia` op de directe resultaatroute.
+- [x] Reduced-motion routegedrag is browser-geverifieerd: `scripts/check-browser-regression-smoke.mjs` emuleert `prefers-reduced-motion: reduce`, stubt `document.startViewTransition` en verwacht nul route-level View Transitions.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
 - [x] Landing-SVG illustraties laden niet meer eager in de initial app chunk; `resolveLandingIconComponent()` gebruikt async component chunks met cache en bron-testdekking.
 - [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.

@@ -255,6 +255,58 @@ async function assertThemeModes(page, baseUrl) {
   );
 }
 
+async function assertReducedMotionRouteTransitions(page, baseUrl) {
+  async function installViewTransitionCounter() {
+    await page.evaluate(() => {
+      window.__beslismodelViewTransitionCalls = 0;
+      Object.defineProperty(document, "startViewTransition", {
+        configurable: true,
+        value: (callback) => {
+          window.__beslismodelViewTransitionCalls += 1;
+          const updateCallbackDone = Promise.resolve().then(callback);
+          return {
+            finished: updateCallbackDone.then(() => undefined),
+            ready: Promise.resolve(),
+            updateCallbackDone,
+          };
+        },
+      });
+    });
+  }
+
+  async function navigateToAboutWithMotionPreference(preference) {
+    await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: preference }]);
+    await page.goto(`${baseUrl}/`, { waitUntil: "networkidle0" });
+    await page.waitForSelector('[aria-label="Over deze beslishulp"]', { timeout: 10_000 });
+    await installViewTransitionCounter();
+    await page.click('[aria-label="Over deze beslishulp"]');
+    await page.waitForFunction(
+      () =>
+        location.pathname === "/over" &&
+        document.querySelector("h1")?.textContent?.includes("Over dit project"),
+      { timeout: 10_000 },
+    );
+    return page.evaluate(() => ({
+      calls: window.__beslismodelViewTransitionCalls,
+      reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
+    }));
+  }
+
+  const reduced = await navigateToAboutWithMotionPreference("reduce");
+  assert(reduced.reduced, "Reduced-motion media emulation did not activate");
+  assert(
+    reduced.calls === 0,
+    `Reduced motion route transition used View Transitions ${reduced.calls} time(s)`,
+  );
+
+  const noPreference = await navigateToAboutWithMotionPreference("no-preference");
+  assert(!noPreference.reduced, "No-preference media emulation did not reset reduced motion");
+  assert(
+    noPreference.calls === 1,
+    `No-preference route transition did not use View Transitions once: ${noPreference.calls}`,
+  );
+}
+
 async function clickChoice(page, label) {
   const clicked = await page.evaluate((text) => {
     const options = [...document.querySelectorAll('[role="radio"], [role="checkbox"]')];
@@ -581,6 +633,7 @@ async function run() {
     try {
       await assertLandingGrid(page, baseUrl);
       await assertThemeModes(page, baseUrl);
+      await assertReducedMotionRouteTransitions(page, baseUrl);
       await assertQuestionnaireNavigation(page, baseUrl);
       await assertInfoPopoverInteraction(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
