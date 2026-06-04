@@ -24,6 +24,20 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
+      - name: Configure Gitea npm auth
+        env:
+          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+        run: |
+          if [ -z "$NPM_REGISTRY_TOKEN" ]; then
+            echo "::error::NPM_REGISTRY_TOKEN secret is required for @beslismodel registry installs"
+            exit 1
+          fi
+          npm config set @beslismodel:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set @oranje:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set @xenia:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set //git.oranje.wtf/api/packages/martien/npm/:_authToken "$NPM_REGISTRY_TOKEN"
+          npm view @beslismodel/core@0.1.0 version --registry=https://git.oranje.wtf/api/packages/martien/npm/
+
       - name: Install dependencies
         run: npm ci
 
@@ -116,6 +130,20 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+
+      - name: Configure Gitea npm auth
+        env:
+          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+        run: |
+          if [ -z "$NPM_REGISTRY_TOKEN" ]; then
+            echo "::error::NPM_REGISTRY_TOKEN secret is required for @beslismodel registry installs"
+            exit 1
+          fi
+          npm config set @beslismodel:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set @oranje:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set @xenia:registry https://git.oranje.wtf/api/packages/martien/npm/
+          npm config set //git.oranje.wtf/api/packages/martien/npm/:_authToken "$NPM_REGISTRY_TOKEN"
+          npm view @beslismodel/core@0.1.0 version --registry=https://git.oranje.wtf/api/packages/martien/npm/
 
       - name: Install dependencies
         run: npm ci

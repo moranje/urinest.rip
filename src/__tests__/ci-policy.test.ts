@@ -814,6 +814,18 @@ describe("CI policy", () => {
   });
 
   it("keeps Gitea app workflows on baseline actions while package publishing stays npm-native", () => {
+    expect(workflow).toContain("Configure Gitea npm auth");
+    expect(workflow).toContain("NPM_REGISTRY_TOKEN");
+    expect(workflow).toContain(
+      "@beslismodel:registry https://git.oranje.wtf/api/packages/martien/npm/",
+    );
+    expect(workflow).toContain("@oranje:registry https://git.oranje.wtf/api/packages/martien/npm/");
+    expect(workflow).toContain("@xenia:registry https://git.oranje.wtf/api/packages/martien/npm/");
+    expect(workflow).toContain("//git.oranje.wtf/api/packages/martien/npm/:_authToken");
+    expect(workflow).toContain(
+      "npm view @beslismodel/core@0.1.0 version --registry=https://git.oranje.wtf/api/packages/martien/npm/",
+    );
+
     expect(giteaCiWorkflow).toContain(
       "https://git.oranje.wtf/martien/baseline/actions/setup-npm-auth@v2.2.1",
     );

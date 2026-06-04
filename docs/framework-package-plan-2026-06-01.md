@@ -434,6 +434,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Package release-notes draft toegevoegd en geborgd met `check:package-release-notes`: package set, public export hashes, consumer-impact, verificatie, migratie en rollback.
 - [x] Gitea/npm publish-runbook toegevoegd op basis van `abacus`, `patient-tracker`, `werkoverleg` en `labbie`: SSH remote, registry URL, tokenbeleid, local proxy en prerelease publish/smoke.
 - [x] Baseline app-integratie toegevoegd voor Gitea Actions: `setup-npm-auth`, `setup-node`, `release-pr`, `upload-sourcemaps` en `release-finalize`; package publish blijft npm-native.
+- [x] GitHub Actions configureert de Gitea npm registry vóór `npm ci` met `NPM_REGISTRY_TOKEN`, `@beslismodel/@oranje/@xenia` scopes en een `npm view @beslismodel/core@0.1.0` preflight, zodat private registry installs niet afhangen van lokale `.npmrc`.
 - [x] Package release-notes in Gitea getagd zodra de prerelease packages bestaan: `beslismodel-v0.1.0-next.0` is gepusht naar `beslismodel-framework` op commit `e296808`.
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
