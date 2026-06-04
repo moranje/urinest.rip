@@ -1,3 +1,3 @@
-import { buildFlows } from "./flow-compiler.mjs";
+import { buildFlows } from "@beslismodel/compiler";
 
 await buildFlows("flows", "public/main.json");

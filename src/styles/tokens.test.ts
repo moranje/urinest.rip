@@ -242,16 +242,23 @@ describe("design tokens", () => {
     expect(landingPage).not.toContain('to="/questionnaire/bacteriurie"');
   });
 
-  it("keeps the dev flow compiler from dropping landing taxonomy", () => {
-    const flowCompiler = read("scripts/flow-compiler.mjs");
+  it("keeps the app build on the public compiler package without dropping landing taxonomy", () => {
+    const viteConfig = read("vite.config.js");
+    const buildFlowsScript = read("scripts/build-flows.mjs");
+    const compilerSchema = read("packages/compiler/src/schema.ts");
+    const compiler = read("packages/compiler/src/compiler.ts");
 
-    expect(flowCompiler).toContain('icon: { type: "string" }');
-    expect(flowCompiler).toContain("metadata: {");
-    expect(flowCompiler).toContain("additionalProperties");
-    expect(flowCompiler).toContain("landingDescription");
-    expect(flowCompiler).toContain("landingSection");
-    expect(flowCompiler).toContain("icon: flow.icon");
-    expect(flowCompiler).toContain("metadata: flow.metadata");
+    expect(viteConfig).toContain('from "@beslismodel/compiler"');
+    expect(viteConfig).not.toContain("./scripts/flow-compiler.mjs");
+    expect(buildFlowsScript).toContain('from "@beslismodel/compiler"');
+    expect(buildFlowsScript).not.toContain("./flow-compiler.mjs");
+    expect(compilerSchema).toContain('icon: { type: "string" }');
+    expect(compilerSchema).toContain("metadata: {");
+    expect(compilerSchema).toContain("additionalProperties");
+    expect(compilerSchema).toContain("landingDescription");
+    expect(compilerSchema).toContain("landingSection");
+    expect(compiler).toContain("icon: flow.icon");
+    expect(compiler).toContain("metadata: flow.metadata");
   });
 
   it("keeps questionnaire route switches inside the same component instance", () => {

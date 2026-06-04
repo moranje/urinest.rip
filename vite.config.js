@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { decisionEngine } from "./scripts/flow-compiler.mjs";
+import { decisionEngine } from "@beslismodel/compiler";
 import viteCompression from "vite-plugin-compression";
 import { VitePWA } from "vite-plugin-pwa";
 
