@@ -386,6 +386,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Geldige Gitea npm publish-token beschikbaar gemaakt via `GITEA_NPM_TOKEN`; publish-auth wordt tijdelijk via npm userconfig in de publish-cache doorgegeven en niet in projectbestanden opgeslagen.
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
 - [x] Prerelease-versies gepubliceerd naar lokale Gitea npm met dist-tag `next`: `@beslismodel/core`, `compiler`, `copd-care`, `cvrm-prevent`, `dm-care`, `vue` en `testing` staan op `0.1.0-next.0`.
+- [x] Volgende prerelease voorbereid: package-source en interne pins staan op `0.1.0-next.1`,
+      `docs/package-release-notes-0.1.0-next.1.md` is aanwezig en `check:package-publish-next`
+      bewijst de offline `next` publish-dry-run. Publicatie, registry-smoke en root-app migratie
+      blijven NAS-stappen.
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
 - [x] Registry smoke is standalone-safe: Urinestrip-checks gebruiken fixture-flows uit `scripts/package-smoke-fixtures.mjs` en leunen niet op app-only `flows/`.
 - [x] Registry smoke uitgevoerd tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0`.
@@ -401,6 +405,9 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
 - [x] `urinest.rip` app- en frameworkchecks gesplitst: `check:app` bevat geen package-build of `check:packages`, terwijl CI frameworkextractie apart via `check:framework` draait.
+- [x] Moderne toolchain-contract toegevoegd: `check:modern-toolchain` faalt als `oxfmt`, `oxlint`,
+      `@typescript/native-preview`/`tsgo`, Vite 8 of Rolldown niet meer in dependencies,
+      lockfile en app-gate verwerkt zijn.
 - [x] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
 - [x] Migratievolgorde uitgevoerd met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`: publish, registry-smoke, `migrate:registry-deps -- --write`, `npm install`, `check:framework`, `test`, `check:app`, browser-smoke.
@@ -432,7 +439,8 @@ Examples:
 - [x] Alle checklistitems hierboven afgevinkt of vervangen door concreter item; hercontrole op 2026-06-04 met `rg -- "- \\[ \\]" docs/framework-package-plan-2026-06-01.md`.
 - [x] AI-agents hebben een gedetailleerde authoring-guide voor nieuwe richtlijnwebsites en domeinpakketten.
 - [x] Urinestrip fixture werkt als package consumer.
-- [x] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`, `npm run format:check`, `npm run build` groen.
+- [x] `npm run test`, `npm run check`, `npm run check:tsgo`, `npm run lint:all`,
+      `npm run format:check`, `npm run check:modern-toolchain`, `npm run build` groen.
 - [x] CI bouwt flows vóór tests.
 - [x] Geen unhandled benign browser transitions.
 - [x] Geen dev Supabase 401 noise zonder opt-in.
