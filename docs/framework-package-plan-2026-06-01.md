@@ -389,7 +389,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
 - [ ] Registry smoke uitvoeren tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION`.
 - [x] Package CI-template in nieuwe repo meenemen via `extract-beslismodel-framework.mjs`: lint, typecheck, tests, package smoke checks, package budget, npm audit en secret scan.
-- [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, en draait daarna registry-smoke.
+- [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, draait registry-smoke en tagt daarna `beslismodel-v<version>` met `RELEASE_TOKEN`.
 - [x] Gitea app- en release-workflows draaien `npm run check:framework`, zodat package/extractie regressies niet alleen lokaal of in GitHub CI worden gevangen.
 - [x] Browser-regressiesmoke toegevoegd voor landing-grid 2x3, progressbar zonder misleidende tekst, questionnaire-switch/back en directe result-route zonder loader-hang.
 - [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.

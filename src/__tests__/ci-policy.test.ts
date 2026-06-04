@@ -296,6 +296,12 @@ describe("CI policy", () => {
       "Extracted framework Gitea CI is missing gate",
     );
     expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "contents: read",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
+      "contents: write",
+    );
+    expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(
       "Extracted framework .gitignore is missing",
     );
     expect(readFileSync(resolve("scripts/check-framework-extract.mjs"), "utf8")).toContain(

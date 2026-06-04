@@ -390,7 +390,7 @@ on:
         default: "0.1.0-next.0"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   publish-next:
@@ -401,14 +401,22 @@ jobs:
       GITEA_NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
       NODE_AUTH_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
       NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+      RELEASE_TOKEN: \${{ secrets.RELEASE_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: \${{ secrets.RELEASE_TOKEN }}
 
       - name: Configure npm auth
         run: |
           set -eu
           if [ -z "\${NPM_TOKEN:-}" ]; then
             echo "::error::NPM_REGISTRY_TOKEN secret is required for package publish"
+            exit 1
+          fi
+          if [ -z "\${RELEASE_TOKEN:-}" ]; then
+            echo "::error::RELEASE_TOKEN secret is required for package release tag"
             exit 1
           fi
           mkdir -p "\${RUNNER_TEMP:-/tmp}/beslismodel-npm"
@@ -432,6 +440,25 @@ jobs:
         env:
           BESLISMODEL_REGISTRY_SMOKE_VERSION: \${{ github.event.inputs.version }}
         run: npm run check:package-registry-smoke
+
+      - name: Tag package release notes
+        run: |
+          set -eu
+          version="\${{ github.event.inputs.version }}"
+          tag="beslismodel-v$version"
+          notes="docs/package-release-notes-$version.md"
+          if [ ! -f "$notes" ]; then
+            echo "::error::Release notes not found: $notes"
+            exit 1
+          fi
+          if git ls-remote --tags origin "refs/tags/$tag" | grep -q "$tag"; then
+            echo "::error::Package release tag already exists: $tag"
+            exit 1
+          fi
+          git config user.name "Gitea Actions"
+          git config user.email "actions@git.oranje.wtf"
+          git tag -a "$tag" -F "$notes"
+          git push origin "$tag"
 `;
 
   mkdirSync(join(target, ".gitea/workflows"), { recursive: true });

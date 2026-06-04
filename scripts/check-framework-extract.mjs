@@ -58,6 +58,12 @@ try {
     join(tempDir, ".gitea/workflows/publish-next.yaml"),
     "utf8",
   );
+  if (!packageCi.includes("permissions:\n  contents: read")) {
+    throw new Error("Extracted framework CI must keep contents: read permissions");
+  }
+  if (!giteaPublishWorkflow.includes("permissions:\n  contents: write")) {
+    throw new Error("Extracted framework Gitea publish workflow must use contents: write");
+  }
   for (const requiredGate of [
     "node-version: [20, 22, 24]",
     "npm ci",
@@ -84,6 +90,11 @@ try {
     "npm run check:package-publish-next -- --publish",
     "BESLISMODEL_REGISTRY_SMOKE_VERSION",
     "npm run check:package-registry-smoke",
+    "Tag package release notes",
+    "beslismodel-v$version",
+    "docs/package-release-notes-$version.md",
+    "git tag -a",
+    'git push origin "$tag"',
   ]) {
     if (!giteaPublishWorkflow.includes(requiredPublishGate)) {
       throw new Error(
