@@ -23,8 +23,6 @@ export interface ToastOptions {
 // Role system
 export type UserRole = "behandelaar" | "triagist";
 
-export type ThemePreference = "system" | "light" | "dark";
-
 // Decision engine types
 export type QuestionOption = ManifestQuestionOption<string>;
 

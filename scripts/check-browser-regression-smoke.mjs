@@ -197,80 +197,49 @@ async function assertThemeModes(page, baseUrl) {
     lightTheme: "#16a34a",
   };
 
-  async function loadTheme(preference, colorScheme) {
+  async function loadTheme(colorScheme) {
     await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: colorScheme }]);
-    await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await page.evaluate((nextPreference) => {
-      if (nextPreference === "clear") localStorage.removeItem("urinest-theme");
-      else localStorage.setItem("urinest-theme", nextPreference);
-    }, preference);
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle0" });
     await page.waitForSelector(".bm-landing-menu-grid__primary-item", { timeout: 10_000 });
 
     return page.evaluate(() => ({
       background: getComputedStyle(document.body).backgroundColor,
       dataTheme: document.documentElement.getAttribute("data-theme"),
+      themeControlCount: document.querySelectorAll('[aria-label*="thema" i], [title*="thema" i]')
+        .length,
       metas: [...document.querySelectorAll('meta[name="theme-color"]')].map((meta) => ({
         content: meta.getAttribute("content") ?? "",
         media: meta.getAttribute("media") ?? "",
       })),
-      stored: localStorage.getItem("urinest-theme"),
     }));
   }
 
-  const light = await loadTheme("light", "dark");
-  assert(light.dataTheme === "light", `Light mode data-theme mismatch: ${light.dataTheme}`);
+  const light = await loadTheme("light");
+  assert(light.dataTheme === "light", `System light data-theme mismatch: ${light.dataTheme}`);
+  assert(light.themeControlCount === 0, "Theme mode control should not render in production UI");
   assert(
     light.background === tokens.lightBackground,
-    `Light mode background mismatch: ${light.background}`,
+    `System light background mismatch: ${light.background}`,
   );
   assert(
-    light.metas.every((meta) => meta.content === tokens.lightTheme),
-    `Light mode theme-color mismatch: ${JSON.stringify(light.metas)}`,
+    light.metas.some(
+      (meta) => meta.media.includes("light") && meta.content === tokens.lightTheme,
+    ) &&
+      light.metas.some((meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme),
+    `System light theme-color mismatch: ${JSON.stringify(light.metas)}`,
   );
 
-  const dark = await loadTheme("dark", "light");
-  assert(dark.dataTheme === "dark", `Dark mode data-theme mismatch: ${dark.dataTheme}`);
+  const dark = await loadTheme("dark");
+  assert(dark.dataTheme === "dark", `System dark data-theme mismatch: ${dark.dataTheme}`);
+  assert(dark.themeControlCount === 0, "Theme mode control should not render in production UI");
   assert(
     dark.background === tokens.darkBackground,
-    `Dark mode background mismatch: ${dark.background}`,
+    `System dark background mismatch: ${dark.background}`,
   );
   assert(
-    dark.metas.every((meta) => meta.content === tokens.darkTheme),
-    `Dark mode theme-color mismatch: ${JSON.stringify(dark.metas)}`,
-  );
-
-  const system = await loadTheme("system", "dark");
-  assert(system.dataTheme === "dark", `System dark data-theme mismatch: ${system.dataTheme}`);
-  assert(
-    system.background === tokens.darkBackground,
-    `System dark background mismatch: ${system.background}`,
-  );
-  assert(
-    system.metas.some(
-      (meta) => meta.media.includes("light") && meta.content === tokens.lightTheme,
-    ) &&
-      system.metas.some((meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme),
-    `System mode theme-color mismatch: ${JSON.stringify(system.metas)}`,
-  );
-
-  const systemLight = await loadTheme("system", "light");
-  assert(
-    systemLight.dataTheme === "light",
-    `System light data-theme mismatch: ${systemLight.dataTheme}`,
-  );
-  assert(
-    systemLight.background === tokens.lightBackground,
-    `System light background mismatch: ${systemLight.background}`,
-  );
-  assert(
-    systemLight.metas.some(
-      (meta) => meta.media.includes("light") && meta.content === tokens.lightTheme,
-    ) &&
-      systemLight.metas.some(
-        (meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme,
-      ),
-    `System light theme-color mismatch: ${JSON.stringify(systemLight.metas)}`,
+    dark.metas.some((meta) => meta.media.includes("light") && meta.content === tokens.lightTheme) &&
+      dark.metas.some((meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme),
+    `System dark theme-color mismatch: ${JSON.stringify(dark.metas)}`,
   );
 }
 

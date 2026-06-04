@@ -121,7 +121,7 @@ Niet breken zonder expliciete user-goedkeuring:
 - answer cards krijgen geen volle groene frame-border;
 - checkbox styling blijft component-owned, geen extra rij/label-border;
 - notice/info componenten bepalen eigen padding;
-- theme toggle gebruikt centrale design tokens en generated theme metadata.
+- theme wordt system-only voor first paint uit centrale design tokens en generated metadata bepaald.
 
 Beschermende tests/scripts:
 

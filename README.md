@@ -144,7 +144,7 @@ Important regressions are covered by tests and browser smoke:
 - direct `/info/:resultKey` renders without loader hang;
 - progressbar avoids misleading numeric text;
 - answer, checkbox and notice components avoid unwanted extra borders;
-- theme toggle uses generated central design token metadata.
+- system theme is selected before first paint from generated central design token metadata.
 
 ## Documentation For Agents
 

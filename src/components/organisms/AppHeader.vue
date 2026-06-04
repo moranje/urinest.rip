@@ -12,7 +12,6 @@
 
       <nav class="header-actions" aria-label="Hoofdnavigatie">
         <RoleToggle />
-        <ThemeToggle />
         <IconButton
           to="/over"
           :aria-current="isAboutActive ? 'page' : undefined"
@@ -39,7 +38,6 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import RoleToggle from "../RoleToggle.vue";
-import ThemeToggle from "../ThemeToggle.vue";
 import LogoSvg from "../LogoSvg.vue";
 import IconButton from "../primitives/IconButton.vue";
 import { useAuthStore } from "../../store/authStore";

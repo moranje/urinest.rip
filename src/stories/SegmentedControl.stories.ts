@@ -7,12 +7,6 @@ const roleOptions = [
   { value: "triage", label: "Triage", ariaLabel: "Triage" },
 ] as const;
 
-const themeOptions = [
-  { value: "system", label: "Systeem", icon: "monitor", ariaLabel: "Systeem thema" },
-  { value: "light", label: "Licht", icon: "sun", ariaLabel: "Licht thema" },
-  { value: "dark", label: "Donker", icon: "moon", ariaLabel: "Donker thema" },
-] as const;
-
 const meta = {
   title: "Molecules/SegmentedControl",
   component: SegmentedControl,
@@ -52,15 +46,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RoleToggle: Story = {};
-
-export const ThemeToggle: Story = {
-  args: {
-    modelValue: "system",
-    options: themeOptions,
-    label: "Thema",
-    iconOnly: true,
-  },
-};
 
 export const LongLabels: Story = {
   args: {

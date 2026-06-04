@@ -55,7 +55,7 @@ const requiredStoryContracts = [
   {
     file: "src/stories/SegmentedControl.stories.ts",
     title: 'title: "Molecules/SegmentedControl"',
-    exports: ["ThemeToggle", "LongLabels"],
+    exports: ["RoleToggle", "LongLabels"],
   },
   {
     file: "src/stories/QuestionPanel.stories.ts",

@@ -39,7 +39,7 @@ describe("security headers", () => {
     expect(themeTokens).toContain("window.__BESLISMODEL_THEME_TOKENS__");
     expect(themeTokens).toContain("#16a34a");
     expect(themeTokens).toContain("#005a2b");
-    expect(themeInit).toContain("localStorage.getItem");
+    expect(themeInit).not.toContain("localStorage");
     expect(themeInit).toContain("window.__BESLISMODEL_THEME_TOKENS__");
     expect(themeInit).toContain("data-theme");
     expect(themeInit).toContain("theme-color");

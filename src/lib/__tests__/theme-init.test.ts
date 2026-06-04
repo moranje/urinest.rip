@@ -13,23 +13,6 @@ type ThemeWindow = Window &
     };
   };
 
-function installStorage(value: string | null, options: { throwOnRead?: boolean } = {}): void {
-  const storage = {
-    getItem: vi.fn(() => {
-      if (options.throwOnRead) {
-        throw new Error("blocked local storage");
-      }
-      return value;
-    }),
-  } as unknown as Storage;
-
-  Object.defineProperty(window, "localStorage", {
-    configurable: true,
-    value: storage,
-  });
-  vi.stubGlobal("localStorage", storage);
-}
-
 function installMatchMedia(prefersDark: boolean): void {
   Object.defineProperty(window, "matchMedia", {
     configurable: true,
@@ -47,7 +30,6 @@ function setThemeMetas(colors = THEME_COLORS): void {
 function runThemeInit(): void {
   runInNewContext(source, {
     document,
-    localStorage: window.localStorage,
     window,
   });
 }
@@ -60,10 +42,8 @@ function themeMetaContents(): string[] {
 
 describe("theme-init", () => {
   beforeEach(() => {
-    vi.unstubAllGlobals();
     vi.clearAllMocks();
     setThemeMetas();
-    installStorage(null);
     installMatchMedia(false);
     document.documentElement.removeAttribute("data-theme");
     (window as ThemeWindow).__BESLISMODEL_THEME_TOKENS__ = {
@@ -71,41 +51,10 @@ describe("theme-init", () => {
     };
   });
 
-  it("applies stored light before Vue can hydrate, even when OS prefers dark", () => {
-    installStorage("light");
-    installMatchMedia(true);
-
-    runThemeInit();
-
-    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
-    expect(themeMetaContents()).toEqual([THEME_COLORS.light, THEME_COLORS.light]);
-  });
-
-  it("applies stored dark before Vue can hydrate, even when OS prefers light", () => {
-    installStorage("dark");
-    installMatchMedia(false);
-
-    runThemeInit();
-
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(themeMetaContents()).toEqual([THEME_COLORS.dark, THEME_COLORS.dark]);
-  });
-
-  it("treats stored system as OS-controlled with per-media theme colors", () => {
-    installStorage("system");
-    installMatchMedia(true);
-
-    runThemeInit();
-
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(themeMetaContents()).toEqual([THEME_COLORS.light, THEME_COLORS.dark]);
-  });
-
   it.each([
     [false, "light"],
     [true, "dark"],
-  ] as const)("uses OS preference %s when storage is empty", (prefersDark, expectedTheme) => {
-    installStorage(null);
+  ] as const)("uses OS preference %s before Vue can hydrate", (prefersDark, expectedTheme) => {
     installMatchMedia(prefersDark);
 
     runThemeInit();
@@ -114,19 +63,11 @@ describe("theme-init", () => {
     expect(themeMetaContents()).toEqual([THEME_COLORS.light, THEME_COLORS.dark]);
   });
 
-  it("falls back to OS preference when stored value is invalid", () => {
-    installStorage("sepia");
-    installMatchMedia(true);
-
-    runThemeInit();
-
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(themeMetaContents()).toEqual([THEME_COLORS.light, THEME_COLORS.dark]);
-  });
-
-  it("falls back to OS preference when localStorage read throws", () => {
-    installStorage(null, { throwOnRead: true });
-    installMatchMedia(false);
+  it("falls back to light when matchMedia is unavailable", () => {
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: undefined,
+    });
 
     runThemeInit();
 
@@ -141,12 +82,11 @@ describe("theme-init", () => {
     };
     setThemeMetas(fallback);
     delete (window as ThemeWindow).__BESLISMODEL_THEME_TOKENS__;
-    installStorage("dark");
-    installMatchMedia(false);
+    installMatchMedia(true);
 
     runThemeInit();
 
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(themeMetaContents()).toEqual([fallback.dark, fallback.dark]);
+    expect(themeMetaContents()).toEqual([fallback.light, fallback.dark]);
   });
 });

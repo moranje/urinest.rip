@@ -822,11 +822,11 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Expected 2 desktop landing rows");
     expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
     expect(browserRegressionSmokeScript).toContain("assertThemeModes");
-    expect(browserRegressionSmokeScript).toContain("Light mode theme-color mismatch");
+    expect(browserRegressionSmokeScript).toContain("Theme mode control should not render");
     expect(browserRegressionSmokeScript).toContain("System light data-theme mismatch");
-    expect(themeStoreTest).toContain("reacts to OS theme changes only while preference is system");
-    expect(themeStoreTest).toContain("reports storage write failure but still applies DOM theme");
-    expect(themeInitTest).toContain("applies stored light before Vue can hydrate");
+    expect(themeStoreTest).toContain("reacts to OS theme changes");
+    expect(themeStoreTest).toContain("creates a fallback theme-color meta when none exist");
+    expect(themeInitTest).toContain("uses OS preference");
     expect(themeInitTest).toContain("uses existing meta colors when generated theme tokens");
     expect(browserRegressionSmokeScript).toContain("assertReducedMotionRouteTransitions");
     expect(browserRegressionSmokeScript).toContain("prefers-reduced-motion");

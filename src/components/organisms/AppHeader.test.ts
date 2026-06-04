@@ -48,7 +48,6 @@ function mountHeader() {
         RouterLink: routerLinkStub,
         LogoSvg: { template: '<span data-test="logo" />' },
         RoleToggle: { template: '<span data-test="role-toggle" />' },
-        ThemeToggle: { template: '<span data-test="theme-toggle" />' },
         Icon: { template: '<span data-test="icon" />' },
       },
     },
@@ -67,7 +66,6 @@ describe("AppHeader", () => {
     expect(wrapper.get("header").classes()).toContain("app-header");
     expect(wrapper.get('[aria-label="Home"]').attributes("aria-current")).toBe("page");
     expect(wrapper.find('[data-test="role-toggle"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="theme-toggle"]').exists()).toBe(true);
     expect(wrapper.get("nav").attributes("aria-label")).toBe("Hoofdnavigatie");
   });
 
