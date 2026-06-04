@@ -391,6 +391,36 @@ describe("route accessibility smoke", () => {
   );
 
   it(
+    "direct result URL resolves data without leaving the shell loader visible",
+    async () => {
+      const { router, wrapper } = await mountRouterViewRoute("/info/uti.local.healthy.1");
+
+      expect(router.currentRoute.value.name).toBe("Result");
+      expect(router.currentRoute.value.params.resultKey).toBe("uti.local.healthy.1");
+      expect(wrapper.find('[aria-label="Resultaat laden"]').exists()).toBe(false);
+      expect(wrapper.find(".result-template__error").exists()).toBe(false);
+      expect(wrapper.get("h1").text()).toBe("Cystitis: Gezonde vrouw");
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "direct missing result URL renders an error instead of a persistent loader",
+    async () => {
+      const { router, wrapper } = await mountRouterViewRoute("/info/missing.result");
+
+      expect(router.currentRoute.value.name).toBe("Result");
+      expect(wrapper.find('[aria-label="Resultaat laden"]').exists()).toBe(false);
+      expect(wrapper.get(".result-template__error").attributes("role")).toBe("alert");
+      expect(wrapper.get("h1").text()).toBe("Resultaat niet gevonden");
+      expect(wrapper.text()).toContain('Resultaat "missing.result" niet gevonden.');
+      wrapper.unmount();
+    },
+    AXE_TEST_TIMEOUT_MS,
+  );
+
+  it(
     "error route has no axe violations",
     async () => {
       const wrapper = await mountRouteView(ErrorPage, "/error?message=Laden%20mislukt");
