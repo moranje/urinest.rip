@@ -57,7 +57,12 @@ const packageExtractionMap = JSON.parse(
   readFileSync(resolve("docs/package-extraction-map.json"), "utf8"),
 ) as {
   targetSiblingFolder?: string;
-  packages?: { name: string; publicExportSha256?: string }[];
+  packages?: {
+    name: string;
+    publicExportSha256?: string;
+    sourceTreeFileCount: number;
+    sourceTreeSha256: string;
+  }[];
   appOnlyExclusions?: string[];
 };
 const clinicalCopyScript = readFileSync(resolve("scripts/check-clinical-dutch-copy.mjs"), "utf8");
