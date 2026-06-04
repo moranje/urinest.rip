@@ -135,4 +135,5 @@ export interface PopoverStyle {
   visibility?: CSSProperties["visibility"];
   opacity?: number;
   maxWidth?: string;
+  maxHeight?: string;
 }

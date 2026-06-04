@@ -10,8 +10,10 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - Storybook runtime-a11y is actief via `@storybook/addon-a11y`; route-level axe-smoke dekt landing, questionnaire, result, error en admin login.
 - 3-state theme toggle, light/dark/system bootstrap, `light-dark()`, cascade layers, forced-colors en prefers-contrast zijn aanwezig.
 - Result treatment reveal heeft `aria-live`; copy, update prompt, info-popover en retry states zijn toegankelijker gemaakt.
+- Answer cards, checkboxes, result notices en info-popovers hebben browser-smoke regressiecontracten voor ongewenste randen, voldoende padding, viewport-fit en stale-popover cleanup.
+- Landing artwork is lazy-loaded; landing grid blijft via unit-, token-, route-contract- en browser-smoke op desktop 2 rijen x 3 kolommen.
 - Landing/questionnaire/result layouts gebruiken container-query cleanup waar dit relevant is.
-- Bundle budget is onderdeel van CI; Lighthouse-CI is superseded door de lokale build/storybook/budget gate voor deze SPA.
+- Bundle budget, Lighthouse-CI, browser-regression smoke en standalone package budgets zijn onderdeel van de gate; resterende performance-observability buiten repo is RUM/INP-meting in productie.
 
 **Auditor:** Claude Opus 4.7 (1M context)
 **Datum:** 2026-05-21
@@ -29,7 +31,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 
 | Aspect                | Detail                                                                                                                                                                                                                                                                 |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Framework**         | Vue 3.5.24, Vue Router 4.6, Pinia 3.0, Vite 7.2                                                                                                                                                                                                                        |
+| **Framework**         | Vue 3.5.24, Vue Router 4.6, Pinia 3.0, Vite 8 + Rolldown                                                                                                                                                                                                               |
 | **Styling**           | Plain CSS scoped per component + `src/styles/tokens.css`, `motion.css` en `main.css`                                                                                                                                                                                   |
 | **Design tokens**     | MD3-stijl CSS custom properties (`--md-ref-*`, `--md-sys-*` + eigen `--spacing-*`, `--motion-*`, `--z-*`) met gegenereerde DTCG-compatible export (`src/styles/beslismodel.tokens.json`), distributiemanifest (`docs/design-token-distribution.json`) en theme bootstrap (`public/theme-tokens.js`) |
 | **Component library** | Eigen primitives: Button, Badge, Card, ProgressBar, Skeleton, BackButton (`src/components/primitives/`). Geen Radix / Headless UI                                                                                                                                      |
@@ -38,8 +40,8 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 | **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief, `axe-core` + `vitest-axe` voor primitives, `src/__tests__/accessibility-route.test.ts` voor samengestelde routes, `@storybook/addon-a11y` in Storybook en build-storybook in CI                                  |
 | **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                                      |
 | **Storybook**         | v10 met `@storybook/vue3-vite`, `@storybook/addon-a11y`, stories voor primitives/molecules/organisms/templates + DesignTokens-showcase, CI-build step toegevoegd                                                                                                        |
-| **Lighthouse**        | Niet gedraaid in deze sessie — `lighthouse` CLI niet geïnstalleerd, npx-fallback geblokkeerd (sandbox + tijdsbudget). Hergebruik 2026-05-03 desktop scores (Perf 98-100, A11y 100, BP 100) als indicatief; nieuwe a11y-fixes maken regressie onwaarschijnlijk          |
-| **CWV**               | Niet vers gemeten; vorige meting LCP <1s desktop, <2.5s mobile (PWA, vooraf gecachte JSON-flow)                                                                                                                                                                        |
+| **Lighthouse**        | Lighthouse-CI draait via `lighthouserc.cjs` op landing, questionnaire en directe result-route, schrijft artifacts naar `docs/lighthouse` en faalt hard op a11y/CLS; performance/SEO blijven waarschuwingen.                                                             |
+| **CWV**               | Lighthouse-CI bewaakt CLS, FCP, LCP en TBT; echte productie-INP blijft RUM/telemetry-observability buiten deze repo.                                                                                                                                                   |
 | **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                                 |
 
 ---
@@ -468,11 +470,11 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 
 ### Lighthouse
 
-**Status:** Niet vers gemeten in deze audit-sessie. Reden: `lighthouse` CLI niet globaal geïnstalleerd; `npx lighthouse` faalde vroeg in de sessie (sandbox/network). Tijdsbudget van 20 min voor 3 projecten maakte een 5-minuten install+run impractical.
+**Status 2026-06-04:** Superseded door repo-gate. `lighthouserc.cjs` draait Lighthouse-CI op `/`, `/questionnaire/strip` en `/info/other.noConclusiveAbnormality`, schrijft artifacts naar `docs/lighthouse` en faalt hard op accessibility en CLS. `npm run check:app`, `npm run check:framework` en `npm run check:browser-smoke` zijn groen in de 2026-06-04 verificatieronde.
 
-**Indicatie uit vorige meting (2026-05-03 desktop):** Performance 98-100, A11y 100, Best Practices 100. Gegeven dat alle wijzigingen sinds dan **a11y-versterking** zijn (skip-link, h1, Space-toets, ARIA), is regressie onwaarschijnlijk. Verbetering op A11y mogelijk binnen marge.
+**Indicatie uit vorige meting (2026-05-03 desktop):** Performance 98-100, A11y 100, Best Practices 100. Huidige gate bewaakt bovendien lazy landing artwork, bundle budget, package bundle budget, route-level a11y, forced-colors result UI, theme bootstrap, reduced-motion route transitions en mobiele info-popover viewport-fit.
 
-**Aanbevolen vervolgactie:** `cd /Users/martien/Sync/Projects/code/urinest.rip && npm run build && npx serve dist -p 5185 &` + handmatige Lighthouse-run in DevTools op `/`, `/questionnaire/uti-vrouw`, `/result/...`.
+**Resterende externe observability:** echte productie-INP/RUM-meting via telemetry/backend dashboard; dit is niet bewijsbaar met alleen repo-bestanden.
 
 ### Static a11y-checks (vervangend)
 
@@ -484,7 +486,9 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 
 ### Build output
 
-- Niet gedraaid in deze sessie; vorige `npm run build` produceerde succesvolle PWA-build met source-map upload naar Supabase Storage (commit `0d15a74 ci: add source map upload`). Bundle-omvang niet vers gemeten.
+- `npm run check:app` draait build, guideline checks, app tests, design-token checks, modern-toolchain gate, bundle budget en Vite/PWA build.
+- `npm run check:framework` draait standalone extractie, package builds/tests, tarball checks, publish dry-run, consumer smokes, registry-smoke config, package export checks en mutation pilot.
+- `npm run check:browser-smoke` draait Chrome-smoke voor landing-grid, theme modes, reduced motion, questionnaire history, info-popover, direct result route, result visual chrome en forced colors.
 
 ### Storybook
 

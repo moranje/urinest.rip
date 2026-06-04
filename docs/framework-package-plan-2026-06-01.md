@@ -32,8 +32,8 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 | Design tokens     |  4.6/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export + CI-bewaakt design-tool distributiecontract; component-token export blijft beperkt |
 | Telemetry         |  4.7/5 |  4.8/5 | Framework-adapter, no-op package-adapter, scrubbed flow trail en consumer-owned `VITE_TELEMETRY_SOURCE`; overgebleven scoregap is externe backend observability |
 | Security/privacy  |  4.8/5 |  4.8/5 | Framework security/privacy contract, consumer release checklist, package boundary gate, RLS/RPC hardening en No-PHI telemetry/storage gates zijn aanwezig |
-| Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite                         |
-| Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken                     |
+| Testing           |  4.8/5 |  4.9/5 | App-, package-, consumer-, browser-, guideline-, route-a11y- en mutation-gates zijn actief; resterend gat is externe platformmatrix buiten Chrome |
+| Performance       |  4.7/5 |  4.8/5 | Bundle budgets, Lighthouse-CI, lazy landing artwork en package budgets actief; resterend gat is echte RUM/INP-observability buiten repo |
 
 ## Kritieke Bevindingen Uit Agent-Ronde
 
@@ -457,6 +457,13 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 
 - [x] `feat(cvrm): add verified aha prevent calculator` voegt `cvrm.prevent` toe naast `cvrm.score2` in `@beslismodel/cvrm-prevent`: 10-/30-jaars total CVD, ASCVD, heart failure, CHD en stroke voor base, HbA1c, UACR, SDI en full PREVENT-modellen; coëfficiënten komen uit CRAN `preventr` 0.11.0, bronnen verwijzen naar AHA/Circulation/PREVENT en testvectors komen uit `preventr` package-tests; verificatie: package Vitest, package build en export-smoke.
 - [x] PREVENT-coëfficiëntdata krijgt structurele schema-test: alle tien model/horizon datasets, unieke termen, vereiste optionele modeltermen, tien sex/outcome-kolommen en finite coëfficiënten worden afgedwongen voordat het package kan releasen.
+
+### Ronde 9 — Info-popover en answer-chrome regressieguard (2026-06-04)
+
+- [x] `usePopover` berekent `maxHeight` voortaan uit de actuele viewport en kiest boven/onder de trigger op basis van beschikbare ruimte, zodat lange antwoordtoelichtingen op lage/mobile viewports niet buiten beeld vallen.
+- [x] Browser-regressiesmoke meet echte computed styles op vraagantwoordkaarten en faalt wanneer normale antwoordopties of option-buttons weer volledige ongewenste randen krijgen.
+- [x] Browser-regressiesmoke meet een mobile info-popover op echte route (`q_bac_tx_local_healthy`) en faalt wanneer dialogpositie of max-height buiten de viewport valt.
+- [x] CI-policy bewaakt dat deze browsercontracten onderdeel blijven van `scripts/check-browser-regression-smoke.mjs`.
 
 ## Commit Discipline
 

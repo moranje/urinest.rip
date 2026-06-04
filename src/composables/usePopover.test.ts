@@ -80,6 +80,7 @@ describe("usePopover", () => {
     expect(popover.popoverDescription.value).toBe("1e keuze bij ongecompliceerde cystitis");
     expect(popover.popoverStyle.value).toMatchObject({
       left: "320px",
+      maxHeight: "300px",
       maxWidth: "300px",
       opacity: 1,
       position: "fixed",
@@ -99,6 +100,7 @@ describe("usePopover", () => {
 
     expect(popover.popoverStyle.value.top).toBe("16px");
     expect(popover.popoverStyle.value.left).toBe("320px");
+    expect(popover.popoverStyle.value.maxHeight).toBe("129px");
   });
 
   it("clamps width and horizontal position on narrow screens", () => {
@@ -108,7 +110,22 @@ describe("usePopover", () => {
     popover.showPopover(option("fosfomycine"), eventWithRect({ bottom: 120, left: 8, width: 24 }));
 
     expect(popover.popoverStyle.value.maxWidth).toBe("228px");
+    expect(popover.popoverStyle.value.maxHeight).toBe("300px");
     expect(popover.popoverStyle.value.left).toBe("16px");
+  });
+
+  it("shrinks popovers to stay within cramped viewport height", () => {
+    const popover = usePopover();
+    setViewport(360, 180);
+
+    popover.showPopover(
+      option("trimethoprim"),
+      eventWithRect({ bottom: 120, left: 310, top: 90, width: 24 }),
+    );
+
+    expect(popover.popoverStyle.value.left).toBe("44px");
+    expect(popover.popoverStyle.value.top).toBe("16px");
+    expect(popover.popoverStyle.value.maxHeight).toBe("69px");
   });
 
   it("schedules, cancels, and closes without leaking stale timers", () => {

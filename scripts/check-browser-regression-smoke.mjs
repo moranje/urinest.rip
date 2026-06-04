@@ -341,6 +341,42 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
   await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Nitriet test");
 
+  const answerUi = await page.evaluate(() => {
+    const px = (value) => Number.parseFloat(value || "0");
+    const option = document.querySelector(".choice-option");
+    const button = document.querySelector(".choice-option__button");
+    const optionStyle = option ? getComputedStyle(option) : null;
+    const buttonStyle = button ? getComputedStyle(button) : null;
+    return {
+      buttonBorderWidths: buttonStyle
+        ? [
+            px(buttonStyle.borderTopWidth),
+            px(buttonStyle.borderRightWidth),
+            px(buttonStyle.borderBottomWidth),
+            px(buttonStyle.borderLeftWidth),
+          ]
+        : [],
+      optionBorderWidths: optionStyle
+        ? [
+            px(optionStyle.borderTopWidth),
+            px(optionStyle.borderRightWidth),
+            px(optionStyle.borderBottomWidth),
+            px(optionStyle.borderLeftWidth),
+          ]
+        : [],
+    };
+  });
+  assert(
+    answerUi.optionBorderWidths.length === 4 &&
+      answerUi.optionBorderWidths.every((width) => width === 0),
+    `Answer option shell has unwanted border widths: ${answerUi.optionBorderWidths.join(", ")}`,
+  );
+  assert(
+    answerUi.buttonBorderWidths.length === 4 &&
+      answerUi.buttonBorderWidths.every((width) => width === 0),
+    `Answer option button has unwanted border widths: ${answerUi.buttonBorderWidths.join(", ")}`,
+  );
+
   const progress = await page.evaluate(() => ({
     ariaLabel: document.querySelector('[role="progressbar"]')?.getAttribute("aria-label") ?? "",
     text: document.querySelector('[role="progressbar"]')?.textContent?.trim() ?? "",
@@ -370,6 +406,57 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
       location.search.includes("q=q_strip_nitrite") &&
       document.querySelector("h1")?.textContent?.includes("Nitriet test"),
     { timeout: 10_000 },
+  );
+}
+
+async function assertInfoPopoverViewportFit(page, baseUrl) {
+  await page.setViewport({ width: 390, height: 420, deviceScaleFactor: 1 });
+  await page.goto(`${baseUrl}/questionnaire/bacteriurie?q=q_bac_tx_local_healthy`, {
+    waitUntil: "domcontentloaded",
+  });
+  await expectHeading(page, "Welke behandeling kan patiënt krijgen?");
+
+  const opened = await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
+    const button = buttons.find((candidate) =>
+      candidate.closest(".choice-option")?.textContent?.includes("Trimethoprim"),
+    );
+    if (!(button instanceof HTMLElement)) return false;
+    button.click();
+    return true;
+  });
+  assert(opened, "Trimethoprim info button not found for viewport-fit check");
+  await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
+    timeout: 10_000,
+  });
+
+  const popoverRect = await page.evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"][aria-label="Meer informatie"]');
+    if (!(dialog instanceof HTMLElement)) return null;
+    const rect = dialog.getBoundingClientRect();
+    const style = getComputedStyle(dialog);
+    return {
+      bottom: rect.bottom,
+      height: rect.height,
+      left: rect.left,
+      maxHeight: Number.parseFloat(style.maxHeight || "0"),
+      right: rect.right,
+      top: rect.top,
+      viewportHeight: window.innerHeight,
+      viewportWidth: window.innerWidth,
+    };
+  });
+  assert(popoverRect, "Info popover missing for viewport-fit measurement");
+  assert(
+    popoverRect.left >= 8 &&
+      popoverRect.top >= 8 &&
+      popoverRect.right <= popoverRect.viewportWidth - 8 &&
+      popoverRect.bottom <= popoverRect.viewportHeight - 8,
+    `Info popover escaped mobile viewport: ${JSON.stringify(popoverRect)}`,
+  );
+  assert(
+    popoverRect.maxHeight <= popoverRect.viewportHeight - 32,
+    `Info popover max-height ignores viewport: ${JSON.stringify(popoverRect)}`,
   );
 }
 
@@ -504,6 +591,7 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
 }
 
 async function assertDirectResultRoute(page, baseUrl) {
+  await page.setViewport({ width: 1714, height: 1200, deviceScaleFactor: 1 });
   await page.goto(`${baseUrl}/info/uti.local.healthy.1`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Cystitis: Gezonde vrouw");
 
@@ -697,6 +785,7 @@ async function run() {
       await assertReducedMotionRouteTransitions(page, baseUrl);
       await assertQuestionnaireNavigation(page, baseUrl);
       await assertInfoPopoverInteraction(page, baseUrl);
+      await assertInfoPopoverViewportFit(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
       await assertForcedColorsResultRoute(page, baseUrl);
       assert(badResponses.length === 0, `Browser network errors:\n${badResponses.join("\n")}`);

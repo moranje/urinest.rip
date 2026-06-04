@@ -800,6 +800,10 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
     expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");
     expect(browserRegressionSmokeScript).toContain("page.goBack");
+    expect(browserRegressionSmokeScript).toContain("Answer option shell has unwanted border");
+    expect(browserRegressionSmokeScript).toContain("assertInfoPopoverViewportFit");
+    expect(browserRegressionSmokeScript).toContain("Info popover escaped mobile viewport");
+    expect(browserRegressionSmokeScript).toContain("Info popover max-height ignores viewport");
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
     expect(browserRegressionSmokeScript).toContain("notice padding too tight");

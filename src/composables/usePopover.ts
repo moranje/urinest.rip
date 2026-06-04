@@ -19,24 +19,32 @@ export function usePopover() {
     const margin = 16;
     const availableWidth = windowWidth - margin * 2;
     const popoverWidth = Math.min(300, availableWidth);
-    const popoverMaxHeight = 300;
     const gap = 5;
+    const viewportMaxHeight = Math.max(48, windowHeight - margin * 2);
+    const preferredMaxHeight = Math.min(300, viewportMaxHeight);
 
-    const spaceBelow = windowHeight - rect.bottom - gap;
-    const spaceAbove = rect.top - gap;
-    const fitsBelow = spaceBelow >= Math.min(popoverMaxHeight, 120);
+    const spaceBelow = Math.max(0, windowHeight - margin - rect.bottom - gap);
+    const spaceAbove = Math.max(0, rect.top - gap - margin);
+    const minimumUsefulHeight = Math.min(preferredMaxHeight, 120);
+    const opensBelow = spaceBelow >= minimumUsefulHeight || spaceBelow >= spaceAbove;
+    const placementSpace = opensBelow ? spaceBelow : spaceAbove;
+    const popoverMaxHeight = Math.max(48, Math.min(preferredMaxHeight, placementSpace));
 
     const style: PopoverStyle = {
       position: "fixed",
       visibility: "visible",
       opacity: 1,
       maxWidth: `${popoverWidth}px`,
+      maxHeight: `${popoverMaxHeight}px`,
     };
 
-    if (fitsBelow) {
-      style.top = `${rect.bottom + gap}px`;
+    if (opensBelow) {
+      style.top = `${Math.max(
+        margin,
+        Math.min(rect.bottom + gap, windowHeight - margin - popoverMaxHeight),
+      )}px`;
     } else {
-      style.top = `${Math.max(margin, rect.top - gap - Math.min(popoverMaxHeight, spaceAbove))}px`;
+      style.top = `${Math.max(margin, rect.top - gap - popoverMaxHeight)}px`;
     }
 
     const iconCenter = rect.left + rect.width / 2;
