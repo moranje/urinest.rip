@@ -13,6 +13,7 @@ const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const gitignore = readFileSync(resolve(".gitignore"), "utf8");
 const envExample = readFileSync(resolve(".env.example"), "utf8");
 const appConfigSource = readFileSync(resolve("src/config/app-config.ts"), "utf8");
+const appCompatibilitySource = readFileSync(resolve("src/lib/app-compatibility.ts"), "utf8");
 const telemetryDocs = readFileSync(resolve("docs/telemetry.md"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const storybookMain = readFileSync(resolve(".storybook/main.ts"), "utf8");
@@ -735,6 +736,8 @@ describe("CI policy", () => {
     expect(landingTemplateTest).toContain("keeps the desktop landing grid at 2 rows by 3 columns");
     expect(landingTemplateTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
     expect(landingTemplateTest).toContain("keeps landing menu tiles dimensionally stable");
+    expect(appCompatibilitySource).toContain("defineAsyncComponent");
+    expect(appCompatibilitySource).toContain('strip: () => import("../components/StripSvg.vue")');
     expect(tokenPolicyTest).toContain("five primary flows render as 2 rows x 3 columns");
     expect(tokenPolicyTest).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
 

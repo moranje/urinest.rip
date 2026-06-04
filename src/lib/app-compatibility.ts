@@ -1,4 +1,4 @@
-import type { Component } from "vue";
+import { defineAsyncComponent, type Component } from "vue";
 import {
   determineOutcome,
   type ManifestCalculatorBinding,
@@ -9,11 +9,6 @@ import type {
   BeslismodelStorageAdapter,
   BeslismodelStoreErrorContext,
 } from "@beslismodel/vue";
-import CultureSvg from "../components/CultureSvg.vue";
-import DipslideSvg from "../components/DipslideSvg.vue";
-import HealthySvg from "../components/HealthySvg.vue";
-import SedimentSvg from "../components/SedimentSvg.vue";
-import StripSvg from "../components/StripSvg.vue";
 import { appConfig } from "../config/app-config";
 import { useRoleStore } from "../store/roleStore";
 import type {
@@ -191,22 +186,41 @@ export const resolveQuestionnaireOutcome = (
   logic: readonly ResultLogicRule[],
 ): OutcomeResult => determineOutcome(answers, logic) as OutcomeResult;
 
-const iconComponents = {
-  culture: CultureSvg,
-  dipslide: DipslideSvg,
-  healthy: HealthySvg,
-  sediment: SedimentSvg,
-  strip: StripSvg,
-} satisfies Record<string, Component>;
+const iconLoaders = {
+  culture: () => import("../components/CultureSvg.vue"),
+  dipslide: () => import("../components/DipslideSvg.vue"),
+  healthy: () => import("../components/HealthySvg.vue"),
+  sediment: () => import("../components/SedimentSvg.vue"),
+  strip: () => import("../components/StripSvg.vue"),
+} satisfies Record<string, () => Promise<{ default: Component }>>;
 
-type LandingIcon = keyof typeof iconComponents;
+type LandingIcon = keyof typeof iconLoaders;
 
-export const landingIconKeys = Object.keys(iconComponents);
+const iconComponents = new Map<LandingIcon, Component>();
+
+export const landingIconKeys = Object.keys(iconLoaders);
 
 export const questionnairePath = (id: string): string => `/questionnaire/${id}`;
 
-export const resolveLandingIconComponent = (icon: string | undefined): Component | null =>
-  icon && icon in iconComponents ? iconComponents[icon as LandingIcon] : null;
+export const resolveLandingIconComponent = (icon: string | undefined): Component | null => {
+  if (!icon || !(icon in iconLoaders)) {
+    return null;
+  }
+
+  const key = icon as LandingIcon;
+  const cached = iconComponents.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  const component = defineAsyncComponent({
+    loader: iconLoaders[key],
+    delay: 0,
+    timeout: 5000,
+  });
+  iconComponents.set(key, component);
+  return component;
+};
 
 export const renderAppMarkdown = (markdown: string | undefined): string => renderMarkdown(markdown);
 

@@ -302,7 +302,7 @@ Drie grote thema's:
 **Remaining issues:**
 
 - Geen `<script type="speculationrules">` voor likely-next pages
-- Geen lazy-loading op SVG-illustraties (Landing tiles laden alle 5 SVGs direct)
+- SVG-illustraties op de landing lazy-loaden via async Vue chunks in `src/lib/app-compatibility.ts`; eager-import regressie is geborgd in `src/lib/__tests__/app-compatibility.test.ts`
 - Geen `loading="lazy"` op niet-critical content
 - Geen INP/LCP meting in CI; alleen Lighthouse-snapshot uit april/mei
 - Geen chunk-naming policy gedocumenteerd
@@ -594,5 +594,6 @@ Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
 - [x] Forced-colors/high-contrast runtimegedrag is geborgd in `scripts/check-browser-regression-smoke.mjs` met Chrome `Emulation.setEmulatedMedia` op de directe resultaatroute.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
+- [x] Landing-SVG illustraties laden niet meer eager in de initial app chunk; `resolveLandingIconComponent()` gebruikt async component chunks met cache en bron-testdekking.
 - [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.
 - [x] Multi-select en grouped-input submits tonen pending feedback en blokkeren dubbele submits via `isSubmitting`, Button `loading` en componenttestdekking.

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -171,7 +172,18 @@ describe("app compatibility adapters", () => {
     expect(landingIconKeys).toEqual(["culture", "dipslide", "healthy", "sediment", "strip"]);
     expect(questionnairePath("strip")).toBe("/questionnaire/strip");
     expect(resolveLandingIconComponent("strip")).toBeTruthy();
+    expect(resolveLandingIconComponent("strip")).toBe(resolveLandingIconComponent("strip"));
     expect(resolveLandingIconComponent("unknown")).toBeNull();
+  });
+
+  it("lazy-loads landing icons so SVG artwork does not bloat the initial app chunk", () => {
+    const source = readFileSync("src/lib/app-compatibility.ts", "utf8");
+
+    expect(source).toContain("defineAsyncComponent");
+    expect(source).toContain('culture: () => import("../components/CultureSvg.vue")');
+    expect(source).toContain('strip: () => import("../components/StripSvg.vue")');
+    expect(source).toContain("const iconComponents = new Map<LandingIcon, Component>()");
+    expect(source).not.toMatch(/import\s+\w+Svg\s+from\s+"..\/components\/\w+Svg\.vue"/);
   });
 
   it("keeps markdown parsing and sanitizing app-owned", () => {

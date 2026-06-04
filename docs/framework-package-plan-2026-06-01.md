@@ -301,6 +301,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Vue package tree-shakeable exports.
 - [x] Admin/Supabase lazy app-only.
 - [x] Markdown renderer lazy or injectable.
+- [x] Consumer-owned landing icons lazy via app-compat async component resolver; framework houdt alleen taxonomy slots.
 - [x] Manifest load cache strategy configurable.
 - [x] Route prefetch opt-in.
 - [x] Bundle budget package en app.
