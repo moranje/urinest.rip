@@ -512,15 +512,26 @@ describe("CI policy", () => {
     expect(releaseStrategy).toContain("docs/gitea-package-publishing.md");
     expect(releaseStrategy).toContain("Rollback");
     expect(releaseStrategy).toContain("Node `20`, `22` and `24`");
-    expect(releaseStrategy).toContain("sibling folder `beslismodel-framework/`");
+    expect(releaseStrategy).toContain("`beslismodel-framework` exists as a sibling Gitea repo");
+    expect(releaseStrategy).toContain("0.1.0-next.1");
+    expect(releaseStrategy).toContain("BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease>");
+    expect(releaseStrategy).toContain("BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease>");
+    expect(releaseStrategy).toContain("check:modern-toolchain");
     expect(releaseStrategy).toContain("Project `.npmrc` may define the scope registry");
     expect(releaseStrategy).toContain("must not contain a token");
     expect(releaseStrategy).toContain("exact registry versions");
     expect(releaseStrategy).toContain("landing-grid regression");
     expect(releaseStrategy).toContain("Urinestrip end-to-end fixture");
-    expect(readFileSync(resolve("docs/gitea-package-publishing.md"), "utf8")).toContain(
-      "npm run migrate:registry-deps -- --write",
+    const giteaPackagePublishing = readFileSync(
+      resolve("docs/gitea-package-publishing.md"),
+      "utf8",
     );
+    expect(giteaPackagePublishing).toContain("npm run migrate:registry-deps -- --write");
+    expect(giteaPackagePublishing).toContain("BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease>");
+    expect(giteaPackagePublishing).toContain(
+      "BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease>",
+    );
+    expect(giteaPackagePublishing).toContain("0.1.0-next.1");
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {

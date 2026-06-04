@@ -22,8 +22,10 @@ git push -u origin master
 The Gitea server creates this repository on first push. `git ls-remote` may return "not found"
 before the first push and must not be treated as a blocking preflight.
 
-Current status: `beslismodel-framework` exists on Gitea and `master` was verified at
-`f177fa4308a71c7a802212d986b7eeee370d9ecb`. The first-push repository creation path is complete.
+Current status: `beslismodel-framework` exists on Gitea and the first-push repository creation path
+is complete. Earlier verification saw `master` at `f177fa4308a71c7a802212d986b7eeee370d9ecb`;
+later package-hardening work advanced the repo through `e296808`. NAS must re-check current
+remote state before publishing.
 
 ## Registry
 
@@ -102,7 +104,7 @@ npm run check:package-publish-next
 Publish the prerelease with dist-tag `next`:
 
 ```bash
-BESLISMODEL_PUBLISH_CONFIRM=0.1.0-next.0 npm run check:package-publish-next -- --publish
+BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish
 ```
 
 The publish command first dry-runs every package, verifies registry auth, and checks that none of
@@ -120,7 +122,7 @@ exist, publish is skipped and the workflow continues. A partial existing package
 Smoke installed packages from Gitea:
 
 ```bash
-BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0 npm run check:package-registry-smoke
+BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke
 ```
 
 For CI or NAS verification against the package version currently declared in all framework package
@@ -134,18 +136,22 @@ If local registry access requires the proxy:
 
 ```bash
 BESLISMODEL_REGISTRY_URL=https://git.oranje.wtf:8766/api/packages/martien/npm/ \
-BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0 \
+BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> \
 npm run check:package-registry-smoke
 ```
 
 Prepare `urinest.rip` as a registry consumer only after publish and smoke pass:
 
 ```bash
-BESLISMODEL_REGISTRY_MIGRATION_VERSION=0.1.0-next.0 npm run migrate:registry-deps -- --write
+BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-prerelease> npm run migrate:registry-deps -- --write
 npm install
 npm run check:app
 npm run check:browser-smoke
 ```
+
+Current local prerelease candidate: `0.1.0-next.1`. It is prepared in package source and release
+notes, but not yet published. `0.1.0-next.0` remains the published/consumed registry version until
+NAS publish, smoke and migration complete.
 
 `migrate:registry-deps -- --write` verifies every exact `@beslismodel/*` version against the Gitea
 npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.

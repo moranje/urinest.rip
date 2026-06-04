@@ -42,27 +42,31 @@ Required before publish:
 - Each package gets `publishConfig.registry` for Gitea once final registry URL is known.
 - First publish uses prerelease version and dist-tag `next`, not `latest`.
 
-Example publish order:
+Use the guarded publish script instead of direct package-by-package commands:
 
 ```bash
-npm publish packages/core --tag next
-npm publish packages/compiler --tag next
-npm publish packages/copd-care --tag next
-npm publish packages/cvrm-prevent --tag next
-npm publish packages/dm-care --tag next
-npm publish packages/vue --tag next
-npm publish packages/testing --tag next
+npm run check:package-publish-next
+BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish
 ```
 
 Use `latest` only after registry smoke, `urinest.rip` smoke and rollback tag exist.
 
 ## Extraction Staging
 
-For now extraction is a planned round, not an in-place source move. The framework moves only after the current app and package gates are green and a registry consumer proves the published packages work.
+Extraction has moved from planned work to active release staging:
+
+- `beslismodel-framework` exists as a sibling Gitea repo.
+- `0.1.0-next.0` is published to the Gitea npm registry and consumed by `urinest.rip`.
+- package source is prepared for `0.1.0-next.1`, but `next.1` still needs NAS publish,
+  registry smoke and root-app migration before it becomes the consumed version.
+
+Framework code moves or removal from `urinest.rip` only after registry-installed app and package
+smokes prove the published packages work.
 
 Target shape:
 
-- Create a separate package directory/repository, for example sibling folder `beslismodel-framework/`.
+- Keep the separate package directory/repository `beslismodel-framework/` reproducible from this
+  repo until the NAS publish/migration round is complete.
 - Prove the copy with `npm run check:framework-extract`; this creates a clean framework target,
   excludes app-only paths and runs the standalone package lint, type, build, package and consumer
   smoke gates.
@@ -98,6 +102,7 @@ Required gates:
 - `npm ci`
 - `npm run build:flows`
 - `npm run format:check`
+- `npm run check:modern-toolchain`
 - `npm run lint:all`
 - `npm run check`
 - `npm run check:tsgo`
@@ -138,13 +143,16 @@ Migration order:
 1. Publish prerelease packages to Gitea with `next`.
    Pack dry-run first with `npm run check:package-publish-next`; real publish requires
    `BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish`.
-2. Install exact prerelease versions in `urinest.rip`.
-3. Remove app aliases that point to package source.
-4. Run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`.
-5. Smoke landing grid, questionnaire redirect/back, progress indicator, result page, PWA and telemetry.
-6. Promote packages to `latest` with stable semver only:
+2. Smoke the exact prerelease:
+   `BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke`.
+3. Install exact prerelease versions in `urinest.rip` with
+   `BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-prerelease> npm run migrate:registry-deps -- --write`.
+4. Remove app aliases that point to package source.
+5. Run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`.
+6. Smoke landing grid, questionnaire redirect/back, progress indicator, result page, PWA and telemetry.
+7. Promote packages to `latest` with stable semver only:
    `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=<exact-stable> npm run check:package-publish-next -- --publish`.
-7. Remove old package source from app repo only after clean registry consumer proof.
+8. Remove old package source from app repo only after clean registry consumer proof.
 
 ## Rollback
 
