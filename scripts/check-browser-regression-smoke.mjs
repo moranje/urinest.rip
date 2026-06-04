@@ -195,6 +195,86 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
   );
 }
 
+async function assertInfoPopoverInteraction(page, baseUrl) {
+  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "networkidle0" });
+  await expectHeading(page, "Nitriet test");
+
+  await clickChoice(page, "Positief");
+  await page.waitForFunction(
+    () =>
+      location.pathname === "/questionnaire/bacteriurie" &&
+      document.querySelector("h1")?.textContent?.includes("Is er sprake van weefselinvasie?"),
+    { timeout: 10_000 },
+  );
+
+  await clickChoice(page, "Geen");
+  await expectHeading(page, "Behoort patiënt tot een risicogroep?");
+  await clickChoice(page, "Nee");
+  await expectHeading(page, "Heeft patiënt een urine katheter?");
+  await clickChoice(page, "Nee");
+  await expectHeading(page, "Welke behandeling kan patiënt krijgen?");
+
+  const beforeUrl = page.url();
+  await page.click('[data-testid="choice-option-info"]');
+  try {
+    await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
+      timeout: 10_000,
+      visible: true,
+    });
+  } catch (error) {
+    const diagnosticState = await page.evaluate(() => ({
+      activeOption:
+        document
+          .querySelector(
+            '.question-options [role="radio"][aria-checked="true"], .question-options [role="checkbox"][aria-checked="true"]',
+          )
+          ?.textContent?.trim() ?? "",
+      dialogs: [...document.querySelectorAll('[role="dialog"]')].map((dialog) => ({
+        ariaLabel: dialog.getAttribute("aria-label"),
+        opacity: getComputedStyle(dialog).opacity,
+        text: dialog.textContent?.trim() ?? "",
+        visibility: getComputedStyle(dialog).visibility,
+      })),
+      infoButtons: [...document.querySelectorAll('[data-testid="choice-option-info"]')].map(
+        (button) => ({
+          ariaExpanded: button.getAttribute("aria-expanded"),
+          label: button.getAttribute("aria-label"),
+          text: button.closest(".choice-option")?.textContent?.trim() ?? "",
+        }),
+      ),
+      url: location.href,
+    }));
+    throw new Error(
+      `Info popover did not become visible: ${JSON.stringify(diagnosticState, null, 2)}\n${String(error)}`,
+    );
+  }
+
+  const popoverState = await page.evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"][aria-label="Meer informatie"]');
+    const activeOption = document.querySelector(
+      '.question-options [role="radio"][aria-checked="true"], .question-options [role="checkbox"][aria-checked="true"]',
+    );
+    return {
+      activeOptionText: activeOption?.textContent?.trim() ?? "",
+      dialogText: dialog?.textContent?.trim() ?? "",
+      url: location.href,
+    };
+  });
+
+  assert(popoverState.url === beforeUrl, "Info button should not navigate or choose an answer");
+  assert(popoverState.activeOptionText === "", "Info button should not select an answer");
+  assert(
+    popoverState.dialogText.includes("controleer eerst op allergieën"),
+    `Unexpected info popover text: ${popoverState.dialogText}`,
+  );
+
+  await page.click('[data-testid="info-popover-close"]');
+  await page.waitForFunction(
+    () => !document.querySelector('[role="dialog"][aria-label="Meer informatie"]'),
+    { timeout: 10_000 },
+  );
+}
+
 async function assertDirectResultRoute(page, baseUrl) {
   await page.goto(`${baseUrl}/info/uti.local.healthy.1`, { waitUntil: "networkidle0" });
   await expectHeading(page, "Cystitis: Gezonde vrouw");
@@ -235,6 +315,7 @@ async function run() {
     try {
       await assertLandingGrid(page, baseUrl);
       await assertQuestionnaireNavigation(page, baseUrl);
+      await assertInfoPopoverInteraction(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
       assert(badResponses.length === 0, `Browser network errors:\n${badResponses.join("\n")}`);
       assert(errors.length === 0, `Browser console/page errors:\n${errors.join("\n")}`);

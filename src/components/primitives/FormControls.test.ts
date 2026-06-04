@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import Checkbox from "./Checkbox.vue";
 import IconButton from "./IconButton.vue";
 import Input from "./Input.vue";
@@ -33,6 +33,36 @@ describe("form primitives", () => {
 
     expect(wrapper.get("button").attributes("aria-label")).toBe("Wachtwoord tonen");
     expect(wrapper.get("button").attributes("aria-pressed")).toBe("true");
+  });
+
+  it("forwards interaction attrs through the icon button primitive", async () => {
+    const onClick = vi.fn();
+    const wrapper = mount(IconButton, {
+      props: {
+        "aria-label": "Meer informatie",
+        icon: "info-circle",
+        size: "sm",
+      },
+      attrs: {
+        "aria-controls": "option-info-example",
+        "aria-expanded": "false",
+        class: "choice-option__info-action",
+        "data-testid": "choice-option-info",
+        onClick,
+      },
+    });
+
+    const button = wrapper.get('[data-testid="choice-option-info"]');
+
+    expect(button.element.tagName).toBe("BUTTON");
+    expect(button.classes()).toContain("icon-button");
+    expect(button.classes()).toContain("choice-option__info-action");
+    expect(button.attributes("aria-controls")).toBe("option-info-example");
+    expect(button.attributes("aria-expanded")).toBe("false");
+
+    await button.trigger("click");
+
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it("renders router links through the icon button primitive", () => {

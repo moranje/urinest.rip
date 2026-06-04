@@ -11,6 +11,8 @@ describe("InfoPopover", () => {
     expect(source).not.toContain('class="info-popover__close"');
     expect(source).not.toContain(".info-popover__close {");
     expect(source).not.toContain(".info-popover__close:hover");
+    expect(source).toContain("pointer-events: auto");
+    expect(source).not.toContain("pointer-events: none");
   });
 
   it("renders a dialog with sanitized html and stable option id", () => {

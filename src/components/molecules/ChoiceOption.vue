@@ -37,12 +37,12 @@
         :aria-controls="popoverId"
         :aria-describedby="popoverOpen ? popoverId : undefined"
         aria-label="Meer informatie"
-        @click.stop="emit('togglePopover', option, $event)"
+        @click.stop="emit('showPopover', option, $event)"
         @keydown.escape.stop="emit('closePopover')"
         @mouseenter.stop="emit('showPopover', option, $event)"
         @mouseleave.stop="emit('schedulePopoverClose')"
         @focus.stop="emit('showPopover', option, $event)"
-        @blur.stop="emit('closePopover')"
+        @blur.stop="emit('schedulePopoverClose')"
       />
     </div>
   </div>

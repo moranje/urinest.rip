@@ -64,7 +64,7 @@ const normalizedStyle = computed(() => props.popoverStyle as StyleValue);
   font: var(--md-sys-typescale-body-small);
   opacity: 0;
   overflow-y: auto;
-  pointer-events: none;
+  pointer-events: auto;
   text-align: left;
   transition: opacity var(--motion-duration-medium) var(--motion-easing-standard);
   visibility: hidden;

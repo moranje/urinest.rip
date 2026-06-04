@@ -1,6 +1,7 @@
 <template>
   <router-link v-if="to" v-slot="{ href: routerHref, navigate }" :to="to" custom>
     <a
+      v-bind="$attrs"
       :href="disabled ? undefined : routerHref"
       :aria-label="buttonAriaLabel"
       :aria-pressed="ariaPressed"
@@ -16,6 +17,7 @@
   </router-link>
   <a
     v-else-if="href"
+    v-bind="$attrs"
     :href="disabled ? undefined : href"
     :aria-label="buttonAriaLabel"
     :aria-pressed="ariaPressed"
@@ -32,6 +34,7 @@
   </a>
   <button
     v-else
+    v-bind="$attrs"
     :type="type"
     :disabled="disabled"
     :aria-label="buttonAriaLabel"
@@ -48,6 +51,8 @@
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import Icon from "./Icon.vue";
+
+defineOptions({ inheritAttrs: false });
 
 type IconName = InstanceType<typeof Icon>["$props"]["name"];
 type Variant = "standard" | "filled" | "tonal" | "outlined";

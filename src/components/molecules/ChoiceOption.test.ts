@@ -56,12 +56,15 @@ describe("ChoiceOption", () => {
     const info = wrapper.get('[data-testid="choice-option-info"]');
 
     await info.trigger("click");
+    await info.trigger("focus");
     await info.trigger("mouseenter");
     await info.trigger("mouseleave");
+    await info.trigger("blur");
 
-    expect(wrapper.emitted("togglePopover")?.[0]).toEqual([option, expect.any(MouseEvent)]);
     expect(wrapper.emitted("showPopover")?.[0]).toEqual([option, expect.any(MouseEvent)]);
-    expect(wrapper.emitted("schedulePopoverClose")).toHaveLength(1);
+    expect(wrapper.emitted("showPopover")).toHaveLength(3);
+    expect(wrapper.emitted("schedulePopoverClose")).toHaveLength(2);
+    expect(wrapper.emitted("togglePopover")).toBeUndefined();
     expect(wrapper.emitted("choose")).toBeUndefined();
   });
 
