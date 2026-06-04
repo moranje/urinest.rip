@@ -29,6 +29,22 @@ const routeTransitionPolicyTest = readFileSync(
 const viewTransitionTest = readFileSync(resolve("src/lib/view-transition.test.ts"), "utf8");
 const progressTest = readFileSync(resolve("packages", "core", "src", "progress.test.ts"), "utf8");
 const tokenPolicyTest = readFileSync(resolve("src/styles/tokens.test.ts"), "utf8");
+const designTokenDistributionScript = readFileSync(
+  resolve("scripts/check-design-token-distribution.mjs"),
+  "utf8",
+);
+const designTokenDistributionDoc = readFileSync(
+  resolve("docs/design-token-distribution.md"),
+  "utf8",
+);
+const designTokenDistributionManifest = JSON.parse(
+  readFileSync(resolve("docs/design-token-distribution.json"), "utf8"),
+) as {
+  source?: Record<string, string>;
+  targets?: { id: string; status: string }[];
+  governance?: { parityChecks?: string[]; customMd3Extensions?: string[] };
+  counts?: { total?: number; byType?: Record<string, number> };
+};
 const routeVisualContractTest = readFileSync(
   resolve("src/__tests__/route-visual-contract.test.ts"),
   "utf8",
@@ -190,6 +206,13 @@ describe("CI policy", () => {
     expect(packageJson.engines?.node).toBe(">=20.19.0");
     expect(packageJson.scripts["check:app"]).toContain("build:flows");
     expect(packageJson.scripts["check:app"]).toContain("check:design-tokens");
+    expect(packageJson.scripts["check:app"]).toContain("check:design-token-distribution");
+    expect(packageJson.scripts["tokens:distribution:write"]).toBe(
+      "node scripts/check-design-token-distribution.mjs --write",
+    );
+    expect(packageJson.scripts["check:design-token-distribution"]).toBe(
+      "node scripts/check-design-token-distribution.mjs",
+    );
     expect(packageJson.scripts["check:app"]).toContain("format:check");
     expect(packageJson.scripts["check:app"]).toContain("lint:all");
     expect(packageJson.scripts["check:app"]).toContain("check:guidelines");
@@ -299,6 +322,36 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:modern-toolchain"]).toBe(
       "node scripts/check-modern-toolchain.mjs",
     );
+    expect(designTokenDistributionScript).toContain("style-dictionary-v4");
+    expect(designTokenDistributionScript).toContain("tokens-studio-figma");
+    expect(designTokenDistributionScript).toContain("web-runtime-css");
+    expect(designTokenDistributionScript).toContain("theme-bootstrap");
+    expect(designTokenDistributionDoc).toContain("style-dictionary-v4");
+    expect(designTokenDistributionDoc).toContain("tokens-studio-figma");
+    expect(designTokenDistributionManifest.source?.css).toBe("src/styles/tokens.css");
+    expect(designTokenDistributionManifest.source?.dtcg).toBe("src/styles/beslismodel.tokens.json");
+    expect(designTokenDistributionManifest.source?.themeBootstrap).toBe("public/theme-tokens.js");
+    expect(designTokenDistributionManifest.targets?.map((target) => target.id)).toEqual([
+      "style-dictionary-v4",
+      "tokens-studio-figma",
+      "web-runtime-css",
+      "theme-bootstrap",
+    ]);
+    expect(
+      designTokenDistributionManifest.targets?.every((target) => target.status === "ready"),
+    ).toBe(true);
+    expect(designTokenDistributionManifest.governance?.parityChecks).toContain(
+      "npm run check:design-tokens",
+    );
+    expect(designTokenDistributionManifest.governance?.parityChecks).toContain(
+      "npm run check:design-token-distribution",
+    );
+    expect(designTokenDistributionManifest.governance?.customMd3Extensions).toContain(
+      "md.sys.color.warning",
+    );
+    expect(designTokenDistributionManifest.counts?.byType?.color).toBeGreaterThan(40);
+    expect(designTokenDistributionManifest.counts?.byType?.dimension).toBeGreaterThan(10);
+    expect(designTokenDistributionManifest.counts?.byType?.typography).toBeGreaterThan(10);
     expect(packageJson.scripts["check:app"]).toContain("check:modern-toolchain");
     expect(packageJson.scripts["check:app"]).toContain("check:tsgo:app");
     expect(packageJson.scripts["check:app"]).toContain("test:app");

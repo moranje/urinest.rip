@@ -1,0 +1,59 @@
+{
+  "$schema": "https://www.designtokens.org/TR/2025.10/format/",
+  "name": "beslismodel-design-token-distribution",
+  "generatedBy": "scripts/check-design-token-distribution.mjs",
+  "source": {
+    "css": "src/styles/tokens.css",
+    "dtcg": "src/styles/beslismodel.tokens.json",
+    "themeBootstrap": "public/theme-tokens.js"
+  },
+  "targets": [
+    {
+      "id": "style-dictionary-v4",
+      "input": "src/styles/beslismodel.tokens.json",
+      "compatibility": "DTCG $type/$value token graph with CSS source extensions",
+      "status": "ready"
+    },
+    {
+      "id": "tokens-studio-figma",
+      "input": "src/styles/beslismodel.tokens.json",
+      "compatibility": "DTCG-compatible import with references and theme metadata",
+      "status": "ready"
+    },
+    {
+      "id": "web-runtime-css",
+      "input": "src/styles/tokens.css",
+      "compatibility": "CSS custom properties, light-dark(), forced-colors and contrast modes",
+      "status": "ready"
+    },
+    {
+      "id": "theme-bootstrap",
+      "input": "public/theme-tokens.js",
+      "compatibility": "Static app metadata for theme-color and first-paint theme bootstrap",
+      "status": "ready"
+    }
+  ],
+  "governance": {
+    "sourceOfTruth": "src/styles/tokens.css",
+    "parityChecks": ["npm run check:design-tokens", "npm run check:design-token-distribution"],
+    "customMd3Extensions": [
+      "md.sys.color.warning",
+      "md.sys.color.on.warning",
+      "md.sys.color.warning.container",
+      "md.sys.color.on.warning.container",
+      "md.sys.color.indicator.positive"
+    ]
+  },
+  "counts": {
+    "total": 180,
+    "byType": {
+      "color": 128,
+      "cubicBezier": 4,
+      "dimension": 16,
+      "duration": 6,
+      "fontFamily": 2,
+      "number": 9,
+      "typography": 15
+    }
+  }
+}

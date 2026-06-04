@@ -29,7 +29,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 | Package readiness |  1.5/5 |  4.8/5 | Geen exports, package boundaries, library build, consumer fixture                        |
 | Compiler/schema   |  2.5/5 |  4.9/5 | Build errors worden geslikt; random rule IDs; type drift                                 |
 | UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet                      |
-| Design tokens     |  4.4/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export; component-token distributie nog beperkt |
+| Design tokens     |  4.6/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export + CI-bewaakt design-tool distributiecontract; component-token export blijft beperkt |
 | Telemetry         |  3.7/5 |  4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt                                    |
 | Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken                    |
 | Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite                         |
@@ -230,6 +230,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Storybook voor atoms, molecules, organisms, templates.
 - [x] Storybook en componenttests voor lange klinische multi-input labels.
 - [x] Route-level visual contractgate voor landing/questionnaire/result/admin.
+- [x] Design-token distributiecontract voor Style Dictionary v4, Tokens Studio/Figma, web-runtime CSS en theme bootstrap: `docs/design-token-distribution.json`, `docs/design-token-distribution.md` en `npm run check:design-token-distribution` draaien mee in `check:app`.
 
 ## Telemetry Checklist
 

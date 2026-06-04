@@ -102,8 +102,22 @@ describe("design tokens", () => {
         };
       };
     };
+    type TokenDistributionManifest = {
+      generatedBy: string;
+      governance: { parityChecks: string[] };
+      source: {
+        css: string;
+        dtcg: string;
+        themeBootstrap: string;
+      };
+      targets: { id: string; status: string }[];
+    };
 
     const tokenExport = readJson<TokenExport>("src/styles/beslismodel.tokens.json");
+    const tokenDistribution = readJson<TokenDistributionManifest>(
+      "docs/design-token-distribution.json",
+    );
+    const tokenDistributionDoc = read("docs/design-token-distribution.md");
     const extension = tokenExport.$extensions["wtf.oranje.beslismodel"];
     const themeScript = read("public/theme-tokens.js");
     const themeInit = read("public/theme-init.js");
@@ -129,6 +143,24 @@ describe("design tokens", () => {
       backgroundColor: { dark: "#1a1c1e", light: "#fcfcff" },
       themeColor: { dark: "#005a2b", light: "#16a34a" },
     });
+    expect(tokenDistribution.generatedBy).toBe("scripts/check-design-token-distribution.mjs");
+    expect(tokenDistribution.source).toEqual({
+      css: "src/styles/tokens.css",
+      dtcg: "src/styles/beslismodel.tokens.json",
+      themeBootstrap: "public/theme-tokens.js",
+    });
+    expect(tokenDistribution.targets.map((target) => `${target.id}:${target.status}`)).toEqual([
+      "style-dictionary-v4:ready",
+      "tokens-studio-figma:ready",
+      "web-runtime-css:ready",
+      "theme-bootstrap:ready",
+    ]);
+    expect(tokenDistribution.governance.parityChecks).toContain("npm run check:design-tokens");
+    expect(tokenDistribution.governance.parityChecks).toContain(
+      "npm run check:design-token-distribution",
+    );
+    expect(tokenDistributionDoc).toContain("npm run tokens:distribution:write");
+    expect(tokenDistributionDoc).toContain("tokens-studio-figma");
     expect(themeScript).toContain("window.__BESLISMODEL_THEME_TOKENS__");
     expect(themeScript).toContain('light: "#16a34a"');
     expect(themeScript).toContain('dark: "#005a2b"');
