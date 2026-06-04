@@ -51,6 +51,10 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+443d43b fix(vue): filter restored answer state
+afde989 fix(guidelines): enforce role responsibility matrix
+0b0de52 docs(framework): record cross repo audit evidence
+6aea325 docs(audits): reconcile open checklist status
 542c02d test(ci): keep theme smoke enforced
 568905b test(theme): smoke app theme modes
 794a2f0 fix(vue): contain answer persistence failures
@@ -200,6 +204,8 @@ Expected pattern: user-level npm auth or CI secret. Never commit `_authToken`.
   websites.
 - `docs/guideline-traceability.md` links visible clinical UI claims to
   `docs/guideline-traceability.json`.
+- `docs/role-responsibility-matrix.json` now maps generic care roles to app runtime roles and
+  `npm run check:guidelines` enforces that triage roles cannot reach treatment questions/results.
 
 ## Current Local Uncommitted State
 
@@ -209,13 +215,9 @@ Before NAS or local continuation, run:
 git status --short
 ```
 
-At local continuation time, root had only documentation/test changes plus the user-provided
-workspace instruction:
+After local continuation commits, only the user-provided workspace instruction remained untracked:
 
 ```text
- M docs/ai-guideline-authoring.md
- M docs/nas-handoff-2026-06-04.md
- M src/__tests__/ai-authoring-doc.test.ts
 ?? AGENTS.md
 ```
 
@@ -240,6 +242,7 @@ Resolved issues:
 - Browser back history is the clinical navigation model; no custom UI back button is expected.
 - Direct `/info/uti.local.healthy.1` renders instead of hanging on the shell loader.
 - Light, dark and system theme rendering are smoke-tested against generated theme tokens.
+- Role-responsibility smoke at guideline level blocks treatment questions/results for triage roles.
 
 Guarding commits:
 
@@ -250,6 +253,7 @@ f0851d3 fix(telemetry): disable local preview persistence by default
 fa01de1 feat(theme): generate design token metadata
 568905b test(theme): smoke app theme modes
 542c02d test(ci): keep theme smoke enforced
+afde989 fix(guidelines): enforce role responsibility matrix
 ```
 
 Required verification before declaring these stable on NAS:
@@ -519,6 +523,21 @@ rg -n "Transition was skipped|VITE_ENABLE_LOG_PERSISTENCE|log persistence disabl
 ```
 
 No package should depend on Supabase. Supabase stays app-only adapter.
+
+Continuation 2026-06-04:
+
+- `443d43b fix(vue): filter restored answer state` filters restored persisted answers against
+  current manifest question IDs and tests async answer persistence failures.
+- `docs/telemetry.md` and `docs/framework-security-privacy.md` now state the actual sessionStorage
+  shape: structured selected option data for current manifest questions, TTL-bound, no free text or
+  patient identifiers.
+- Verified locally:
+
+  ```bash
+  npx vitest run --config vitest.config.packages.ts packages/vue/src/store.test.ts
+  npx vitest run --config vitest.config.app.ts src/lib/__tests__/app-compatibility.test.ts
+  npm run build:vue
+  ```
 
 ## Baseline Integration
 
@@ -798,11 +817,15 @@ test(theme): lock theme toggle token parity
 Verified 2026-06-04:
 
 - `794a2f0 fix(vue): contain answer persistence failures` added package store failure handling.
-- `npm run test:packages -- packages/vue/src/store.test.ts` passed: 1 file, 8 tests.
+- `443d43b fix(vue): filter restored answer state` filters stale persisted answer keys and tests
+  async persist rejection handling.
+- `npx vitest run --config vitest.config.packages.ts packages/vue/src/store.test.ts` passed: 1
+  file, 9 tests.
 - `npm run check:packages` passed after the package change, including standalone extraction,
   framework format/lint/tsc/tsgo, package builds, bundle budget, tarballs, publish dry-run,
   packed/file-install consumer smokes, package export checks, mutation pilot and Urinestrip
   consumer type/test gate.
+- `npm run build:vue` passed after the restored-answer filtering change.
 
 Commits:
 
