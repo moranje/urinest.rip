@@ -15,6 +15,15 @@ describe("framework security and privacy documentation", () => {
       "Remove source maps from deploy artifact",
       "service key alleen als CI-secret",
       "packages sturen alleen events naar een geinjecteerde telemetry adapter",
+      "Consumer Release Checklist",
+      "Framework packages bevatten geen Supabase/admin/storage hardcoding",
+      "Telemetry adapter is no-op zonder consumer config",
+      "No-PHI telemetry contract is getest",
+      "No-PHI storage contract is getest",
+      "Anon log-ingest RPC weigert raw clinical telemetry keys",
+      "CSP headers zijn enforcing en getest",
+      "Source maps worden prive geupload en uit deploy artifact verwijderd",
+      "Admin routes zijn app-only, lazy en auth-gated",
       "Malicious flow metadata",
     ]) {
       expect(guide).toContain(requiredPhrase);

@@ -31,7 +31,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 | UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet                      |
 | Design tokens     |  4.6/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export + CI-bewaakt design-tool distributiecontract; component-token export blijft beperkt |
 | Telemetry         |  4.7/5 |  4.8/5 | Framework-adapter, no-op package-adapter, scrubbed flow trail en consumer-owned `VITE_TELEMETRY_SOURCE`; overgebleven scoregap is externe backend observability |
-| Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken                    |
+| Security/privacy  |  4.8/5 |  4.8/5 | Framework security/privacy contract, consumer release checklist, package boundary gate, RLS/RPC hardening en No-PHI telemetry/storage gates zijn aanwezig |
 | Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite                         |
 | Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken                     |
 
@@ -269,6 +269,8 @@ App blijft eigenaar van domeindata en branding.
 - [x] Log ingestion gebruikt RPC/Edge Function met schema/rate/source validatie.
 - [x] `.map` files niet publiek deployen.
 - [x] Security tests voor malicious flow metadata.
+- [x] Framework security/privacy contract en consumer release checklist zijn geborgd in `docs/framework-security-privacy.md` en `src/__tests__/framework-security-doc.test.ts`.
+- [x] Package boundary gate faalt op Supabase/admin/storage/app-source lekken in frameworkpackages (`check:framework-boundaries`).
 
 ## Testing Checklist
 
