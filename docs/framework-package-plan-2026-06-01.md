@@ -421,6 +421,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
 
+### Ronde 7 — NAS-tail UI-regressie-afsluiting (2026-06-04)
+
+- [x] `chore(lockfile): sync npm optional deps` houdt `package-lock.json` installbaar met npm 11/Node 24 door ontbrekende `@emnapi` optional dependencies op te nemen; verificatie: tijdelijke Node 24 container met lokale Gitea registry override bereikt `npm ci`.
+
 ## Commit Discipline
 
 Elke stap krijgt atomic conventional commit.
