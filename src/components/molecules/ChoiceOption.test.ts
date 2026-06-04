@@ -68,6 +68,36 @@ describe("ChoiceOption", () => {
     expect(wrapper.emitted("choose")).toBeUndefined();
   });
 
+  it("links open answer info to option and info controls with ARIA", () => {
+    const wrapper = mount(ChoiceOption, { props: { ...baseProps, popoverOpen: true } });
+    const item = wrapper.get(".choice-option__button");
+    const info = wrapper.get('[data-testid="choice-option-info"]');
+
+    expect(item.attributes("aria-describedby")).toBe("option-info-q1-o1");
+    expect(info.attributes("aria-expanded")).toBe("true");
+    expect(info.attributes("aria-controls")).toBe("option-info-q1-o1");
+    expect(info.attributes("aria-describedby")).toBe("option-info-q1-o1");
+  });
+
+  it("omits popover ARIA and info control when answer info is closed or absent", () => {
+    const closed = mount(ChoiceOption, { props: baseProps });
+    const withoutDescription = mount(ChoiceOption, {
+      props: {
+        ...baseProps,
+        option: { ...option, description: undefined },
+      },
+    });
+
+    expect(closed.get(".choice-option__button").attributes("aria-describedby")).toBeUndefined();
+    expect(closed.get('[data-testid="choice-option-info"]').attributes("aria-expanded")).toBe(
+      "false",
+    );
+    expect(
+      closed.get('[data-testid="choice-option-info"]').attributes("aria-describedby"),
+    ).toBeUndefined();
+    expect(withoutDescription.find('[data-testid="choice-option-info"]').exists()).toBe(false);
+  });
+
   it("keeps info controls integrated inside the option card", () => {
     const wrapper = mount(ChoiceOption, { props: baseProps });
     const source = readFileSync("src/components/molecules/ChoiceOption.vue", "utf8");

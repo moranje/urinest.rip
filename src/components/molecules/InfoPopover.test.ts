@@ -72,4 +72,23 @@ describe("InfoPopover", () => {
 
     expect(wrapper.find(".info-popover").exists()).toBe(false);
   });
+
+  it("teleports the active dialog to document body and cleans it up on unmount", () => {
+    document.body.innerHTML = "";
+    const wrapper = mount(InfoPopover, {
+      attachTo: document.body,
+      props: {
+        activeOptionId: "opt-teleport",
+        html: "<p>Teleported uitleg</p>",
+        popoverStyle: { position: "fixed", top: "20px", left: "40px", visibility: "visible" },
+      },
+    });
+
+    const popover = document.body.querySelector('[role="dialog"][aria-label="Meer informatie"]');
+    expect(popover?.id).toBe("option-info-opt-teleport");
+    expect(popover?.textContent).toContain("Teleported uitleg");
+
+    wrapper.unmount();
+    expect(document.body.querySelector(".info-popover")).toBeNull();
+  });
 });

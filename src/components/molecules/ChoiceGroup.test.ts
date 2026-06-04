@@ -93,4 +93,31 @@ describe("ChoiceGroup", () => {
     await confirm.trigger("click");
     expect(wrapper.emitted("confirm")).toBeUndefined();
   });
+
+  it("passes active popover state and relays answer-info events without choosing", async () => {
+    const wrapper = mount(ChoiceGroup, {
+      props: {
+        ...baseProps,
+        activePopoverOptionId: "a",
+        selectedOptionIds: [],
+      },
+    });
+
+    const firstOption = wrapper.findAll(".choice-option")[0];
+    const firstButton = firstOption?.get(".choice-option__button");
+    const info = firstOption?.get('[data-testid="choice-option-info"]');
+
+    expect(firstButton?.attributes("aria-describedby")).toBe("option-info-a");
+    expect(info?.attributes("aria-expanded")).toBe("true");
+    expect(info?.attributes("aria-controls")).toBe("option-info-a");
+
+    await info?.trigger("click");
+    await info?.trigger("mouseleave");
+    await info?.trigger("keydown.escape");
+
+    expect(wrapper.emitted("showPopover")?.[0]).toEqual([options[0], expect.any(MouseEvent)]);
+    expect(wrapper.emitted("schedulePopoverClose")).toHaveLength(1);
+    expect(wrapper.emitted("closePopover")).toHaveLength(1);
+    expect(wrapper.emitted("choose")).toBeUndefined();
+  });
 });
