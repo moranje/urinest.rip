@@ -1,5 +1,9 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+
+const vitestConfig = existsSync("vitest.config.packages.ts")
+  ? "vitest.config.packages.ts"
+  : "vitest.config.ts";
 
 const mutants = [
   {
@@ -19,7 +23,7 @@ const mutants = [
 ];
 
 const runVitest = (testFile) =>
-  execFileSync("vitest", ["run", testFile], {
+  execFileSync("vitest", ["run", "--config", vitestConfig, testFile], {
     encoding: "utf8",
     stdio: "pipe",
   });

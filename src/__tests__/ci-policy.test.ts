@@ -30,6 +30,8 @@ const registryMigrationScript = readFileSync(
   resolve("scripts/migrate-to-beslismodel-registry.mjs"),
   "utf8",
 );
+const mutationPilotScript = readFileSync(resolve("scripts/check-core-mutation-pilot.mjs"), "utf8");
+const packageVitestConfig = readFileSync(resolve("vitest.config.packages.ts"), "utf8");
 const packageReleaseConfigScript = readFileSync(
   resolve("scripts/check-package-release-config.mjs"),
   "utf8",
@@ -200,6 +202,15 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:mutation-pilot"]).toBe(
       "node scripts/check-core-mutation-pilot.mjs",
     );
+    expect(packageJson.scripts.test).toContain("test:app");
+    expect(packageJson.scripts.test).toContain("test:packages");
+    expect(packageJson.scripts["test:packages"]).toBe(
+      "vitest run --config vitest.config.packages.ts",
+    );
+    expect(packageVitestConfig).toContain('include: ["packages/**/*.test.ts"]');
+    expect(packageVitestConfig).toContain("@beslismodel/core");
+    expect(mutationPilotScript).toContain("vitest.config.packages.ts");
+    expect(mutationPilotScript).toContain('"--config", vitestConfig');
     expect(packageJson.scripts["check:package-consumer-smoke"]).toBe(
       "node scripts/check-package-consumer-smoke.mjs",
     );
@@ -343,6 +354,12 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "Refusing partial publish",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "publish.npmrc",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "npm_config_userconfig",
     );
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "writeUrinestripFixtureFlows",
