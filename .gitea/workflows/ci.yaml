@@ -57,6 +57,9 @@ jobs:
       - name: App quality gates
         run: npm run check:app
 
+      - name: Framework package checks
+        run: npm run check:framework
+
       - name: Security — package release config
         run: npm run check:package-release-config
         env:
@@ -78,4 +81,3 @@ jobs:
             echo "::error::.env file is tracked by git"
             exit 1
           fi
-

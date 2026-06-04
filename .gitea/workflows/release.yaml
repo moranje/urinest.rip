@@ -93,6 +93,9 @@ jobs:
       - name: App quality gates
         run: npm run check:app
 
+      - name: Framework package checks
+        run: npm run check:framework
+
       - name: Package release config preflight
         run: npm run check:package-release-config
         env:
