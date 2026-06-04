@@ -130,22 +130,22 @@ f0851d3 fix(telemetry): disable local preview persistence by default
 ```
 
 Belangrijk: package-source in `packages/*` en de root app zijn nu beide gemigreerd naar exact
-gepinde registry dependencies `0.1.0-next.1`. De versie is gepubliceerd in Gitea en live
-registry-smoke is groen.
+gepinde registry dependencies `0.1.0`. De stable versie is gepubliceerd in Gitea met dist-tag
+`latest` en live registry-smoke is groen.
 
 ```json
-"@beslismodel/core": "0.1.0-next.1",
-"@beslismodel/vue": "0.1.0-next.1"
+"@beslismodel/core": "0.1.0",
+"@beslismodel/vue": "0.1.0"
 ```
 
 Dev dependencies:
 
 ```json
-"@beslismodel/compiler": "0.1.0-next.1",
-"@beslismodel/copd-care": "0.1.0-next.1",
-"@beslismodel/cvrm-prevent": "0.1.0-next.1",
-"@beslismodel/dm-care": "0.1.0-next.1",
-"@beslismodel/testing": "0.1.0-next.1"
+"@beslismodel/compiler": "0.1.0",
+"@beslismodel/copd-care": "0.1.0",
+"@beslismodel/cvrm-prevent": "0.1.0",
+"@beslismodel/dm-care": "0.1.0",
+"@beslismodel/testing": "0.1.0"
 ```
 
 `.npmrc` has scope routing only:
@@ -166,6 +166,9 @@ Current status checked clean.
 Latest commits:
 
 ```text
+2fdb847 chore(packages): prepare stable release
+93534b5 fix(packages): support stable publish flow
+ee7702b feat(packages): sync prevent and traceability exports
 cf2b848 chore(packages): bump next prerelease
 7213258 fix(vue): harden restored answer storage
 5fa0d44 ci(packages): guard stable publish smoke
@@ -185,7 +188,7 @@ ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git
 ```
 
 Gitea created repo on first push. Docs mention verified `master` previously at
-`f177fa4308a71c7a802212d986b7eeee370d9ecb`; newer pushed commit is `cf2b848`.
+`f177fa4308a71c7a802212d986b7eeee370d9ecb`; newer pushed commit is `2fdb847`.
 
 ## Published Package Status
 
@@ -200,6 +203,7 @@ Published versions:
 ```text
 0.1.0-next.0
 0.1.0-next.1
+0.1.0
 ```
 
 Package set:
@@ -242,7 +246,8 @@ Expected pattern: user-level npm auth or CI secret. Never commit `_authToken`.
 - Gitea repo pushed.
 - Seven packages published to Gitea npm as `0.1.0-next.0` with dist-tag `next`.
 - Seven packages published to Gitea npm as `0.1.0-next.1` with dist-tag `next`.
-- Root app migrated to exact `0.1.0-next.1` registry dependencies.
+- Seven packages published to Gitea npm as `0.1.0` with dist-tag `latest`.
+- Root app migrated to exact `0.1.0` registry dependencies.
 - `scripts/check-modern-toolchain.mjs` enforces the requested modern stack contract: `oxfmt`,
   `oxlint`, `tsgo`, Vite 8 and Rolldown must stay wired into dependencies/scripts/gates.
 - Package release docs added.
@@ -687,10 +692,11 @@ test(theme): lock browser theme color tokens
 
 ## Package Release Next Steps
 
-Current `0.1.0-next.1` is published, registry-smoked and consumed by `urinest.rip`.
-`0.1.0-next.0` remains an older published prerelease but is no longer the app dependency target.
+Current `0.1.0` is published with dist-tag `latest`, registry-smoked and consumed by
+`urinest.rip`. `0.1.0-next.0` and `0.1.0-next.1` remain older published prereleases but are no
+longer app dependency targets.
 
-Before stable/latest:
+Current verification baseline:
 
 ```bash
 cd /code/beslismodel-framework
@@ -706,24 +712,9 @@ npm run check:browser-smoke
 npm audit --omit=dev --audit-level=high
 ```
 
-Preferred stable path:
-
-1. Confirm no new app UI/browser regressions with current smokes.
-2. If `0.1.0-next.1` is clean and no further API changes are needed, prepare stable `0.1.0`.
-3. Do not put prerelease on `latest`; the publish guard rejects prerelease versions for that tag.
-4. Stable/latest publish path is guarded by
-   `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=<exact-stable> npm run check:package-publish-next -- --publish`.
-5. Create release notes:
-
-   ```text
-   docs/package-release-notes-0.1.0.md
-   ```
-
-6. Push tag:
-
-   ```text
-   beslismodel-v0.1.0
-   ```
+Future releases should repeat the same path: publish prereleases with `next`, promote stable semver
+with explicit `BESLISMODEL_PUBLISH_TAG=latest`, run live registry smoke, migrate `urinest.rip`,
+then rerun the app, package, browser, Lighthouse and production-audit gates.
 
 ## High-Signal Command Checklist
 
@@ -892,7 +883,7 @@ test(theme): lock theme toggle token parity
 - [x] Publish `0.1.0-next.1`.
 - [x] Run registry smoke.
 - [x] Migrate `urinest.rip` to exact `0.1.0-next.1` registry versions.
-- [ ] Prepare and migrate to exact stable `0.1.0` registry versions after next smoke passes.
+- [x] Prepare and migrate to exact stable `0.1.0` registry versions after next smoke passes.
 - [x] Run app full gate.
 - [x] Push prerelease commits.
 
@@ -908,6 +899,19 @@ Verified 2026-06-04:
   packed/file-install consumer smokes, package export checks, mutation pilot and Urinestrip
   consumer type/test gate.
 - `npm run build:vue` passed after the restored-answer filtering change.
+- `BESLISMODEL_PUBLISH_CONFIRM=0.1.0-next.1 npm run check:package-publish-next -- --publish`
+  confirmed all seven `0.1.0-next.1` packages existed in Gitea npm and skipped duplicate publish
+  safely.
+- `npm run check:package-registry-smoke:current` passed against the published `0.1.0-next.1`
+  prerelease packages.
+- `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=0.1.0 npm run check:package-publish-next -- --publish`
+  confirmed all seven stable `0.1.0` packages existed in Gitea npm and skipped duplicate publish
+  safely.
+- `BESLISMODEL_REGISTRY_MIGRATION_VERSION=0.1.0 npm run migrate:registry-deps -- --write`
+  and `npm install` migrated `urinest.rip` to exact stable registry dependencies.
+- `npm run check:package-registry-smoke:current`, `npm run check:packages`, `npm run check:app`,
+  `npm run check:browser-smoke`, `npm run check:lighthouse` and
+  `npm audit --omit=dev --audit-level=high` passed after the stable migration.
 - `d022544 chore(packages): bump next prerelease` bumped package source/internal pins to
   `0.1.0-next.1`, added `docs/package-release-notes-0.1.0-next.1.md`, and updated the extracted
   Gitea workflow default.
@@ -989,6 +993,11 @@ Verified 2026-06-04:
   Registry smoke passed with Gitea-installed packages. Root app commit `a84561e chore(packages):
   consume next beslismodel prerelease` migrated `package.json` and `package-lock.json` to exact
   `0.1.0-next.1`; app/package/browser gates and production audit passed.
+- Stable continuation pushed `ee7702b feat(packages): sync prevent and traceability exports`,
+  `93534b5 fix(packages): support stable publish flow` and
+  `2fdb847 chore(packages): prepare stable release` to Gitea. Root app commit
+  `dea6fa5 feat(packages): consume stable beslismodel release` migrated `package.json` and
+  `package-lock.json` to exact `0.1.0`.
 
 Commits:
 

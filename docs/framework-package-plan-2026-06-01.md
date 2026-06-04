@@ -386,10 +386,9 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Geldige Gitea npm publish-token beschikbaar gemaakt via `GITEA_NPM_TOKEN`; publish-auth wordt tijdelijk via npm userconfig in de publish-cache doorgegeven en niet in projectbestanden opgeslagen.
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
 - [x] Prerelease-versies gepubliceerd naar lokale Gitea npm met dist-tag `next`: `@beslismodel/core`, `compiler`, `copd-care`, `cvrm-prevent`, `dm-care`, `vue` en `testing` staan op `0.1.0-next.0`.
-- [x] Volgende prerelease voorbereid: package-source en interne pins staan op `0.1.0-next.1`,
-      `docs/package-release-notes-0.1.0-next.1.md` is aanwezig en `check:package-publish-next`
-      bewijst de offline `next` publish-dry-run. Publicatie, registry-smoke en root-app migratie
-      blijven NAS-stappen.
+- [x] Volgende prerelease gepubliceerd: `0.1.0-next.1` is met dist-tag `next` naar Gitea npm
+      gepubliceerd, registry-smoke draaide groen en `urinest.rip` is daarna door de stable
+      release-migratie heen gegaan.
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
 - [x] Registry smoke is standalone-safe: Urinestrip-checks gebruiken fixture-flows uit `scripts/package-smoke-fixtures.mjs` en leunen niet op app-only `flows/`.
 - [x] Registry smoke uitgevoerd tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0`.
@@ -411,6 +410,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
 - [x] Migratievolgorde uitgevoerd met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`: publish, registry-smoke, `migrate:registry-deps -- --write`, `npm install`, `check:framework`, `test`, `check:app`, browser-smoke.
+- [x] Stable package-release uitgevoerd: alle zeven `@beslismodel/*` packages staan op `0.1.0`
+      met dist-tag `latest`, `check:package-registry-smoke:current` installeert de Gitea packages
+      inclusief CLI, `urinest.rip` gebruikt exacte `0.1.0` registry dependencies en de app-,
+      framework-, browser-, Lighthouse- en productie-audit gates zijn groen.
 - [x] Na extractie `urinest.rip` draaiend gehouden via gepinde registry dependencies, lockfile-update, productiebuild/PWA-build, guideline/copy checks, package registry-smoke, landing-grid regressie, questionnaire-switch/back regressie en Urinestrip end-to-end fixture.
 - [x] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
 - [x] Package release-notes format gedocumenteerd met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.

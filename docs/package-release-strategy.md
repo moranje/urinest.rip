@@ -56,9 +56,10 @@ Use `latest` only after registry smoke, `urinest.rip` smoke and rollback tag exi
 Extraction has moved from planned work to active release staging:
 
 - `beslismodel-framework` exists as a sibling Gitea repo.
-- `0.1.0-next.0` is published to the Gitea npm registry and consumed by `urinest.rip`.
-- package source is prepared for `0.1.0-next.1`, but `next.1` still needs NAS publish,
-  registry smoke and root-app migration before it becomes the consumed version.
+- `0.1.0-next.1` is published to the Gitea npm registry with dist-tag `next`.
+- `0.1.0` is published to the Gitea npm registry with dist-tag `latest`.
+- `urinest.rip` consumes exact `@beslismodel/*@0.1.0` registry packages after registry smoke,
+  app gates, framework gates, browser regression smoke, Lighthouse and production audit passed.
 
 Framework code moves or removal from `urinest.rip` only after registry-installed app and package
 smokes prove the published packages work.

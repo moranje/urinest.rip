@@ -158,15 +158,16 @@ npm run check:package-registry-smoke
 Prepare `urinest.rip` as a registry consumer only after publish and smoke pass:
 
 ```bash
-BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-prerelease> npm run migrate:registry-deps -- --write
+BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-version> npm run migrate:registry-deps -- --write
 npm install
 npm run check:app
 npm run check:browser-smoke
 ```
 
-Current local prerelease candidate: `0.1.0-next.1`. It is prepared in package source and release
-notes, but not yet published. `0.1.0-next.0` remains the published/consumed registry version until
-NAS publish, smoke and migration complete.
+Current registry status: `0.1.0-next.1` is published with dist-tag `next`; `0.1.0` is published
+with dist-tag `latest`; `urinest.rip` consumes exact `@beslismodel/*@0.1.0` registry packages.
+Post-migration verification passed with `check:package-registry-smoke:current`, `check:packages`,
+`check:app`, `check:browser-smoke`, `check:lighthouse` and production `npm audit`.
 
 `migrate:registry-deps -- --write` verifies every exact `@beslismodel/*` version against the Gitea
 npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.
