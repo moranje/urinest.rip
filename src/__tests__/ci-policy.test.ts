@@ -6,6 +6,7 @@ const workflow = readFileSync(resolve(".github/workflows/ci.yml"), "utf8");
 const giteaCiWorkflow = readFileSync(resolve(".gitea/workflows/ci.yaml"), "utf8");
 const giteaReleaseWorkflow = readFileSync(resolve(".gitea/workflows/release.yaml"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
+const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const landingTemplateTest = readFileSync(
   resolve("src/components/templates/LandingTemplate.test.ts"),
@@ -532,6 +533,30 @@ describe("CI policy", () => {
       "BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease>",
     );
     expect(giteaPackagePublishing).toContain("0.1.0-next.1");
+  });
+
+  it("keeps root agent instructions aligned with current package architecture", () => {
+    expect(agentInstructions).toContain("Vue 3 + Vite 8 SPA");
+    expect(agentInstructions).toContain("@beslismodel/compiler");
+    expect(agentInstructions).toContain("@beslismodel/core");
+    expect(agentInstructions).toContain("@beslismodel/vue");
+    expect(agentInstructions).toContain("@beslismodel/cvrm-prevent");
+    expect(agentInstructions).toContain("@beslismodel/copd-care");
+    expect(agentInstructions).toContain("@beslismodel/dm-care");
+    expect(agentInstructions).toContain("@typescript/native-preview");
+    expect(agentInstructions).toContain("tsgo");
+    expect(agentInstructions).toContain("oxfmt");
+    expect(agentInstructions).toContain("oxlint");
+    expect(agentInstructions).toContain("Rolldown");
+    expect(agentInstructions).toContain("0.1.0-next.1");
+    expect(agentInstructions).toContain("desktop landing grid");
+    expect(agentInstructions).toContain("2 rijen x 3 kolommen");
+    expect(agentInstructions).toContain("geen custom UI back button");
+    expect(agentInstructions).toContain("docs/nas-handoff-2026-06-04.md");
+    expect(agentInstructions).not.toContain("Vite 7");
+    expect(agentInstructions).not.toContain("decision-engine-core");
+    expect(agentInstructions).not.toContain("decision-engine-core-1.0.0.tgz");
+    expect(agentInstructions).not.toContain("src/views/AboutPage.vue");
   });
 
   it("keeps critical UI regression tests for landing, transitions and progress", () => {
