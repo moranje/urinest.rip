@@ -76,7 +76,8 @@ niet ruim genoeg ingesteld en moet de agent/runtime-config worden aangepast voor
 7. `docs/package-release-notes-0.1.0-next.1.md`.
 8. `docs/ai-guideline-authoring.md`.
 9. `docs/guideline-traceability.md`.
-10. `AGENTS.md` in root, lokaal untracked maar inhoudelijk nuttig.
+10. `AGENTS.md` in root, nu tracked en afgestemd op Vite 8 / `@beslismodel/*`.
+11. `README.md`, nu afgestemd op huidige dev URL, app/framework gates en package-status.
 
 ## Huidige Repostatus
 
@@ -87,6 +88,9 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+1f3e330 docs(readme): align framework workflow
+9642b0e docs(agents): align workspace instructions
+ab8c765 docs(framework): update nas execution context
 55e3403 docs(packages): refresh release staging runbook
 94ced85 docs(framework): record next toolchain guard
 a18ed90 docs(framework): record toolchain gate
@@ -276,15 +280,17 @@ Before NAS or local continuation, run:
 git status --short
 ```
 
-After local continuation commits, only the user-provided workspace instruction remained untracked:
+After local continuation commits, the worktree was clean:
 
 ```text
-?? AGENTS.md
+(no output)
 ```
 
 Meaning:
 
-- `AGENTS.md` is user-provided workspace instruction. Do not accidentally commit unless desired.
+- `AGENTS.md` is now tracked and guarded by `src/__tests__/ci-policy.test.ts`.
+- `README.md` is aligned with current framework/app workflow and guarded by
+  `src/__tests__/ci-policy.test.ts`.
 - Re-run `git status --short` before committing because this section is a snapshot, not live state.
 
 ## Resolved Local UI Invariants
@@ -957,6 +963,13 @@ Verified 2026-06-04:
   active framework/release docs after the toolchain guard. The release docs now treat
   `0.1.0-next.1` as the prepared-but-unpublished NAS candidate and avoid stale direct
   `0.1.0-next.0` publish examples.
+- `9642b0e docs(agents): align workspace instructions` made root `AGENTS.md` tracked and current:
+  Vite 8, `@beslismodel/*`, package gates, UI invariants, telemetry boundaries and NAS handoff.
+- `1f3e330 docs(readme): align framework workflow` replaced stale README content with the current
+  `npm ci`, localhost `5173`, app/framework gates, package release status and clinical guideline
+  workflow.
+- `src/__tests__/ci-policy.test.ts` now blocks stale `Vite 7`, `decision-engine-core` tarball,
+  old `localhost:3000` and old `src/views/AboutPage.vue` guidance in agent/README docs.
 - `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 82 app
   test files/409 tests, guideline traceability/copy/role gates, bundle budget and production build.
 - `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
