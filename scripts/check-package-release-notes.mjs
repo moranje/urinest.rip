@@ -18,6 +18,8 @@ const manifests = packages.map((item) => ({
 
 const versions = new Set(manifests.map((item) => item.manifest.version));
 const violations = [];
+const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/u;
+const stableVersionPattern = /^\d+\.\d+\.\d+$/u;
 
 const fail = (message) => {
   violations.push(message);
@@ -28,6 +30,14 @@ if (versions.size !== 1) {
 }
 
 const [version] = versions;
+const expectedDistTag = prereleaseVersionPattern.test(version)
+  ? "next"
+  : stableVersionPattern.test(version)
+    ? "latest"
+    : "";
+if (!expectedDistTag) {
+  fail(`release notes require stable semver or semver prerelease, got ${version}`);
+}
 const releaseNotesPath = resolve(root, `docs/package-release-notes-${version}.md`);
 let releaseNotes = "";
 try {
@@ -48,7 +58,7 @@ if (releaseNotes) {
   ];
   const requiredSnippets = [
     version,
-    "Dist-tag: `next`",
+    `Dist-tag: \`${expectedDistTag}\``,
     expectedPackageRegistry,
     `BESLISMODEL_PUBLISH_CONFIRM=${version}`,
     `BESLISMODEL_REGISTRY_SMOKE_VERSION=${version}`,
