@@ -122,12 +122,12 @@ Drie grote thema's:
 | 5           | Frictieloze UX & Smart Defaults   | **4.5**         | ▲ +1.5     | ProgressBar, Space-toets, multi-counter, restart-button, OfflineBanner, terug-knop met Esc/Backspace label. Friction in klinische flow grotendeels opgelost  |
 | 6           | Visuele Feedback                  | **4.5**         | ▲ +1.5     | ProgressBar (waar ben ik in flow), multi-counter live region, skeleton-card, OfflineBanner, fade-transition op question-card, view-transition op title-morph |
 | 7           | Typografie & Hiërarchie           | **4.0**         | =          | Inter, fluid clamp(), text-wrap: balance op h1, h1 per route. Mist: letter-spacing-tokens, tabular-nums alleen 4 sites                                       |
-| 8           | Forms & Input UX                  | **3.0**         | ▲ +0.5     | AdminLogin nog steeds enige echte form; Button primitive met loading/disabled/aria-busy is nu form-ready. Geen passkey, geen autocomplete-audit deze sessie  |
+| 8           | Forms & Input UX                  | **3.4**         | ▲ +0.9     | AdminLogin heeft Input-primitive validation wiring, `aria-invalid`, `aria-describedby`, `inputmode`, `enterkeyhint` en password-manager hints                |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
 | 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en theme toggle aanwezig; platformvalidatie blijft vervolgpunt             |
 | **Overall** |                                   | **4.2/5 (84%)** | **▲ +1.1** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
-**Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3 + 4 + 3.5) ÷ 12 = **4.18 / 5.00** ✅
+**Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.5×2 + 4 + 3.4 + 4 + 3.5) ÷ 12 = **4.21 / 5.00** ✅
 
 ---
 
@@ -272,20 +272,18 @@ Drie grote thema's:
 - Geen `font-variation-settings` — Inter is variable maar geen axis-control gebruikt
 - Type-scale-steps op één scherm niet geaudit (mogelijk >3 in Result-page)
 
-### 8. Forms & Input UX — 3.0/5
+### 8. Forms & Input UX — 3.4/5
 
 **Strengths:**
 
 - Button primitive met `:disabled`, `:aria-busy="loading || undefined"`, loading-spinner (`Button.vue:1-25`)
-- AdminLogin: `<label for=>`, `autocomplete`, `required`, juiste `type="email"`/`type="password"`
+- AdminLogin: `<label for=>`, `required`, juiste `type="email"`/`type="password"`, `aria-invalid`, `aria-describedby`, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en `autocomplete="current-password"`
 - Question-flow gedraagt zich als form-ersatz (radio/checkbox semantics correct nu)
 
 **Remaining issues:**
 
 - Slechts één echt formulier (AdminLogin) — kleine sample
-- Geen `aria-invalid`, `aria-describedby` voor errors (AdminLogin)
-- Geen `inputmode`, `enterkeyhint`
-- Geen passkey-support (`autocomplete="username webauthn"`)
+- Geen echte WebAuthn/passkey login-flow; alleen password-manager/conditional-UI autocomplete-hint aanwezig
 - Geen autosave-feedback (klein domein, mogelijk niet nodig)
 
 ### 9. Performance UX — 4.0/5
@@ -341,7 +339,7 @@ Drie grote thema's:
 | **Resultaat lezen + Copy-to-EPD**      | nee                                              | ja — toast op copy                                              | warn — toast `role="alert"` + container `aria-live="polite"` mogelijk dubbele announce | minimaal                                   | **pass** (verifieer dubbele announce) |
 | **Offline gaan tijdens beslishulp**    | nee — banner verschijnt                          | ja — OfflineBanner-component                                    | ja (banner heeft proper role)                                                          | motion in/uit                              | **pass**                              |
 | **PWA update beschikbaar**             | nee — sheet (niet blokkerend)                    | ja — sheet-fly motion                                           | ja — Esc sluit                                                                         | sheet-fly + scrim-fade                     | **pass**                              |
-| **Admin-login (foutpad)**              | warn — geen `aria-invalid` op error              | basis — error-tekst maar niet auto-aangekondigd                 | warn — `outline:none` op input gereconcilieerd                                         | basis                                      | **warn**                              |
+| **Admin-login (foutpad)**              | ja — Input primitive koppelt errors aan controls | ja — error-tekst met `role="alert"` en `aria-describedby`       | ja — `aria-invalid`, labels, focus-visible en axe-test                                 | basis                                      | **pass**                              |
 
 ---
 
@@ -580,12 +578,12 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 | 5. Frictie                     | 3.0                 | 4.5             | ▲ +1.5      |
 | 6. Feedback                    | 3.0                 | 4.5             | ▲ +1.5      |
 | 7. Typografie                  | 4.0                 | 4.0             | =           |
-| 8. Forms                       | 2.5                 | 3.0             | ▲ +0.5      |
+| 8. Forms                       | 2.5                 | 3.4             | ▲ +0.9      |
 | 9. Performance                 | 4.0                 | 4.0             | =           |
 | 10. Responsive/Dark            | 3.0                 | 3.5             | ▲ +0.5      |
-| **Overall (gewogen clinical)** | **3.13**            | **4.18**        | **▲ +1.05** |
+| **Overall (gewogen clinical)** | **3.13**            | **4.21**        | **▲ +1.08** |
 
-Sprong van **3.13 → 4.18** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
+Sprong van **3.13 → 4.21** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
 
 ## Resolution Update — 2026-06-04
 
@@ -594,3 +592,4 @@ Sprong van **3.13 → 4.18** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] DTCG-compatible design-token export en distributie zijn aanwezig en bewaakt in `check:app` (`src/styles/beslismodel.tokens.json`, `docs/design-token-distribution.json`, `scripts/check-design-tokens.mjs`, `scripts/check-design-token-distribution.mjs`); `public/theme-tokens.js`, `themeStore.ts` en `vite.config.js` gebruiken dezelfde gegenereerde theme metadata.
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
+- [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.

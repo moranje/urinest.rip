@@ -87,6 +87,28 @@ describe("AdminLogin", () => {
     );
   });
 
+  it("exposes password-manager hints and validation state through the Input primitive", async () => {
+    const wrapper = mount(AdminLogin);
+    const email = wrapper.get("#email");
+    const password = wrapper.get("#password");
+
+    expect(email.attributes("autocomplete")).toBe("username webauthn");
+    expect(email.attributes("inputmode")).toBe("email");
+    expect(email.attributes("enterkeyhint")).toBe("next");
+    expect(password.attributes("autocomplete")).toBe("current-password");
+    expect(password.attributes("enterkeyhint")).toBe("go");
+
+    await wrapper.get("form").trigger("submit");
+
+    expect(wrapper.get("#email").attributes("aria-invalid")).toBe("true");
+    expect(wrapper.get("#email").attributes("aria-describedby")).toBe("email-error");
+    expect(wrapper.get("#email-error").attributes("role")).toBe("alert");
+    expect(wrapper.get("#password").attributes("aria-invalid")).toBe("true");
+    expect(wrapper.get("#password").attributes("aria-describedby")).toBe("password-error");
+    expect(wrapper.get("#password-error").attributes("role")).toBe("alert");
+    expect(mocks.signIn).not.toHaveBeenCalled();
+  });
+
   it("has no axe violations on the admin login route", async () => {
     const wrapper = mount(AdminLogin, { attachTo: document.body });
     const result = await runAxe(wrapper);

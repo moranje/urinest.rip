@@ -66,7 +66,7 @@ async function handleSubmit() {
           v-model="email"
           label="E-mail"
           type="email"
-          autocomplete="email"
+          autocomplete="username webauthn"
           inputmode="email"
           enterkeyhint="next"
           required
