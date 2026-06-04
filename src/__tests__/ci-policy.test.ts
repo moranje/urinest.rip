@@ -342,6 +342,12 @@ describe("CI policy", () => {
       "BESLISMODEL_STRICT_NPMRC",
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "BESLISMODEL_PUBLISH_TAG",
+    );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "stableVersionPattern",
+    );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "Project .npmrc must not contain auth material",
     );
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).not.toContain(
@@ -358,6 +364,15 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "NODE_AUTH_TOKEN",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "BESLISMODEL_PUBLISH_TAG",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "stableVersionPattern",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "dist-tag latest",
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "already exists",

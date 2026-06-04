@@ -14,10 +14,17 @@ const tokenEnvNames = ["NODE_AUTH_TOKEN", "NPM_TOKEN", "NPM_REGISTRY_TOKEN", "GI
 
 const packageNames = new Set(packages.map((item) => item.name));
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
+const stableVersionPattern = /^\d+\.\d+\.\d+$/;
+const publishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "next";
+const allowedPublishTags = new Set(["latest", "next"]);
 
 const fail = (message) => {
   throw new Error(message);
 };
+
+if (!allowedPublishTags.has(publishTag)) {
+  fail(`BESLISMODEL_PUBLISH_TAG must be "next" or "latest", received ${publishTag}`);
+}
 
 const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 const parseNpmPackJson = (output) => {
@@ -151,9 +158,14 @@ if (versions.size !== 1) {
 }
 
 const [version] = versions;
-if (!prereleaseVersionPattern.test(version)) {
+if (publishTag === "next" && !prereleaseVersionPattern.test(version)) {
   fail(
     `Package version must be a semver prerelease before publishing with dist-tag next, received: ${version}`,
+  );
+}
+if (publishTag === "latest" && !stableVersionPattern.test(version)) {
+  fail(
+    `Package version must be a stable semver before publishing with dist-tag latest, received: ${version}`,
   );
 }
 
@@ -236,7 +248,7 @@ try {
     if (packResult.name !== name || packResult.version !== version) {
       fail(`${dir}: npm pack resolved ${packResult.name}@${packResult.version}`);
     }
-    console.log(`Pack dry-run checked ${name}@${version} with dist-tag next`);
+    console.log(`Pack dry-run checked ${name}@${version} with dist-tag ${publishTag}`);
   };
 
   for (const { dir, name } of packages) {
@@ -244,7 +256,9 @@ try {
   }
 
   if (!isPublish) {
-    console.log(`Package next-publish dry-run passed for @beslismodel packages ${version}`);
+    console.log(
+      `Package ${publishTag}-publish dry-run passed for @beslismodel packages ${version}`,
+    );
   } else {
     const publishAuth = await verifyPublishAuth(cacheDir);
     const publishEnv = createPublishEnv(cacheDir, publishAuth.token);
@@ -275,7 +289,7 @@ try {
           "publish",
           resolve(root, dir),
           "--tag",
-          "next",
+          publishTag,
           "--registry",
           expectedPackageRegistry,
         ],
@@ -285,11 +299,11 @@ try {
           stdio: "inherit",
         },
       );
-      console.log(`Published ${name}@${version} with dist-tag next`);
+      console.log(`Published ${name}@${version} with dist-tag ${publishTag}`);
     }
 
     console.log(
-      `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag next`,
+      `Published @beslismodel packages ${version} to ${expectedPackageRegistry} with dist-tag ${publishTag}`,
     );
   }
 } finally {

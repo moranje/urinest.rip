@@ -751,14 +751,16 @@ Preferred stable path:
 1. Fix remaining app UI/browser regressions.
 2. If no framework public API changes: publish stable `0.1.0`.
 3. If framework changes needed: publish `0.1.0-next.1`, smoke, migrate app, then stable.
-4. Do not put prerelease on `latest` unless explicitly accepting prerelease as latest.
-5. Create release notes:
+4. Do not put prerelease on `latest`; the publish guard rejects prerelease versions for that tag.
+5. Stable/latest publish path is guarded by
+   `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=<exact-stable> npm run check:package-publish-next -- --publish`.
+6. Create release notes:
 
    ```text
    docs/package-release-notes-0.1.0.md
    ```
 
-6. Push tag:
+7. Push tag:
 
    ```text
    beslismodel-v0.1.0

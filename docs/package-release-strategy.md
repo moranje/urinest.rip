@@ -142,7 +142,8 @@ Migration order:
 3. Remove app aliases that point to package source.
 4. Run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`.
 5. Smoke landing grid, questionnaire redirect/back, progress indicator, result page, PWA and telemetry.
-6. Promote packages to `latest`.
+6. Promote packages to `latest` with stable semver only:
+   `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=<exact-stable> npm run check:package-publish-next -- --publish`.
 7. Remove old package source from app repo only after clean registry consumer proof.
 
 ## Rollback

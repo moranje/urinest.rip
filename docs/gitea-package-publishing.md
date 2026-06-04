@@ -151,3 +151,9 @@ npm run check:browser-smoke
 npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.
 
 Promote to `latest` only after registry smoke and `urinest.rip` app smoke pass.
+Stable publish uses the same guarded script with an explicit tag and a stable semver:
+
+```bash
+BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=0.1.0 \
+  npm run check:package-publish-next -- --publish
+```

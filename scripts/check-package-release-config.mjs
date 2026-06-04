@@ -18,6 +18,13 @@ const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
 const violations = [];
 
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
+const stableVersionPattern = /^\d+\.\d+\.\d+$/;
+const publishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "next";
+const allowedPublishTags = new Set(["latest", "next"]);
+
+if (!allowedPublishTags.has(publishTag)) {
+  violations.push(`BESLISMODEL_PUBLISH_TAG must be "next" or "latest", received ${publishTag}`);
+}
 
 for (const { dir, name, packageJson } of packages) {
   const manifest = readJson(packageJson);
@@ -27,8 +34,11 @@ for (const { dir, name, packageJson } of packages) {
   if (manifest.private !== false) {
     violations.push(`${packageJson}: private must be false`);
   }
-  if (!prereleaseVersionPattern.test(manifest.version)) {
+  if (publishTag === "next" && !prereleaseVersionPattern.test(manifest.version)) {
     violations.push(`${packageJson}: version must be a prerelease for dist-tag next`);
+  }
+  if (publishTag === "latest" && !stableVersionPattern.test(manifest.version)) {
+    violations.push(`${packageJson}: version must be stable semver for dist-tag latest`);
   }
   if (!manifest.description) {
     violations.push(`${packageJson}: description is required`);
