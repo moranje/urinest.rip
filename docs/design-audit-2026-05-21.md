@@ -602,3 +602,4 @@ Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] Multi-select en grouped-input submits tonen pending feedback en blokkeren dubbele submits via `isSubmitting`, Button `loading` en componenttestdekking.
 - [x] Answer-info popover positionering, viewport-clamping, close-timers en toggle state zijn direct getest in `src/composables/usePopover.test.ts`.
 - [x] Answer-info ARIA wiring, event relay en Teleport cleanup zijn getest op `ChoiceOption`, `ChoiceGroup` en `InfoPopover`.
+- [x] Answer-info controllergedrag is browser-geverifieerd: binnenklik houdt open, buitenklik sluit, en keyboard-answer navigation laat geen stale popover staan.

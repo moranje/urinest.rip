@@ -312,6 +312,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
   };
 
   const advanceQuestionState = (branch?: string, mode: "question" | "step" = "question"): void => {
+    closePopover();
     const previousQuestionId = currentQuestionId.value;
     if (previousQuestionId) {
       recordFlowStep({

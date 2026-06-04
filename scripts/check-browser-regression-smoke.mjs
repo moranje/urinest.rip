@@ -420,17 +420,59 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
   assert(afterOpen.trimethoprimChecked === "false", "Info popover click selected Trimethoprim");
   assert(afterOpen.text.includes("3e keuze"), "Info popover did not show treatment info text");
 
+  await page.click('[role="dialog"][aria-label="Meer informatie"]');
+  const keptOpenAfterInsideClick = await page.evaluate(
+    () => Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
+  );
+  assert(keptOpenAfterInsideClick, "Info popover closed after clicking inside the dialog");
+
   await page.click('[data-testid="info-popover-close"]');
   await page.waitForFunction(
     () => !document.querySelector('[role="dialog"][aria-label="Meer informatie"]'),
     { timeout: 10_000 },
   );
 
-  await clickChoice(page, "Afwachtend beleid");
+  const reopened = await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
+    const button = buttons.find((candidate) =>
+      candidate.closest(".choice-option")?.textContent?.includes("Trimethoprim"),
+    );
+    if (!(button instanceof HTMLElement)) return false;
+    button.click();
+    return true;
+  });
+  assert(reopened, "Trimethoprim info button not found for outside-click check");
+  await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
+    timeout: 10_000,
+  });
+  await page.click("h1");
+  await page.waitForFunction(
+    () => !document.querySelector('[role="dialog"][aria-label="Meer informatie"]'),
+    { timeout: 10_000 },
+  );
+
+  const reopenedForKeyboard = await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
+    const button = buttons.find((candidate) =>
+      candidate.closest(".choice-option")?.textContent?.includes("Trimethoprim"),
+    );
+    if (!(button instanceof HTMLElement)) return false;
+    button.click();
+    return true;
+  });
+  assert(reopenedForKeyboard, "Trimethoprim info button not found for keyboard navigation check");
+  await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
+    timeout: 10_000,
+  });
+  await page.keyboard.press("A");
   await page.waitForFunction(
     () => location.pathname.startsWith("/info/") && document.querySelector("h1"),
     { timeout: 10_000 },
   );
+  const stalePopover = await page.evaluate(
+    () => Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
+  );
+  assert(!stalePopover, "Info popover stayed visible after keyboard answer navigation");
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(

@@ -802,6 +802,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
     expect(browserRegressionSmokeScript).toContain("notice padding too tight");
+    expect(browserRegressionSmokeScript).toContain("Info popover closed after clicking inside");
+    expect(browserRegressionSmokeScript).toContain("Info popover stayed visible after keyboard");
     expect(browserRegressionSmokeScript).toContain("assertForcedColorsResultRoute");
     expect(browserRegressionSmokeScript).toContain("Emulation.setEmulatedMedia");
     expect(browserRegressionSmokeScript).toContain('name: "forced-colors", value: "active"');
