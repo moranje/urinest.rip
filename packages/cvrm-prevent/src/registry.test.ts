@@ -6,8 +6,60 @@ import {
   cvrmPreventRegistryStatus,
 } from "./registry";
 import { isVerifiedCvrmPreventCalculator } from "./calculator-contract";
+import preventCoefficientData from "./prevent-data.json";
 import { calculatePreventRisk, preventCalculator, preventTestVectors } from "./prevent";
 import { calculateScore2Risk, score2Calculator, score2TestVectors } from "./score2";
+
+const preventCoefficientKeys = [
+  "base_10",
+  "base_30",
+  "hba1c_10",
+  "hba1c_30",
+  "uacr_10",
+  "uacr_30",
+  "sdi_10",
+  "sdi_30",
+  "full_10",
+  "full_30",
+] as const;
+
+const preventCoefficientTerms = new Set([
+  "age",
+  "age_squared",
+  "non_hdl_c",
+  "hdl_c",
+  "sbp_lt_110",
+  "sbp_gte_110",
+  "dm",
+  "smoking",
+  "bmi_lt_30",
+  "bmi_gte_30",
+  "egfr_lt_60",
+  "egfr_gte_60",
+  "bp_tx",
+  "statin",
+  "bp_tx_sbp_gte_110",
+  "statin_non_hdl_c",
+  "age_non_hdl_c",
+  "age_hdl_c",
+  "age_sbp_gte_110",
+  "age_dm",
+  "age_smoking",
+  "age_bmi_gte_30",
+  "age_egfr_lt_60",
+  "ln_uacr",
+  "missing_uacr",
+  "hba1c_dm",
+  "hba1c_no_dm",
+  "missing_hba1c",
+  "sdi_4_to_6",
+  "sdi_7_to_10",
+  "missing_sdi",
+  "constant",
+]);
+
+type PreventCoefficientRow = readonly [string, readonly number[]];
+type PreventCoefficientData = Readonly<Record<string, readonly PreventCoefficientRow[]>>;
 
 const expectRiskPercentClose = (actual: number, expected: number, tolerance = 0.3): void => {
   expect(actual).toBeGreaterThanOrEqual(expected - tolerance);
@@ -62,6 +114,43 @@ describe("cvrm prevent calculator registry", () => {
     );
     expect(preventCalculator.testVectors).toHaveLength(preventTestVectors.length);
     expect(preventCalculator.testVectors.length).toBeGreaterThan(5);
+  });
+
+  it("keeps AHA PREVENT coefficient data structurally complete", () => {
+    const coefficientData = preventCoefficientData as unknown as PreventCoefficientData;
+
+    expect(Object.keys(coefficientData).sort()).toEqual([...preventCoefficientKeys].sort());
+
+    for (const key of preventCoefficientKeys) {
+      const rows = coefficientData[key];
+      const rowTerms = rows.map(([term]) => term);
+      const uniqueTerms = new Set(rowTerms);
+
+      expect(rows.length).toBeGreaterThan(0);
+      expect(uniqueTerms.size).toBe(rowTerms.length);
+      expect(uniqueTerms.has("constant")).toBe(true);
+      if (key.endsWith("_30")) expect(uniqueTerms.has("age_squared")).toBe(true);
+      if (key.startsWith("hba1c") || key.startsWith("full")) {
+        expect(uniqueTerms.has("hba1c_dm")).toBe(true);
+        expect(uniqueTerms.has("hba1c_no_dm")).toBe(true);
+        expect(uniqueTerms.has("missing_hba1c")).toBe(true);
+      }
+      if (key.startsWith("uacr") || key.startsWith("full")) {
+        expect(uniqueTerms.has("ln_uacr")).toBe(true);
+        expect(uniqueTerms.has("missing_uacr")).toBe(true);
+      }
+      if (key.startsWith("sdi") || key.startsWith("full")) {
+        expect(uniqueTerms.has("sdi_4_to_6")).toBe(true);
+        expect(uniqueTerms.has("sdi_7_to_10")).toBe(true);
+        expect(uniqueTerms.has("missing_sdi")).toBe(true);
+      }
+
+      for (const [term, coefficients] of rows) {
+        expect(preventCoefficientTerms.has(term)).toBe(true);
+        expect(coefficients).toHaveLength(10);
+        expect(coefficients.every((coefficient) => Number.isFinite(coefficient))).toBe(true);
+      }
+    }
   });
 
   it("matches labbie U-Prevent SCORE2 validation vectors", () => {

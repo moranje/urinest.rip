@@ -442,6 +442,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 ### Ronde 8 — CVRM/PREVENT-domain package afronding (2026-06-04)
 
 - [x] `feat(cvrm): add verified aha prevent calculator` voegt `cvrm.prevent` toe naast `cvrm.score2` in `@beslismodel/cvrm-prevent`: 10-/30-jaars total CVD, ASCVD, heart failure, CHD en stroke voor base, HbA1c, UACR, SDI en full PREVENT-modellen; coëfficiënten komen uit CRAN `preventr` 0.11.0, bronnen verwijzen naar AHA/Circulation/PREVENT en testvectors komen uit `preventr` package-tests; verificatie: package Vitest, package build en export-smoke.
+- [x] PREVENT-coëfficiëntdata krijgt structurele schema-test: alle tien model/horizon datasets, unieke termen, vereiste optionele modeltermen, tien sex/outcome-kolommen en finite coëfficiënten worden afgedwongen voordat het package kan releasen.
 
 ## Commit Discipline
 
