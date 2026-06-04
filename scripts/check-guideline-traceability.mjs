@@ -109,6 +109,9 @@ function validateFreshness() {
 function validateFlow(flow, trace, sourceIds, flowIds) {
   const path = `flows.${flow.id}`;
   validateEvidenceNode(trace, path, sourceIds);
+  const optionDefenseRequired = new Set(traceability.optionDefenseRequiredForFlows ?? []).has(
+    flow.id,
+  );
 
   const actualQuestions = flow.questions.map((question) => question.id).sort();
   const tracedQuestions = Object.keys(trace.questions ?? {}).sort();
@@ -122,6 +125,23 @@ function validateFlow(flow, trace, sourceIds, flowIds) {
       question.options.map((option) => String(option.value)),
       questionTrace.optionValues,
     );
+
+    if (optionDefenseRequired) {
+      const actualOptionValues = question.options.map((option) => String(option.value)).sort();
+      const tracedOptionValues = Object.keys(questionTrace.optionClaims ?? {}).sort();
+      assertSameArray(
+        `${path}.questions.${question.id}.optionClaims`,
+        actualOptionValues,
+        tracedOptionValues,
+      );
+      for (const option of question.options) {
+        validateEvidenceNode(
+          questionTrace.optionClaims?.[String(option.value)],
+          `${path}.questions.${question.id}.optionClaims.${String(option.value)}`,
+          sourceIds,
+        );
+      }
+    }
   }
 
   const actualResultKeys = Object.keys(flow.results).sort();
@@ -192,6 +212,9 @@ function validate() {
   const flows = mainData.questionnaires ?? [];
   const flowIds = new Set(flows.map((flow) => flow.id));
   const tracedFlowIds = new Set(Object.keys(traceability.flows ?? {}));
+  for (const flowId of traceability.optionDefenseRequiredForFlows ?? []) {
+    if (!flowIds.has(flowId)) fail(`optionDefenseRequiredForFlows: unknown flow ${flowId}`);
+  }
 
   assertSameArray("flows", [...flowIds].sort(), [...tracedFlowIds].sort());
 

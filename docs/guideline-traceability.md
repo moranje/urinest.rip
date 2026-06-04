@@ -21,9 +21,15 @@ npm run check:guidelines
 De gate faalt wanneer:
 
 - een flow, vraag, antwoordset, resultaatkaart of redirect niet in de matrix staat;
+- een flow in `optionDefenseRequiredForFlows` staat en een antwoordoptie geen `optionClaims`
+  evidence-node met bronverwijzing heeft;
 - een matrix-entry naar een onbekende bron verwijst;
 - een resultaatkaart geen HTTPS-bronlink heeft;
 - een richtlijnreview ouder is dan `maxReviewAgeDays` in de matrix.
+
+`strip` is de eerste volledig uitgewerkte testcase voor antwoordoptieverdediging. De matrix
+controleert daar per optie claim, verdict en bron-ID. Nieuwe domeinen kunnen dezelfde gate
+aanzetten door hun flow-ID aan `optionDefenseRequiredForFlows` toe te voegen.
 
 ## Review 2026-06-01
 

@@ -24,6 +24,8 @@ describe("AI guideline authoring documentation", () => {
       "`verpleegkundige`",
       "`poh`",
       "Info-knoppen",
+      "`optionClaims`",
+      "`optionDefenseRequiredForFlows`",
       "Gebruikersvriendelijke Taal",
       "Telemetry En Privacy",
       "npm run check:guidelines",

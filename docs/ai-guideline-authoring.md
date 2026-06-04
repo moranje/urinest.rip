@@ -518,7 +518,9 @@ bronverwijzingen, testnamen en klinische eigenaar.
 
 - Bronregister compleet met versies, URLs, beperkingen en reviewdatums.
 - Iedere vraag heeft een Question Defense Matrix-record.
-- Iedere antwoordoptie heeft bron, betekenis, veilige route en testdekking.
+- Iedere antwoordoptie heeft bron, betekenis, veilige route en testdekking; in
+  `docs/guideline-traceability.json` gebeurt dit met `optionClaims` zodra een flow in
+  `optionDefenseRequiredForFlows` staat.
 - Iedere info-knop heeft reden, tekst, rollen en bron.
 - Iedere zichtbare claim heeft bronverdediging.
 - Iedere resultkaart heeft HTTPS-bronlinks.

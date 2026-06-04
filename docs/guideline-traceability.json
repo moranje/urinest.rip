@@ -1,6 +1,7 @@
 {
   "reviewedOn": "2026-06-01",
   "maxReviewAgeDays": 183,
+  "optionDefenseRequiredForFlows": ["strip"],
   "sources": {
     "nhg-uwi": {
       "title": "NHG-Standaard Urineweginfecties",
@@ -90,19 +91,80 @@
           "claim": "Nitriet is de eerste test omdat een positieve nitriettest de diagnose UWI ondersteunt/bevestigt.",
           "verdict": "supported",
           "sourceIds": ["nhg-uwi", "nhg-lab"],
-          "optionValues": ["positive", "negative"]
+          "optionValues": ["positive", "negative"],
+          "optionClaims": {
+            "positive": {
+              "claim": "Positieve nitrietuitslag ondersteunt bacteriurie omdat bacterien nitraat kunnen omzetten; deze optie routeert daarom naar UWI-beoordeling.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab"]
+            },
+            "negative": {
+              "claim": "Negatieve nitrietuitslag sluit UWI niet volledig uit; leukocytenvervolg blijft nodig om nitriet-negatieve infecties of vervolgvraag te ondervangen.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab"]
+            }
+          }
         },
         "q_strip_leuko": {
           "claim": "Leukocyten worden alleen na negatieve nitriet beoordeeld; negatieve nitriet plus negatieve leukocyten maakt UWI onwaarschijnlijk.",
           "verdict": "supported",
           "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"],
-          "optionValues": ["positive_1", "positive_2", "positive_3", "negative"]
+          "optionValues": ["positive_1", "positive_2", "positive_3", "negative"],
+          "optionClaims": {
+            "positive_1": {
+              "claim": "Leukocyten + na negatieve nitriet markeert pyurie en vraagt vervolgdiagnostiek in plaats van directe afsluiting.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+            },
+            "positive_2": {
+              "claim": "Leukocyten ++ houdt een sterkere positieve testuitslag vast, maar blijft binnen dezelfde vervolgdiagnostische route als positieve leukocyturie.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+            },
+            "positive_3": {
+              "claim": "Leukocyten +++ houdt de hoogste positieve testuitslag vast, maar blijft binnen dezelfde vervolgdiagnostische route als positieve leukocyturie.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"]
+            },
+            "negative": {
+              "claim": "Negatieve leukocyten na negatieve nitriet maakt UWI minder waarschijnlijk; erythrocytencontrole blijft nodig om hematurie niet te missen.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi", "nvkc-hematurie-lab"]
+            }
+          }
         },
         "q_strip_ery": {
           "claim": "Erytrocyten worden pas bij negatieve UWI-screening beoordeeld om hematurie niet te missen zonder de UWI-route te vervuilen.",
           "verdict": "supported",
           "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"],
-          "optionValues": ["positive_1", "positive_2", "positive_3", "positive_4", "negative"]
+          "optionValues": ["positive_1", "positive_2", "positive_3", "positive_4", "negative"],
+          "optionClaims": {
+            "positive_1": {
+              "claim": "Erytrocyten + na negatieve UWI-screening markeert mogelijke hematurie en routeert naar hematuriebeoordeling.",
+              "verdict": "supported",
+              "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+            },
+            "positive_2": {
+              "claim": "Erytrocyten ++ houdt een sterkere positieve hematurie-indicatie vast en routeert naar dezelfde hematuriebeoordeling.",
+              "verdict": "supported",
+              "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+            },
+            "positive_3": {
+              "claim": "Erytrocyten +++ houdt een duidelijke positieve hematurie-indicatie vast en routeert naar dezelfde hematuriebeoordeling.",
+              "verdict": "supported",
+              "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+            },
+            "positive_4": {
+              "claim": "Erytrocyten ++++ houdt de hoogste positieve hematurie-indicatie vast en routeert naar dezelfde hematuriebeoordeling.",
+              "verdict": "supported",
+              "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"]
+            },
+            "negative": {
+              "claim": "Negatieve erythrocyten na negatieve nitriet en leukocyten ondersteunt dat er geen conclusieve stripafwijking is; vervolg hangt af van klachten.",
+              "verdict": "supported",
+              "sourceIds": ["nhg-uwi", "nhg-lab", "nvu-hematurie", "nvkc-hematurie-lab"]
+            }
+          }
         }
       },
       "results": {
