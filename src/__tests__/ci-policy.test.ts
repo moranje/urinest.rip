@@ -12,8 +12,14 @@ const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md")
 const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const gitignore = readFileSync(resolve(".gitignore"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
+const storybookMain = readFileSync(resolve(".storybook/main.ts"), "utf8");
+const storybookPreview = readFileSync(resolve(".storybook/preview.ts"), "utf8");
 const landingTemplateTest = readFileSync(
   resolve("src/components/templates/LandingTemplate.test.ts"),
+  "utf8",
+);
+const routeAccessibilityTest = readFileSync(
+  resolve("src/__tests__/accessibility-route.test.ts"),
   "utf8",
 );
 const routeTransitionPolicyTest = readFileSync(
@@ -68,6 +74,7 @@ const packageExtractionMap = JSON.parse(
 const clinicalCopyScript = readFileSync(resolve("scripts/check-clinical-dutch-copy.mjs"), "utf8");
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
   scripts: Record<string, string>;
+  devDependencies?: Record<string, string>;
   engines?: Record<string, string>;
 };
 const expectedPackageRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
@@ -504,6 +511,26 @@ describe("CI policy", () => {
     expect(clinicalCopyScript).toContain("visibleStringKeys");
     expect(clinicalCopyScript).toContain("blockedEnglishTerms");
     expect(clinicalCopyScript).toContain("metadata");
+  });
+
+  it("keeps Storybook and route-level runtime accessibility gates active", () => {
+    expect(packageJson.devDependencies?.["@storybook/addon-a11y"]).toBeTruthy();
+    expect(packageJson.devDependencies?.["axe-core"]).toBeTruthy();
+    expect(packageJson.devDependencies?.["vitest-axe"]).toBeTruthy();
+    expect(storybookMain).toContain("@storybook/addon-a11y");
+    expect(storybookPreview).toContain("a11y:");
+    expect(storybookPreview).toContain('test: "error"');
+    expect(storybookPreview).toContain('"color-contrast"');
+    expect(workflow).toContain("npm run build-storybook");
+    expect(routeAccessibilityTest).toContain('describe("route accessibility smoke"');
+    expect(routeAccessibilityTest).toContain('"landing route has no axe violations"');
+    expect(routeAccessibilityTest).toContain('"questionnaire route has no axe violations"');
+    expect(routeAccessibilityTest).toContain('"result route has no axe violations"');
+    expect(routeAccessibilityTest).toContain('"error route has no axe violations"');
+    expect(routeAccessibilityTest).toContain(
+      'runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]',
+    );
+    expect(routeAccessibilityTest).toContain("questionnaire redirect preserves the source flow");
   });
 
   it("keeps framework package release policy explicit and lockstep", () => {
