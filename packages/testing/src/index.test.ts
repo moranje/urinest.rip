@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
+  assertGuidelineTraceability,
   assertRoleContextMatrix,
   assertClinicalSafetyFixtures,
   createManifestSnapshot,
   createNormalizedManifestSnapshot,
   createStableSnapshot,
+  evaluateGuidelineTraceability,
   evaluateRoleContextMatrix,
   evaluateClinicalSafetyFixtures,
   type ClinicalSafetyFixture,
+  type GuidelineTraceabilityMatrix,
   type RoleContextMatrixCase,
 } from "./index";
 
@@ -169,6 +172,146 @@ describe("@beslismodel/testing role/context matrix", () => {
     ).toThrowErrorMatchingInlineSnapshot(`
       [Error: Role/context matrix check failed:
       - behandelaar-treatment-visible: Unexpected role/context matrix output.]
+    `);
+  });
+});
+
+describe("@beslismodel/testing guideline traceability", () => {
+  const traceableManifest = {
+    questionnaires: [
+      {
+        id: "strip",
+        version: "1",
+        title: "Urinestrip",
+        questions: [
+          {
+            id: "q_nitrite",
+            text: "Nitriet?",
+            type: "select",
+            options: [
+              { id: "nitrite-positive", value: "positive", text: "Positief" },
+              { id: "nitrite-negative", value: "negative", text: "Negatief" },
+            ],
+          },
+        ],
+        steps: [{ id: "step-strip", questionIds: ["q_nitrite"] }],
+        results: {
+          normal: { title: "Geen afwijking" },
+        },
+        resultsLogic: [
+          {
+            id: "rule-redirect",
+            actionType: "redirect",
+            conditions: [{ questionId: "q_nitrite", operator: "equals", value: "positive" }],
+            redirectToQuestionnaire: "bacteriurie",
+          },
+          {
+            id: "rule-normal",
+            actionType: "result",
+            conditions: [{ questionId: "q_nitrite", operator: "equals", value: "negative" }],
+            resultKey: "normal",
+          },
+        ],
+      },
+      {
+        id: "bacteriurie",
+        version: "1",
+        title: "Bacteriurie",
+        questions: [],
+        steps: [],
+        results: {},
+        resultsLogic: [],
+      },
+    ],
+  } as const;
+
+  const traceability = {
+    optionDefenseRequiredForFlows: ["strip"],
+    sources: {
+      nhg: { title: "NHG" },
+    },
+    flows: {
+      bacteriurie: {
+        claim: "Bacteriurie wordt apart beoordeeld.",
+        verdict: "supported",
+        sourceIds: ["nhg"],
+        questions: {},
+        redirects: {},
+        results: {},
+      },
+      strip: {
+        claim: "Strip routeert nitrietuitslagen veilig.",
+        verdict: "supported",
+        sourceIds: ["nhg"],
+        questions: {
+          q_nitrite: {
+            claim: "Nitriet ondersteunt UWI-beoordeling.",
+            verdict: "supported",
+            sourceIds: ["nhg"],
+            optionValues: ["positive", "negative"],
+            optionClaims: {
+              positive: {
+                claim: "Positieve nitriet routeert naar bacteriurie.",
+                verdict: "supported",
+                sourceIds: ["nhg"],
+              },
+              negative: {
+                claim: "Negatieve nitriet routeert naar normale uitslag.",
+                verdict: "supported",
+                sourceIds: ["nhg"],
+              },
+            },
+          },
+        },
+        redirects: {
+          bacteriurie: {
+            claim: "Positieve nitriet vraagt UWI-vervolg.",
+            verdict: "supported",
+            sourceIds: ["nhg"],
+          },
+        },
+        results: {
+          normal: {
+            claim: "Negatieve nitriet geeft normale uitkomst in deze fixture.",
+            verdict: "supported",
+            sourceIds: ["nhg"],
+          },
+        },
+      },
+    },
+  } satisfies GuidelineTraceabilityMatrix;
+
+  it("evaluates guideline traceability with required option defenses", () => {
+    const result = evaluateGuidelineTraceability(traceableManifest, traceability);
+
+    expect(result.passed).toBe(true);
+    expect(result.failures).toEqual([]);
+  });
+
+  it("throws readable failures for missing option defenses", () => {
+    const incompleteTraceability = {
+      ...traceability,
+      flows: {
+        ...traceability.flows,
+        strip: {
+          ...traceability.flows.strip,
+          questions: {
+            q_nitrite: {
+              ...traceability.flows.strip.questions.q_nitrite,
+              optionClaims: {
+                positive: traceability.flows.strip.questions.q_nitrite.optionClaims.positive,
+              },
+            },
+          },
+        },
+      },
+    } satisfies GuidelineTraceabilityMatrix;
+
+    expect(() => assertGuidelineTraceability(traceableManifest, incompleteTraceability))
+      .toThrowErrorMatchingInlineSnapshot(`
+      [Error: Guideline traceability check failed:
+      - flows.strip.questions.q_nitrite.optionClaims: Unexpected coverage.
+      - flows.strip.questions.q_nitrite.optionClaims.negative: Missing evidence node.]
     `);
   });
 });

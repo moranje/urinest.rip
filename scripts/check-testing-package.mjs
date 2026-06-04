@@ -21,18 +21,28 @@ writeFileSync(
     .replaceAll('"@beslismodel/core"', JSON.stringify(coreDistUrl))
     .replaceAll("'@beslismodel/core'", JSON.stringify(coreDistUrl)),
 );
-const { assertClinicalSafetyFixtures, createManifestSnapshot, createStableSnapshot } = await import(
-  pathToFileURL(smokeFile).href
-);
+const {
+  assertClinicalSafetyFixtures,
+  assertGuidelineTraceability,
+  createManifestSnapshot,
+  createStableSnapshot,
+} = await import(pathToFileURL(smokeFile).href);
 rmSync(smokeDir, { recursive: true, force: true });
 
-const snapshot = createManifestSnapshot({
+const smokeManifest = {
   questionnaires: [
     {
       id: "package-smoke",
       version: "1",
       title: "Package smoke",
-      questions: [{ id: "q1", text: "Question", type: "select", options: [] }],
+      questions: [
+        {
+          id: "q1",
+          text: "Question",
+          type: "select",
+          options: [{ id: "yes", value: "yes", text: "Yes" }],
+        },
+      ],
       results: {
         ok: {
           title: "OK",
@@ -48,7 +58,9 @@ const snapshot = createManifestSnapshot({
       ],
     },
   ],
-});
+};
+
+const snapshot = createManifestSnapshot(smokeManifest);
 
 if (snapshot.questionnaireIds[0] !== "package-smoke") {
   throw new Error("testing package manifest snapshot export failed");
@@ -74,6 +86,47 @@ const results = assertClinicalSafetyFixtures(
 
 if (!results[0]?.passed) {
   throw new Error("testing package clinical safety fixture export failed");
+}
+
+const traceabilityResult = assertGuidelineTraceability(smokeManifest, {
+  optionDefenseRequiredForFlows: ["package-smoke"],
+  sources: {
+    source: { title: "Source" },
+  },
+  flows: {
+    "package-smoke": {
+      claim: "Package smoke flow is traceable.",
+      verdict: "supported",
+      sourceIds: ["source"],
+      questions: {
+        q1: {
+          claim: "Package smoke question is traceable.",
+          verdict: "supported",
+          sourceIds: ["source"],
+          optionValues: ["yes"],
+          optionClaims: {
+            yes: {
+              claim: "Package smoke answer is traceable.",
+              verdict: "supported",
+              sourceIds: ["source"],
+            },
+          },
+        },
+      },
+      results: {
+        ok: {
+          claim: "Package smoke result is traceable.",
+          verdict: "supported",
+          sourceIds: ["source"],
+        },
+      },
+      redirects: {},
+    },
+  },
+});
+
+if (!traceabilityResult.passed) {
+  throw new Error("testing package guideline traceability export failed");
 }
 
 console.log("@beslismodel/testing package exports ok");

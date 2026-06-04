@@ -67,8 +67,8 @@
       "destinationRoot": "packages/testing",
       "packageJson": "packages/testing/package.json",
       "publicExportFile": "packages/testing/src/index.ts",
-      "publicExportLineCount": 353,
-      "publicExportSha256": "08f3b12d717de559945913654376f362832bd3ed59c5fbc51d290ca97b60e92f"
+      "publicExportLineCount": 637,
+      "publicExportSha256": "f99ce3b57278d9f74ea4dfcffaa8d6309efd558f44edf0ccec892cceb956dd31"
     }
   ],
   "appOnlyExclusions": [

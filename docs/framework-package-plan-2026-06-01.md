@@ -430,6 +430,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `test(browser): cover result history navigation` borgt in dezelfde browser-smoke dat na een echte behandelkeuze vanaf het resultaat de native browser-terugknop terugkeert naar de laatste vragenlijststap (`q_bac_tx_local_healthy`) en niet naar dashboard of loader; verificatie: app CI-policy test en Chrome browser-smoke groen.
 - [x] `test(browser): cover result visual chrome` borgt op de directe resultaatroute dat contra-indicatiecheckboxes en waarschuwing/statusnotices in echte browserstijl geen extra randen krijgen en voldoende padding houden; verificatie: app CI-policy test en Chrome browser-smoke groen.
 - [x] `test(guidelines): require strip option defenses` maakt Urinestrip de eerste volledig uitgewerkte testcase voor antwoordoptieverdediging: `optionDefenseRequiredForFlows` activeert `optionClaims` per antwoordoptie, de traceability-gate valideert claim/verdict/bron-ID en de authoring-doc noemt het contract; verificatie: `npm run check:guidelines` en app authoring-doc test groen.
+- [x] `feat(testing): add guideline traceability assertions` verplaatst het option-defense contract naar herbruikbare package-API in `@beslismodel/testing`: consumers kunnen manifest, bronmatrix, results, redirects en `optionClaims` buiten Urinest.rip valideren; verificatie: package test/build, release-notes en extraction-map gates.
 
 ## Commit Discipline
 

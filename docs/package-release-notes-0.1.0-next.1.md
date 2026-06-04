@@ -15,7 +15,7 @@ Gitea tag target: `beslismodel-v0.1.0-next.1`
 | `@beslismodel/cvrm-prevent` | `packages/cvrm-prevent` | `95bf8837eca6fea1ad58b24d548cda773930dc259e94a3660395cff64e066228` |
 | `@beslismodel/dm-care` | `packages/dm-care` | `68d2d4b7afa8cbb39158d1d11b7b109e53471512773f46ddac5ed57b7dbec4a4` |
 | `@beslismodel/vue` | `packages/vue` | `a8709639ae43e69fea4df7852815b82330ad0268fc328c7238e1be6aff4809ff` |
-| `@beslismodel/testing` | `packages/testing` | `08f3b12d717de559945913654376f362832bd3ed59c5fbc51d290ca97b60e92f` |
+| `@beslismodel/testing` | `packages/testing` | `f99ce3b57278d9f74ea4dfcffaa8d6309efd558f44edf0ccec892cceb956dd31` |
 
 ## Changed Exports
 
@@ -25,11 +25,11 @@ Gitea tag target: `beslismodel-v0.1.0-next.1`
 - `@beslismodel/cvrm-prevent`: verified SCORE2/SCORE2-OP/SCORE2-Diabetes calculator as `cvrm.score2`.
 - `@beslismodel/dm-care`: verified HbA1c IFCC/NGSP/eAG converter as `dm.hba1c_conversion`.
 - `@beslismodel/vue`: Pinia store factory, route guards, runner/resolver composables, landing menu and telemetry adapter contracts.
-- `@beslismodel/testing`: manifest snapshots, clinical safety fixtures and role/context matrix helpers.
+- `@beslismodel/testing`: manifest snapshots, clinical safety fixtures, role/context matrix helpers and guideline traceability/option-defense helpers.
 
 ## Consumer Impact
 
-This prerelease carries the Vue store persistence hardening and publish/registry guard updates from the post-0.1.0-next.0 framework sync. Public export surface remains unchanged.
+This prerelease carries the Vue store persistence hardening, publish/registry guard updates and reusable guideline traceability helpers from the post-0.1.0-next.0 framework sync.
 
 
 - Consumers import only public `@beslismodel/*` package roots.
@@ -37,6 +37,8 @@ This prerelease carries the Vue store persistence hardening and publish/registry
 - Internal package dependencies pin exact version `0.1.0-next.1`.
 - Node engine: `>=20.19.0`.
 - Tarballs contain only `dist/` and `package.json`.
+- Consumers can use `@beslismodel/testing` to verify per-flow option defenses through
+  `optionDefenseRequiredForFlows` and `optionClaims`.
 - Clinical flow data remains consumer-owned; framework packages do not bundle Urinest YAML flows, Supabase app logging, app icons or PWA branding.
 
 ## Verification

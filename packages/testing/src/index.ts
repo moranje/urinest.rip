@@ -129,6 +129,48 @@ export interface RoleContextMatrixOptions<Actual = unknown, Expected = unknown> 
   readonly failureMessage?: string;
 }
 
+export interface GuidelineEvidenceNode {
+  readonly claim: string;
+  readonly verdict: string;
+  readonly sourceIds: readonly string[];
+}
+
+export interface GuidelineQuestionTraceability extends GuidelineEvidenceNode {
+  readonly optionValues: readonly string[];
+  readonly optionClaims?: Readonly<Record<string, GuidelineEvidenceNode>>;
+}
+
+export interface GuidelineResultGroupTraceability extends GuidelineEvidenceNode {
+  readonly id: string;
+  readonly keys: readonly string[];
+}
+
+export interface GuidelineFlowTraceability extends GuidelineEvidenceNode {
+  readonly questions: Readonly<Record<string, GuidelineQuestionTraceability>>;
+  readonly results?: Readonly<Record<string, GuidelineEvidenceNode>>;
+  readonly resultGroups?: readonly GuidelineResultGroupTraceability[];
+  readonly redirects?: Readonly<Record<string, GuidelineEvidenceNode>>;
+}
+
+export interface GuidelineTraceabilityMatrix {
+  readonly sources: Readonly<Record<string, unknown>>;
+  readonly flows: Readonly<Record<string, GuidelineFlowTraceability>>;
+  readonly optionDefenseRequiredForFlows?: readonly string[];
+  readonly allowedVerdicts?: readonly string[];
+}
+
+export interface GuidelineTraceabilityFailure {
+  readonly path: string;
+  readonly message: string;
+  readonly expected?: StableSnapshotValue;
+  readonly actual?: StableSnapshotValue;
+}
+
+export interface GuidelineTraceabilityResult {
+  readonly failures: readonly GuidelineTraceabilityFailure[];
+  readonly passed: boolean;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -230,6 +272,248 @@ const actualSnapshot = (actual: TypedOutcome): StableSnapshotValue => stableValu
 
 const snapshotsEqual = (actual: unknown, expected: unknown): boolean =>
   JSON.stringify(stableValue(actual)) === JSON.stringify(stableValue(expected));
+
+const sorted = (values: Iterable<string>): readonly string[] => [...values].sort();
+
+const arraysMatch = (actual: readonly string[], expected: readonly string[]): boolean =>
+  JSON.stringify(actual) === JSON.stringify(expected);
+
+const addTraceabilityFailure = (
+  failures: GuidelineTraceabilityFailure[],
+  path: string,
+  message: string,
+  expected?: unknown,
+  actual?: unknown,
+): void => {
+  failures.push({
+    actual: actual === undefined ? undefined : stableValue(actual),
+    expected: expected === undefined ? undefined : stableValue(expected),
+    message,
+    path,
+  });
+};
+
+const validateGuidelineEvidenceNode = (
+  node: GuidelineEvidenceNode | undefined,
+  path: string,
+  sourceIds: ReadonlySet<string>,
+  allowedVerdicts: ReadonlySet<string>,
+  failures: GuidelineTraceabilityFailure[],
+): void => {
+  if (!node || typeof node !== "object") {
+    addTraceabilityFailure(failures, path, "Missing evidence node.");
+    return;
+  }
+  if (!node.claim || typeof node.claim !== "string") {
+    addTraceabilityFailure(failures, path, "Missing claim.");
+  }
+  if (!allowedVerdicts.has(node.verdict)) {
+    addTraceabilityFailure(failures, path, `Unsupported verdict: ${node.verdict}.`);
+  }
+  if (!Array.isArray(node.sourceIds) || node.sourceIds.length === 0) {
+    addTraceabilityFailure(failures, path, "sourceIds must be a non-empty array.");
+    return;
+  }
+  for (const sourceId of node.sourceIds) {
+    if (!sourceIds.has(sourceId)) {
+      addTraceabilityFailure(failures, path, `Unknown sourceId: ${sourceId}.`);
+    }
+  }
+};
+
+const assertSameStringArray = (
+  failures: GuidelineTraceabilityFailure[],
+  path: string,
+  actual: readonly string[],
+  expected: readonly string[],
+): void => {
+  if (!arraysMatch(actual, expected)) {
+    addTraceabilityFailure(failures, path, "Unexpected coverage.", expected, actual);
+  }
+};
+
+export const evaluateGuidelineTraceability = (
+  manifest: DecisionManifest,
+  traceability: GuidelineTraceabilityMatrix,
+): GuidelineTraceabilityResult => {
+  const failures: GuidelineTraceabilityFailure[] = [];
+  const sourceIds = new Set(Object.keys(traceability.sources ?? {}));
+  const allowedVerdicts = new Set(
+    traceability.allowedVerdicts ?? ["supported", "scope-guard", "safety-note"],
+  );
+  const optionDefenseRequiredForFlows = new Set(traceability.optionDefenseRequiredForFlows ?? []);
+  const flowIds = new Set((manifest.questionnaires ?? []).map((questionnaire) => questionnaire.id));
+
+  if (sourceIds.size === 0) {
+    addTraceabilityFailure(failures, "sources", "No sources configured.");
+  }
+
+  for (const flowId of optionDefenseRequiredForFlows) {
+    if (!flowIds.has(flowId)) {
+      addTraceabilityFailure(failures, "optionDefenseRequiredForFlows", `Unknown flow: ${flowId}.`);
+    }
+  }
+
+  assertSameStringArray(
+    failures,
+    "flows",
+    sorted(flowIds),
+    sorted(Object.keys(traceability.flows)),
+  );
+
+  for (const questionnaire of manifest.questionnaires ?? []) {
+    const path = `flows.${questionnaire.id}`;
+    const flowTrace = traceability.flows[questionnaire.id];
+    validateGuidelineEvidenceNode(flowTrace, path, sourceIds, allowedVerdicts, failures);
+    if (!flowTrace) continue;
+
+    const actualQuestionIds = sorted(
+      (questionnaire.questions ?? []).map((question) => question.id),
+    );
+    assertSameStringArray(
+      failures,
+      `${path}.questions`,
+      actualQuestionIds,
+      sorted(Object.keys(flowTrace.questions ?? {})),
+    );
+
+    for (const question of questionnaire.questions ?? []) {
+      const questionPath = `${path}.questions.${question.id}`;
+      const questionTrace = flowTrace.questions?.[question.id];
+      validateGuidelineEvidenceNode(
+        questionTrace,
+        questionPath,
+        sourceIds,
+        allowedVerdicts,
+        failures,
+      );
+      if (!questionTrace) continue;
+
+      const actualOptionValues = (question.options ?? []).map((option) => String(option.value));
+      assertSameStringArray(
+        failures,
+        `${questionPath}.optionValues`,
+        actualOptionValues,
+        questionTrace.optionValues,
+      );
+
+      if (optionDefenseRequiredForFlows.has(questionnaire.id)) {
+        assertSameStringArray(
+          failures,
+          `${questionPath}.optionClaims`,
+          sorted(actualOptionValues),
+          sorted(Object.keys(questionTrace.optionClaims ?? {})),
+        );
+        for (const optionValue of actualOptionValues) {
+          validateGuidelineEvidenceNode(
+            questionTrace.optionClaims?.[optionValue],
+            `${questionPath}.optionClaims.${optionValue}`,
+            sourceIds,
+            allowedVerdicts,
+            failures,
+          );
+        }
+      }
+    }
+
+    const actualResultKeys = sorted(Object.keys(questionnaire.results ?? {}));
+    const coveredResultKeys = new Set<string>();
+    for (const [resultKey, resultTrace] of Object.entries(flowTrace.results ?? {})) {
+      if (!(resultKey in (questionnaire.results ?? {}))) {
+        addTraceabilityFailure(failures, `${path}.results.${resultKey}`, "Result does not exist.");
+      }
+      coveredResultKeys.add(resultKey);
+      validateGuidelineEvidenceNode(
+        resultTrace,
+        `${path}.results.${resultKey}`,
+        sourceIds,
+        allowedVerdicts,
+        failures,
+      );
+    }
+
+    for (const group of flowTrace.resultGroups ?? []) {
+      validateGuidelineEvidenceNode(
+        group,
+        `${path}.resultGroups.${group.id}`,
+        sourceIds,
+        allowedVerdicts,
+        failures,
+      );
+      for (const resultKey of group.keys ?? []) {
+        if (!(resultKey in (questionnaire.results ?? {}))) {
+          addTraceabilityFailure(
+            failures,
+            `${path}.resultGroups.${group.id}`,
+            `Result does not exist: ${resultKey}.`,
+          );
+        }
+        if (coveredResultKeys.has(resultKey)) {
+          addTraceabilityFailure(
+            failures,
+            `${path}.resultGroups.${group.id}`,
+            `Duplicate result coverage: ${resultKey}.`,
+          );
+        }
+        coveredResultKeys.add(resultKey);
+      }
+    }
+
+    assertSameStringArray(
+      failures,
+      `${path}.result coverage`,
+      actualResultKeys,
+      sorted(coveredResultKeys),
+    );
+
+    const redirectTargets = sorted(
+      new Set(
+        (questionnaire.resultsLogic ?? [])
+          .map((rule) => rule.redirectToQuestionnaire)
+          .filter((target): target is string => typeof target === "string" && target.length > 0),
+      ),
+    );
+    assertSameStringArray(
+      failures,
+      `${path}.redirects`,
+      redirectTargets,
+      sorted(Object.keys(flowTrace.redirects ?? {})),
+    );
+    for (const target of redirectTargets) {
+      if (!flowIds.has(target)) {
+        addTraceabilityFailure(failures, `${path}.redirects.${target}`, "Target flow not found.");
+      }
+      validateGuidelineEvidenceNode(
+        flowTrace.redirects?.[target],
+        `${path}.redirects.${target}`,
+        sourceIds,
+        allowedVerdicts,
+        failures,
+      );
+    }
+  }
+
+  return {
+    failures,
+    passed: failures.length === 0,
+  };
+};
+
+export const assertGuidelineTraceability = (
+  manifest: DecisionManifest,
+  traceability: GuidelineTraceabilityMatrix,
+): GuidelineTraceabilityResult => {
+  const result = evaluateGuidelineTraceability(manifest, traceability);
+  if (result.failures.length > 0) {
+    throw new Error(
+      [
+        "Guideline traceability check failed:",
+        ...result.failures.map((failure) => `- ${failure.path}: ${failure.message}`),
+      ].join("\n"),
+    );
+  }
+  return result;
+};
 
 export const evaluateClinicalSafetyFixtures = <
   Answers extends Readonly<Record<string, unknown>> = Readonly<Record<string, unknown>>,
