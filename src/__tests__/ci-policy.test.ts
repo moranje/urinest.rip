@@ -365,6 +365,15 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "--current-version",
     );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "--check-version",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "packageReleaseVersionPattern",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "stable semver or semver prerelease",
+    );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "npm whoami --registry",
     );

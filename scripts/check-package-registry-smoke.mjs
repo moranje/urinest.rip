@@ -15,6 +15,7 @@ const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 const defaultRegistry = expectedPackageRegistry;
 const registry = process.env.BESLISMODEL_REGISTRY_URL ?? defaultRegistry;
 const isConfigCheck = process.argv.includes("--check-config");
+const isVersionCheck = process.argv.includes("--check-version");
 const usesCurrentVersion = process.argv.includes("--current-version");
 
 const packages = getFrameworkPackageNames(root);
@@ -27,6 +28,7 @@ const version =
   process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION ?? (usesCurrentVersion ? expectedVersion : "");
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
+const packageReleaseVersionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
 
 const smokeSource = `
 import { readFile } from "node:fs/promises";
@@ -293,8 +295,10 @@ const assertVersion = () => {
   if (version !== expectedVersion) {
     fail(`BESLISMODEL_REGISTRY_SMOKE_VERSION must equal package version ${expectedVersion}`);
   }
-  if (!/^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/u.test(version)) {
-    fail(`BESLISMODEL_REGISTRY_SMOKE_VERSION must be a semver prerelease, got ${version}`);
+  if (!packageReleaseVersionPattern.test(version)) {
+    fail(
+      `BESLISMODEL_REGISTRY_SMOKE_VERSION must be a stable semver or semver prerelease, got ${version}`,
+    );
   }
 };
 
@@ -305,6 +309,11 @@ if (isConfigCheck) {
 
 assertConfig();
 assertVersion();
+
+if (isVersionCheck) {
+  console.log(`Package registry smoke version accepted: ${version}`);
+  process.exit(0);
+}
 
 const tempDir = mkdtempSync(join(tmpdir(), "beslismodel-registry-consumer-"));
 

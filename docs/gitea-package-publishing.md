@@ -136,6 +136,10 @@ Smoke installed packages from Gitea:
 BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke
 ```
 
+Registry smoke accepts the exact package version, either prerelease (`0.1.0-next.1`) or stable
+(`0.1.0`), so the same post-publish smoke works for both `next` and `latest` releases. Use
+`--check-version` for a no-install version gate when the registry itself is temporarily unavailable.
+
 For CI or NAS verification against the package version currently declared in all framework package
 manifests:
 
