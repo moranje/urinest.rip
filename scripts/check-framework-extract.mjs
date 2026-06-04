@@ -108,6 +108,7 @@ try {
 
   for (const requiredPublishGate of [
     "workflow_dispatch",
+    "dist_tag",
     "Validate publish secrets",
     "NPM_REGISTRY_TOKEN",
     "RELEASE_TOKEN secret is required for package release tag",
@@ -115,6 +116,7 @@ try {
     "npm run check:packages",
     "Check package release tag",
     "BESLISMODEL_PUBLISH_CONFIRM",
+    "BESLISMODEL_PUBLISH_TAG",
     "npm run check:package-publish-next -- --publish",
     "BESLISMODEL_REGISTRY_SMOKE_VERSION",
     "npm run check:package-registry-smoke",

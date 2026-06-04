@@ -421,9 +421,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
 
-### Ronde 7 — NAS-tail UI-regressie-afsluiting (2026-06-04)
+### Ronde 7 — NAS-tail Gitea-package en UI-afsluiting (2026-06-04)
 
 - [x] `chore(lockfile): sync npm optional deps` houdt `package-lock.json` installbaar met npm 11/Node 24 door ontbrekende `@emnapi` optional dependencies op te nemen; verificatie: tijdelijke Node 24 container met lokale Gitea registry override bereikt `npm ci`.
+- [x] `fix(packages): guard gitea latest publishing` maakt `BESLISMODEL_PUBLISH_TAG=latest` expliciet veilig voor stabiele semver, blijft prereleases op `next` afdwingen, laat CI-dry-runs de tag uit de packageversie afleiden, geeft de gegenereerde Gitea workflow dezelfde `dist_tag`-guard en documenteert de stable/latest route; verificatie: release-config, publish dry-run, extractie- en CI-policy gates.
 - [x] `test(browser): cover answer info popovers` borgt in de browser-smoke het echte bacteriurie-behandelpad: info-click opent/sluit de dialog, wijzigt URL/selectie niet, gebruikt robuuste DOM-waits, ruimt preview-processen op en negeert alleen de externe `stats.oranje.wtf` analytics request; verificatie: Chrome 149 browser-smoke groen.
 
 ## Commit Discipline

@@ -107,14 +107,25 @@ Publish the prerelease with dist-tag `next`:
 BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish
 ```
 
-The publish command first dry-runs every package, verifies registry auth, and checks that none of
-the package versions already exist in Gitea before the first `npm publish` call.
+Publish a stable release with dist-tag `latest` only after registry smoke and `urinest.rip` app
+smoke pass:
+
+```bash
+BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=0.1.0 \
+  npm run check:package-publish-next -- --publish
+```
+
+The publish command first dry-runs every package, infers `next` for prereleases and `latest` for
+stable versions during dry-run checks, verifies registry auth for real publish, and checks that none
+of the package versions already exist in Gitea before the first `npm publish` call. A real stable
+publish still requires explicit `BESLISMODEL_PUBLISH_TAG=latest`.
 
 In the standalone Gitea repo, `.gitea/workflows/publish-next.yaml` exposes the same path as manual
 `workflow_dispatch`. It requires `NPM_REGISTRY_TOKEN` and `RELEASE_TOKEN`, runs
-`npm run check:packages`, publishes with `BESLISMODEL_PUBLISH_CONFIRM`, immediately runs registry
-smoke for the dispatched version, then creates `beslismodel-v<version>` from the matching package
-release-notes file.
+`npm run check:packages` with the dispatched `dist_tag`, publishes with
+`BESLISMODEL_PUBLISH_CONFIRM` and `BESLISMODEL_PUBLISH_TAG`, immediately runs registry smoke for the
+dispatched version, then creates `beslismodel-v<version>` from the matching package release-notes
+file.
 
 The publish step is rerunnable after a post-publish smoke/tag failure: if all package versions already
 exist, publish is skipped and the workflow continues. A partial existing package set still fails.
@@ -156,10 +167,4 @@ NAS publish, smoke and migration complete.
 `migrate:registry-deps -- --write` verifies every exact `@beslismodel/*` version against the Gitea
 npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.
 
-Promote to `latest` only after registry smoke and `urinest.rip` app smoke pass.
-Stable publish uses the same guarded script with an explicit tag and a stable semver:
-
-```bash
-BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=0.1.0 \
-  npm run check:package-publish-next -- --publish
-```
+The publish guard rejects prerelease versions for `latest` and stable versions for `next`.

@@ -15,15 +15,15 @@ const tokenEnvNames = ["NODE_AUTH_TOKEN", "NPM_TOKEN", "NPM_REGISTRY_TOKEN", "GI
 const packageNames = new Set(packages.map((item) => item.name));
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
 const stableVersionPattern = /^\d+\.\d+\.\d+$/;
-const publishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "next";
+const requestedPublishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "";
 const allowedPublishTags = new Set(["latest", "next"]);
 
 const fail = (message) => {
   throw new Error(message);
 };
 
-if (!allowedPublishTags.has(publishTag)) {
-  fail(`BESLISMODEL_PUBLISH_TAG must be "next" or "latest", received ${publishTag}`);
+if (requestedPublishTag && !allowedPublishTags.has(requestedPublishTag)) {
+  fail(`BESLISMODEL_PUBLISH_TAG must be "next" or "latest", received ${requestedPublishTag}`);
 }
 
 const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
@@ -158,14 +158,25 @@ if (versions.size !== 1) {
 }
 
 const [version] = versions;
-if (publishTag === "next" && !prereleaseVersionPattern.test(version)) {
+const isPrereleaseVersion = prereleaseVersionPattern.test(version);
+const isStableVersion = stableVersionPattern.test(version);
+if (!isPrereleaseVersion && !isStableVersion) {
+  fail(`Package version must be a stable semver or semver prerelease, received: ${version}`);
+}
+const publishTag = requestedPublishTag || (isPrereleaseVersion ? "next" : "latest");
+if (publishTag === "next" && !isPrereleaseVersion) {
   fail(
     `Package version must be a semver prerelease before publishing with dist-tag next, received: ${version}`,
   );
 }
-if (publishTag === "latest" && !stableVersionPattern.test(version)) {
+if (publishTag === "latest" && !isStableVersion) {
   fail(
     `Package version must be a stable semver before publishing with dist-tag latest, received: ${version}`,
+  );
+}
+if (isPublish && publishTag === "latest" && !requestedPublishTag) {
+  fail(
+    `Publishing stable packages with dist-tag latest requires BESLISMODEL_PUBLISH_TAG=latest and BESLISMODEL_PUBLISH_CONFIRM=${version}`,
   );
 }
 

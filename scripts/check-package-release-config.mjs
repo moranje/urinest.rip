@@ -19,10 +19,10 @@ const violations = [];
 
 const prereleaseVersionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
 const stableVersionPattern = /^\d+\.\d+\.\d+$/;
-const publishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "next";
+const publishTag = process.env.BESLISMODEL_PUBLISH_TAG?.trim() || "";
 const allowedPublishTags = new Set(["latest", "next"]);
 
-if (!allowedPublishTags.has(publishTag)) {
+if (publishTag && !allowedPublishTags.has(publishTag)) {
   violations.push(`BESLISMODEL_PUBLISH_TAG must be "next" or "latest", received ${publishTag}`);
 }
 
@@ -34,10 +34,15 @@ for (const { dir, name, packageJson } of packages) {
   if (manifest.private !== false) {
     violations.push(`${packageJson}: private must be false`);
   }
-  if (publishTag === "next" && !prereleaseVersionPattern.test(manifest.version)) {
+  const isPrereleaseVersion = prereleaseVersionPattern.test(manifest.version);
+  const isStableVersion = stableVersionPattern.test(manifest.version);
+  if (!isPrereleaseVersion && !isStableVersion) {
+    violations.push(`${packageJson}: version must be stable semver or a semver prerelease`);
+  }
+  if (publishTag === "next" && !isPrereleaseVersion) {
     violations.push(`${packageJson}: version must be a prerelease for dist-tag next`);
   }
-  if (publishTag === "latest" && !stableVersionPattern.test(manifest.version)) {
+  if (publishTag === "latest" && !isStableVersion) {
     violations.push(`${packageJson}: version must be stable semver for dist-tag latest`);
   }
   if (!manifest.description) {

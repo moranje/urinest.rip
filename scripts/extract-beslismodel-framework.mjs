@@ -384,22 +384,26 @@ jobs:
 }
 
 function writeGiteaPublishWorkflow(target) {
-  const workflow = `name: Publish Next Packages
+  const workflow = `name: Publish Packages
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "@beslismodel prerelease version to publish"
+        description: "@beslismodel version to publish"
         required: true
         default: "0.1.0-next.1"
+      dist_tag:
+        description: "npm dist-tag: next for prerelease, latest for stable"
+        required: true
+        default: "next"
 
 permissions:
   contents: write
 
 jobs:
-  publish-next:
-    name: Publish @beslismodel packages with next tag
+  publish:
+    name: Publish @beslismodel packages
     runs-on: ubuntu-latest
     container: public.ecr.aws/docker/library/node:24-bookworm
     steps:
@@ -425,7 +429,10 @@ jobs:
           persist-credentials: false
 
       - run: npm ci
-      - run: npm run check:packages
+      - name: Check packages
+        env:
+          BESLISMODEL_PUBLISH_TAG: \${{ github.event.inputs.dist_tag }}
+        run: npm run check:packages
 
       - name: Check package release tag
         run: |
@@ -456,12 +463,13 @@ jobs:
           } > "$NPM_USERCONFIG"
           echo "npm_config_userconfig=$NPM_USERCONFIG" >> "$GITHUB_ENV"
 
-      - name: Publish prerelease packages
+      - name: Publish packages
         env:
           GITEA_NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
           NODE_AUTH_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
           NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
           BESLISMODEL_PUBLISH_CONFIRM: \${{ github.event.inputs.version }}
+          BESLISMODEL_PUBLISH_TAG: \${{ github.event.inputs.dist_tag }}
         run: npm run check:package-publish-next -- --publish
 
       - name: Smoke packages from Gitea npm
