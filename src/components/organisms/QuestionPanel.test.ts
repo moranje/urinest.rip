@@ -153,6 +153,20 @@ describe("QuestionPanel", () => {
     expect(titleFocusCss).toContain("outline: none");
   });
 
+  it("keeps question copy free of decorative borders", () => {
+    const source = readFileSync("src/components/organisms/QuestionPanel.vue", "utf8");
+    const titleCss = source.match(/\.question-panel__title\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
+      ?.body;
+    const stepCss = source.match(/\.question-panel__step\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+    const descriptionCss = source.match(/\.question-panel__description\s*\{(?<body>[\s\S]*?)\n\}/)
+      ?.groups?.body;
+
+    expect(titleCss).not.toContain("border");
+    expect(stepCss).not.toContain("border");
+    expect(descriptionCss).toContain("border: 0");
+    expect(descriptionCss).not.toContain("border-top");
+  });
+
   it("delegates question panel shell styling to Card", () => {
     const source = readFileSync("src/components/organisms/QuestionPanel.vue", "utf8");
     const panelCss = source.match(/\.question-panel\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;

@@ -144,8 +144,8 @@ watch(
 
 .question-panel__description {
   margin-top: var(--spacing-lg);
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+  padding-top: 0;
+  border: 0;
   color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-body-medium);
 }
