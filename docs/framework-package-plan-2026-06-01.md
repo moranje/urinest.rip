@@ -383,12 +383,12 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding, DM HbA1c en COPD GOLD ABE.
 - [x] File-tarball install-smoke toegevoegd: `check:package-file-install-consumer-smoke` installeert de gepackte frameworkpackages via echte `file:` npm dependencies in een schone consumer, draait de geïnstalleerde `beslismodel` CLI en importeert alleen publieke `@beslismodel/*` exports inclusief CVRM, DM en COPD calculators.
 - [x] Lokale Gitea npm registry-config voorbereid: `@beslismodel` scope, tokenvrije `.npmrc.example`, package `publishConfig.registry`, release-config gate en Gitea/npm runbook zijn aanwezig.
-- [ ] Geldige Gitea npm publish-token beschikbaar maken in user-level npm config of `NODE_AUTH_TOKEN`/`NPM_TOKEN`/`NPM_REGISTRY_TOKEN`/`GITEA_NPM_TOKEN`; geteste tokens uit sibling repos geven geen registry-publish auth.
+- [x] Geldige Gitea npm publish-token beschikbaar gemaakt via `GITEA_NPM_TOKEN`; publish-auth wordt tijdelijk via npm userconfig in de publish-cache doorgegeven en niet in projectbestanden opgeslagen.
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
-- [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
+- [x] Prerelease-versies gepubliceerd naar lokale Gitea npm met dist-tag `next`: `@beslismodel/core`, `compiler`, `copd-care`, `cvrm-prevent`, `dm-care`, `vue` en `testing` staan op `0.1.0-next.0`.
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
 - [x] Registry smoke is standalone-safe: Urinestrip-checks gebruiken fixture-flows uit `scripts/package-smoke-fixtures.mjs` en leunen niet op app-only `flows/`.
-- [ ] Registry smoke uitvoeren tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION`.
+- [x] Registry smoke uitgevoerd tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0`.
 - [x] Package CI-template in nieuwe repo meenemen via `extract-beslismodel-framework.mjs`: lint, typecheck, tests, package smoke checks, package budget, npm audit en secret scan.
 - [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, draait registry-smoke en tagt daarna `beslismodel-v<version>` met `RELEASE_TOKEN`.
 - [x] Gitea app- en release-workflows draaien `npm run check:framework`, zodat package/extractie regressies niet alleen lokaal of in GitHub CI worden gevangen.
@@ -396,23 +396,23 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.
 - [x] Registry migratie checkt bij `--write` iedere exacte package-versie in Gitea npm, tenzij `--skip-registry-check` expliciet wordt gebruikt voor testfixtures.
 - [x] App/framework gates gesplitst: `check:app` gebruikt app-only tsgo/vitest configs; `check:framework` blijft package checks draaien.
-- [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
-- [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
+- [x] `urinest.rip` package.json omgezet van monorepo source imports naar exacte registry dependencies `@beslismodel/*@0.1.0-next.0`.
+- [x] `urinest.rip` Vite/TS/Vitest aliases verwijderd of gesplitst: app-configs gebruiken registry packages, package-tests gebruiken een aparte package-vitestconfig voor bronpakkettests.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.
 - [x] Tijdelijke dual-source afspraak vastleggen: tijdens extractie mag `urinest.rip` alleen switchen tussen workspace packages en registry packages via package manager config, niet via afwijkende importpaden of private package-source imports.
 - [x] `urinest.rip` app- en frameworkchecks gesplitst: `check:app` bevat geen package-build of `check:packages`, terwijl CI frameworkextractie apart via `check:framework` draait.
 - [x] `urinest.rip` consumer fixture behouden als integratiecontract tegen gepubliceerde packages.
 - [x] Migratievolgorde gedocumenteerd: publish prerelease packages naar lokale registry, install exacte prerelease-versies in `urinest.rip`, run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`, daarna pas oude package-source uit app repo verwijderen.
-- [ ] Migratievolgorde uitvoeren met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`.
-- [ ] Na extractie `urinest.rip` draaiend houden via gepinde registry dependencies, lockfile-update, Vite dev smoke, productiebuild, PWA smoke, telemetry smoke, landing-grid regressie, questionnaire-switch regressie en Urinestrip end-to-end fixture.
+- [x] Migratievolgorde uitgevoerd met gepubliceerde prerelease packages en exacte registry-versies in `urinest.rip`: publish, registry-smoke, `migrate:registry-deps -- --write`, `npm install`, `check:framework`, `test`, `check:app`, browser-smoke.
+- [x] Na extractie `urinest.rip` draaiend gehouden via gepinde registry dependencies, lockfile-update, productiebuild/PWA-build, guideline/copy checks, package registry-smoke, landing-grid regressie, questionnaire-switch/back regressie en Urinestrip end-to-end fixture.
 - [x] App-compatibiliteitsadapter behouden voor `loadManifest`, role context, markdown sanitizer, telemetry adapter en taxonomy/icon mapping zodat de package geen Urinest-specifieke aannames terugkrijgt.
 - [x] Package release-notes format gedocumenteerd met consumer-impact: gewijzigde exports, gewijzigde peer dependency ranges, migratiestappen en rollback-versie.
 - [x] Package release-notes draft toegevoegd en geborgd met `check:package-release-notes`: package set, public export hashes, consumer-impact, verificatie, migratie en rollback.
 - [x] Gitea/npm publish-runbook toegevoegd op basis van `abacus`, `patient-tracker`, `werkoverleg` en `labbie`: SSH remote, registry URL, tokenbeleid, local proxy en prerelease publish/smoke.
 - [x] Baseline app-integratie toegevoegd voor Gitea Actions: `setup-npm-auth`, `setup-node`, `release-pr`, `upload-sourcemaps` en `release-finalize`; package publish blijft npm-native.
-- [ ] Package release-notes in Gitea taggen zodra de prerelease packages bestaan.
+- [x] Package release-notes in Gitea getagd zodra de prerelease packages bestaan: `beslismodel-v0.1.0-next.0` is gepusht naar `beslismodel-framework` op commit `e296808`.
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
-- [ ] Rollback-plan uitvoeren en bewijzen met een echte registry-versie en Gitea tag.
+- [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
 
 ## Commit Discipline
 
