@@ -538,6 +538,8 @@ describe("CI policy", () => {
     );
     expect(browserRegressionSmokeScript).toContain("Expected 2 desktop landing rows");
     expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
+    expect(browserRegressionSmokeScript).toContain("assertThemeModes");
+    expect(browserRegressionSmokeScript).toContain("Light mode theme-color mismatch");
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
