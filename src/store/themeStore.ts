@@ -6,6 +6,10 @@ import { readStorage, writeStorage } from "../lib/storage";
 
 const STORAGE_KEY = "urinest-theme";
 const QUERY = "(prefers-color-scheme: dark)";
+const THEME_COLORS = {
+  dark: "#005a2b",
+  light: "#16a34a",
+} as const;
 
 function readStoredTheme(): ThemePreference {
   const value = readStorage("local", STORAGE_KEY);
@@ -15,6 +19,25 @@ function readStoredTheme(): ThemePreference {
 
 function systemTheme(): "light" | "dark" {
   return window.matchMedia(QUERY).matches ? "dark" : "light";
+}
+
+function syncThemeColor(theme: "light" | "dark", mode: ThemePreference): void {
+  const metas = Array.from(document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]'));
+  if (metas.length === 0) {
+    const meta = document.createElement("meta");
+    meta.name = "theme-color";
+    document.head.append(meta);
+    metas.push(meta);
+  }
+
+  for (const meta of metas) {
+    if (mode === "system") {
+      const media = meta.getAttribute("media") ?? "";
+      meta.content = media.includes("dark") ? THEME_COLORS.dark : THEME_COLORS.light;
+    } else {
+      meta.content = THEME_COLORS[theme];
+    }
+  }
 }
 
 export const useThemeStore = defineStore("theme", () => {
@@ -27,6 +50,7 @@ export const useThemeStore = defineStore("theme", () => {
 
   const applyTheme = (): void => {
     document.documentElement.setAttribute("data-theme", resolved.value);
+    syncThemeColor(resolved.value, preference.value);
   };
 
   const setTheme = (next: ThemePreference): void => {

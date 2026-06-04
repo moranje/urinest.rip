@@ -36,5 +36,8 @@ describe("security headers", () => {
     expect(index).not.toContain("onload=");
     expect(themeInit).toContain("localStorage.getItem");
     expect(themeInit).toContain("data-theme");
+    expect(themeInit).toContain("theme-color");
+    expect(themeInit).toContain("#16a34a");
+    expect(themeInit).toContain("#005a2b");
   });
 });
