@@ -374,15 +374,16 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Package-extractie, lokale Gitea npm publicatie en `urinest.rip` compatibiliteit zijn expliciet in dit plan opgenomen.
 - [x] Nieuwe package-map/repo reproduceerbaar gemaakt met `extract-beslismodel-framework.mjs` en `check:framework-extract`, zodat framework-code als eigen `beslismodel-framework/` target zonder app-only code gebouwd kan worden.
 - [x] Package-extractie-map gestart met dezelfde package boundaries als deze repo: core, compiler, copd-care, cvrm-prevent, dm-care, vue en testing; geen tijdelijke bundeling van app-only code.
-- [ ] Packages verplaatsen: `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/copd-care`, `@beslismodel/cvrm-prevent`, `@beslismodel/dm-care`, `@beslismodel/vue`, `@beslismodel/testing`.
+- [x] Packages als zelfstandige Gitea-repo geëxtraheerd en gepusht: `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/copd-care`, `@beslismodel/cvrm-prevent`, `@beslismodel/dm-care`, `@beslismodel/vue`, `@beslismodel/testing` staan in `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`.
 - [x] Publieke exports in de package-map eerst exact gelijk houden aan de huidige exports in `packages/*/src/index.ts`.
 - [x] App-only code expliciet niet meenemen: `flows/`, `src/views/admin`, Supabase client/log sink, Urinest icons/copy, PWA branding, `src/config/app-config.ts`.
-- [ ] Gitea remote toevoegen zodra lokale URL/namespace vastligt.
+- [x] Gitea remote toegevoegd en gepusht: `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`, `master` staat op `f177fa4`.
 - [x] Registry-config-gate toegevoegd: package `publishConfig.registry`, tokenvrije `.npmrc.example` en `check:package-release-config`.
 - [x] Offline tarball-gate toegevoegd: `check:package-tarballs` bewijst dat publicatie-artefacten alleen `dist/` en `package.json` bevatten voordat registry publish gebeurt.
 - [x] Packed-consumer-smoke toegevoegd: `check:package-consumer-smoke` pakt echte npm-tarballs uit in een schone tijdelijke consumer, importeert alleen publieke `@beslismodel/*` exports en doorloopt echte Urinestrip runner/redirect/result checks plus CVRM SCORE2 score/outcome-binding, DM HbA1c en COPD GOLD ABE.
 - [x] File-tarball install-smoke toegevoegd: `check:package-file-install-consumer-smoke` installeert de gepackte frameworkpackages via echte `file:` npm dependencies in een schone consumer, draait de geïnstalleerde `beslismodel` CLI en importeert alleen publieke `@beslismodel/*` exports inclusief CVRM, DM en COPD calculators.
-- [ ] Lokale Gitea npm registry voorbereiden: package owner/scope, auth token, user-level `.npmrc` voor secrets, project `.npmrc` zonder token, scope registry config, en package `publishConfig.registry`.
+- [x] Lokale Gitea npm registry-config voorbereid: `@beslismodel` scope, tokenvrije `.npmrc.example`, package `publishConfig.registry`, release-config gate en Gitea/npm runbook zijn aanwezig.
+- [ ] Geldige Gitea npm publish-token beschikbaar maken in user-level npm config of `NODE_AUTH_TOKEN`/`NPM_TOKEN`/`NPM_REGISTRY_TOKEN`/`GITEA_NPM_TOKEN`; geteste tokens uit sibling repos geven geen registry-publish auth.
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.

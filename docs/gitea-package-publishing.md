@@ -22,6 +22,9 @@ git push -u origin master
 The Gitea server creates this repository on first push. `git ls-remote` may return "not found"
 before the first push and must not be treated as a blocking preflight.
 
+Current status: `beslismodel-framework` exists on Gitea and `master` was verified at
+`f177fa4308a71c7a802212d986b7eeee370d9ecb`. The first-push repository creation path is complete.
+
 ## Registry
 
 Canonical npm registry:
