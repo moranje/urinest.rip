@@ -54,10 +54,28 @@ try {
 
   const packageCi = readFileSync(join(tempDir, ".github/workflows/ci.yml"), "utf8");
   const giteaPackageCi = readFileSync(join(tempDir, ".gitea/workflows/ci.yaml"), "utf8");
+  const extractedPackageJson = readFileSync(join(tempDir, "package.json"), "utf8");
   const giteaPublishWorkflow = readFileSync(
     join(tempDir, ".gitea/workflows/publish-next.yaml"),
     "utf8",
   );
+  if (!existsSync(join(tempDir, "scripts/package-smoke-fixtures.mjs"))) {
+    throw new Error("Extracted framework must include package smoke fixtures");
+  }
+  if (!extractedPackageJson.includes("check:package-consumer-smoke")) {
+    throw new Error("Extracted framework package checks must include package consumer smoke");
+  }
+  const publishScript = readFileSync(
+    join(tempDir, "scripts/check-package-publish-next.mjs"),
+    "utf8",
+  );
+  for (const requiredPublishScriptGuard of ["publish step skipped", "Refusing partial publish"]) {
+    if (!publishScript.includes(requiredPublishScriptGuard)) {
+      throw new Error(
+        `Extracted framework publish script is missing guard: ${requiredPublishScriptGuard}`,
+      );
+    }
+  }
   if (!packageCi.includes("permissions:\n  contents: read")) {
     throw new Error("Extracted framework CI must keep contents: read permissions");
   }
@@ -84,8 +102,12 @@ try {
 
   for (const requiredPublishGate of [
     "workflow_dispatch",
+    "Validate publish secrets",
     "NPM_REGISTRY_TOKEN",
+    "RELEASE_TOKEN secret is required for package release tag",
+    "persist-credentials: false",
     "npm run check:packages",
+    "Check package release tag",
     "BESLISMODEL_PUBLISH_CONFIRM",
     "npm run check:package-publish-next -- --publish",
     "BESLISMODEL_REGISTRY_SMOKE_VERSION",

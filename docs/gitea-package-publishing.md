@@ -104,6 +104,9 @@ In the standalone Gitea repo, `.gitea/workflows/publish-next.yaml` exposes the s
 smoke for the dispatched version, then creates `beslismodel-v<version>` from the matching package
 release-notes file.
 
+The publish step is rerunnable after a post-publish smoke/tag failure: if all package versions already
+exist, publish is skipped and the workflow continues. A partial existing package set still fails.
+
 Smoke installed packages from Gitea:
 
 ```bash
@@ -126,5 +129,8 @@ npm install
 npm run check:app
 npm run check:browser-smoke
 ```
+
+`migrate:registry-deps -- --write` verifies every exact `@beslismodel/*` version against the Gitea
+npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.
 
 Promote to `latest` only after registry smoke and `urinest.rip` app smoke pass.

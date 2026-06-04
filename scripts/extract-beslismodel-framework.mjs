@@ -27,6 +27,7 @@ const scriptFiles = [
   "scripts/check-cvrm-prevent-package.mjs",
   "scripts/check-dm-care-package.mjs",
   "scripts/check-framework-security-boundaries.mjs",
+  "scripts/check-package-consumer-smoke.mjs",
   "scripts/check-package-extraction-map.mjs",
   "scripts/check-package-file-install-consumer-smoke.mjs",
   "scripts/check-package-publish-next.mjs",
@@ -36,6 +37,7 @@ const scriptFiles = [
   "scripts/check-package-tarballs.mjs",
   "scripts/check-testing-package.mjs",
   "scripts/check-vue-package.mjs",
+  "scripts/package-smoke-fixtures.mjs",
   "scripts/package-extraction-map.mjs",
 ];
 
@@ -69,6 +71,7 @@ const packageScripts = {
   "check:package-extraction-map": "node scripts/check-package-extraction-map.mjs",
   "check:package-file-install-consumer-smoke":
     "node scripts/check-package-file-install-consumer-smoke.mjs",
+  "check:package-consumer-smoke": "node scripts/check-package-consumer-smoke.mjs",
   "check:package-publish-next": "node scripts/check-package-publish-next.mjs",
   "check:package-registry-smoke": "node scripts/check-package-registry-smoke.mjs",
   "check:package-registry-smoke:config":
@@ -80,7 +83,7 @@ const packageScripts = {
   "check:testing-package": "node scripts/check-testing-package.mjs",
   "check:vue-package": "node scripts/check-vue-package.mjs",
   "check:packages":
-    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run check:package-release-notes && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
+    "npm run check:framework-boundaries && npm run check:package-extraction-map && npm run check:package-release-config && npm run check:package-release-notes && npm run build:packages && npm run check:package-bundle-budget && npm run check:package-tarballs && npm run check:package-publish-next && npm run check:package-consumer-smoke && npm run check:package-file-install-consumer-smoke && npm run check:package-registry-smoke:config && npm run check:core-package && npm run check:compiler-package && npm run check:cvrm-prevent-package && npm run check:dm-care-package && npm run check:copd-care-package && npm run check:vue-package && npm run check:testing-package && npm run check:mutation-pilot",
   "budget:packages": "node scripts/check-package-bundle-budget.mjs",
   "format:check": "oxfmt --check packages/ scripts/",
   lint: "oxlint packages/ scripts/ --deny-warnings",
@@ -397,18 +400,11 @@ jobs:
     name: Publish @beslismodel packages with next tag
     runs-on: ubuntu-latest
     container: public.ecr.aws/docker/library/node:24-bookworm
-    env:
-      GITEA_NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
-      NODE_AUTH_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
-      NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
-      RELEASE_TOKEN: \${{ secrets.RELEASE_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: \${{ secrets.RELEASE_TOKEN }}
-
-      - name: Configure npm auth
+      - name: Validate publish secrets
+        env:
+          NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+          RELEASE_TOKEN: \${{ secrets.RELEASE_TOKEN }}
         run: |
           set -eu
           if [ -z "\${NPM_TOKEN:-}" ]; then
@@ -419,29 +415,17 @@ jobs:
             echo "::error::RELEASE_TOKEN secret is required for package release tag"
             exit 1
           fi
-          mkdir -p "\${RUNNER_TEMP:-/tmp}/beslismodel-npm"
-          NPM_USERCONFIG="\${RUNNER_TEMP:-/tmp}/beslismodel-npm/.npmrc"
-          {
-            echo "@beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/"
-            echo "//git.oranje.wtf/api/packages/martien/npm/:_authToken=\${NPM_TOKEN}"
-            echo "always-auth=true"
-          } > "$NPM_USERCONFIG"
-          echo "npm_config_userconfig=$NPM_USERCONFIG" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: \${{ secrets.RELEASE_TOKEN }}
+          persist-credentials: false
 
       - run: npm ci
       - run: npm run check:packages
 
-      - name: Publish prerelease packages
-        env:
-          BESLISMODEL_PUBLISH_CONFIRM: \${{ github.event.inputs.version }}
-        run: npm run check:package-publish-next -- --publish
-
-      - name: Smoke packages from Gitea npm
-        env:
-          BESLISMODEL_REGISTRY_SMOKE_VERSION: \${{ github.event.inputs.version }}
-        run: npm run check:package-registry-smoke
-
-      - name: Tag package release notes
+      - name: Check package release tag
         run: |
           set -eu
           version="\${{ github.event.inputs.version }}"
@@ -451,13 +435,51 @@ jobs:
             echo "::error::Release notes not found: $notes"
             exit 1
           fi
-          if git ls-remote --tags origin "refs/tags/$tag" | grep -q "$tag"; then
+          if git tag --list "$tag" | grep -q "$tag"; then
             echo "::error::Package release tag already exists: $tag"
             exit 1
           fi
+
+      - name: Configure npm auth
+        env:
+          NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+        run: |
+          set -eu
+          mkdir -p "\${RUNNER_TEMP:-/tmp}/beslismodel-npm"
+          NPM_USERCONFIG="\${RUNNER_TEMP:-/tmp}/beslismodel-npm/.npmrc"
+          {
+            echo "@beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/"
+            echo "//git.oranje.wtf/api/packages/martien/npm/:_authToken=\${NPM_TOKEN}"
+            echo "always-auth=true"
+          } > "$NPM_USERCONFIG"
+          echo "npm_config_userconfig=$NPM_USERCONFIG" >> "$GITHUB_ENV"
+
+      - name: Publish prerelease packages
+        env:
+          GITEA_NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+          NODE_AUTH_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+          NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+          BESLISMODEL_PUBLISH_CONFIRM: \${{ github.event.inputs.version }}
+        run: npm run check:package-publish-next -- --publish
+
+      - name: Smoke packages from Gitea npm
+        env:
+          BESLISMODEL_REGISTRY_SMOKE_VERSION: \${{ github.event.inputs.version }}
+        run: npm run check:package-registry-smoke
+
+      - name: Tag package release notes
+        env:
+          RELEASE_TOKEN: \${{ secrets.RELEASE_TOKEN }}
+        run: |
+          set -eu
+          version="\${{ github.event.inputs.version }}"
+          tag="beslismodel-v$version"
+          notes="docs/package-release-notes-$version.md"
           git config user.name "Gitea Actions"
           git config user.email "actions@git.oranje.wtf"
           git tag -a "$tag" -F "$notes"
+          remote_url="$(git remote get-url origin)"
+          git remote set-url origin "$(printf "%s" "$remote_url" | sed "s#https://#https://x-access-token:\${RELEASE_TOKEN}@#")"
           git push origin "$tag"
 `;
 

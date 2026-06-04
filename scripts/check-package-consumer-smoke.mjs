@@ -12,6 +12,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getFrameworkPackages } from "./package-extraction-map.mjs";
+import { writeBasicFlowFixture, writeUrinestripFixtureFlows } from "./package-smoke-fixtures.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packages = getFrameworkPackages(root);
@@ -26,38 +27,6 @@ const externalDependencies = [
   "vue",
   "vue-router",
 ];
-
-const flowYaml = `
-id: packed-consumer-smoke
-version: "1"
-title: Packed consumer smoke
-category: test
-audience: [tester]
-domain: test
-recommendedStart: true
-metadata:
-  landingSection: primary
-  landingOrder: 1
-questions:
-  answer:
-    text: Answer
-    type: select
-    options:
-      - text: Yes
-        value: yes
-steps:
-  - title: Start
-    questions: [answer]
-results:
-  ok:
-    title: Ok
-    sources:
-      - name: Test source
-        url: https://example.test/source
-logic:
-  - when: ["answer == yes"]
-    show: ok
-`;
 
 const smokeSource = `
 import {
@@ -203,7 +172,7 @@ import {
   useResultResolver,
 } from "@beslismodel/vue";
 
-const manifest = await compileFlowFiles(${JSON.stringify(resolve(root, "flows"))});
+const manifest = await compileFlowFiles(new URL("./urinestrip-flows", import.meta.url).pathname);
 const manifestIds = new Set(manifest.questionnaires.map((questionnaire) => questionnaire.id));
 for (const id of ["strip", "bacteriurie", "leukocyturie", "hematurie"]) {
   if (!manifestIds.has(id)) {
@@ -363,8 +332,12 @@ try {
     join(consumerDir, "package.json"),
     JSON.stringify({ name: "beslismodel-packed-consumer-smoke", type: "module" }, null, 2),
   );
-  mkdirSync(join(consumerDir, "flows"), { recursive: true });
-  writeFileSync(join(consumerDir, "flows", "fixture.yaml"), flowYaml);
+  writeBasicFlowFixture(
+    join(consumerDir, "flows"),
+    "packed-consumer-smoke",
+    "Packed consumer smoke",
+  );
+  writeUrinestripFixtureFlows(join(consumerDir, "urinestrip-flows"));
   writeFileSync(join(consumerDir, "smoke.mjs"), smokeSource);
   writeFileSync(join(consumerDir, "urinestrip-smoke.mjs"), urinestripSmokeSource);
 

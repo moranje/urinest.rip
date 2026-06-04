@@ -1,13 +1,5 @@
 import { execFileSync } from "node:child_process";
-import {
-  cpSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,6 +8,7 @@ import {
   getFrameworkPackageNames,
   getFrameworkPackages,
 } from "./package-extraction-map.mjs";
+import { writeBasicFlowFixture, writeUrinestripFixtureFlows } from "./package-smoke-fixtures.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -32,38 +25,6 @@ const expectedVersions = new Set(packageManifests.map((manifest) => manifest.ver
 const [expectedVersion] = expectedVersions;
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
-
-const flowYaml = `
-id: registry-smoke
-version: "1"
-title: Registry smoke
-category: test
-audience: [tester]
-domain: test
-recommendedStart: true
-metadata:
-  landingSection: primary
-  landingOrder: 1
-questions:
-  answer:
-    text: Answer
-    type: select
-    options:
-      - text: Yes
-        value: yes
-steps:
-  - title: Start
-    questions: [answer]
-results:
-  ok:
-    title: Ok
-    sources:
-      - name: Test source
-        url: https://example.test/source
-logic:
-  - when: ["answer == yes"]
-    show: ok
-`;
 
 const smokeSource = `
 import { readFile } from "node:fs/promises";
@@ -354,7 +315,8 @@ try {
 
   mkdirSync(flowsDir, { recursive: true });
   mkdirSync(publicDir, { recursive: true });
-  cpSync(join(root, "flows"), urinestripFlowsDir, { recursive: true });
+  writeBasicFlowFixture(flowsDir, "registry-smoke", "Registry smoke");
+  writeUrinestripFixtureFlows(urinestripFlowsDir);
 
   const dependencies = Object.fromEntries([
     ...packages.map((name) => [name, version]),
@@ -377,7 +339,6 @@ try {
     ),
   );
   writeFileSync(join(consumerDir, ".npmrc"), `@beslismodel:registry=${registry}\n`);
-  writeFileSync(join(flowsDir, "fixture.yaml"), flowYaml);
   writeFileSync(join(consumerDir, "smoke.mjs"), smokeSource);
 
   execFileSync(

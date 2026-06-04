@@ -387,12 +387,15 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Prerelease metadata en publish-preflight toegevoegd: alle `@beslismodel/*` packages staan op `0.1.0-next.0`, interne package dependencies pinnen dezelfde prerelease en `check:package-publish-next` doet een offline pack-dry-run voor de `next` publicatiestap.
 - [ ] Prerelease-versies publiceren naar lokale Gitea npm met dist-tag `next` voordat `latest` wordt gebruikt.
 - [x] Registry smoke consumer script toegevoegd: `check:package-registry-smoke` installeert packages via Gitea npm in een schone temp-map, compileert een minimale manifest-runner en draait Urinestrip redirect/result checks.
+- [x] Registry smoke is standalone-safe: Urinestrip-checks gebruiken fixture-flows uit `scripts/package-smoke-fixtures.mjs` en leunen niet op app-only `flows/`.
 - [ ] Registry smoke uitvoeren tegen gepubliceerde Gitea prerelease packages met `BESLISMODEL_REGISTRY_SMOKE_VERSION`.
 - [x] Package CI-template in nieuwe repo meenemen via `extract-beslismodel-framework.mjs`: lint, typecheck, tests, package smoke checks, package budget, npm audit en secret scan.
 - [x] Gitea manual publish-workflow in package-repo genereren: `workflow_dispatch` publiceert `next` pas na `check:packages`, gebruikt `NPM_REGISTRY_TOKEN`, draait registry-smoke en tagt daarna `beslismodel-v<version>` met `RELEASE_TOKEN`.
 - [x] Gitea app- en release-workflows draaien `npm run check:framework`, zodat package/extractie regressies niet alleen lokaal of in GitHub CI worden gevangen.
 - [x] Browser-regressiesmoke toegevoegd voor landing-grid 2x3, progressbar zonder misleidende tekst, questionnaire-switch/back en directe result-route zonder loader-hang.
 - [x] Guarded migratiescript toegevoegd: `migrate:registry-deps` zet exacte `@beslismodel/*` registry-dependencies en verwijdert lokale Vite/TS/Vitest package-source aliases zodra de prerelease-versie bestaat.
+- [x] Registry migratie checkt bij `--write` iedere exacte package-versie in Gitea npm, tenzij `--skip-registry-check` expliciet wordt gebruikt voor testfixtures.
+- [x] App/framework gates gesplitst: `check:app` gebruikt app-only tsgo/vitest configs; `check:framework` blijft package checks draaien.
 - [ ] `urinest.rip` package.json omzetten van monorepo source imports naar registry dependencies.
 - [ ] `urinest.rip` Vite/TS aliases verwijderen of beperken tot lokale app-code nadat packages uit registry komen.
 - [x] `urinest.rip` imports controleren: alleen publieke package-exports gebruiken; geen imports uit `packages/*/src`.

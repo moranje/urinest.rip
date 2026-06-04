@@ -169,6 +169,36 @@ if (isPublish && process.env.BESLISMODEL_PUBLISH_CONFIRM !== version) {
 const cacheDir = mkdtempSync(resolve(tmpdir(), "beslismodel-publish-cache-"));
 
 try {
+  const findExistingPublishedPackages = () =>
+    packages.map(({ name }) => {
+      try {
+        const publishedVersion = execFileSync(
+          "npm",
+          [
+            "--cache",
+            cacheDir,
+            "view",
+            `${name}@${version}`,
+            "version",
+            "--registry",
+            expectedPackageRegistry,
+          ],
+          {
+            cwd: root,
+            encoding: "utf8",
+            stdio: ["ignore", "pipe", "pipe"],
+          },
+        ).trim();
+        return { exists: publishedVersion === version, name };
+      } catch (error) {
+        const detail = errorDetail(error);
+        if (/E404|404|not found/i.test(detail)) return { exists: false, name };
+        fail(
+          `Could not verify whether ${name}@${version} already exists in ${expectedPackageRegistry}.\n${detail}`,
+        );
+      }
+    });
+
   const packPackage = ({ dir, name }) => {
     const output = execFileSync(
       "npm",
@@ -195,36 +225,21 @@ try {
   } else {
     await verifyPublishAuth(cacheDir);
 
-    for (const { name } of packages) {
-      try {
-        const publishedVersion = execFileSync(
-          "npm",
-          [
-            "--cache",
-            cacheDir,
-            "view",
-            `${name}@${version}`,
-            "version",
-            "--registry",
-            expectedPackageRegistry,
-          ],
-          {
-            cwd: root,
-            encoding: "utf8",
-            stdio: ["ignore", "pipe", "pipe"],
-          },
-        ).trim();
-        if (publishedVersion === version) {
-          fail(`${name}@${version} already exists in ${expectedPackageRegistry}`);
-        }
-      } catch (error) {
-        const detail = errorDetail(error);
-        if (!/E404|404|not found/i.test(detail)) {
-          fail(
-            `Could not verify whether ${name}@${version} already exists in ${expectedPackageRegistry}.\n${detail}`,
-          );
-        }
-      }
+    const existingPackages = findExistingPublishedPackages();
+    const alreadyPublished = existingPackages.filter((item) => item.exists);
+    if (alreadyPublished.length === packages.length) {
+      console.log(
+        `All @beslismodel packages ${version} already exist in ${expectedPackageRegistry}; publish step skipped`,
+      );
+      process.exit(0);
+    }
+    if (alreadyPublished.length > 0) {
+      fail(
+        [
+          `Refusing partial publish for ${version}; registry already contains:`,
+          ...alreadyPublished.map((item) => `- ${item.name}@${version}`),
+        ].join("\n"),
+      );
     }
 
     for (const { dir, name } of packages) {
