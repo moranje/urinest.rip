@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { breadcrumbApi, breadcrumbNav, clearBreadcrumbs, getBreadcrumbs } from "../breadcrumbs";
-import { hashForTelemetry, sanitizeRouteForTelemetry } from "../telemetry-privacy";
+import {
+  hashForTelemetry,
+  sanitizeRouteForTelemetry,
+  sanitizeTelemetryContext,
+} from "../telemetry-privacy";
 
 describe("telemetry privacy", () => {
   beforeEach(() => {
@@ -36,5 +40,32 @@ describe("telemetry privacy", () => {
     expect(serialized).not.toContain("secret");
     expect(serialized).toContain("/questionnaire/questionnaire_");
     expect(serialized).toContain("/info/info_");
+  });
+
+  it("hashes raw clinical context identifiers and keeps flow trail", () => {
+    const sanitized = sanitizeTelemetryContext({
+      answeredQuestionIds: ["q_bac_risk", "q_bac_tissue"],
+      outcome: "result:uti.local.pregnant.0",
+      questionnaireId: "bacteriurie",
+      redirectChain: ["strip", "bacteriurie"],
+      resultKey: "uti.local.pregnant.0",
+      role: "behandelaar",
+      flow_trail: [{ flowId: "flow_12345678", questionId: "question_12345678" }],
+    });
+    const serialized = JSON.stringify(sanitized);
+
+    expect(sanitized).toMatchObject({
+      answered_question_count: 2,
+      role: "behandelaar",
+    });
+    expect(serialized).toContain("questionnaire_hash");
+    expect(serialized).toContain("result_hash");
+    expect(serialized).toContain("redirect_chain_hashes");
+    expect(serialized).toContain("flow_trail");
+    expect(serialized).not.toContain("questionnaireId");
+    expect(serialized).not.toContain("answeredQuestionIds");
+    expect(serialized).not.toContain("q_bac");
+    expect(serialized).not.toContain("uti.local.pregnant.0");
+    expect(serialized).not.toContain("bacteriurie");
   });
 });

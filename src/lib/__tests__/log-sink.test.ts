@@ -123,8 +123,42 @@ describe("log-sink", () => {
     expect(payload?.message).toContain("***SCRUBBED-EMAIL***");
     expect(payload?.message).toContain("***SCRUBBED-BSN***");
     expect(payload?.detail.devDetail).toContain("Bearer ***SCRUBBED-TOKEN***");
-    expect(payload?.context.tokenUrl).toContain("access_token=***SCRUBBED-TOKEN***");
+    expect(JSON.stringify(payload?.context.tokenUrl)).not.toContain("secret-token");
     expect(Number(payload?.context.scrub_hits_total)).toBeGreaterThanOrEqual(6);
+  });
+
+  it("hashes raw clinical context identifiers before persistence", async () => {
+    rpcMock.mockResolvedValue({ error: null });
+
+    persistError({
+      context: "test:clinical-context",
+      errorClass: "Error",
+      extraContext: {
+        answeredQuestionIds: ["q_bac_risk", "q_bac_tissue"],
+        outcome: "result:uti.local.pregnant.0",
+        questionnaireId: "bacteriurie",
+        redirectChain: ["strip", "bacteriurie"],
+        resultKey: "uti.local.pregnant.0",
+        role: "behandelaar",
+      },
+      level: "error",
+      userMessage: "Er ging iets mis.",
+    });
+    await flushLogs();
+
+    const payload = rpcMock.mock.calls[0]?.[1]?.p_logs?.[0] as
+      | { context: Record<string, unknown> }
+      | undefined;
+    const serialized = JSON.stringify(payload?.context);
+    expect(serialized).toContain("questionnaire_hash");
+    expect(serialized).toContain("answered_question_count");
+    expect(serialized).toContain("result_hash");
+    expect(serialized).toContain("redirect_chain_hashes");
+    expect(serialized).not.toContain("questionnaireId");
+    expect(serialized).not.toContain("answeredQuestionIds");
+    expect(serialized).not.toContain("q_bac");
+    expect(serialized).not.toContain("uti.local.pregnant.0");
+    expect(serialized).not.toContain("bacteriurie");
   });
 
   it("sets a circuit-breaker flag after repeated transient failures", async () => {
@@ -227,6 +261,8 @@ describe("log-sink", () => {
     expect(serialized).toContain("flow_trail");
     expect(serialized).toContain("flow_");
     expect(serialized).toContain("question_");
+    expect(serialized).not.toContain("flowId");
+    expect(serialized).not.toContain("questionId");
     expect(serialized).not.toContain("bacteriurie");
     expect(serialized).not.toContain("q1-o2");
   });

@@ -17,7 +17,11 @@ import { getErrorContext, parseSourceLocation } from "./error-context";
 import { getFlowTrail } from "./flow-trail";
 import { scrubValue } from "./scrub";
 import { readStorage, removeStorage, writeStorage } from "./storage";
-import { hashForTelemetry, sanitizeRouteForTelemetry } from "./telemetry-privacy";
+import {
+  hashForTelemetry,
+  sanitizeRouteForTelemetry,
+  sanitizeTelemetryContext,
+} from "./telemetry-privacy";
 
 const log = createLogger("log-sink");
 
@@ -258,24 +262,23 @@ export function persistError(input: PersistErrorInput): void {
   const flowTrail = getFlowTrail();
   const fingerprint = computeFingerprint(input);
   const source = parseSourceLocation(input.stack);
-  const safeMessage = scrubValue(input.userMessage).value;
-  const safeDetail = scrubValue({
+  const messageScrub = scrubValue(input.userMessage);
+  const detailScrub = scrubValue({
     devDetail: input.devDetail,
     errorClass: input.errorClass,
     stack: input.stack,
     sourceLocation: source,
     breadcrumbs,
-  }).value;
-  const safeContext = scrubValue({
+  });
+  const contextScrub = scrubValue({
     ...(errorContext ? { ...errorContext } : {}),
     ...(flowTrail.length > 0 ? { flow_trail: flowTrail } : {}),
     ...input.extraContext,
-  }).value;
-  const scrubHits =
-    scrubValue(input.userMessage).stats.hits +
-    scrubValue(input.devDetail ?? "").stats.hits +
-    scrubValue(input.stack ?? "").stats.hits +
-    scrubValue(input.extraContext ?? {}).stats.hits;
+  });
+  const safeMessage = messageScrub.value;
+  const safeDetail = sanitizeTelemetryContext(detailScrub.value);
+  const safeContext = sanitizeTelemetryContext(contextScrub.value);
+  const scrubHits = messageScrub.stats.hits + detailScrub.stats.hits + contextScrub.stats.hits;
 
   const entry: BufferedEntry = {
     level: input.level,
@@ -304,10 +307,11 @@ export function persistTelemetry(input: PersistTelemetryInput): void {
   if (breakerTripped || persistenceDisabledReason) return;
 
   const errorContext = getErrorContext();
-  const safeContext = scrubValue({
+  const contextScrub = scrubValue({
     ...(errorContext ? { ...errorContext } : {}),
     ...input.context,
-  }).value;
+  });
+  const safeContext = sanitizeTelemetryContext(contextScrub.value);
   const safeMessage = scrubValue(input.message).value;
 
   if (buffer.length >= MAX_BUFFER) buffer.shift();

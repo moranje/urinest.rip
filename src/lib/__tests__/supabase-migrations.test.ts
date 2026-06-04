@@ -32,6 +32,10 @@ describe("Supabase security migrations", () => {
     expect(migration).toContain("if octet_length(v_entry::text) > 32768 then");
     expect(migration).toContain("if v_source <> 'urinestrip' then");
     expect(migration).toContain("if v_limit.event_count > 120 then");
+    expect(migration).toContain("raw clinical telemetry keys");
+    expect(migration).toContain("unsanitized sensitive telemetry data");
+    expect(migration).toContain("questionnaireId|answeredQuestionIds|resultKey");
+    expect(migration).toContain("access_token|refresh_token|apikey|anon_key|token|key");
     expect(migration).toContain(
       "grant execute on function insert_app_logs(jsonb) to anon, authenticated",
     );

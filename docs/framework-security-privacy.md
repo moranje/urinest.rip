@@ -159,6 +159,8 @@ Eisen voor consumer apps:
 - [x] Framework packages bevatten geen Supabase/admin/storage hardcoding (`npm run check:framework-boundaries`).
 - [x] Telemetry adapter is no-op zonder consumer config (`packages/vue/src/telemetry.ts`, `npm run check:vue-package`).
 - [x] No-PHI telemetry contract is getest (`telemetry-privacy`, `log-sink`, `error-matrix`).
+- [x] Telemetry context hasht/dropt raw clinical identifiers voordat Supabase persistence draait (`sanitizeTelemetryContext`, `log-sink`).
+- [x] Anon log-ingest RPC weigert raw clinical telemetry keys en token/PHI patronen server-side (`007_harden_log_access.sql`).
 - [x] No-PHI storage contract is getest (`storage`, `redirect-trail`, package boundary checks).
 - [x] CSP headers zijn enforcing en getest (`security-headers`).
 - [x] Source maps worden prive geupload en uit deploy artifact verwijderd (`.github/workflows/ci.yml`).

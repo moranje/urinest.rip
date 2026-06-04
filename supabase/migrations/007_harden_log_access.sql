@@ -84,6 +84,7 @@ declare
   v_message text;
   v_source text;
   v_fingerprint text;
+  v_entry_text text;
 begin
   if p_logs is null or jsonb_typeof(p_logs) <> 'array' then
     raise exception 'p_logs must be a json array' using errcode = '22023';
@@ -138,6 +139,14 @@ begin
     end if;
     if octet_length(v_entry::text) > 32768 then
       raise exception 'log entry too large' using errcode = '22023';
+    end if;
+    v_entry_text := v_entry::text;
+
+    if v_entry_text ~* '"(questionnaireId|answeredQuestionIds|resultKey|availableKeys|redirectChain|outcome|flowId|stepId|questionId|targetFlowId|resultId)"\s*:' then
+      raise exception 'log entry contains raw clinical telemetry keys' using errcode = '22023';
+    end if;
+    if v_entry_text ~* '([[:alnum:]_.%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,}|eyJ[[:alnum:]_-]+\.[[:alnum:]_-]+\.[[:alnum:]_-]+|[?&](access_token|refresh_token|apikey|anon_key|token|key)=|Bearer[[:space:]]+[[:alnum:]._~+/=-]+|\m[0-9]{9}\M)' then
+      raise exception 'log entry contains unsanitized sensitive telemetry data' using errcode = '22023';
     end if;
 
     v_level := v_entry ->> 'level';

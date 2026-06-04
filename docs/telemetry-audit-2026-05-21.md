@@ -19,34 +19,35 @@ Alle nog relevante telemetrypunten zijn verwerkt:
 
 ## 0. Scope-check
 
-| Aspect | Waarde | Trigger | Bewijs |
-|--------|--------|---------|--------|
-| `@oranje/telemetry` in `package.json` | **0** | informatief | grep `package.json` |
-| `console.*` in `src/` (excl. tests) | **3** | hygiëne | identiek aan 05-15 — niet opgelost |
-| `fetch(` calls | 1 | ≥1 → ja | `store/questionnaireStore.ts:143` (`/main.json`) |
-| `supabase.` calls | 7 | ≥1 → ja | `authStore.ts:24,27,38,50`; `logStore.ts:66,91`; `lib/log-sink.ts` |
-| `try` blokken | 20 | ≈ async-call-count | OK |
-| `handleError(` aanroepen | 12 (was 10) | +2 sinds 05-15 | App.vue, main.ts (2), errors.ts decl |
-| `breadcrumb*` aanroepen | 30 (was 29) | groei | informatief |
-| Empty catches | 0 | 0 | ✓ |
-| Vue `app.config.errorHandler` + `unhandledrejection` | 1 + 1 | ✓ | `src/main.ts:14-22` |
-| `decision-engine-core` | aanwezig (`node_modules/decision-engine-core`) | informatief | tarball-plugin |
-| YAML-flows | 8 | informatief | `flows/*.yaml` |
-| Bestaande telemetry-stack | **maatwerk volledig**: `logger.ts` (6.1k) + `errors.ts` (6.3k) + `error-context.ts` (3.6k) + `breadcrumbs.ts` (1.7k) + `log-sink.ts` (7.5k) | informatief | `src/lib/` |
-| Scrubber-tests (BSN/email/JWT) | **8 fixtures** | ≥1 | ✓ — `src/lib/__tests__/scrub.test.ts` |
-| Sourcemap upload | ja | ✓ | sinds `0d15a74` |
-| Commits sinds 05-15 | **20** | + activiteit | zie git log onder |
+| Aspect                                               | Waarde                                                                                                                                      | Trigger            | Bewijs                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
+| `@oranje/telemetry` in `package.json`                | **0**                                                                                                                                       | informatief        | grep `package.json`                                                |
+| `console.*` in `src/` (excl. tests)                  | **3**                                                                                                                                       | hygiëne            | identiek aan 05-15 — niet opgelost                                 |
+| `fetch(` calls                                       | 1                                                                                                                                           | ≥1 → ja            | `store/questionnaireStore.ts:143` (`/main.json`)                   |
+| `supabase.` calls                                    | 7                                                                                                                                           | ≥1 → ja            | `authStore.ts:24,27,38,50`; `logStore.ts:66,91`; `lib/log-sink.ts` |
+| `try` blokken                                        | 20                                                                                                                                          | ≈ async-call-count | OK                                                                 |
+| `handleError(` aanroepen                             | 12 (was 10)                                                                                                                                 | +2 sinds 05-15     | App.vue, main.ts (2), errors.ts decl                               |
+| `breadcrumb*` aanroepen                              | 30 (was 29)                                                                                                                                 | groei              | informatief                                                        |
+| Empty catches                                        | 0                                                                                                                                           | 0                  | ✓                                                                  |
+| Vue `app.config.errorHandler` + `unhandledrejection` | 1 + 1                                                                                                                                       | ✓                  | `src/main.ts:14-22`                                                |
+| `decision-engine-core`                               | aanwezig (`node_modules/decision-engine-core`)                                                                                              | informatief        | tarball-plugin                                                     |
+| YAML-flows                                           | 8                                                                                                                                           | informatief        | `flows/*.yaml`                                                     |
+| Bestaande telemetry-stack                            | **maatwerk volledig**: `logger.ts` (6.1k) + `errors.ts` (6.3k) + `error-context.ts` (3.6k) + `breadcrumbs.ts` (1.7k) + `log-sink.ts` (7.5k) | informatief        | `src/lib/`                                                         |
+| Scrubber-tests (BSN/email/JWT)                       | **8 fixtures**                                                                                                                              | ≥1                 | ✓ — `src/lib/__tests__/scrub.test.ts`                              |
+| Sourcemap upload                                     | ja                                                                                                                                          | ✓                  | sinds `0d15a74`                                                    |
+| Commits sinds 05-15                                  | **20**                                                                                                                                      | + activiteit       | zie git log onder                                                  |
 
 ### Activiteit sinds 2026-05-15 (20 commits)
 
 Kern-changes relevant voor telemetry:
+
 - `d9e6dbe fix(log-sink): classify permanent errors, beacon on unload, drop double-write`
   - Permanent-error klassificatie (auth/RLS/schema) trip de circuit-breaker direct → **lost console-spam op tegen unauthenticated session**.
   - `navigator.sendBeacon` op `pagehide`/`visibilitychange` ipv `beforeunload` → iOS Safari betrouwbaarder.
   - Verwijdert `addLogSink` callback die `log.error` mirrorde naar `persistError` → **lost double-write bug op** (rijen in `app_logs` waren dubbel met armere context).
   - Buffer-cap op `MAX_BUFFER` met FIFO-drop → geen unbounded memory groei.
 
-Niet-telemetry: Storybook setup, design-tokens showcase, a11y-hardening (DSN-* dimensies), offline-banner, view-transition fixes.
+Niet-telemetry: Storybook setup, design-tokens showcase, a11y-hardening (DSN-\* dimensies), offline-banner, view-transition fixes.
 
 ## 1. Verdict
 
@@ -58,11 +59,11 @@ De delta sinds 05-15 (commit `d9e6dbe`) is precies de soort verfijning die `@ora
 
 **Status SPEC's vorige audit:**
 
-| SPEC | Status 05-15 | Status 05-21 | Δ |
-|------|--------------|--------------|---|
-| U01 — Scrubber + tests | kritiek opgelost | **DONE 2026-06-01** | `scrub.ts`, breadcrumbs/log-sink hooks, 8 fixtures |
-| U02 — Decision-engine flow-step trail | gereconcilieerd | **DONE 2026-06-01** | app-level `flow_trail` buffer records flow-start/step/redirect/result with whitelisted ids; persisted in error context |
-| U03 — 3× console.error → handleError | gereconcilieerd | **DONE 2026-06-01** | 0 `console.*` outside `src/lib/logger.ts`; `no-console` lint gate active |
+| SPEC                                  | Status 05-15     | Status 05-21        | Δ                                                                                                                      |
+| ------------------------------------- | ---------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| U01 — Scrubber + tests                | kritiek opgelost | **DONE 2026-06-01** | `scrub.ts`, breadcrumbs/log-sink hooks, 8 fixtures                                                                     |
+| U02 — Decision-engine flow-step trail | gereconcilieerd  | **DONE 2026-06-01** | app-level `flow_trail` buffer records flow-start/step/redirect/result with whitelisted ids; persisted in error context |
+| U03 — 3× console.error → handleError  | gereconcilieerd  | **DONE 2026-06-01** | 0 `console.*` outside `src/lib/logger.ts`; `no-console` lint gate active                                               |
 
 ## 2. SPEC-U01-v2026-05-21 — Scrubber + tests (kritisch, opgelost 2026-06-01)
 
@@ -115,11 +116,10 @@ De delta sinds 05-15 (commit `d9e6dbe`) is precies de soort verfijning die `@ora
   - `src/views/QuestionnairePage.vue:308` — `console.error("Error loading questionnaire data", err)` → `handleError(err, 'questionnaire-page:load')` (en kanselleer dubbele logging-pad — store gooit al via U03-stap-1).
   - `src/views/ResultPage.vue:234` — multi-line context-rijk `console.error` met `availableKeys`, `questionnaires`. Vervang door:
     ```ts
-    handleError(
-      new Error(`Result key not found: ${key}`),
-      'result-page:key-not-found',
-      { availableKeys, questionnaires }
-    );
+    handleError(new Error(`Result key not found: ${key}`), "result-page:key-not-found", {
+      availableKeys,
+      questionnaires,
+    });
     ```
   - **Pas op:** `ResultPage:234` heeft diagnostische context die niet weg mag — zorg dat `handleError` 3e-argument (extra context) wordt doorgegeven aan `persistError → app_logs.context`.
 - **Stappen:**
@@ -131,11 +131,13 @@ De delta sinds 05-15 (commit `d9e6dbe`) is precies de soort verfijning die `@ora
 ## 5. Aanvullende observatie 05-21 — log-sink resilience
 
 De `d9e6dbe` commit is kwalitatief sterk en illustreert **waarom maatwerk-stack voortzetten zinvol is**:
+
 - Permanent-vs-transient klassificatie is domein-specifiek (Supabase-auth/RLS) — een generieke `@oranje/telemetry` zou dit niet automatisch hebben.
 - `sendBeacon` op `pagehide`/`visibilitychange` is de moderne best-practice (2025+) — `beforeunload` is op iOS Safari onbetrouwbaar.
 - Verwijderen van `addLogSink` mirror-callback toont dat het systeem **geconsolideerd** wordt, niet gefragmenteerd. Adoptie van externe lib zou nu juist nieuwe fragmentatie introduceren.
 
 Wel wenselijk:
+
 - **Test-coverage `log-sink.ts`** — 7.5k regels code, `MAX_BUFFER`-cap en circuit-breaker logic verdienen unit-tests. Niet aangetroffen in `__tests__/`. Voeg toe in zelfde slot als SPEC-U01 scrubber-tests.
 
 ## 6. Anti-Verschraling Checklist
@@ -168,3 +170,5 @@ Wel wenselijk:
 - [x] Aanvullend — flow/result breadcrumbs toegevoegd met whitelisted ids en rol, zonder antwoordwaarden.
 - [x] U02 — `src/lib/flow-trail.ts` toegevoegd; `persistError()` schrijft actieve trail naar `app_logs.context.flow_trail`.
 - [x] U02 — `QuestionnairePage.vue` logt `flow-start`, `flow-step`, `flow-redirect` en `flow-result` via app-level hooks omdat de tarball geen `onStep` export biedt.
+- [x] U02 — `sanitizeTelemetryContext()` hasht/dropt raw `*Id`, `*Ids`, `*Key`, `outcome` en `redirectChain` context voordat logs naar Supabase gaan.
+- [x] U02 — `insert_app_logs` weigert raw klinische telemetry-keys en token/PHI-patronen server-side, zodat anon RPC niet alleen op client-scrubbing vertrouwt.
