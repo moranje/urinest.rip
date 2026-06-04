@@ -11,6 +11,9 @@ const claudeInstructions = readFileSync(resolve("CLAUDE.md"), "utf8");
 const releaseStrategy = readFileSync(resolve("docs/package-release-strategy.md"), "utf8");
 const agentInstructions = readFileSync(resolve("AGENTS.md"), "utf8");
 const gitignore = readFileSync(resolve(".gitignore"), "utf8");
+const envExample = readFileSync(resolve(".env.example"), "utf8");
+const appConfigSource = readFileSync(resolve("src/config/app-config.ts"), "utf8");
+const telemetryDocs = readFileSync(resolve("docs/telemetry.md"), "utf8");
 const lighthouseConfig = readFileSync(resolve("lighthouserc.cjs"), "utf8");
 const storybookMain = readFileSync(resolve(".storybook/main.ts"), "utf8");
 const storybookPreview = readFileSync(resolve(".storybook/preview.ts"), "utf8");
@@ -220,6 +223,12 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:app"]).toContain("build");
     expect(packageJson.scripts["check:app"]).not.toContain("build:packages");
     expect(packageJson.scripts["check:app"]).not.toContain("check:packages");
+    expect(envExample).toContain("VITE_TELEMETRY_SOURCE=urinestrip");
+    expect(envExample).toContain("VITE_ENABLE_LOG_PERSISTENCE=false");
+    expect(appConfigSource).toContain("VITE_TELEMETRY_SOURCE");
+    expect(appConfigSource).toContain("resolveTelemetrySource");
+    expect(telemetryDocs).toContain("VITE_TELEMETRY_SOURCE");
+    expect(telemetryDocs).toContain("consumer apps");
     expect(packageJson.scripts["check:framework"]).toBe("npm run check:packages");
     expect(packageJson.scripts["check:consumer-imports"]).toBe(
       "node scripts/check-consumer-package-imports.mjs",

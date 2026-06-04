@@ -30,7 +30,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 | Compiler/schema   |  2.5/5 |  4.9/5 | Build errors worden geslikt; random rule IDs; type drift                                 |
 | UI/UX framework   |  3.0/5 |  4.8/5 | Grote page-scoped organisms; legacy `.md-*`; atomic laag incompleet                      |
 | Design tokens     |  4.6/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export + CI-bewaakt design-tool distributiecontract; component-token export blijft beperkt |
-| Telemetry         |  3.7/5 |  4.8/5 | Hard-coded source/app keys; package-adapter ontbreekt                                    |
+| Telemetry         |  4.7/5 |  4.8/5 | Framework-adapter, no-op package-adapter, scrubbed flow trail en consumer-owned `VITE_TELEMETRY_SOURCE`; overgebleven scoregap is externe backend observability |
 | Security/privacy  |  4.0/5 |  4.8/5 | Scrubbing aanwezig, package threat model en consumer policy ontbreken                    |
 | Testing           |  4.0/5 |  4.9/5 | Goede flowtests, geen package contract/consumer/e2e visual suite                         |
 | Performance       |  4.0/5 |  4.8/5 | Supabase/admin/logging scheiding en package bundle budgets ontbreken                     |
@@ -47,6 +47,7 @@ Framework moet flow-data kunnen wisselen zonder UI/UX, runtime, telemetry, testi
 - [x] Breaker flag bij reload lezen en persistence disabled houden.
 - [x] Auth refresh failure: sign out, refresh loop stoppen, redirect naar login.
 - [x] `VITE_ENABLE_LOG_PERSISTENCE` typen en documenteren.
+- [x] `VITE_TELEMETRY_SOURCE` configureerbaar gemaakt voor consumer apps, met `urinestrip` als veilige fallback.
 - [x] `npm audit --omit=dev --audit-level=high` hard laten falen.
 - [x] CSP/HSTS/Permissions-Policy uitbreiden in `public/_headers`.
 
@@ -241,6 +242,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Framework telemetry adapter interface.
 - [x] App-specific source/config injecteerbaar.
 - [x] No-op telemetry adapter voor packages.
+- [x] Consumer-owned telemetry source via `VITE_TELEMETRY_SOURCE`, zodat `huisarts.land`, CVRM, COPD, DM en andere beslismodellen niet de Urinestrip source hoeven te hergebruiken.
 - [x] Supabase adapter apart package/app-only houden.
 - [x] Error classification delen tussen app en package.
 - [x] Breadcrumb model typed maken.

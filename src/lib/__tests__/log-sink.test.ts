@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { appConfig } from "../../config/app-config";
 import { clearBreadcrumbs } from "../breadcrumbs";
 import { clearFlowTrail, recordFlowStep } from "../flow-trail";
 import {
@@ -78,7 +79,7 @@ describe("log-sink", () => {
           module: "questionnaire-store",
           message: "flow.versions",
           session_id: expect.stringMatching(/^session_[a-f0-9]{8}$/),
-          source: "urinestrip",
+          source: appConfig.telemetrySource,
         }),
       ],
     });

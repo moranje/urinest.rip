@@ -45,6 +45,18 @@ export interface AppConfig {
   };
 }
 
+const DEFAULT_TELEMETRY_SOURCE = "urinestrip";
+const TELEMETRY_SOURCE_PATTERN = /^[a-z0-9][a-z0-9._-]{1,62}[a-z0-9]$/u;
+
+export function resolveTelemetrySource(
+  value = import.meta.env.VITE_TELEMETRY_SOURCE as string | undefined,
+): string {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized) return DEFAULT_TELEMETRY_SOURCE;
+  if (!TELEMETRY_SOURCE_PATTERN.test(normalized)) return DEFAULT_TELEMETRY_SOURCE;
+  return normalized;
+}
+
 export const appConfig: AppConfig = {
   errorMessages: {
     auth: {
@@ -83,7 +95,7 @@ export const appConfig: AppConfig = {
     unknown: "Er ging iets mis. Probeer het opnieuw.",
   },
   manifestUrl: "/main.json",
-  telemetrySource: "urinestrip",
+  telemetrySource: resolveTelemetrySource(),
   storage: {
     answersKey: "urinest-questionnaire-answers",
     answersTtlMs: 8 * 60 * 60 * 1000,

@@ -28,7 +28,9 @@ pipeline heeft:
 
 ## Sink en observability
 
-- `source = 'urinestrip'` is de discriminator voor gedeelde Supabase-logtabellen.
+- `VITE_TELEMETRY_SOURCE` bepaalt de discriminator voor gedeelde Supabase-logtabellen.
+  Default is `urinestrip`; consumer apps kunnen bijvoorbeeld `huisarts.land`,
+  `cvrm-prevent` of `poh.dm-care` gebruiken zonder frameworkcode aan te passen.
 - De sink heeft een circuit breaker; bij herhaalde failures wordt `localStorage.log_sink_down` gezet.
 - Als de circuit breaker gezet is, blijft persistence na reload uit tot de flag wordt gewist.
 - In dev staat Supabase-persistence standaard uit; zet `VITE_ENABLE_LOG_PERSISTENCE=true` om lokaal echt naar `app_logs` te schrijven.
