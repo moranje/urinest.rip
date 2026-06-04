@@ -80,6 +80,17 @@ async function createMigrationFixture() {
     ),
   );
   await writeFile(
+    join(dir, "tsconfig.tsgo.json"),
+    JSON.stringify(
+      {
+        extends: "./tsconfig.json",
+        include: ["src/**/*.ts", "packages/**/*.ts"],
+      },
+      null,
+      2,
+    ),
+  );
+  await writeFile(
     join(dir, "vite.config.js"),
     `export default {
   resolve: {
@@ -125,6 +136,7 @@ describe("beslismodel registry migration", () => {
     expect(plan.filter((item) => item.changed).map((item) => item.path)).toEqual([
       "package.json",
       "tsconfig.json",
+      "tsconfig.tsgo.json",
       "vite.config.js",
       "vitest.config.ts",
     ]);
@@ -134,9 +146,17 @@ describe("beslismodel registry migration", () => {
   it("writes exact registry deps and removes local package source aliases", async () => {
     const root = await createMigrationFixture();
 
-    expect(applyRegistryMigration({ root, version: "0.1.0-next.0", write: true }).sort()).toEqual([
+    expect(
+      applyRegistryMigration({
+        root,
+        skipRegistryCheck: true,
+        version: "0.1.0-next.0",
+        write: true,
+      }).sort(),
+    ).toEqual([
       "package.json",
       "tsconfig.json",
+      "tsconfig.tsgo.json",
       "vite.config.js",
       "vitest.config.ts",
     ]);
@@ -148,8 +168,14 @@ describe("beslismodel registry migration", () => {
     expect(manifest.devDependencies["@beslismodel/testing"]).toBe("0.1.0-next.0");
 
     expect(await readFile(join(root, "tsconfig.json"), "utf8")).not.toContain("packages/**/*.ts");
+    expect(await readFile(join(root, "tsconfig.tsgo.json"), "utf8")).not.toContain(
+      "packages/**/*.ts",
+    );
     expect(await readFile(join(root, "vite.config.js"), "utf8")).not.toContain("@beslismodel/");
     expect(await readFile(join(root, "vitest.config.ts"), "utf8")).not.toContain("@beslismodel/");
+    expect(await readFile(join(root, "vitest.config.ts"), "utf8")).not.toContain(
+      "packages/**/*.test.ts",
+    );
   });
 
   it("requires an exact version", async () => {

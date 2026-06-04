@@ -60,6 +60,15 @@ jobs:
       - name: Framework package checks
         run: npm run check:framework
 
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Browser regression smoke
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: npm run check:browser-smoke
+
       - name: Security — package release config
         run: npm run check:package-release-config
         env:

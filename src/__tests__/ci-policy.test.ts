@@ -251,6 +251,10 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:guidelines"]).toContain("build:flows");
     expect(packageJson.scripts["check:guidelines"]).toContain("check:guideline-traceability");
     expect(packageJson.scripts["check:guidelines"]).toContain("check:clinical-copy");
+    expect(packageJson.scripts["check:app"]).toContain("check:tsgo:app");
+    expect(packageJson.scripts["check:app"]).toContain("test:app");
+    expect(packageJson.scripts["check:app"]).not.toContain("npm run check:tsgo && npm run test");
+    expect(packageJson.scripts["check:framework"]).toContain("check:packages");
     expect(packageReleaseConfigScript).toContain("Project .npmrc contains auth material");
     expect(packageReleaseConfigScript).not.toContain("console.warn");
     expect(packageExtractionMapScript).toContain("publicExportSha256");
@@ -270,6 +274,12 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       "scripts/package-extraction-map.mjs",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "scripts/package-smoke-fixtures.mjs",
+    );
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "check:package-consumer-smoke",
     );
     expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
       ".gitea/workflows/ci.yaml",
@@ -327,6 +337,24 @@ describe("CI policy", () => {
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "already exists",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "publish step skipped",
+    );
+    expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
+      "Refusing partial publish",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "writeUrinestripFixtureFlows",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).not.toContain(
+      'join(root, "flows")',
+    );
+    expect(readFileSync(resolve("scripts/migrate-to-beslismodel-registry.mjs"), "utf8")).toContain(
+      "Registry migration --write requires published package",
+    );
+    expect(readFileSync(resolve("scripts/migrate-to-beslismodel-registry.mjs"), "utf8")).toContain(
+      "tsconfig.tsgo.json",
     );
     expect(readFileSync(resolve("scripts/check-bundle-budget.mjs"), "utf8")).toContain(
       "appBundleBudgets",
@@ -478,6 +506,8 @@ describe("CI policy", () => {
     expect(giteaCiWorkflow).toContain('scopes: "@oranje,@xenia,@beslismodel"');
     expect(giteaCiWorkflow).toContain("npm run check:app");
     expect(giteaCiWorkflow).toContain("npm run check:framework");
+    expect(giteaCiWorkflow).toContain("browser-actions/setup-chrome@v1");
+    expect(giteaCiWorkflow).toContain("npm run check:browser-smoke");
     expect(giteaCiWorkflow).toContain("npm run check:package-release-config");
 
     expect(giteaReleaseWorkflow).toContain(
@@ -492,6 +522,8 @@ describe("CI policy", () => {
     expect(giteaReleaseWorkflow).toContain("app-name: urinest.rip");
     expect(giteaReleaseWorkflow).toContain("release-version: ${{ needs.version.outputs.value }}");
     expect(giteaReleaseWorkflow).toContain("npm run check:framework");
+    expect(giteaReleaseWorkflow).toContain("browser-actions/setup-chrome@v1");
+    expect(giteaReleaseWorkflow).toContain("npm run check:browser-smoke");
     expect(giteaReleaseWorkflow).toContain("nwtgck/actions-netlify@v3");
     expect(giteaReleaseWorkflow).not.toContain("npm publish");
   });

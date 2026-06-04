@@ -1,7 +1,8 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { getFrameworkPackageNames } from "./package-extraction-map.mjs";
+import { expectedPackageRegistry, getFrameworkPackageNames } from "./package-extraction-map.mjs";
 
 const runtimePackageNames = new Set(["@beslismodel/core", "@beslismodel/vue"]);
 const packageSourcePathPattern = /^\.\/packages\/[^/]+\/src\/index\.ts$/u;
@@ -18,6 +19,7 @@ function parseArgs(args = process.argv.slice(2), env = process.env) {
 
   return {
     root: resolve(rootIndex >= 0 && args[rootIndex + 1] ? args[rootIndex + 1] : "."),
+    skipRegistryCheck: args.includes("--skip-registry-check"),
     version,
     write: args.includes("--write"),
   };
@@ -71,6 +73,38 @@ function migrateTsconfig(source, packageNames) {
   return `${JSON.stringify(config, null, 2)}\n`;
 }
 
+function errorDetail(error) {
+  return [error?.stdout, error?.stderr, error?.message]
+    .map((value) => String(value ?? "").trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+function assertRegistryPackagesExist({ packageNames, registry, root, version }) {
+  for (const packageName of packageNames) {
+    try {
+      const publishedVersion = execFileSync(
+        "npm",
+        ["view", `${packageName}@${version}`, "version", "--registry", registry],
+        {
+          cwd: root,
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "pipe"],
+        },
+      ).trim();
+      if (publishedVersion !== version) {
+        throw new Error(
+          `${packageName}@${version} resolved to ${publishedVersion || "empty version"}`,
+        );
+      }
+    } catch (error) {
+      throw new Error(
+        `Registry migration --write requires published package ${packageName}@${version} in ${registry}.\n${errorDetail(error)}`,
+      );
+    }
+  }
+}
+
 function removePackageAliasEntries(source, packageNames) {
   const names = packageNames.map((name) => name.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")).join("|");
   const aliasLinePattern = new RegExp(
@@ -91,7 +125,9 @@ function migrateViteConfig(source, packageNames) {
 }
 
 function migrateVitestConfig(source, packageNames) {
-  return removeEmptyResolveAliasBlock(removePackageAliasEntries(source, packageNames));
+  return removeEmptyResolveAliasBlock(removePackageAliasEntries(source, packageNames))
+    .replace(/,\s*"packages\/\*\*\/\*\.test\.ts"/gu, "")
+    .replace(/"packages\/\*\*\/\*\.test\.ts",\s*/gu, "");
 }
 
 export function buildRegistryMigrationPlan(root, version) {
@@ -107,6 +143,10 @@ export function buildRegistryMigrationPlan(root, version) {
       migrate: (source) => migrateTsconfig(source, packageNames),
     },
     {
+      path: "tsconfig.tsgo.json",
+      migrate: (source) => migrateTsconfig(source, packageNames),
+    },
+    {
       path: "vite.config.js",
       migrate: (source) => migrateViteConfig(source, packageNames),
     },
@@ -116,20 +156,32 @@ export function buildRegistryMigrationPlan(root, version) {
     },
   ];
 
-  return files.map((file) => {
-    const absolutePath = resolve(root, file.path);
-    const before = readFileSync(absolutePath, "utf8");
-    const after = file.migrate(before);
-    return {
-      after,
-      before,
-      changed: before !== after,
-      path: file.path,
-    };
-  });
+  return files
+    .filter((file) => existsSync(resolve(root, file.path)))
+    .map((file) => {
+      const absolutePath = resolve(root, file.path);
+      const before = readFileSync(absolutePath, "utf8");
+      const after = file.migrate(before);
+      return {
+        after,
+        before,
+        changed: before !== after,
+        path: file.path,
+      };
+    });
 }
 
-export function applyRegistryMigration({ root, version, write }) {
+export function applyRegistryMigration({
+  registry = expectedPackageRegistry,
+  root,
+  skipRegistryCheck = false,
+  version,
+  write,
+}) {
+  const packageNames = getFrameworkPackageNames(root);
+  if (write && !skipRegistryCheck) {
+    assertRegistryPackagesExist({ packageNames, registry, root, version });
+  }
   const plan = buildRegistryMigrationPlan(root, version);
   const changedFiles = plan.filter((item) => item.changed);
 
