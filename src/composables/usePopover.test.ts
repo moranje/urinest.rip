@@ -21,7 +21,10 @@ function setViewport(width: number, height: number): void {
   });
 }
 
-function eventWithRect(rect: Partial<DOMRect>): MouseEvent {
+function eventTargetWithRect(
+  rect: Partial<DOMRect>,
+  type: "click" | "mouseenter" = "mouseenter",
+): { event: MouseEvent; target: HTMLButtonElement } {
   const target = document.createElement("button");
   target.getBoundingClientRect = vi.fn(
     () =>
@@ -38,7 +41,23 @@ function eventWithRect(rect: Partial<DOMRect>): MouseEvent {
       }) as DOMRect,
   );
 
-  const event = new MouseEvent("mouseenter");
+  const event = new MouseEvent(type);
+  Object.defineProperty(event, "currentTarget", {
+    configurable: true,
+    value: target,
+  });
+  return { event, target };
+}
+
+function eventWithRect(
+  rect: Partial<DOMRect>,
+  type: "click" | "mouseenter" = "mouseenter",
+): MouseEvent {
+  return eventTargetWithRect(rect, type).event;
+}
+
+function focusEventForTarget(target: HTMLElement): FocusEvent {
+  const event = new FocusEvent("focus");
   Object.defineProperty(event, "currentTarget", {
     configurable: true,
     value: target,
@@ -78,6 +97,7 @@ describe("usePopover", () => {
 
     expect(popover.activePopoverOptionId.value).toBe("nitrofurantoine");
     expect(popover.popoverDescription.value).toBe("1e keuze bij ongecompliceerde cystitis");
+    expect(popover.popoverShouldFocus.value).toBe(false);
     expect(popover.popoverStyle.value).toMatchObject({
       left: "320px",
       maxHeight: "300px",
@@ -87,6 +107,34 @@ describe("usePopover", () => {
       top: "105px",
       visibility: "visible",
     });
+  });
+
+  it("restores focus to the trigger when a click-opened popover closes", async () => {
+    const popover = usePopover();
+    const { event, target } = eventTargetWithRect(
+      { bottom: 80, left: 200, top: 50, width: 40 },
+      "click",
+    );
+    document.body.append(target);
+
+    popover.showPopover(option("nitrofurantoine"), event);
+    expect(popover.popoverShouldFocus.value).toBe(true);
+
+    popover.closePopover();
+    await Promise.resolve();
+
+    expect(popover.activePopoverOptionId.value).toBeNull();
+    expect(popover.popoverShouldFocus.value).toBe(false);
+    expect(document.activeElement).toBe(target);
+
+    popover.showPopover(option("nitrofurantoine"), focusEventForTarget(target));
+    expect(popover.activePopoverOptionId.value).toBeNull();
+
+    popover.showPopover(option("nitrofurantoine"), focusEventForTarget(target));
+    expect(popover.activePopoverOptionId.value).toBe("nitrofurantoine");
+    expect(popover.popoverShouldFocus.value).toBe(false);
+
+    target.remove();
   });
 
   it("opens above the trigger and keeps the top inside the viewport", () => {

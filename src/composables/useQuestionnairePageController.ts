@@ -66,6 +66,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
 
   const {
     activePopoverOptionId,
+    popoverShouldFocus,
     popoverDescription,
     popoverStyle,
     showPopover,
@@ -581,6 +582,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
     isNonTouchDevice,
     isSubmitting,
     popoverDescription,
+    popoverShouldFocus,
     popoverStyle,
     progressLabel,
     progressMax,

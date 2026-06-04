@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
+import { nextTick } from "vue";
 import { describe, expect, it } from "vitest";
 import InfoPopover from "./InfoPopover.vue";
 
@@ -19,6 +20,7 @@ describe("InfoPopover", () => {
     const wrapper = mount(InfoPopover, {
       props: {
         activeOptionId: "opt-1",
+        focusOnOpen: false,
         html: "<p>Toelichting</p>",
         popoverStyle: { position: "fixed", top: "12px", left: "20px", visibility: "visible" },
       },
@@ -39,6 +41,7 @@ describe("InfoPopover", () => {
     const wrapper = mount(InfoPopover, {
       props: {
         activeOptionId: "opt-1",
+        focusOnOpen: false,
         html: "Toelichting",
         popoverStyle: {},
       },
@@ -62,6 +65,7 @@ describe("InfoPopover", () => {
     const wrapper = mount(InfoPopover, {
       props: {
         activeOptionId: null,
+        focusOnOpen: false,
         html: "Verborgen",
         popoverStyle: {},
       },
@@ -79,6 +83,7 @@ describe("InfoPopover", () => {
       attachTo: document.body,
       props: {
         activeOptionId: "opt-teleport",
+        focusOnOpen: false,
         html: "<p>Teleported uitleg</p>",
         popoverStyle: { position: "fixed", top: "20px", left: "40px", visibility: "visible" },
       },
@@ -90,5 +95,26 @@ describe("InfoPopover", () => {
 
     wrapper.unmount();
     expect(document.body.querySelector(".info-popover")).toBeNull();
+  });
+
+  it("moves focus into the dialog when opened by explicit activation", async () => {
+    document.body.innerHTML = "";
+    const wrapper = mount(InfoPopover, {
+      attachTo: document.body,
+      props: {
+        activeOptionId: "opt-focus",
+        focusOnOpen: true,
+        html: "<p>Gefocuste uitleg</p>",
+        popoverStyle: { position: "fixed", top: "20px", left: "40px", visibility: "visible" },
+      },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    const popover = document.body.querySelector('[role="dialog"][aria-label="Meer informatie"]');
+    expect(document.activeElement).toBe(popover);
+
+    wrapper.unmount();
   });
 });

@@ -471,6 +471,38 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
   await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
     timeout: 10_000,
   });
+  try {
+    await page.waitForFunction(
+      () =>
+        document.activeElement?.getAttribute("role") === "dialog" &&
+        document.activeElement?.getAttribute("aria-label") === "Meer informatie",
+      { timeout: 10_000 },
+    );
+  } catch (error) {
+    const focusDebug = await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"][aria-label="Meer informatie"]');
+      return {
+        activeClasses: document.activeElement?.className?.toString() ?? "",
+        activeLabel: document.activeElement?.getAttribute("aria-label") ?? "",
+        activeRole: document.activeElement?.getAttribute("role") ?? "",
+        dialogExists: Boolean(dialog),
+        dialogTabindex: dialog?.getAttribute("tabindex") ?? "",
+      };
+    });
+    throw new Error(
+      `Info popover did not receive focus after click-open: ${JSON.stringify(focusDebug)}; ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+  const focusAfterOpen = await page.evaluate(() => ({
+    label: document.activeElement?.getAttribute("aria-label") ?? "",
+    role: document.activeElement?.getAttribute("role") ?? "",
+  }));
+  assert(
+    focusAfterOpen.role === "dialog" && focusAfterOpen.label === "Meer informatie",
+    `Info popover did not receive focus after click-open: ${JSON.stringify(focusAfterOpen)}`,
+  );
 
   const afterOpen = await page.evaluate(() => {
     const trimethoprimOption = [...document.querySelectorAll(".choice-option")].find((candidate) =>
@@ -496,8 +528,8 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
   assert(afterOpen.text.includes("3e keuze"), "Info popover did not show treatment info text");
 
   await page.click('[role="dialog"][aria-label="Meer informatie"]');
-  const keptOpenAfterInsideClick = await page.evaluate(
-    () => Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
+  const keptOpenAfterInsideClick = await page.evaluate(() =>
+    Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
   );
   assert(keptOpenAfterInsideClick, "Info popover closed after clicking inside the dialog");
 
@@ -506,6 +538,15 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
     () => !document.querySelector('[role="dialog"][aria-label="Meer informatie"]'),
     { timeout: 10_000 },
   );
+  const focusReturned = await page.evaluate(() => {
+    const active = document.activeElement;
+    return (
+      active instanceof HTMLElement &&
+      active.matches('[data-testid="choice-option-info"]') &&
+      Boolean(active.closest(".choice-option")?.textContent?.includes("Trimethoprim"))
+    );
+  });
+  assert(focusReturned, "Info popover close did not restore focus to the answer info button");
 
   const reopened = await page.evaluate(() => {
     const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
@@ -544,8 +585,8 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
     () => location.pathname.startsWith("/info/") && document.querySelector("h1"),
     { timeout: 10_000 },
   );
-  const stalePopover = await page.evaluate(
-    () => Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
+  const stalePopover = await page.evaluate(() =>
+    Boolean(document.querySelector('[role="dialog"][aria-label="Meer informatie"]')),
   );
   assert(!stalePopover, "Info popover stayed visible after keyboard answer navigation");
 

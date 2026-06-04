@@ -69,6 +69,7 @@
 
     <InfoPopover
       :active-option-id="activePopoverOptionId"
+      :focus-on-open="popoverShouldFocus"
       :html="popoverHtml"
       :popover-style="popoverStyle"
       @cancel-close="emit('cancelPopoverClose')"
@@ -109,6 +110,7 @@ const props = withDefaults(
     nonTouch: boolean;
     isSubmitting?: boolean;
     activePopoverOptionId?: string | null;
+    popoverShouldFocus?: boolean;
     popoverHtml?: string;
     popoverStyle?: PopoverStyle;
   }>(),
@@ -121,6 +123,7 @@ const props = withDefaults(
     stepDescription: "",
     descriptionHtml: "",
     activePopoverOptionId: null,
+    popoverShouldFocus: false,
     isSubmitting: false,
     popoverHtml: "",
     popoverStyle: () => ({}),

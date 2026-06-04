@@ -3,13 +3,23 @@ import type { PopoverStyle, QuestionOption } from "../types";
 
 export function usePopover() {
   const activePopoverOptionId = ref<string | null>(null);
+  const popoverShouldFocus = ref(false);
   const popoverDescription = ref("");
   const popoverStyle = ref<PopoverStyle>({ top: "0px", left: "0px", visibility: "hidden" });
   let hidePopoverTimeout: ReturnType<typeof setTimeout> | null = null;
+  let focusRestoreTarget: HTMLElement | null = null;
+  let ignoredFocusTarget: HTMLElement | null = null;
 
   const showPopover = (option: QuestionOption, event: MouseEvent | FocusEvent): void => {
     if (hidePopoverTimeout) clearTimeout(hidePopoverTimeout);
     const target = event.currentTarget as HTMLElement;
+    if (event.type === "focus" && target === ignoredFocusTarget) {
+      ignoredFocusTarget = null;
+      return;
+    }
+    const shouldManageFocus = event.type === "click";
+    popoverShouldFocus.value = shouldManageFocus;
+    if (shouldManageFocus) focusRestoreTarget = target;
     const rect = target.getBoundingClientRect();
     activePopoverOptionId.value = option.id;
     popoverDescription.value = option.description || "";
@@ -65,9 +75,16 @@ export function usePopover() {
       clearTimeout(hidePopoverTimeout);
       hidePopoverTimeout = null;
     }
+    const target = popoverShouldFocus.value ? focusRestoreTarget : null;
     activePopoverOptionId.value = null;
+    popoverShouldFocus.value = false;
     popoverStyle.value.visibility = "hidden";
     popoverStyle.value.opacity = 0;
+    ignoredFocusTarget = target;
+    queueMicrotask(() => {
+      if (target && document.contains(target)) target.focus({ preventScroll: true });
+      else if (ignoredFocusTarget === target) ignoredFocusTarget = null;
+    });
   };
 
   const cancelPopoverClose = (): void => {
@@ -94,6 +111,7 @@ export function usePopover() {
 
   return {
     activePopoverOptionId,
+    popoverShouldFocus,
     popoverDescription,
     popoverStyle,
     showPopover,

@@ -463,6 +463,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `usePopover` berekent `maxHeight` voortaan uit de actuele viewport en kiest boven/onder de trigger op basis van beschikbare ruimte, zodat lange antwoordtoelichtingen op lage/mobile viewports niet buiten beeld vallen.
 - [x] Browser-regressiesmoke meet echte computed styles op vraagantwoordkaarten en faalt wanneer normale antwoordopties of option-buttons weer volledige ongewenste randen krijgen.
 - [x] Browser-regressiesmoke meet een mobile info-popover op echte route (`q_bac_tx_local_healthy`) en faalt wanneer dialogpositie of max-height buiten de viewport valt.
+- [x] Info-popover beheert focus alleen bij expliciete click/keyboard-activatie: dialog krijgt focus bij openen, sluiting herstelt focus naar de antwoord-infoknop, hover/focus-preview steelt geen focus.
 - [x] CI-policy bewaakt dat deze browsercontracten onderdeel blijven van `scripts/check-browser-regression-smoke.mjs`.
 
 ### Ronde 10 — Package metadata en registry provenance (2026-06-04)

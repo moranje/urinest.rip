@@ -3,6 +3,7 @@
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <div
       v-if="activeOptionId"
+      ref="popoverRef"
       class="info-popover"
       :id="`option-info-${activeOptionId}`"
       :style="normalizedStyle"
@@ -30,13 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import IconButton from "../primitives/IconButton.vue";
 import type { PopoverStyle } from "../../types";
 import type { StyleValue } from "vue";
 
 const props = defineProps<{
   activeOptionId: string | null;
+  focusOnOpen: boolean;
   html: string;
   popoverStyle: PopoverStyle;
 }>();
@@ -48,6 +50,18 @@ const emit = defineEmits<{
 }>();
 
 const normalizedStyle = computed(() => props.popoverStyle as StyleValue);
+const popoverRef = ref<HTMLElement | null>(null);
+
+watch(
+  () => [props.activeOptionId, props.focusOnOpen] as const,
+  ([activeOptionId, focusOnOpen]) => {
+    if (!activeOptionId || !focusOnOpen) return;
+    void nextTick(() => {
+      popoverRef.value?.focus({ preventScroll: true });
+    });
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>

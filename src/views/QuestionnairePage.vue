@@ -20,6 +20,7 @@
     :non-touch="isNonTouchDevice"
     :is-submitting="isSubmitting"
     :active-popover-option-id="activePopoverOptionId"
+    :popover-should-focus="popoverShouldFocus"
     :popover-html="compiledMarkdown(popoverDescription)"
     :popover-style="popoverStyle"
     @restart="restartQuestionnaire"
@@ -61,6 +62,7 @@ const {
   isNonTouchDevice,
   isSubmitting,
   popoverDescription,
+  popoverShouldFocus,
   popoverStyle,
   progressLabel,
   progressMax,

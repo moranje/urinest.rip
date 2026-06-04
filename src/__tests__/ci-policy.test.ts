@@ -845,6 +845,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
     expect(browserRegressionSmokeScript).toContain("notice padding too tight");
     expect(browserRegressionSmokeScript).toContain("Info popover closed after clicking inside");
+    expect(browserRegressionSmokeScript).toContain("Info popover did not receive focus");
+    expect(browserRegressionSmokeScript).toContain("did not restore focus");
     expect(browserRegressionSmokeScript).toContain("Info popover stayed visible after keyboard");
     expect(browserRegressionSmokeScript).toContain("assertForcedColorsResultRoute");
     expect(browserRegressionSmokeScript).toContain("Emulation.setEmulatedMedia");
