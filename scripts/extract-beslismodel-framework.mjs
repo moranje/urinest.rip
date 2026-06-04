@@ -392,7 +392,7 @@ on:
       version:
         description: "@beslismodel prerelease version to publish"
         required: true
-        default: "0.1.0-next.0"
+        default: "0.1.0-next.1"
 
 permissions:
   contents: write

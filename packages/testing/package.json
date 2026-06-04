@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/testing",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0-next.1",
   "private": false,
   "description": "Testing utilities for beslismodel flow coverage, path enumeration and clinical consumer fixtures.",
   "keywords": [
@@ -39,7 +39,7 @@
     "prepack": "npm --prefix ../.. run build:testing"
   },
   "dependencies": {
-    "@beslismodel/core": "0.1.0-next.0"
+    "@beslismodel/core": "0.1.0-next.1"
   },
   "engines": {
     "node": ">=20.19.0"

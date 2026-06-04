@@ -1,7 +1,7 @@
 export const copdCarePackageMetadata = Object.freeze({
   id: "copd-care",
   packageName: "@beslismodel/copd-care",
-  version: "0.1.0-next.0",
+  version: "0.1.0-next.1",
   status: "verified",
   domain: "COPD care",
   sourcePolicy: {

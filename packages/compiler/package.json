@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/compiler",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0-next.1",
   "private": false,
   "description": "YAML and JSON compiler, schema validator, CLI and Vite/Rolldown plugin for beslismodel flow manifests.",
   "keywords": [

@@ -1,7 +1,7 @@
 export const dmCarePackageMetadata = Object.freeze({
   id: "dm-care",
   packageName: "@beslismodel/dm-care",
-  version: "0.1.0-next.0",
+  version: "0.1.0-next.1",
   status: "verified",
   domain: "DM care",
   sourcePolicy: {
