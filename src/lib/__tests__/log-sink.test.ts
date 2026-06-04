@@ -229,6 +229,18 @@ describe("log-sink", () => {
     expect(rpcMock).not.toHaveBeenCalled();
   });
 
+  it("does not persist on local production preview unless explicitly enabled", async () => {
+    vi.stubEnv("MODE", "production");
+    vi.stubEnv("DEV", false);
+
+    initLogSink();
+    persistSampleError("test:local-preview-disabled");
+    await flushLogs();
+
+    expect(window.location.hostname).toBe("localhost");
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
   it("persists in dev when explicitly enabled", async () => {
     vi.stubEnv("MODE", "development");
     vi.stubEnv("DEV", true);

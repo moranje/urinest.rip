@@ -102,12 +102,24 @@ let consecutiveFailures = 0;
 let breakerTripped = false;
 let persistenceDisabledReason: string | null = null;
 
+function isLocalRuntimeHost(hostname: string): boolean {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
 function resolvePersistenceDisabledReason(): string | null {
   const breakerDownAt = getLogSinkDownAt();
   if (breakerDownAt) return `disabled by circuit breaker at ${breakerDownAt}`;
 
   const explicit = import.meta.env.VITE_ENABLE_LOG_PERSISTENCE as string | undefined;
   if (explicit === "false") return "disabled by VITE_ENABLE_LOG_PERSISTENCE=false";
+  if (
+    import.meta.env.MODE !== "test" &&
+    explicit !== "true" &&
+    typeof window !== "undefined" &&
+    isLocalRuntimeHost(window.location.hostname)
+  ) {
+    return "disabled on local preview; set VITE_ENABLE_LOG_PERSISTENCE=true to test Supabase persistence";
+  }
   if (import.meta.env.MODE !== "test" && import.meta.env.DEV && explicit !== "true") {
     return "disabled in dev; set VITE_ENABLE_LOG_PERSISTENCE=true to test Supabase persistence";
   }
