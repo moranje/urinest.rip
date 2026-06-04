@@ -427,6 +427,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `fix(packages): guard gitea latest publishing` maakt `BESLISMODEL_PUBLISH_TAG=latest` expliciet veilig voor stabiele semver, blijft prereleases op `next` afdwingen, laat CI-dry-runs de tag uit de packageversie afleiden, geeft de gegenereerde Gitea workflow dezelfde `dist_tag`-guard en documenteert de stable/latest route; verificatie: release-config, publish dry-run, extractie- en CI-policy gates.
 - [x] `fix(packages): allow stable registry smoke` laat `check:package-registry-smoke` exact gepubliceerde stable semver accepteren, zodat de Gitea post-publish smoke werkt voor zowel `next` als `latest`; verificatie: registry-smoke config, `--check-version` voor huidige prerelease, gesimuleerde stable en ongeldige semver, plus CI-policy gate.
 - [x] `test(browser): cover answer info popovers` borgt in de browser-smoke het echte bacteriurie-behandelpad: info-click opent/sluit de dialog, wijzigt URL/selectie niet, gebruikt robuuste DOM-waits, ruimt preview-processen op en negeert alleen de externe `stats.oranje.wtf` analytics request; verificatie: Chrome 149 browser-smoke groen.
+- [x] `test(browser): cover result history navigation` borgt in dezelfde browser-smoke dat na een echte behandelkeuze vanaf het resultaat de native browser-terugknop terugkeert naar de laatste vragenlijststap (`q_bac_tx_local_healthy`) en niet naar dashboard of loader; verificatie: app CI-policy test en Chrome browser-smoke groen.
 
 ## Commit Discipline
 

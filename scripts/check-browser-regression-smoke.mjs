@@ -373,6 +373,21 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
     () => !document.querySelector('[role="dialog"][aria-label="Meer informatie"]'),
     { timeout: 10_000 },
   );
+
+  await clickChoice(page, "Afwachtend beleid");
+  await page.waitForFunction(
+    () => location.pathname.startsWith("/info/") && document.querySelector("h1"),
+    { timeout: 10_000 },
+  );
+
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await page.waitForFunction(
+    () =>
+      location.pathname === "/questionnaire/bacteriurie" &&
+      location.search.includes("q=q_bac_tx_local_healthy") &&
+      document.querySelector("h1")?.textContent?.includes("Welke behandeling kan patiënt krijgen?"),
+    { timeout: 10_000 },
+  );
 }
 
 async function assertDirectResultRoute(page, baseUrl) {

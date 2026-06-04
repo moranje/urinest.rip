@@ -649,6 +649,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Light mode theme-color mismatch");
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
+    expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");
+    expect(browserRegressionSmokeScript).toContain("page.goBack");
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
   });
 
