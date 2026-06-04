@@ -75,7 +75,7 @@ Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
 Domeinspecifieke data, calculatorimplementaties en richtlijnadapters leven buiten core. Core levert alleen generieke contracten.
 
 - [x] Urinestrip consumer fixture bewijst dat een consumer lokaal calculators kan registreren via publieke core exports
-- [x] CVRM/U-Prevent calculatorpakket als consumer/domain package: `@beslismodel/cvrm-prevent` met SCORE2, SCORE2-OP en SCORE2-Diabetes uit labbie + U-Prevent testvectors; AHA PREVENT-equations nog niet aanwezig in labbie-data
+- [x] CVRM calculatorpakket als consumer/domain package: `@beslismodel/cvrm-prevent` met SCORE2, SCORE2-OP en SCORE2-Diabetes uit labbie + U-Prevent testvectors, plus AHA PREVENT 10-/30-jaars CVD/ASCVD/HF/CHD/stroke-calculator (`cvrm.prevent`) op basis van preventr 0.11.0-coefficienten, AHA/Circulation-bronnen en package-testvectors
 - [x] COPD calculatorpakket als consumer/domain package: `@beslismodel/copd-care` met GOLD 2026 ABE-classificatie, officiële GOLD bronverwijzingen, testvectors en consumer-smoke via publieke exports
 - [x] DM calculatorpakket als consumer/domain package: `@beslismodel/dm-care` met HbA1c IFCC/NGSP/eAG conversie, officiële NGSP/IFCC bronverwijzing, testvectors en consumer-smoke via publieke exports
 
@@ -433,6 +433,10 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `feat(testing): add guideline traceability assertions` verplaatst het option-defense contract naar herbruikbare package-API in `@beslismodel/testing`: consumers kunnen manifest, bronmatrix, results, redirects en `optionClaims` buiten Urinest.rip valideren; verificatie: package test/build, release-notes en extraction-map gates.
 - [x] `test(core): keep calculator bindings domain neutral` vervangt CVRM/SCORE2-voorbeelden in core-tests door neutrale scorebindingen, zodat core alleen generieke calculatorcontracten demonstreert en medische calculatorlogica aantoonbaar in domain packages blijft; verificatie: core package-tests en core export-smoke.
 - [x] `test(packages): run package unit tests in framework gate` voegt `test:packages` toe aan root `check:packages` en aan de geëxtraheerde frameworkrepo, zodat core boundary-tests, domain calculator-tests, package Vue-tests en `@beslismodel/testing` traceability-tests standaard meelopen vóór publish/smoke; verificatie: app CI-policy test en package Vitest-run.
+
+### Ronde 8 — CVRM/PREVENT-domain package afronding (2026-06-04)
+
+- [x] `feat(cvrm): add verified aha prevent calculator` voegt `cvrm.prevent` toe naast `cvrm.score2` in `@beslismodel/cvrm-prevent`: 10-/30-jaars total CVD, ASCVD, heart failure, CHD en stroke voor base, HbA1c, UACR, SDI en full PREVENT-modellen; coëfficiënten komen uit CRAN `preventr` 0.11.0, bronnen verwijzen naar AHA/Circulation/PREVENT en testvectors komen uit `preventr` package-tests; verificatie: package Vitest, package build en export-smoke.
 
 ## Commit Discipline
 

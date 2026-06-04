@@ -106,6 +106,27 @@ const cvrmResult = await cvrmRegistry.run("cvrm.score2", {
 if (cvrmResult.model !== "SCORE2" || cvrmResult.riskClass.label !== "hoog") {
   throw new Error("registry cvrm-prevent SCORE2 calculator failed");
 }
+const preventResult = await cvrmRegistry.run("cvrm.prevent", {
+  age: 50,
+  sex: "female",
+  systolicBp: 160,
+  bpTreatment: true,
+  totalCholesterolMgDl: 200,
+  hdlCholesterolMgDl: 45,
+  statin: false,
+  diabetes: true,
+  smoking: false,
+  egfrMlMin173m2: 90,
+  bmi: 35,
+});
+const preventTenYear = preventResult.risks.find((risk) => risk.horizon === 10);
+if (
+  preventResult.modelType !== "base" ||
+  !preventTenYear ||
+  Math.abs(preventTenYear.totalCvd - 0.147) > 0.001
+) {
+  throw new Error("registry cvrm-prevent AHA PREVENT calculator failed");
+}
 
 const outcome = await determineOutcomeWithCalculators({
   registry: cvrmRegistry,

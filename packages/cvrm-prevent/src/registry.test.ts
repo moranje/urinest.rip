@@ -6,6 +6,7 @@ import {
   cvrmPreventRegistryStatus,
 } from "./registry";
 import { isVerifiedCvrmPreventCalculator } from "./calculator-contract";
+import { calculatePreventRisk, preventCalculator, preventTestVectors } from "./prevent";
 import { calculateScore2Risk, score2Calculator, score2TestVectors } from "./score2";
 
 const expectRiskPercentClose = (actual: number, expected: number, tolerance = 0.3): void => {
@@ -13,19 +14,26 @@ const expectRiskPercentClose = (actual: number, expected: number, tolerance = 0.
   expect(actual).toBeLessThanOrEqual(expected + tolerance);
 };
 
+const expectRiskClose = (actual: number, expected: number, tolerance = 0.001): void => {
+  expect(actual).toBeGreaterThanOrEqual(expected - tolerance);
+  expect(actual).toBeLessThanOrEqual(expected + tolerance);
+};
+
 describe("cvrm prevent calculator registry", () => {
-  it("exports the verified SCORE2 calculator from labbie/U-Prevent data", () => {
+  it("exports verified SCORE2 and AHA PREVENT calculators from domain package data", () => {
     const registry = createCvrmPreventCalculatorRegistry();
 
-    expect(cvrmPreventCalculatorIds).toEqual(["cvrm.score2"]);
+    expect(cvrmPreventCalculatorIds).toEqual(["cvrm.score2", "cvrm.prevent"]);
     expect(cvrmPreventRegistryStatus).toEqual({
       status: "verified",
-      calculatorCount: 1,
+      calculatorCount: 2,
       exportsClinicalCalculators: true,
     });
     expect(registry.has("cvrm.score2")).toBe(true);
-    expect(registry.list()).toHaveLength(1);
+    expect(registry.has("cvrm.prevent")).toBe(true);
+    expect(registry.list()).toHaveLength(2);
     expect(isVerifiedCvrmPreventCalculator(registry.get("cvrm.score2"))).toBe(true);
+    expect(isVerifiedCvrmPreventCalculator(registry.get("cvrm.prevent"))).toBe(true);
   });
 
   it("does not accept unverified calculator definitions as CVRM/PREVENT calculators", () => {
@@ -46,6 +54,14 @@ describe("cvrm prevent calculator registry", () => {
     );
     expect(score2Calculator.testVectors).toHaveLength(score2TestVectors.length);
     expect(score2Calculator.testVectors.length).toBeGreaterThan(3);
+    expect(preventCalculator.sourceReferences.map((reference) => reference.id)).toContain(
+      "preventr-0.11.0",
+    );
+    expect(preventCalculator.sourceReferences.map((reference) => reference.id)).toContain(
+      "prevent-equations-statement",
+    );
+    expect(preventCalculator.testVectors).toHaveLength(preventTestVectors.length);
+    expect(preventCalculator.testVectors.length).toBeGreaterThan(5);
   });
 
   it("matches labbie U-Prevent SCORE2 validation vectors", () => {
@@ -57,6 +73,22 @@ describe("cvrm prevent calculator registry", () => {
         vector.expected.riskPercent,
         vector.tolerance ?? 0.3,
       );
+    }
+  });
+
+  it("matches preventr AHA PREVENT validation vectors", () => {
+    for (const vector of preventTestVectors) {
+      const result = calculatePreventRisk(vector.input);
+      expect(result.modelType).toBe(vector.expected.modelType);
+      for (const expectedRisk of vector.expected.risks) {
+        const actualRisk = result.risks.find((risk) => risk.horizon === expectedRisk.horizon);
+        expect(actualRisk).toBeDefined();
+        expectRiskClose(actualRisk?.totalCvd ?? Number.NaN, expectedRisk.totalCvd);
+        expectRiskClose(actualRisk?.ascvd ?? Number.NaN, expectedRisk.ascvd);
+        expectRiskClose(actualRisk?.heartFailure ?? Number.NaN, expectedRisk.heartFailure);
+        expectRiskClose(actualRisk?.chd ?? Number.NaN, expectedRisk.chd);
+        expectRiskClose(actualRisk?.stroke ?? Number.NaN, expectedRisk.stroke);
+      }
     }
   });
 
@@ -110,10 +142,46 @@ describe("cvrm prevent calculator registry", () => {
     ).toThrow("SCORE2-Diabetes requires diabetesAge to be <= age.");
   });
 
+  it("rejects clinically invalid PREVENT inputs with explicit messages", () => {
+    expect(() =>
+      calculatePreventRisk({
+        age: 29,
+        sex: "female",
+        systolicBp: 120,
+        bpTreatment: false,
+        totalCholesterolMgDl: 200,
+        hdlCholesterolMgDl: 45,
+        statin: false,
+        diabetes: false,
+        smoking: false,
+        egfrMlMin173m2: 90,
+        bmi: 25,
+      }),
+    ).toThrow("PREVENT requires age between 30 and 79 years.");
+
+    expect(() =>
+      calculatePreventRisk({
+        age: 55,
+        sex: "male",
+        systolicBp: 120,
+        bpTreatment: false,
+        totalCholesterolMgDl: 200,
+        hdlCholesterolMgDl: 45,
+        statin: false,
+        diabetes: false,
+        smoking: false,
+        egfrMlMin173m2: 90,
+        bmi: 25,
+        sdiDecile: 11,
+      }),
+    ).toThrow("PREVENT requires SDI decile between 1 and 10.");
+  });
+
   it("keeps the registry source tied to real calculator definitions", () => {
     const source = readFileSync("packages/cvrm-prevent/src/registry.ts", "utf8");
 
     expect(source).toContain("score2Calculator");
+    expect(source).toContain("preventCalculator");
     expect(source).not.toContain("createCalculatorRegistry([])");
   });
 });

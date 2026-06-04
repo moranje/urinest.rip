@@ -40,8 +40,8 @@
       "destinationRoot": "packages/cvrm-prevent",
       "packageJson": "packages/cvrm-prevent/package.json",
       "publicExportFile": "packages/cvrm-prevent/src/index.ts",
-      "publicExportLineCount": 35,
-      "publicExportSha256": "95bf8837eca6fea1ad58b24d548cda773930dc259e94a3660395cff64e066228"
+      "publicExportLineCount": 52,
+      "publicExportSha256": "724ca45016dbe9330c486a6ff7fbe8e1d98cef136688776b7ba8f3f90dab5cf3"
     },
     {
       "name": "@beslismodel/dm-care",

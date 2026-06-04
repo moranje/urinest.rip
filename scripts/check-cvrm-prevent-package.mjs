@@ -22,16 +22,22 @@ writeFileSync(
 );
 
 const {
+  calculatePreventRisk,
   calculateScore2Risk,
   createCvrmPreventCalculatorRegistry,
   cvrmPreventCalculatorIds,
   cvrmPreventRegistryStatus,
+  preventTestVectors,
   score2TestVectors,
 } = await import(pathToFileURL(smokeFile).href);
 rmSync(smokeDir, { recursive: true, force: true });
 
 if (!cvrmPreventCalculatorIds.includes("cvrm.score2")) {
   throw new Error("@beslismodel/cvrm-prevent did not export cvrm.score2");
+}
+
+if (!cvrmPreventCalculatorIds.includes("cvrm.prevent")) {
+  throw new Error("@beslismodel/cvrm-prevent did not export cvrm.prevent");
 }
 
 if (
@@ -46,6 +52,10 @@ const registryResult = await registry.run("cvrm.score2", score2TestVectors[0].in
 if (registryResult.model !== score2TestVectors[0].expected.model) {
   throw new Error("@beslismodel/cvrm-prevent registry run failed");
 }
+const preventRegistryResult = await registry.run("cvrm.prevent", preventTestVectors[0].input);
+if (preventRegistryResult.modelType !== preventTestVectors[0].expected.modelType) {
+  throw new Error("@beslismodel/cvrm-prevent PREVENT registry run failed");
+}
 
 for (const vector of score2TestVectors) {
   const result = calculateScore2Risk(vector.input);
@@ -56,6 +66,28 @@ for (const vector of score2TestVectors) {
     result.riskPercent > vector.expected.riskPercent + tolerance
   ) {
     throw new Error(`@beslismodel/cvrm-prevent SCORE2 vector failed: ${vector.id}`);
+  }
+}
+
+for (const vector of preventTestVectors) {
+  const result = calculatePreventRisk(vector.input);
+  const tolerance = vector.tolerance ?? 0.001;
+  if (result.modelType !== vector.expected.modelType) {
+    throw new Error(`@beslismodel/cvrm-prevent PREVENT model failed: ${vector.id}`);
+  }
+  for (const expectedRisk of vector.expected.risks) {
+    const actualRisk = result.risks.find((risk) => risk.horizon === expectedRisk.horizon);
+    if (!actualRisk) {
+      throw new Error(`@beslismodel/cvrm-prevent PREVENT horizon missing: ${vector.id}`);
+    }
+    for (const outcome of ["totalCvd", "ascvd", "heartFailure", "chd", "stroke"]) {
+      if (
+        actualRisk[outcome] < expectedRisk[outcome] - tolerance ||
+        actualRisk[outcome] > expectedRisk[outcome] + tolerance
+      ) {
+        throw new Error(`@beslismodel/cvrm-prevent PREVENT vector failed: ${vector.id}`);
+      }
+    }
   }
 }
 

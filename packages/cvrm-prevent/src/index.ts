@@ -12,6 +12,23 @@ export {
   cvrmPreventRegistryStatus,
 } from "./registry";
 export type {
+  PreventHorizon,
+  PreventInput,
+  PreventModelType,
+  PreventOutcome,
+  PreventResult,
+  PreventRiskSet,
+  PreventSex,
+} from "./prevent";
+export {
+  calculatePreventRisk,
+  preventCalculator,
+  preventSourceReferences,
+  preventTestVectors,
+  selectPreventModelType,
+  validatePreventInput,
+} from "./prevent";
+export type {
   Score2Input,
   Score2Model,
   Score2Region,
