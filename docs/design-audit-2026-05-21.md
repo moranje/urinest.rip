@@ -4,7 +4,7 @@
 
 Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 
-- Native option control: `QuestionOption.vue` gebruikt een native button met ARIA radio/checkbox state en sibling info-popover.
+- Native option control: `ChoiceOption.vue` gebruikt een native button met ARIA radio/checkbox state en sibling info-popover; `ChoiceGroup.vue` owns radiogroup/listbox navigation.
 - UI iconen lopen via `src/components/primitives/Icon.vue`; overgebleven SVG's zijn illustraties/logo's.
 - `.md-button` usages zijn gemigreerd naar `Button.vue`; legacy CSS blijft alleen als historische compatibility-style.
 - 3-state theme toggle, light/dark/system bootstrap, `light-dark()`, cascade layers, forced-colors en prefers-contrast zijn aanwezig.
@@ -115,7 +115,7 @@ Drie grote thema's:
 | #           | Dimensie                          | Score           | Delta      | Notes                                                                                                                                                        |
 | ----------- | --------------------------------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1           | Design Tokens & Centralisatie     | **4.2**         | ▲ +0.7     | MD3-tokens zijn gecentraliseerd met `light-dark()`, cascade layers en gegenereerde DTCG-compatible export; Style Dictionary/Figma-pipeline ontbreekt nog     |
-| 2           | Component Architectuur            | **4.0**         | ▲ +1.5     | 6 primitives met variant-API, a11y-tests, Storybook. Question-options nog niet uitgepakt naar `QuestionOption.vue`                                           |
+| 2           | Component Architectuur            | **4.2**         | ▲ +1.7     | 6 primitives met variant-API, a11y-tests, Storybook. Question-options zitten in molecule `ChoiceOption.vue` en group-nav in `ChoiceGroup.vue`                 |
 | 3           | Accessibility (WCAG 2.2 AA)       | **4.0**         | ▲ +2.0     | Skip-link, h1, Space-toets, aria-checked, forced-colors, eslint-plugin-vuejs-accessibility, axe-core in primitives-tests. Mist: runtime axe in CI            |
 | 4           | Motion & Microinteracties         | **4.5**         | ▲ +1.0     | View Transitions API, `view-transition-name`, reduced-motion overal, OfflineBanner motion. Mist: spring-physics voor primary feedback                        |
 | 5           | Frictieloze UX & Smart Defaults   | **4.5**         | ▲ +1.5     | ProgressBar, Space-toets, multi-counter, restart-button, OfflineBanner, terug-knop met Esc/Backspace label. Friction in klinische flow grotendeels opgelost  |
@@ -161,7 +161,7 @@ Drie grote thema's:
 
 **Remaining issues:**
 
-- Question-options nog niet als `QuestionOption.vue` uitgepakt — inline 70-regels block in `QuestionnairePage.vue:101-153`
+- Question-options zijn uitgepakt naar `ChoiceOption.vue` en `ChoiceGroup.vue`; legacy wrapper `src/components/QuestionOption.vue` is verwijderd zodat er één atomic implementation blijft.
 - Toast-systeem nog niet als primitive (alleen `ToastContainer.vue` als organism)
 - Geen `OptionList.vue` voor radiogroup-pattern; herhaalt zich in andere views potentieel
 - Geen `asChild`/polymorphic `as`-prop op Button (Link-variant kan niet gerenderd worden zonder copy-paste)
