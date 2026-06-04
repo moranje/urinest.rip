@@ -25,6 +25,10 @@ const landingTemplateTest = readFileSync(
   resolve("src/components/templates/LandingTemplate.test.ts"),
   "utf8",
 );
+const multiInputPanelTest = readFileSync(
+  resolve("src/components/organisms/MultiInputPanel.test.ts"),
+  "utf8",
+);
 const routeAccessibilityTest = readFileSync(
   resolve("src/__tests__/accessibility-route.test.ts"),
   "utf8",
@@ -860,7 +864,16 @@ describe("CI policy", () => {
       "Reduced motion route transition used View Transitions",
     );
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
+    expect(multiInputPanelTest).toContain(
+      "keeps grouped progress indicative and free of misleading visible counts",
+    );
+    expect(multiInputPanelTest).toContain("Indicatieve voortgang door vragenlijst");
+    expect(multiInputPanelTest).toContain("progress-bar-text");
+    expect(browserRegressionSmokeScript).toContain("assertQuestionnaireDeepBackStack");
     expect(browserRegressionSmokeScript).toContain("questionnaire/bacteriurie");
+    expect(browserRegressionSmokeScript).toContain("q_bac_tissue");
+    expect(browserRegressionSmokeScript).toContain("q_bac_risk");
+    expect(browserRegressionSmokeScript).toContain("q_bac_catheter");
     expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");
     expect(browserRegressionSmokeScript).toContain("page.goBack");
     expect(browserRegressionSmokeScript).toContain("Answer option shell has unwanted border");

@@ -59,6 +59,15 @@ describe("MultiInputPanel", () => {
     expect(wrapper.get("button[type='submit']").attributes("disabled")).toBeUndefined();
   });
 
+  it("keeps grouped progress indicative and free of misleading visible counts", () => {
+    const wrapper = mountPanel();
+    const progress = wrapper.get('[role="progressbar"]');
+
+    expect(progress.attributes("aria-label")).toBe("Indicatieve voortgang door vragenlijst");
+    expect(progress.text().trim()).toBe("");
+    expect(wrapper.find(".progress-bar-text").exists()).toBe(false);
+  });
+
   it("emits answer updates with question ids and blocks incomplete submit", async () => {
     const wrapper = mountPanel();
 

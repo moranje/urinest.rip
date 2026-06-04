@@ -306,6 +306,19 @@ async function clickChoice(page, label) {
   assert(clicked, `Choice not found: ${label}`);
 }
 
+async function expectQuestionPath(page, pathname, queryFragment, heading) {
+  await page.waitForFunction(
+    (expectedPathname, expectedQueryFragment, expectedHeading) =>
+      location.pathname === expectedPathname &&
+      location.search.includes(expectedQueryFragment) &&
+      document.querySelector("h1")?.textContent?.includes(expectedHeading),
+    { timeout: 10_000 },
+    pathname,
+    queryFragment,
+    heading,
+  );
+}
+
 async function assertQuestionnaireNavigation(page, baseUrl) {
   await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Nitriet test");
@@ -360,22 +373,79 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
   );
 
   await clickChoice(page, "Positief");
-  await page.waitForFunction(
-    () =>
-      location.pathname === "/questionnaire/bacteriurie" &&
-      location.search.includes("q=q_bac_tissue") &&
-      document.querySelector("h1")?.textContent?.includes("Is er sprake van weefselinvasie?"),
-    { timeout: 10_000 },
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tissue",
+    "Is er sprake van weefselinvasie?",
   );
 
   await page.goBack({ waitUntil: "domcontentloaded" });
-  await page.waitForFunction(
-    () =>
-      location.pathname === "/questionnaire/strip" &&
-      location.search.includes("q=q_strip_nitrite") &&
-      document.querySelector("h1")?.textContent?.includes("Nitriet test"),
-    { timeout: 10_000 },
+  await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
+}
+
+async function assertQuestionnaireDeepBackStack(page, baseUrl) {
+  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
+  await expectHeading(page, "Nitriet test");
+
+  await clickChoice(page, "Positief");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tissue",
+    "Is er sprake van weefselinvasie?",
   );
+
+  await clickChoice(page, "Geen");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_risk",
+    "Behoort patiënt tot een risicogroep?",
+  );
+
+  await clickChoice(page, "Nee");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_catheter",
+    "Heeft patiënt een urine katheter?",
+  );
+
+  await clickChoice(page, "Nee");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tx_local_healthy",
+    "Welke behandeling kan patiënt krijgen?",
+  );
+
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_catheter",
+    "Heeft patiënt een urine katheter?",
+  );
+
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_risk",
+    "Behoort patiënt tot een risicogroep?",
+  );
+
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tissue",
+    "Is er sprake van weefselinvasie?",
+  );
+
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
 }
 
 async function assertInfoPopoverViewportFit(page, baseUrl) {
@@ -794,6 +864,7 @@ async function run() {
       await assertThemeModes(page, baseUrl);
       await assertReducedMotionRouteTransitions(page, baseUrl);
       await assertQuestionnaireNavigation(page, baseUrl);
+      await assertQuestionnaireDeepBackStack(page, baseUrl);
       await assertInfoPopoverInteraction(page, baseUrl);
       await assertInfoPopoverViewportFit(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
