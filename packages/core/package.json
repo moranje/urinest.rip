@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/core",
-  "version": "0.1.0-next.1",
+  "version": "0.1.0",
   "private": false,
   "description": "Pure TypeScript runtime contracts, graph traversal, outcomes, progress, calculators and audit helpers for beslismodel flows.",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/vue",
-  "version": "0.1.0-next.1",
+  "version": "0.1.0",
   "private": false,
   "description": "Vue runtime, route helpers, stores and render helpers for beslismodel flow consumers.",
   "keywords": [
@@ -39,7 +39,7 @@
     "prepack": "npm --prefix ../.. run build:vue"
   },
   "dependencies": {
-    "@beslismodel/core": "0.1.0-next.1"
+    "@beslismodel/core": "0.1.0"
   },
   "peerDependencies": {
     "pinia": "^3.0.0",

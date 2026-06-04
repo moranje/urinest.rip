@@ -135,7 +135,7 @@ export const classifyGoldAbe = (input: GoldAbeInput): GoldAbeResult => {
 
 export const goldAbeCalculator = Object.freeze({
   id: "copd.gold_abe",
-  version: "0.1.0-next.1",
+  version: "0.1.0",
   label: "GOLD COPD ABE classification",
   formulaVersion: FORMULA_VERSION,
   sourceReferences: goldAbeSourceReferences,

@@ -394,11 +394,11 @@ on:
       version:
         description: "@beslismodel version to publish"
         required: true
-        default: "0.1.0-next.1"
+        default: "0.1.0"
       dist_tag:
         description: "npm dist-tag: next for prerelease, latest for stable"
         required: true
-        default: "next"
+        default: "latest"
 
 permissions:
   contents: write

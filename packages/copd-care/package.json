@@ -1,6 +1,6 @@
 {
   "name": "@beslismodel/copd-care",
-  "version": "0.1.0-next.1",
+  "version": "0.1.0",
   "private": false,
   "description": "Verified COPD care calculator package with GOLD ABE classification for beslismodel consumers.",
   "keywords": [
@@ -40,7 +40,7 @@
     "prepack": "npm --prefix ../.. run build:copd-care"
   },
   "dependencies": {
-    "@beslismodel/core": "0.1.0-next.1"
+    "@beslismodel/core": "0.1.0"
   },
   "engines": {
     "node": ">=20.19.0"

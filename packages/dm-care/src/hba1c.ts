@@ -136,7 +136,7 @@ export const convertHba1c = (input: Hba1cConversionInput): Hba1cConversionResult
 
 export const hba1cConversionCalculator = Object.freeze({
   id: "dm.hba1c_conversion",
-  version: "0.1.0-next.1",
+  version: "0.1.0",
   label: "HbA1c IFCC/NGSP/eAG conversion",
   formulaVersion: FORMULA_VERSION,
   sourceReferences: hba1cSourceReferences,
