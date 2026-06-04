@@ -7,34 +7,32 @@ import {
 } from "./calculator-bindings";
 import type { ManifestCalculatorBinding } from "./manifest";
 
-const score2Binding: ManifestCalculatorBinding = {
-  id: "score2",
-  calculatorId: "cvrm.score2",
+const scoreBandBinding: ManifestCalculatorBinding = {
+  id: "score-band",
+  calculatorId: "score.band",
   input: {
-    age: { source: "answer", key: "q_age", coerce: "number" },
-    sex: { source: "answer", key: "q_sex" },
-    smoking: { source: "answer", key: "q_smoking", coerce: "boolean" },
-    systolicBp: { source: "answer", key: "q_sbp", coerce: "number" },
-    totalCholesterol: { source: "answer", key: "q_total_cholesterol", coerce: "number" },
-    hdlCholesterol: { source: "answer", key: "q_hdl", coerce: "number" },
-    region: { source: "context", key: "riskRegion", required: false },
+    points: { source: "answer", key: "q_points", coerce: "number" },
+    weight: { source: "answer", key: "q_weight", coerce: "number" },
+    enabled: { source: "answer", key: "q_enabled", coerce: "boolean" },
+    profile: { source: "context", key: "scoreProfile", required: false },
   },
   outputs: {
-    _score2_percent: { path: "riskPercent" },
-    _score2_class: { path: "riskClass.label" },
+    _score_total: { path: "total" },
+    _score_band: { path: "band.label" },
   },
 };
 
 const registry = createCalculatorRegistry([
   {
-    id: "cvrm.score2",
+    id: "score.band",
     calculate: (input) => {
       const scoreInput = input as Record<string, unknown>;
+      const total = Number(scoreInput.points) * Number(scoreInput.weight);
       return {
-        model: Number(scoreInput.age) >= 70 ? "SCORE2-OP" : "SCORE2",
-        riskPercent: Number(scoreInput.age) >= 60 ? 12.4 : 4.5,
-        riskClass: { label: Number(scoreInput.age) >= 60 ? "hoog" : "laag-matig" },
-        region: scoreInput.region ?? "low",
+        band: { label: total >= 10 ? "high" : "low" },
+        enabled: scoreInput.enabled,
+        profile: scoreInput.profile ?? "default",
+        total,
       };
     },
   },
@@ -44,53 +42,47 @@ describe("calculator bindings", () => {
   it("maps answer and context inputs into virtual answers", async () => {
     const result = await runCalculatorBindings({
       registry,
-      bindings: [score2Binding],
-      context: { metadata: { riskRegion: "low" } },
+      bindings: [scoreBandBinding],
+      context: { metadata: { scoreProfile: "default" } },
       answers: {
-        q_age: { value: "65", text: "65" },
-        q_sex: { value: "M", text: "Man" },
-        q_smoking: { value: "true", text: "Ja" },
-        q_sbp: { value: "150", text: "150" },
-        q_total_cholesterol: { value: "6", text: "6" },
-        q_hdl: { value: "1", text: "1" },
+        q_enabled: { value: "true", text: "Ja" },
+        q_points: { value: "5", text: "5" },
+        q_weight: { value: "3", text: "3" },
       },
     });
 
     expect(result.calculations).toHaveLength(1);
     expect(result.calculations[0]?.input).toMatchObject({
-      age: 65,
-      sex: "M",
-      smoking: true,
-      region: "low",
+      enabled: true,
+      points: 5,
+      profile: "default",
+      weight: 3,
     });
-    expect(result.answers._score2_percent).toMatchObject({ value: 12.4, text: "12.4" });
-    expect(result.answers._score2_class).toMatchObject({ value: "hoog", text: "hoog" });
+    expect(result.answers._score_total).toMatchObject({ value: 15, text: "15" });
+    expect(result.answers._score_band).toMatchObject({ value: "high", text: "high" });
   });
 
   it("uses virtual answers for outcome resolution", async () => {
     const result = await determineOutcomeWithCalculators({
       registry,
-      calculatorBindings: [score2Binding],
+      calculatorBindings: [scoreBandBinding],
       answers: {
-        q_age: { value: "65", text: "65" },
-        q_sex: { value: "M", text: "Man" },
-        q_smoking: { value: "true", text: "Ja" },
-        q_sbp: { value: "150", text: "150" },
-        q_total_cholesterol: { value: "6", text: "6" },
-        q_hdl: { value: "1", text: "1" },
+        q_enabled: { value: "true", text: "Ja" },
+        q_points: { value: "5", text: "5" },
+        q_weight: { value: "3", text: "3" },
       },
       resultsLogic: [
         {
-          id: "score2-high",
+          id: "score-band-high",
           actionType: "showResult",
-          resultKey: "intensive_cvrm",
-          conditions: [{ questionId: "_score2_class", operator: "equals", value: "hoog" }],
+          resultKey: "high_score_follow_up",
+          conditions: [{ questionId: "_score_band", operator: "equals", value: "high" }],
         },
       ],
     });
 
-    expect(result.outcome).toBe("result:intensive_cvrm");
-    expect(result.ruleId).toBe("score2-high");
+    expect(result.outcome).toBe("result:high_score_follow_up");
+    expect(result.ruleId).toBe("score-band-high");
   });
 
   it("skips bindings when conditions are not met", async () => {
@@ -98,32 +90,32 @@ describe("calculator bindings", () => {
       registry,
       bindings: [
         {
-          ...score2Binding,
-          conditions: [{ questionId: "q_has_lipids", operator: "equals", value: "yes" }],
+          ...scoreBandBinding,
+          conditions: [{ questionId: "q_can_score", operator: "equals", value: "yes" }],
         },
       ],
-      answers: { q_has_lipids: { value: "no", text: "Nee" } },
+      answers: { q_can_score: { value: "no", text: "Nee" } },
     });
 
     expect(result.calculations).toEqual([]);
-    expect(result.answers).toEqual({ q_has_lipids: { value: "no", text: "Nee" } });
+    expect(result.answers).toEqual({ q_can_score: { value: "no", text: "Nee" } });
   });
 
   it("throws explicit errors for missing required inputs", async () => {
     await expect(
       runCalculatorBindings({
         registry,
-        bindings: [score2Binding],
-        answers: { q_age: { value: "65", text: "65" } },
+        bindings: [scoreBandBinding],
+        answers: { q_points: { value: "5", text: "5" } },
       }),
     ).rejects.toThrow(CalculatorBindingError);
 
     await expect(
       runCalculatorBindings({
         registry,
-        bindings: [score2Binding],
-        answers: { q_age: { value: "65", text: "65" } },
+        bindings: [scoreBandBinding],
+        answers: { q_points: { value: "5", text: "5" } },
       }),
-    ).rejects.toThrow('Calculation "score2" missing required input "sex".');
+    ).rejects.toThrow('Calculation "score-band" missing required input "weight".');
   });
 });
