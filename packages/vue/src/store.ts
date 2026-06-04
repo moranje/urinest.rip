@@ -198,6 +198,24 @@ export function createBeslismodelStore<
       return reported;
     };
 
+    const reportAnswersStorageError = (
+      caught: unknown,
+      phase: "answers.persist" | "answers.restore",
+    ): Error => {
+      const storageError = toError(caught);
+      telemetry.track({
+        type: phase === "answers.persist" ? "answers.persist_failed" : "answers.restore_failed",
+        phase,
+        storeId,
+        errorClass: getErrorClass(storageError),
+      });
+      options.onError?.(storageError, {
+        phase,
+        storeId,
+      });
+      return storageError;
+    };
+
     const persistAnswers = (): void => {
       if (!answersStorage || !answersStorageKey) return;
       const payload: BeslismodelPersistedAnswers<Answer> = {
@@ -206,21 +224,15 @@ export function createBeslismodelStore<
         answers: answers.value,
       };
 
-      Promise.resolve(answersStorage.setItem(answersStorageKey, JSON.stringify(payload))).catch(
-        (caught: unknown) => {
-          const persistError = toError(caught);
-          telemetry.track({
-            type: "answers.persist_failed",
-            phase: "answers.persist",
-            storeId,
-            errorClass: getErrorClass(persistError),
-          });
-          options.onError?.(persistError, {
-            phase: "answers.persist",
-            storeId,
-          });
-        },
-      );
+      try {
+        Promise.resolve(answersStorage.setItem(answersStorageKey, JSON.stringify(payload))).catch(
+          (caught: unknown) => {
+            reportAnswersStorageError(caught, "answers.persist");
+          },
+        );
+      } catch (caught) {
+        reportAnswersStorageError(caught, "answers.persist");
+      }
     };
 
     const restorePersistedAnswers = async (
@@ -252,18 +264,12 @@ export function createBeslismodelStore<
         }
         return restored;
       } catch (caught) {
-        const restoreError = toError(caught);
-        await Promise.resolve(answersStorage.removeItem(answersStorageKey)).catch(() => undefined);
-        telemetry.track({
-          type: "answers.restore_failed",
-          phase: "answers.restore",
-          storeId,
-          errorClass: getErrorClass(restoreError),
-        });
-        options.onError?.(restoreError, {
-          phase: "answers.restore",
-          storeId,
-        });
+        reportAnswersStorageError(caught, "answers.restore");
+        try {
+          await answersStorage.removeItem(answersStorageKey);
+        } catch {
+          // Best-effort cleanup only; original restore failure is already reported.
+        }
         return baseAnswers;
       }
     };

@@ -268,6 +268,60 @@ describe("createBeslismodelStore", () => {
     expect(telemetry.track.mock.calls[0]?.[0]).not.toHaveProperty("error");
   });
 
+  it("routes synchronous answer persistence failures through typed telemetry without throwing", async () => {
+    const persistError = new Error("raw patient answer write blocked");
+    const storage: BeslismodelStorageAdapter = {
+      getItem: vi.fn(() => null),
+      removeItem: vi.fn(),
+      setItem: vi.fn(() => {
+        throw persistError;
+      }),
+    };
+    const telemetry = {
+      track: vi.fn(),
+    };
+    const onError = vi.fn();
+    const useStore = createBeslismodelStore({
+      answersStorage: storage,
+      answersStorageKey: "answers",
+      answersTtlMs: 5000,
+      loadManifest: async () => ({
+        questionnaires: [
+          {
+            id: "example-flow",
+            title: "Example",
+            questions: [{ id: "q1", text: "Question", type: "select", options: [] }],
+            steps: [],
+            results: {},
+            resultsLogic: [],
+          },
+        ],
+      }),
+      onError,
+      telemetry,
+    });
+
+    const store = useStore();
+    await store.loadInitialData();
+
+    expect(() =>
+      store.setAnswer("example-flow", "q1", { value: "yes", text: "Yes" }),
+    ).not.toThrow();
+
+    expect(store.getAnswer("example-flow", "q1")).toEqual({ value: "yes", text: "Yes" });
+    expect(telemetry.track).toHaveBeenCalledWith({
+      type: "answers.persist_failed",
+      phase: "answers.persist",
+      storeId: "beslismodel",
+      errorClass: "Error",
+    });
+    expect(onError).toHaveBeenCalledWith(persistError, {
+      phase: "answers.persist",
+      storeId: "beslismodel",
+    });
+    expect(JSON.stringify(telemetry.track.mock.calls)).not.toContain("raw patient");
+  });
+
   it("keeps manifest loading cached in memory unless force reload is requested", async () => {
     let version = 0;
     const loadManifest = vi.fn(async () => ({
