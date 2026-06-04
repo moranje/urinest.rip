@@ -1,7 +1,13 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expectedPackageRegistry, getFrameworkPackages } from "./package-extraction-map.mjs";
+import {
+  expectedPackageBugsUrl,
+  expectedPackageHomepage,
+  expectedPackageRegistry,
+  expectedPackageRepositoryUrl,
+  getFrameworkPackages,
+} from "./package-extraction-map.mjs";
 
 const packages = getFrameworkPackages();
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
@@ -54,17 +60,17 @@ for (const { dir, name, packageJson } of packages) {
   if (!Array.isArray(manifest.keywords) || manifest.keywords.length === 0) {
     violations.push(`${packageJson}: keywords must be non-empty`);
   }
-  if (!manifest.homepage?.startsWith("https://")) {
-    violations.push(`${packageJson}: homepage must be https URL`);
+  if (manifest.homepage !== expectedPackageHomepage) {
+    violations.push(`${packageJson}: homepage must be ${expectedPackageHomepage}`);
   }
-  if (!manifest.bugs?.url?.startsWith("https://")) {
-    violations.push(`${packageJson}: bugs.url must be https URL`);
+  if (manifest.bugs?.url !== expectedPackageBugsUrl) {
+    violations.push(`${packageJson}: bugs.url must be ${expectedPackageBugsUrl}`);
   }
   if (
     manifest.repository?.type !== "git" ||
-    !manifest.repository?.url?.startsWith("git+https://")
+    manifest.repository?.url !== expectedPackageRepositoryUrl
   ) {
-    violations.push(`${packageJson}: repository must be a git+https URL`);
+    violations.push(`${packageJson}: repository.url must be ${expectedPackageRepositoryUrl}`);
   }
   if (manifest.repository?.directory !== dir) {
     violations.push(`${packageJson}: repository.directory must be ${dir}`);

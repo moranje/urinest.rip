@@ -100,12 +100,21 @@ const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8")) as
   devDependencies?: Record<string, string>;
   engines?: Record<string, string>;
 };
+const packageLock = JSON.parse(readFileSync(resolve("package-lock.json"), "utf8")) as {
+  packages?: Record<string, { version?: string; resolved?: string }>;
+};
 const expectedPackageRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
+const expectedPackageHomepage = "https://git.oranje.wtf/martien/beslismodel-framework";
+const expectedPackageBugsUrl = "https://git.oranje.wtf/martien/beslismodel-framework/issues";
+const expectedPackageRepositoryUrl = "git+https://git.oranje.wtf/martien/beslismodel-framework.git";
 const corePackage = JSON.parse(readFileSync(resolve("packages/core/package.json"), "utf8")) as {
   name: string;
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -119,6 +128,9 @@ const compilerPackage = JSON.parse(
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -132,6 +144,9 @@ const copdCarePackage = JSON.parse(
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -145,6 +160,9 @@ const cvrmPreventPackage = JSON.parse(
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -158,6 +176,9 @@ const dmCarePackage = JSON.parse(
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -171,6 +192,9 @@ const testingPackage = JSON.parse(
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -182,6 +206,9 @@ const vuePackage = JSON.parse(readFileSync(resolve("packages/vue/package.json"),
   version: string;
   description?: string;
   license?: string;
+  homepage?: string;
+  bugs?: { url?: string };
+  repository?: { type?: string; url?: string; directory?: string };
   files?: string[];
   dependencies?: Record<string, string>;
   engines?: Record<string, string>;
@@ -634,6 +661,12 @@ describe("CI policy", () => {
     };
     for (const manifest of packages) {
       expect(appFrameworkDependencies[manifest.name]).toBe(manifest.version);
+      const lockEntry = packageLock.packages?.[`node_modules/${manifest.name}`];
+      const packageBasename = manifest.name.split("/")[1];
+      expect(lockEntry?.version).toBe(manifest.version);
+      expect(lockEntry?.resolved).toBe(
+        `${expectedPackageRegistry}${encodeURIComponent(manifest.name)}/-/${manifest.version}/${packageBasename}-${manifest.version}.tgz`,
+      );
     }
     expect(copdCarePackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
     expect(cvrmPreventPackage.dependencies?.["@beslismodel/core"]).toBe(corePackage.version);
@@ -643,6 +676,10 @@ describe("CI policy", () => {
     for (const manifest of packages) {
       expect(manifest.description).toBeTruthy();
       expect(manifest.license).toBe("GPL-3.0-only");
+      expect(manifest.homepage).toBe(expectedPackageHomepage);
+      expect(manifest.bugs?.url).toBe(expectedPackageBugsUrl);
+      expect(manifest.repository?.type).toBe("git");
+      expect(manifest.repository?.url).toBe(expectedPackageRepositoryUrl);
       expect(manifest.files).toEqual(["dist"]);
       expect(manifest.engines?.node).toBe(">=20.19.0");
       expect(manifest.publishConfig?.registry).toBe(expectedPackageRegistry);

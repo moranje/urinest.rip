@@ -22,6 +22,9 @@ Package manifests must include:
 - `files: ["dist"]`
 - description, license, repository, homepage, bugs and keywords
 - `prepack` build hook so stale `dist` cannot be packed
+- Gitea repository metadata only: homepage `https://git.oranje.wtf/martien/beslismodel-framework`,
+  bugs `https://git.oranje.wtf/martien/beslismodel-framework/issues` and repository
+  `git+https://git.oranje.wtf/martien/beslismodel-framework.git`.
 
 ## Semver
 
@@ -89,6 +92,8 @@ Local npm setup:
 `urinest.rip` stays runnable during the move:
 
 - The app switches from workspace packages to exact registry versions in one atomic dependency commit.
+- The app lockfile must resolve every `@beslismodel/*` dependency to the canonical Gitea npm
+  registry URL for the exact package manifest version.
 - Vite and TypeScript aliases to `packages/*/src` are removed or narrowed to app-only code.
 - No import path may change to a private package source path; consumers use public `@beslismodel/*` exports only.
 - During the transition, source packages and registry packages may be selected only through package manager configuration, not divergent application imports.

@@ -465,6 +465,12 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] Browser-regressiesmoke meet een mobile info-popover op echte route (`q_bac_tx_local_healthy`) en faalt wanneer dialogpositie of max-height buiten de viewport valt.
 - [x] CI-policy bewaakt dat deze browsercontracten onderdeel blijven van `scripts/check-browser-regression-smoke.mjs`.
 
+### Ronde 10 — Package metadata en registry provenance (2026-06-04)
+
+- [x] Alle zeven package manifests gebruiken Gitea als canonical repository metadata (`homepage`, `bugs.url`, `repository.url`) in plaats van de oude GitHub placeholder.
+- [x] `check-package-release-config` faalt wanneer package metadata afwijkt van de Gitea frameworkrepo of wanneer `publishConfig.registry` afwijkt van de Gitea npm registry.
+- [x] CI-policy verifieert dat de app-lockfile iedere `@beslismodel/*` dependency resolveert naar de canonical Gitea npm tarball voor exact dezelfde versie als het package manifest.
+
 ## Commit Discipline
 
 Elke stap krijgt atomic conventional commit.

@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const KB = 1024;
 export const expectedPackageRegistry = "https://git.oranje.wtf/api/packages/martien/npm/";
+export const expectedPackageHomepage = "https://git.oranje.wtf/martien/beslismodel-framework";
+export const expectedPackageBugsUrl = "https://git.oranje.wtf/martien/beslismodel-framework/issues";
+export const expectedPackageRepositoryUrl =
+  "git+https://git.oranje.wtf/martien/beslismodel-framework.git";
 
 export const appBundleBudgets = {
   jsTotal: 950 * KB,

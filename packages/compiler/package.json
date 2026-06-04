@@ -9,14 +9,14 @@
     "guidelines",
     "vite-plugin"
   ],
-  "homepage": "https://github.com/moranje/beslismodel-framework",
+  "homepage": "https://git.oranje.wtf/martien/beslismodel-framework",
   "bugs": {
-    "url": "https://github.com/moranje/beslismodel-framework/issues"
+    "url": "https://git.oranje.wtf/martien/beslismodel-framework/issues"
   },
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moranje/beslismodel-framework.git",
+    "url": "git+https://git.oranje.wtf/martien/beslismodel-framework.git",
     "directory": "packages/compiler"
   },
   "bin": {
