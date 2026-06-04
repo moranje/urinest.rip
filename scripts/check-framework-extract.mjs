@@ -54,6 +54,10 @@ try {
 
   const packageCi = readFileSync(join(tempDir, ".github/workflows/ci.yml"), "utf8");
   const giteaPackageCi = readFileSync(join(tempDir, ".gitea/workflows/ci.yaml"), "utf8");
+  const giteaPublishWorkflow = readFileSync(
+    join(tempDir, ".gitea/workflows/publish-next.yaml"),
+    "utf8",
+  );
   for (const requiredGate of [
     "node-version: [20, 22, 24]",
     "npm ci",
@@ -69,6 +73,22 @@ try {
     }
     if (!giteaPackageCi.includes(requiredGate)) {
       throw new Error(`Extracted framework Gitea CI is missing gate: ${requiredGate}`);
+    }
+  }
+
+  for (const requiredPublishGate of [
+    "workflow_dispatch",
+    "NPM_REGISTRY_TOKEN",
+    "npm run check:packages",
+    "BESLISMODEL_PUBLISH_CONFIRM",
+    "npm run check:package-publish-next -- --publish",
+    "BESLISMODEL_REGISTRY_SMOKE_VERSION",
+    "npm run check:package-registry-smoke",
+  ]) {
+    if (!giteaPublishWorkflow.includes(requiredPublishGate)) {
+      throw new Error(
+        `Extracted framework Gitea publish workflow is missing: ${requiredPublishGate}`,
+      );
     }
   }
 

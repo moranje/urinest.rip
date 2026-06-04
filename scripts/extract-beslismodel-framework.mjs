@@ -378,6 +378,66 @@ jobs:
   writeFileSync(join(target, ".gitea/workflows/ci.yaml"), workflow);
 }
 
+function writeGiteaPublishWorkflow(target) {
+  const workflow = `name: Publish Next Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "@beslismodel prerelease version to publish"
+        required: true
+        default: "0.1.0-next.0"
+
+permissions:
+  contents: read
+
+jobs:
+  publish-next:
+    name: Publish @beslismodel packages with next tag
+    runs-on: ubuntu-latest
+    container: public.ecr.aws/docker/library/node:24-bookworm
+    env:
+      GITEA_NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+      NODE_AUTH_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+      NPM_TOKEN: \${{ secrets.NPM_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure npm auth
+        run: |
+          set -eu
+          if [ -z "\${NPM_TOKEN:-}" ]; then
+            echo "::error::NPM_REGISTRY_TOKEN secret is required for package publish"
+            exit 1
+          fi
+          mkdir -p "\${RUNNER_TEMP:-/tmp}/beslismodel-npm"
+          NPM_USERCONFIG="\${RUNNER_TEMP:-/tmp}/beslismodel-npm/.npmrc"
+          {
+            echo "@beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/"
+            echo "//git.oranje.wtf/api/packages/martien/npm/:_authToken=\${NPM_TOKEN}"
+            echo "always-auth=true"
+          } > "$NPM_USERCONFIG"
+          echo "npm_config_userconfig=$NPM_USERCONFIG" >> "$GITHUB_ENV"
+
+      - run: npm ci
+      - run: npm run check:packages
+
+      - name: Publish prerelease packages
+        env:
+          BESLISMODEL_PUBLISH_CONFIRM: \${{ github.event.inputs.version }}
+        run: npm run check:package-publish-next -- --publish
+
+      - name: Smoke packages from Gitea npm
+        env:
+          BESLISMODEL_REGISTRY_SMOKE_VERSION: \${{ github.event.inputs.version }}
+        run: npm run check:package-registry-smoke
+`;
+
+  mkdirSync(join(target, ".gitea/workflows"), { recursive: true });
+  writeFileSync(join(target, ".gitea/workflows/publish-next.yaml"), workflow);
+}
+
 function linkNodeModules(target) {
   symlinkSync(join(root, "node_modules"), join(target, "node_modules"), "dir");
 }
@@ -425,6 +485,7 @@ function main() {
   writeVitestConfig(target);
   writeEslintConfig(target);
   writePackageCi(target);
+  writeGiteaPublishWorkflow(target);
 
   if (shouldLinkNodeModules) {
     linkNodeModules(target);

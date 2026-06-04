@@ -98,6 +98,11 @@ BESLISMODEL_PUBLISH_CONFIRM=0.1.0-next.0 npm run check:package-publish-next -- -
 The publish command first dry-runs every package, verifies registry auth, and checks that none of
 the package versions already exist in Gitea before the first `npm publish` call.
 
+In the standalone Gitea repo, `.gitea/workflows/publish-next.yaml` exposes the same path as manual
+`workflow_dispatch`. It requires the `NPM_REGISTRY_TOKEN` secret, runs `npm run check:packages`,
+publishes with `BESLISMODEL_PUBLISH_CONFIRM`, and immediately runs registry smoke for the dispatched
+version.
+
 Smoke installed packages from Gitea:
 
 ```bash
