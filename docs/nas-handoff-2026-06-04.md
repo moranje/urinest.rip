@@ -88,6 +88,7 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+44cd5cf test(packages): cover registry smoke versions
 05ffcd4 fix(packages): allow stable registry smoke
 298133c fix(packages): guard gitea latest publishing
 bf9a2c0 test(browser): cover answer info popovers
@@ -920,6 +921,10 @@ Verified 2026-06-04:
 - `05ffcd4 fix(packages): allow stable registry smoke` lets `check-package-registry-smoke` accept
   either stable semver or semver prerelease, so post-publish smoke works for both `next` and
   `latest`.
+- `44cd5cf test(packages): cover registry smoke versions` extracts the registry-smoke version
+  validation into `scripts/package-registry-smoke-version.mjs`, tests exact prerelease and stable
+  versions, rejects shorthand/mismatch/mixed/missing versions, and copies the helper into the
+  standalone framework extraction.
 - `bf9a2c0 test(browser): cover answer info popovers` adds real browser coverage for answer info
   popovers: click opens/closes dialog without selecting an answer or mutating URL.
 - `6e3fc33 chore(build): drop legacy compiler tarball` removes the obsolete tracked
@@ -949,6 +954,17 @@ Verified 2026-06-04:
   `check:packages` passed standalone extraction, framework gates, tarballs, publish dry-run,
   file-install consumer smoke, package export checks, mutation pilot and Urinestrip consumer test;
   `check:browser-smoke` passed; registry-smoke version check accepted current `0.1.0-next.1`.
+- Local verification after the registry-smoke version helper:
+
+  ```bash
+  npx vitest run --config vitest.config.app.ts scripts/package-registry-smoke-version.test.mjs src/__tests__/ci-policy.test.ts
+  node scripts/check-package-registry-smoke.mjs --check-config
+  node scripts/check-package-registry-smoke.mjs --check-version --current-version
+  npm run check:packages
+  ```
+
+  Results: focused helper and CI-policy tests passed, registry-smoke config/version checks passed,
+  and `check:packages` passed with the helper present in the extracted standalone framework.
 - NAS agent verification: live registry smoke against already published `0.1.0-next.0` passed via
   `--network container:gitea` against `127.0.0.1:3000`; host port `127.0.0.1:3030` refused
   connections. `0.1.0-next.1` is still not published, so live `check:package-registry-smoke:current`
