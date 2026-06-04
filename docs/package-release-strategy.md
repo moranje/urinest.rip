@@ -123,6 +123,8 @@ Before moving `urinest.rip` to registry dependencies, create clean temp consumer
 - fresh `package.json`
 - install packages from Gitea registry
 - run `BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke`;
+- in CI/NAS verification where all package manifests already share the target version, run
+  `npm run check:package-registry-smoke:current`;
 - compile minimal manifest runner
 - import only public `@beslismodel/*` exports
 - run Urinestrip redirect/result fixture

@@ -123,6 +123,13 @@ Smoke installed packages from Gitea:
 BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0 npm run check:package-registry-smoke
 ```
 
+For CI or NAS verification against the package version currently declared in all framework package
+manifests:
+
+```bash
+npm run check:package-registry-smoke:current
+```
+
 If local registry access requires the proxy:
 
 ```bash

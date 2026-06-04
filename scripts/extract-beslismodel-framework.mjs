@@ -76,6 +76,8 @@ const packageScripts = {
   "check:package-registry-smoke": "node scripts/check-package-registry-smoke.mjs",
   "check:package-registry-smoke:config":
     "node scripts/check-package-registry-smoke.mjs --check-config",
+  "check:package-registry-smoke:current":
+    "node scripts/check-package-registry-smoke.mjs --current-version",
   "check:package-bundle-budget": "node scripts/check-package-bundle-budget.mjs",
   "check:package-release-config": "node scripts/check-package-release-config.mjs",
   "check:package-release-notes": "node scripts/check-package-release-notes.mjs",

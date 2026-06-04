@@ -14,8 +14,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 const defaultRegistry = expectedPackageRegistry;
 const registry = process.env.BESLISMODEL_REGISTRY_URL ?? defaultRegistry;
-const version = process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION;
 const isConfigCheck = process.argv.includes("--check-config");
+const usesCurrentVersion = process.argv.includes("--current-version");
 
 const packages = getFrameworkPackageNames(root);
 const packageManifests = getFrameworkPackages(root).map((item) =>
@@ -23,6 +23,8 @@ const packageManifests = getFrameworkPackages(root).map((item) =>
 );
 const expectedVersions = new Set(packageManifests.map((manifest) => manifest.version));
 const [expectedVersion] = expectedVersions;
+const version =
+  process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION ?? (usesCurrentVersion ? expectedVersion : "");
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
 
@@ -269,7 +271,7 @@ const assertConfig = () => {
   }
 
   console.log(
-    "Package registry smoke config ready; set BESLISMODEL_REGISTRY_SMOKE_VERSION to run install smoke",
+    "Package registry smoke config ready; set BESLISMODEL_REGISTRY_SMOKE_VERSION or run check:package-registry-smoke:current to install-smoke published packages",
   );
 };
 
@@ -282,7 +284,7 @@ const dependencyVersion = (name) => {
 const assertVersion = () => {
   if (!version) {
     fail(
-      `BESLISMODEL_REGISTRY_SMOKE_VERSION is required, for example: BESLISMODEL_REGISTRY_SMOKE_VERSION=${expectedVersion} npm run check:package-registry-smoke`,
+      `BESLISMODEL_REGISTRY_SMOKE_VERSION is required, or run npm run check:package-registry-smoke:current for ${expectedVersion}`,
     );
   }
   if (expectedVersions.size !== 1) {

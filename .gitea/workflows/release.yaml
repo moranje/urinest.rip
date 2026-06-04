@@ -82,7 +82,7 @@ jobs:
           npm-token: ${{ secrets.NPM_REGISTRY_TOKEN }}
           registry: https://git.oranje.wtf/api/packages/martien/npm/
           scopes: "@oranje,@xenia,@beslismodel"
-          preflight-package: "@oranje%2ftokens"
+          preflight-package: "@beslismodel%2fcore"
 
       - name: Setup Node + install dependencies
         uses: https://git.oranje.wtf/martien/baseline/actions/setup-node@v2.2.1
@@ -95,6 +95,9 @@ jobs:
 
       - name: Framework package checks
         run: npm run check:framework
+
+      - name: Registry package install smoke
+        run: npm run check:package-registry-smoke:current
 
       - name: Package release config preflight
         run: npm run check:package-release-config

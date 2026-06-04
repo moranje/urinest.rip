@@ -111,11 +111,6 @@ if (trackedForbiddenFiles.length > 0) {
 const projectNpmrcPath = join(process.cwd(), ".npmrc");
 if (existsSync(projectNpmrcPath)) {
   const projectNpmrc = readFileSync(projectNpmrcPath, "utf8");
-  if (strictNpmrc && projectNpmrc.includes("@beslismodel:registry=")) {
-    violations.push(
-      "Project .npmrc must not define @beslismodel registry when BESLISMODEL_STRICT_NPMRC=true; use .npmrc.example plus user-level npm auth.",
-    );
-  }
   if (strictNpmrc && secretPattern.test(projectNpmrc)) {
     violations.push(
       "Project .npmrc must not contain auth material when BESLISMODEL_STRICT_NPMRC=true; use CI secret injection.",

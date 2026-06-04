@@ -227,6 +227,9 @@ describe("CI policy", () => {
     expect(packageJson.scripts["check:package-registry-smoke:config"]).toBe(
       "node scripts/check-package-registry-smoke.mjs --check-config",
     );
+    expect(packageJson.scripts["check:package-registry-smoke:current"]).toBe(
+      "node scripts/check-package-registry-smoke.mjs --current-version",
+    );
     expect(packageJson.scripts["check:browser-smoke"]).toBe(
       "node scripts/check-browser-regression-smoke.mjs",
     );
@@ -338,6 +341,15 @@ describe("CI policy", () => {
     expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
       "BESLISMODEL_STRICT_NPMRC",
     );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).toContain(
+      "Project .npmrc must not contain auth material",
+    );
+    expect(readFileSync(resolve("scripts/check-package-release-config.mjs"), "utf8")).not.toContain(
+      "must not define @beslismodel registry when BESLISMODEL_STRICT_NPMRC=true",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "--current-version",
+    );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "npm whoami --registry",
     );
@@ -391,6 +403,9 @@ describe("CI policy", () => {
     ).toContain("getFrameworkPackages");
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
       "BESLISMODEL_REGISTRY_SMOKE_VERSION",
+    );
+    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
+      "--current-version",
     );
     expect(registryMigrationScript).toContain("BESLISMODEL_REGISTRY_MIGRATION_VERSION");
     expect(registryMigrationScript).toContain("migratePackageJson");
@@ -522,8 +537,11 @@ describe("CI policy", () => {
     );
     expect(giteaCiWorkflow).toContain("registry: https://git.oranje.wtf/api/packages/martien/npm/");
     expect(giteaCiWorkflow).toContain('scopes: "@oranje,@xenia,@beslismodel"');
+    expect(giteaCiWorkflow).toContain('preflight-package: "@beslismodel%2fcore"');
+    expect(giteaCiWorkflow).not.toContain('preflight-package: "@oranje%2ftokens"');
     expect(giteaCiWorkflow).toContain("npm run check:app");
     expect(giteaCiWorkflow).toContain("npm run check:framework");
+    expect(giteaCiWorkflow).toContain("npm run check:package-registry-smoke:current");
     expect(giteaCiWorkflow).toContain("browser-actions/setup-chrome@v1");
     expect(giteaCiWorkflow).toContain("npm run check:browser-smoke");
     expect(giteaCiWorkflow).toContain("npm run check:package-release-config");
@@ -539,7 +557,10 @@ describe("CI policy", () => {
     );
     expect(giteaReleaseWorkflow).toContain("app-name: urinest.rip");
     expect(giteaReleaseWorkflow).toContain("release-version: ${{ needs.version.outputs.value }}");
+    expect(giteaReleaseWorkflow).toContain('preflight-package: "@beslismodel%2fcore"');
+    expect(giteaReleaseWorkflow).not.toContain('preflight-package: "@oranje%2ftokens"');
     expect(giteaReleaseWorkflow).toContain("npm run check:framework");
+    expect(giteaReleaseWorkflow).toContain("npm run check:package-registry-smoke:current");
     expect(giteaReleaseWorkflow).toContain("browser-actions/setup-chrome@v1");
     expect(giteaReleaseWorkflow).toContain("npm run check:browser-smoke");
     expect(giteaReleaseWorkflow).toContain("nwtgck/actions-netlify@v3");

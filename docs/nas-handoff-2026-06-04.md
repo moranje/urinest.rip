@@ -786,6 +786,7 @@ node -v
 npm ci
 npm run check:packages
 BESLISMODEL_REGISTRY_SMOKE_VERSION=0.1.0-next.0 npm run check:package-registry-smoke
+npm run check:package-registry-smoke:current
 npm audit --omit=dev --audit-level=high
 ```
 
@@ -813,6 +814,7 @@ BESLISMODEL_PUBLISH_CONFIRM=<exact-version> npm run check:package-publish-next -
 
 ```bash
 BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-version> npm run check:package-registry-smoke
+npm run check:package-registry-smoke:current
 ```
 
 ### App registry migration
