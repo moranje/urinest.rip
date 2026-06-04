@@ -428,6 +428,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 - [x] `fix(packages): allow stable registry smoke` laat `check:package-registry-smoke` exact gepubliceerde stable semver accepteren, zodat de Gitea post-publish smoke werkt voor zowel `next` als `latest`; verificatie: registry-smoke config, `--check-version` voor huidige prerelease, gesimuleerde stable en ongeldige semver, plus CI-policy gate.
 - [x] `test(browser): cover answer info popovers` borgt in de browser-smoke het echte bacteriurie-behandelpad: info-click opent/sluit de dialog, wijzigt URL/selectie niet, gebruikt robuuste DOM-waits, ruimt preview-processen op en negeert alleen de externe `stats.oranje.wtf` analytics request; verificatie: Chrome 149 browser-smoke groen.
 - [x] `test(browser): cover result history navigation` borgt in dezelfde browser-smoke dat na een echte behandelkeuze vanaf het resultaat de native browser-terugknop terugkeert naar de laatste vragenlijststap (`q_bac_tx_local_healthy`) en niet naar dashboard of loader; verificatie: app CI-policy test en Chrome browser-smoke groen.
+- [x] `test(browser): cover result visual chrome` borgt op de directe resultaatroute dat contra-indicatiecheckboxes en waarschuwing/statusnotices in echte browserstijl geen extra randen krijgen en voldoende padding houden; verificatie: app CI-policy test en Chrome browser-smoke groen.
 
 ## Commit Discipline
 

@@ -652,6 +652,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("q_bac_tx_local_healthy");
     expect(browserRegressionSmokeScript).toContain("page.goBack");
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
+    expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
+    expect(browserRegressionSmokeScript).toContain("notice padding too tight");
   });
 
   it("keeps Gitea app workflows on baseline actions while package publishing stays npm-native", () => {

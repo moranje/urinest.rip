@@ -397,6 +397,93 @@ async function assertDirectResultRoute(page, baseUrl) {
   const text = await page.evaluate(() => document.body.textContent ?? "");
   assert(!text.includes("Resultaat bepalen"), "Direct result route stayed stuck on loader");
   assert(!text.includes("Vragenlijst laden"), "Direct result route stayed stuck on shell loader");
+
+  const resultUi = await page.evaluate(() => {
+    const px = (value) => Number.parseFloat(value || "0");
+    const notice = document.querySelector(".contraindication-notice");
+    const warning = document.querySelector(".notice--warning");
+    const checkboxBox = document.querySelector(".checkbox-field__box");
+    const noticeStyle = notice ? getComputedStyle(notice) : null;
+    const warningStyle = warning ? getComputedStyle(warning) : null;
+    const checkboxBoxStyle = checkboxBox ? getComputedStyle(checkboxBox) : null;
+
+    return {
+      checkboxBorderWidths: checkboxBoxStyle
+        ? [
+            px(checkboxBoxStyle.borderTopWidth),
+            px(checkboxBoxStyle.borderRightWidth),
+            px(checkboxBoxStyle.borderBottomWidth),
+            px(checkboxBoxStyle.borderLeftWidth),
+          ]
+        : [],
+      checkboxBoxShadow: checkboxBoxStyle?.boxShadow ?? "",
+      noticeBorderWidths: noticeStyle
+        ? [
+            px(noticeStyle.borderTopWidth),
+            px(noticeStyle.borderRightWidth),
+            px(noticeStyle.borderBottomWidth),
+            px(noticeStyle.borderLeftWidth),
+          ]
+        : [],
+      noticePadding: noticeStyle
+        ? {
+            blockEnd: px(noticeStyle.paddingBlockEnd),
+            blockStart: px(noticeStyle.paddingBlockStart),
+            inlineEnd: px(noticeStyle.paddingInlineEnd),
+            inlineStart: px(noticeStyle.paddingInlineStart),
+          }
+        : null,
+      warningBorderWidths: warningStyle
+        ? [
+            px(warningStyle.borderTopWidth),
+            px(warningStyle.borderRightWidth),
+            px(warningStyle.borderBottomWidth),
+            px(warningStyle.borderLeftWidth),
+          ]
+        : [],
+      warningPadding: warningStyle
+        ? {
+            blockEnd: px(warningStyle.paddingBlockEnd),
+            blockStart: px(warningStyle.paddingBlockStart),
+            inlineEnd: px(warningStyle.paddingInlineEnd),
+            inlineStart: px(warningStyle.paddingInlineStart),
+          }
+        : null,
+    };
+  });
+
+  assert(
+    resultUi.checkboxBorderWidths.length === 4 &&
+      resultUi.checkboxBorderWidths.every((width) => width === 0),
+    `Result checkbox visual has unwanted border widths: ${resultUi.checkboxBorderWidths.join(", ")}`,
+  );
+  assert(
+    resultUi.checkboxBoxShadow === "none",
+    `Result checkbox visual has unwanted shadow: ${resultUi.checkboxBoxShadow}`,
+  );
+  assert(
+    resultUi.noticeBorderWidths.length === 4 &&
+      resultUi.noticeBorderWidths.every((width) => width === 0),
+    `Contraindication notice has unwanted border widths: ${resultUi.noticeBorderWidths.join(", ")}`,
+  );
+  assert(
+    resultUi.warningBorderWidths.length === 4 &&
+      resultUi.warningBorderWidths.every((width) => width === 0),
+    `Warning notice has unwanted border widths: ${resultUi.warningBorderWidths.join(", ")}`,
+  );
+  for (const [name, padding] of [
+    ["contraindication", resultUi.noticePadding],
+    ["warning", resultUi.warningPadding],
+  ]) {
+    assert(padding, `Missing ${name} notice padding measurement`);
+    assert(
+      padding.blockStart >= 20 &&
+        padding.blockEnd >= 20 &&
+        padding.inlineStart >= 28 &&
+        padding.inlineEnd >= 28,
+      `${name} notice padding too tight: ${JSON.stringify(padding)}`,
+    );
+  }
 }
 
 async function run() {
