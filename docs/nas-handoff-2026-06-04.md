@@ -82,6 +82,8 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+117a45a test(flows): update triage result snapshot
+35e66e4 docs(framework): record next prerelease handoff
 d022544 chore(packages): bump next prerelease
 a9cb291 docs(framework): clarify token verification status
 e9968a5 docs(framework): align nas ui contract evidence
@@ -816,7 +818,7 @@ git commit -m "docs(framework): add nas execution handoff"
 Verified 2026-06-04:
 
 - `npm run build` passed on Vite 8.0.16.
-- `npm run test:app` passed: 81 files, 402 tests.
+- `npm run test:app` passed in the latest full app gate: 82 files, 409 tests.
 - `npm run check:browser-smoke` passed and now covers landing grid, info popover, browser back,
   direct result route and light/dark/system theme rendering.
 
@@ -935,11 +937,15 @@ Verified 2026-06-04:
 - `docs/audit-2026-05-21.md` is now explicitly labeled as superseded by the 2026-05-22 audit
   reconciliation.
 - `docs/ai-guideline-authoring.md` template checklist no longer appears as open project work.
-- `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 81 app
-  test files/402 tests, guideline traceability/copy, bundle budget and production build.
+- `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 82 app
+  test files/409 tests, guideline traceability/copy/role gates, bundle budget and production build.
 - `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
   publish dry-run, packed/file-install consumer smokes, package export checks, mutation pilot and
   Urinestrip consumer type/test gate.
+- `117a45a test(flows): update triage result snapshot` updated the compiled manifest snapshot for
+  the added triage `U3` result rule in `bacteriurie`.
+- `npm run check:app` passed after the snapshot update: 82 app test files, 409 tests, guideline
+  traceability/copy/role gates, bundle budget and production build.
 - `npm run check:browser-smoke` passed after the latest docs/test changes.
 - `npm audit --omit=dev --audit-level=high` reported 0 vulnerabilities.
 
