@@ -424,6 +424,7 @@ Voor nu is dit een geplande vervolgronde: pas uitvoeren nadat de huidige app- en
 ### Ronde 7 — NAS-tail UI-regressie-afsluiting (2026-06-04)
 
 - [x] `chore(lockfile): sync npm optional deps` houdt `package-lock.json` installbaar met npm 11/Node 24 door ontbrekende `@emnapi` optional dependencies op te nemen; verificatie: tijdelijke Node 24 container met lokale Gitea registry override bereikt `npm ci`.
+- [x] `test(browser): cover answer info popovers` borgt in de browser-smoke het echte bacteriurie-behandelpad: info-click opent/sluit de dialog, wijzigt URL/selectie niet, gebruikt robuuste DOM-waits, ruimt preview-processen op en negeert alleen de externe `stats.oranje.wtf` analytics request; verificatie: Chrome 149 browser-smoke groen.
 
 ## Commit Discipline
 

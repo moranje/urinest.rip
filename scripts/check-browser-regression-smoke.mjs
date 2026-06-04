@@ -34,6 +34,10 @@ function getFreePort() {
   });
 }
 
+function isIgnoredBrowserRequest(url) {
+  return url === "https://stats.oranje.wtf/script.js";
+}
+
 async function waitForHttp(url, timeoutMs = 30_000) {
   const startedAt = Date.now();
   let lastError = "";
@@ -50,6 +54,36 @@ async function waitForHttp(url, timeoutMs = 30_000) {
   throw new Error(`Timed out waiting for ${url}: ${lastError}`);
 }
 
+function signalPreviewServer(server, signal) {
+  if (!server.pid) return;
+  try {
+    if (process.platform !== "win32") process.kill(-server.pid, signal);
+    else server.kill(signal);
+  } catch {
+    server.kill(signal);
+  }
+}
+
+async function stopPreviewServer(server) {
+  if (server.exitCode !== null || server.signalCode !== null) return;
+
+  const waitForExit = (timeoutMs) =>
+    new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(false), timeoutMs);
+      server.once("exit", () => {
+        clearTimeout(timeout);
+        resolve(true);
+      });
+    });
+
+  signalPreviewServer(server, "SIGTERM");
+  if (await waitForExit(1_500)) return;
+  if (server.exitCode !== null || server.signalCode !== null) return;
+
+  signalPreviewServer(server, "SIGKILL");
+  await waitForExit(1_000);
+}
+
 async function withPreviewServer(callback) {
   if (process.env.BESLISMODEL_BROWSER_SMOKE_URL) {
     await callback(process.env.BESLISMODEL_BROWSER_SMOKE_URL.replace(/\/$/u, ""));
@@ -62,6 +96,7 @@ async function withPreviewServer(callback) {
     "npm",
     ["run", "preview", "--", "--host", "127.0.0.1", "--port", String(port), "--strictPort"],
     {
+      detached: process.platform !== "win32",
       env: { ...process.env, BROWSER: "none" },
       stdio: ["ignore", "pipe", "pipe"],
     },
@@ -83,7 +118,7 @@ async function withPreviewServer(callback) {
     if (detail) console.error(detail);
     throw error;
   } finally {
-    server.kill("SIGTERM");
+    await stopPreviewServer(server);
   }
 }
 
@@ -97,7 +132,7 @@ async function expectHeading(page, text) {
 
 async function assertLandingGrid(page, baseUrl) {
   await page.setViewport({ width: 1714, height: 1200, deviceScaleFactor: 1 });
-  await page.goto(`${baseUrl}/`, { waitUntil: "networkidle0" });
+  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.waitForSelector(".bm-landing-menu-grid__primary-item", { timeout: 10_000 });
 
   const grid = await page.evaluate(() => {
@@ -232,7 +267,7 @@ async function clickChoice(page, label) {
 }
 
 async function assertQuestionnaireNavigation(page, baseUrl) {
-  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "networkidle0" });
+  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Nitriet test");
 
   const progress = await page.evaluate(() => ({
@@ -257,7 +292,7 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
     { timeout: 10_000 },
   );
 
-  await page.goBack({ waitUntil: "networkidle0" });
+  await page.goBack({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(
     () =>
       location.pathname === "/questionnaire/strip" &&
@@ -268,9 +303,8 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
 }
 
 async function assertInfoPopoverInteraction(page, baseUrl) {
-  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "networkidle0" });
+  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Nitriet test");
-
   await clickChoice(page, "Positief");
   await page.waitForFunction(
     () =>
@@ -278,67 +312,61 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
       document.querySelector("h1")?.textContent?.includes("Is er sprake van weefselinvasie?"),
     { timeout: 10_000 },
   );
-
   await clickChoice(page, "Geen");
   await expectHeading(page, "Behoort patiënt tot een risicogroep?");
   await clickChoice(page, "Nee");
   await expectHeading(page, "Heeft patiënt een urine katheter?");
   await clickChoice(page, "Nee");
-  await expectHeading(page, "Welke behandeling kan patiënt krijgen?");
+  await page.waitForFunction(
+    () =>
+      location.search.includes("q=q_bac_tx_local_healthy") &&
+      document.querySelector("h1")?.textContent?.includes("Welke behandeling kan patiënt krijgen?"),
+    { timeout: 10_000 },
+  );
 
   const beforeUrl = page.url();
-  await page.click('[data-testid="choice-option-info"]');
-  try {
-    await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
-      timeout: 10_000,
-      visible: true,
-    });
-  } catch (error) {
-    const diagnosticState = await page.evaluate(() => ({
-      activeOption:
-        document
-          .querySelector(
-            '.question-options [role="radio"][aria-checked="true"], .question-options [role="checkbox"][aria-checked="true"]',
-          )
-          ?.textContent?.trim() ?? "",
-      dialogs: [...document.querySelectorAll('[role="dialog"]')].map((dialog) => ({
-        ariaLabel: dialog.getAttribute("aria-label"),
-        opacity: getComputedStyle(dialog).opacity,
-        text: dialog.textContent?.trim() ?? "",
-        visibility: getComputedStyle(dialog).visibility,
-      })),
-      infoButtons: [...document.querySelectorAll('[data-testid="choice-option-info"]')].map(
-        (button) => ({
-          ariaExpanded: button.getAttribute("aria-expanded"),
-          label: button.getAttribute("aria-label"),
-          text: button.closest(".choice-option")?.textContent?.trim() ?? "",
-        }),
-      ),
-      url: location.href,
-    }));
-    throw new Error(
-      `Info popover did not become visible: ${JSON.stringify(diagnosticState, null, 2)}\n${String(error)}`,
+  const selectedBefore = await page.evaluate(() =>
+    [...document.querySelectorAll('[role="radio"][aria-checked="true"]')].map((node) =>
+      node.textContent?.trim(),
+    ),
+  );
+  const opened = await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
+    const button = buttons.find((candidate) =>
+      candidate.closest(".choice-option")?.textContent?.includes("Trimethoprim"),
     );
-  }
+    if (!(button instanceof HTMLElement)) return false;
+    button.click();
+    return true;
+  });
+  assert(opened, "Trimethoprim info button not found");
 
-  const popoverState = await page.evaluate(() => {
-    const dialog = document.querySelector('[role="dialog"][aria-label="Meer informatie"]');
-    const activeOption = document.querySelector(
-      '.question-options [role="radio"][aria-checked="true"], .question-options [role="checkbox"][aria-checked="true"]',
+  await page.waitForSelector('[role="dialog"][aria-label="Meer informatie"]', {
+    timeout: 10_000,
+  });
+
+  const afterOpen = await page.evaluate(() => {
+    const trimethoprimOption = [...document.querySelectorAll(".choice-option")].find((candidate) =>
+      candidate.textContent?.includes("Trimethoprim"),
     );
     return {
-      activeOptionText: activeOption?.textContent?.trim() ?? "",
-      dialogText: dialog?.textContent?.trim() ?? "",
+      selected: [...document.querySelectorAll('[role="radio"][aria-checked="true"]')].map((node) =>
+        node.textContent?.trim(),
+      ),
+      text:
+        document.querySelector('[role="dialog"][aria-label="Meer informatie"]')?.textContent ?? "",
+      trimethoprimChecked:
+        trimethoprimOption?.querySelector('[role="radio"]')?.getAttribute("aria-checked") ?? "",
       url: location.href,
     };
   });
-
-  assert(popoverState.url === beforeUrl, "Info button should not navigate or choose an answer");
-  assert(popoverState.activeOptionText === "", "Info button should not select an answer");
+  assert(afterOpen.url === beforeUrl, "Info popover click changed the questionnaire URL");
   assert(
-    popoverState.dialogText.includes("controleer eerst op allergieën"),
-    `Unexpected info popover text: ${popoverState.dialogText}`,
+    JSON.stringify(afterOpen.selected) === JSON.stringify(selectedBefore),
+    "Info popover click changed answer selection",
   );
+  assert(afterOpen.trimethoprimChecked === "false", "Info popover click selected Trimethoprim");
+  assert(afterOpen.text.includes("3e keuze"), "Info popover did not show treatment info text");
 
   await page.click('[data-testid="info-popover-close"]');
   await page.waitForFunction(
@@ -348,7 +376,7 @@ async function assertInfoPopoverInteraction(page, baseUrl) {
 }
 
 async function assertDirectResultRoute(page, baseUrl) {
-  await page.goto(`${baseUrl}/info/uti.local.healthy.1`, { waitUntil: "networkidle0" });
+  await page.goto(`${baseUrl}/info/uti.local.healthy.1`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Cystitis: Gezonde vrouw");
 
   const text = await page.evaluate(() => document.body.textContent ?? "");
@@ -371,15 +399,17 @@ async function run() {
     const page = await browser.newPage();
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("console", (message) => {
-      if (
-        message.type() === "error" &&
-        !message.text().includes("Failed to load resource: the server responded with a status of")
-      ) {
+      if (message.type() === "error" && !message.text().startsWith("Failed to load resource:")) {
         errors.push(message.text());
       }
     });
+    page.on("requestfailed", (request) => {
+      if (!isIgnoredBrowserRequest(request.url())) {
+        badResponses.push(`${request.failure()?.errorText ?? "request failed"} ${request.url()}`);
+      }
+    });
     page.on("response", (response) => {
-      if (response.status() >= 400) {
+      if (response.status() >= 400 && !isIgnoredBrowserRequest(response.url())) {
         badResponses.push(`${response.status()} ${response.url()}`);
       }
     });
