@@ -696,11 +696,23 @@ npm run check:browser-smoke
 
 - [ ] `git status --short` in every repo.
 - [ ] `git remote -v` in every repo.
-- [ ] `git log --oneline -10` in `urinest.rip` and `beslismodel-framework`.
+- [x] `git log --oneline -10` in `urinest.rip` and `beslismodel-framework`.
 - [ ] Find and read `Preview framework...md`.
 - [ ] Compare that document with this handoff and `docs/framework-package-plan-2026-06-01.md`.
-- [ ] Confirm no tracked `.npmrc` auth tokens.
-- [ ] Confirm Node `>=20.19.0`.
+- [x] Confirm no tracked `.npmrc` auth tokens.
+- [x] Confirm Node `>=20.19.0`.
+
+Verified 2026-06-04:
+
+- `urinest.rip` log captured through `6aea325 docs(audits): reconcile open checklist status`.
+- `beslismodel-framework` is clean/synced on `master`, remote is
+  `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`, latest log starts at
+  `e296808 fix(packages): harden gitea publish gates`.
+- Tracked `.npmrc` files in `tokens` and `create-oranje-app` contain only
+  `${GITEA_NPM_TOKEN}` placeholders; `beslismodel-framework` and `xenia-ui` have no tracked
+  `.npmrc`.
+- Local Node is `v25.2.1`, satisfying `>=20.19.0`.
+- `Preview framework...md` was not found by filename scan under `/Users/martien/Sync/Projects/code`.
 
 Commit only if docs changed:
 
@@ -743,7 +755,7 @@ test(ui): lock clinical route visual regressions
 
 ### Round 3 — Cross-Repo Token/Theme Architecture
 
-- [ ] Inspect `tokens`, `xenia-ui`, `create-oranje-app`.
+- [x] Inspect `tokens`, `xenia-ui`, `create-oranje-app`.
 - [x] Decide source of truth for app token export: `src/styles/tokens.css` is runtime source; DTCG JSON is generated parity artefact.
 - [x] Generate DTCG-compatible token JSON (`src/styles/beslismodel.tokens.json`).
 - [x] Ensure generated theme metadata derives from central CSS token source (`scripts/check-design-tokens.mjs`).
@@ -753,6 +765,13 @@ test(ui): lock clinical route visual regressions
 
 Verified 2026-06-04:
 
+- `tokens` is `@oranje/tokens`: CSS source-of-truth, DTCG JSON exports and TS exports; repo is
+  behind origin by 5.
+- `xenia-ui` consumes `@oranje/tokens`, documents CSS-cascade theming and has token-discipline
+  audit score 5/5 in its latest local audit; repo is behind origin by 4 and has untracked
+  audit/package artefacts.
+- `create-oranje-app` templates include `@oranje/tokens`, optional `@xenia/ui`, Gitea npm registry
+  `.npmrc` placeholders and baseline pipeline docs; repo is behind origin by 2.
 - `568905b test(theme): smoke app theme modes` added rendered browser checks for explicit light,
   explicit dark and system dark mode using generated theme colors.
 - `npm run check:browser-smoke` passed after that change.
