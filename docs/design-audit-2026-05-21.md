@@ -546,3 +546,10 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 | **Overall (gewogen clinical)** | **3.13** | **4.04** | **▲ +0.91** |
 
 Sprong van **3.13 → 4.04** in 14 dagen — drie kritieke clinical-dimensies (3/5/6) zijn allemaal op of boven 4.0. Sprint-doel uit vorige audit ("≥4.0 op Dim 3/5/6 binnen één sprint") behaald.
+
+## Resolution Update — 2026-06-04
+
+- [x] Theme toggle is volledig gekoppeld aan centrale theme tokens en synchroniseert browser/PWA `theme-color` vóór en na Vue-hydration (`public/theme-init.js`, `src/store/themeStore.ts`).
+- [x] Moderne tokenpunten uit deze audit zijn gereconcilieerd: `@layer` staat in `src/styles/main.css`, `light-dark()` semantic tokens staan in `src/styles/tokens.css`, en `svh`/`dvh`/`lvh` viewport-units staan in `src/components/templates/PageShell.vue`.
+- [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
+- [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
