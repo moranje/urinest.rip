@@ -148,6 +148,78 @@ async function assertLandingGrid(page, baseUrl) {
   );
 }
 
+function hexToRgbString(hex) {
+  const clean = hex.replace("#", "");
+  const value = Number.parseInt(clean, 16);
+  return `rgb(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255})`;
+}
+
+async function assertThemeModes(page, baseUrl) {
+  const tokens = {
+    darkBackground: hexToRgbString("#1a1c1e"),
+    darkTheme: "#005a2b",
+    lightBackground: hexToRgbString("#fcfcff"),
+    lightTheme: "#16a34a",
+  };
+
+  async function loadTheme(preference, colorScheme) {
+    await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: colorScheme }]);
+    await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+    await page.evaluate((nextPreference) => {
+      if (nextPreference === "clear") localStorage.removeItem("urinest-theme");
+      else localStorage.setItem("urinest-theme", nextPreference);
+    }, preference);
+    await page.goto(`${baseUrl}/`, { waitUntil: "networkidle0" });
+    await page.waitForSelector(".bm-landing-menu-grid__primary-item", { timeout: 10_000 });
+
+    return page.evaluate(() => ({
+      background: getComputedStyle(document.body).backgroundColor,
+      dataTheme: document.documentElement.getAttribute("data-theme"),
+      metas: [...document.querySelectorAll('meta[name="theme-color"]')].map((meta) => ({
+        content: meta.getAttribute("content") ?? "",
+        media: meta.getAttribute("media") ?? "",
+      })),
+      stored: localStorage.getItem("urinest-theme"),
+    }));
+  }
+
+  const light = await loadTheme("light", "dark");
+  assert(light.dataTheme === "light", `Light mode data-theme mismatch: ${light.dataTheme}`);
+  assert(
+    light.background === tokens.lightBackground,
+    `Light mode background mismatch: ${light.background}`,
+  );
+  assert(
+    light.metas.every((meta) => meta.content === tokens.lightTheme),
+    `Light mode theme-color mismatch: ${JSON.stringify(light.metas)}`,
+  );
+
+  const dark = await loadTheme("dark", "light");
+  assert(dark.dataTheme === "dark", `Dark mode data-theme mismatch: ${dark.dataTheme}`);
+  assert(
+    dark.background === tokens.darkBackground,
+    `Dark mode background mismatch: ${dark.background}`,
+  );
+  assert(
+    dark.metas.every((meta) => meta.content === tokens.darkTheme),
+    `Dark mode theme-color mismatch: ${JSON.stringify(dark.metas)}`,
+  );
+
+  const system = await loadTheme("system", "dark");
+  assert(system.dataTheme === "dark", `System dark data-theme mismatch: ${system.dataTheme}`);
+  assert(
+    system.background === tokens.darkBackground,
+    `System dark background mismatch: ${system.background}`,
+  );
+  assert(
+    system.metas.some(
+      (meta) => meta.media.includes("light") && meta.content === tokens.lightTheme,
+    ) &&
+      system.metas.some((meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme),
+    `System mode theme-color mismatch: ${JSON.stringify(system.metas)}`,
+  );
+}
+
 async function clickChoice(page, label) {
   const clicked = await page.evaluate((text) => {
     const options = [...document.querySelectorAll('[role="radio"], [role="checkbox"]')];
@@ -314,6 +386,7 @@ async function run() {
 
     try {
       await assertLandingGrid(page, baseUrl);
+      await assertThemeModes(page, baseUrl);
       await assertQuestionnaireNavigation(page, baseUrl);
       await assertInfoPopoverInteraction(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
