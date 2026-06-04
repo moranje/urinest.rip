@@ -590,6 +590,7 @@ Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3
 
 - [x] Theme toggle is volledig gekoppeld aan centrale theme tokens en synchroniseert browser/PWA `theme-color` vóór en na Vue-hydration (`public/theme-init.js`, `src/store/themeStore.ts`).
 - [x] Theme-store state machine is getest voor invalid storage fallback, OS media-change, explicit mode override, terugkeer naar system, ontbrekende `theme-color` meta en storage write failure (`src/store/themeStore.test.ts`).
+- [x] First-paint theme bootstrap is direct getest voor stored light/dark/system, lege/ongeldige storage, storage read failures en ontbrekende generated theme tokens (`src/lib/__tests__/theme-init.test.ts`).
 - [x] Moderne tokenpunten uit deze audit zijn gereconcilieerd: `@layer` staat in `src/styles/main.css`, `light-dark()` semantic tokens staan in `src/styles/tokens.css`, en `svh`/`dvh`/`lvh` viewport-units staan in `src/components/templates/PageShell.vue`.
 - [x] DTCG-compatible design-token export en distributie zijn aanwezig en bewaakt in `check:app` (`src/styles/beslismodel.tokens.json`, `docs/design-token-distribution.json`, `scripts/check-design-tokens.mjs`, `scripts/check-design-token-distribution.mjs`); `public/theme-tokens.js`, `themeStore.ts` en `vite.config.js` gebruiken dezelfde gegenereerde theme metadata.
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
