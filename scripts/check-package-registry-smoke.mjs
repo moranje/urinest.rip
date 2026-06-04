@@ -8,6 +8,7 @@ import {
   getFrameworkPackageNames,
   getFrameworkPackages,
 } from "./package-extraction-map.mjs";
+import { assertRegistrySmokeVersion } from "./package-registry-smoke-version.mjs";
 import { writeBasicFlowFixture, writeUrinestripFixtureFlows } from "./package-smoke-fixtures.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -28,7 +29,6 @@ const version =
   process.env.BESLISMODEL_REGISTRY_SMOKE_VERSION ?? (usesCurrentVersion ? expectedVersion : "");
 
 const secretPattern = /(?:^|\n)\s*(?:(?:\/\/.*:)?_authToken|_password|password|username)\s*=/i;
-const packageReleaseVersionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
 
 const smokeSource = `
 import { readFile } from "node:fs/promises";
@@ -284,22 +284,7 @@ const dependencyVersion = (name) => {
 };
 
 const assertVersion = () => {
-  if (!version) {
-    fail(
-      `BESLISMODEL_REGISTRY_SMOKE_VERSION is required, or run npm run check:package-registry-smoke:current for ${expectedVersion}`,
-    );
-  }
-  if (expectedVersions.size !== 1) {
-    fail(`Registry smoke requires one package version, got ${[...expectedVersions].join(", ")}`);
-  }
-  if (version !== expectedVersion) {
-    fail(`BESLISMODEL_REGISTRY_SMOKE_VERSION must equal package version ${expectedVersion}`);
-  }
-  if (!packageReleaseVersionPattern.test(version)) {
-    fail(
-      `BESLISMODEL_REGISTRY_SMOKE_VERSION must be a stable semver or semver prerelease, got ${version}`,
-    );
-  }
+  assertRegistrySmokeVersion({ version, expectedVersion, expectedVersions });
 };
 
 if (isConfigCheck) {

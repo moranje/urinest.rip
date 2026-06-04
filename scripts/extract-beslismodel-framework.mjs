@@ -35,6 +35,7 @@ const scriptFiles = [
   "scripts/check-package-release-config.mjs",
   "scripts/check-package-release-notes.mjs",
   "scripts/check-package-tarballs.mjs",
+  "scripts/package-registry-smoke-version.mjs",
   "scripts/check-testing-package.mjs",
   "scripts/check-vue-package.mjs",
   "scripts/package-smoke-fixtures.mjs",

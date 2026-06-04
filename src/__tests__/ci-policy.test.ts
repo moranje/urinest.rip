@@ -35,6 +35,10 @@ const registryMigrationScript = readFileSync(
   resolve("scripts/migrate-to-beslismodel-registry.mjs"),
   "utf8",
 );
+const registrySmokeVersionPolicy = readFileSync(
+  resolve("scripts/package-registry-smoke-version.mjs"),
+  "utf8",
+);
 const mutationPilotScript = readFileSync(resolve("scripts/check-core-mutation-pilot.mjs"), "utf8");
 const packageVitestConfig = readFileSync(resolve("vitest.config.packages.ts"), "utf8");
 const packageReleaseConfigScript = readFileSync(
@@ -369,10 +373,13 @@ describe("CI policy", () => {
       "--check-version",
     );
     expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
-      "packageReleaseVersionPattern",
+      "assertRegistrySmokeVersion",
     );
-    expect(readFileSync(resolve("scripts/check-package-registry-smoke.mjs"), "utf8")).toContain(
-      "stable semver or semver prerelease",
+    expect(registrySmokeVersionPolicy).toContain("packageReleaseVersionPattern");
+    expect(registrySmokeVersionPolicy).toContain("stable semver or semver prerelease");
+    expect(registrySmokeVersionPolicy).toContain("Registry smoke requires one package version");
+    expect(readFileSync(resolve("scripts/extract-beslismodel-framework.mjs"), "utf8")).toContain(
+      "scripts/package-registry-smoke-version.mjs",
     );
     expect(readFileSync(resolve("scripts/check-package-publish-next.mjs"), "utf8")).toContain(
       "npm whoami --registry",
