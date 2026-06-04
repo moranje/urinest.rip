@@ -601,9 +601,9 @@ npm run check:package-publish-next
 BESLISMODEL_PUBLISH_CONFIRM=<version> npm run check:package-publish-next -- --publish
 ```
 
-## Design Tokens / DTCG Gap
+## Design Tokens / DTCG Contract
 
-Remaining package-quality gap from agent audit:
+Status after local implementation:
 
 - Strong CSS variables exist.
 - `light-dark()` tokens exist.
@@ -611,7 +611,7 @@ Remaining package-quality gap from agent audit:
 - Component-token distribution is still intentionally light; most UI consumes semantic tokens directly.
 - `themeStore.ts`, `public/theme-init.js`, Vite PWA config and tests now share generated theme metadata via `public/theme-tokens.js` and `src/styles/themeColors.ts`.
 
-NAS cross-repo task:
+NAS cross-repo verification:
 
 ```bash
 rg -n "DTCG|Design Token|tokens\\.json|Style Dictionary|style-dictionary|theme-color|light-dark|@oranje/tokens" \
