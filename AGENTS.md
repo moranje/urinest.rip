@@ -56,8 +56,8 @@ Alle `@beslismodel/*` packages gebruiken lockstep versies tot externe consumers 
 
 Huidige registry-status:
 
-- gepubliceerd en door app gebruikt: `0.1.0-next.0`
-- lokaal voorbereid maar nog NAS-publish nodig: `0.1.0-next.1`
+- gepubliceerd en door app gebruikt: `@beslismodel/*@0.1.0`
+- prerelease-lane gepubliceerd voor rollback/vergelijking: `0.1.0-next.1` met dist-tag `next`
 
 Geen token in project `.npmrc` committen. Scope routing mag:
 

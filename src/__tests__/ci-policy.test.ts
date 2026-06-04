@@ -684,6 +684,7 @@ describe("CI policy", () => {
     expect(agentInstructions).toContain("oxfmt");
     expect(agentInstructions).toContain("oxlint");
     expect(agentInstructions).toContain("Rolldown");
+    expect(agentInstructions).toContain("@beslismodel/*@0.1.0");
     expect(agentInstructions).toContain("0.1.0-next.1");
     expect(agentInstructions).toContain("desktop landing grid");
     expect(agentInstructions).toContain("2 rijen x 3 kolommen");
@@ -697,6 +698,7 @@ describe("CI policy", () => {
     expect(claudeInstructions).toContain("Vue 3 + Vite 8");
     expect(claudeInstructions).toContain("@beslismodel/compiler");
     expect(claudeInstructions).toContain("src/lib/guidelines.ts");
+    expect(claudeInstructions).toContain("@beslismodel/*@0.1.0");
     expect(claudeInstructions).toContain("0.1.0-next.1");
     expect(claudeInstructions).toContain("Desktop landing grid");
     expect(claudeInstructions).not.toContain("Vite 7");
@@ -708,6 +710,7 @@ describe("CI policy", () => {
   it("keeps README aligned with current app and framework workflow", () => {
     expect(readme).toContain("Vue 3 + Vite 8 SPA");
     expect(readme).toContain("@beslismodel/compiler");
+    expect(readme).toContain("@beslismodel/*@0.1.0");
     expect(readme).toContain("0.1.0-next.1");
     expect(readme).toContain("npm ci");
     expect(readme).toContain("http://localhost:5173");

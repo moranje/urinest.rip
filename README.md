@@ -22,8 +22,8 @@ Latest production version: [www.urinest.rip](https://www.urinest.rip/)
 
 Current package state:
 
-- published and consumed registry version: `0.1.0-next.0`;
-- prepared local package candidate: `0.1.0-next.1`;
+- stable registry version consumed by the app: `@beslismodel/*@0.1.0`;
+- prerelease lane published for rollback/comparison: `0.1.0-next.1` with dist-tag `next`;
 - NAS handoff for publish/migration work: [docs/nas-handoff-2026-06-04.md](docs/nas-handoff-2026-06-04.md).
 
 ## Requirements

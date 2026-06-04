@@ -50,8 +50,8 @@ For any substantive `flows/` change:
 
 ## Package Status
 
-- Consumed registry version: `0.1.0-next.0`.
-- Prepared local prerelease: `0.1.0-next.1`.
+- Consumed registry version: `@beslismodel/*@0.1.0`.
+- Published prerelease lane: `0.1.0-next.1` with dist-tag `next`.
 - NAS handoff for publish/migration: [docs/nas-handoff-2026-06-04.md](docs/nas-handoff-2026-06-04.md).
 
 ## Commit Rules
