@@ -292,6 +292,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Role/context matrix tests.
 - [x] Accessibility route tests.
 - [x] Source/DOM visual contracttests voor critical UI.
+- [x] Popover composable tests voor answer-info positionering, viewport-clamping en close lifecycle.
 - [x] Mutation testing pilot voor core traversal/outcome resolver.
 - [x] Bundle budget per package.
 

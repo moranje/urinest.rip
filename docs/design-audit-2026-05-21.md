@@ -597,3 +597,4 @@ Sprong van **3.13 → 4.23** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] Landing-SVG illustraties laden niet meer eager in de initial app chunk; `resolveLandingIconComponent()` gebruikt async component chunks met cache en bron-testdekking.
 - [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.
 - [x] Multi-select en grouped-input submits tonen pending feedback en blokkeren dubbele submits via `isSubmitting`, Button `loading` en componenttestdekking.
+- [x] Answer-info popover positionering, viewport-clamping, close-timers en toggle state zijn direct getest in `src/composables/usePopover.test.ts`.
