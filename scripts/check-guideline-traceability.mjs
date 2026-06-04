@@ -4,10 +4,7 @@ const mainData = JSON.parse(readFileSync(new URL("../public/main.json", import.m
 const traceability = JSON.parse(
   readFileSync(new URL("../docs/guideline-traceability.json", import.meta.url), "utf8"),
 );
-const guidelinesSource = readFileSync(
-  new URL("../src/lib/guidelines.ts", import.meta.url),
-  "utf8",
-);
+const guidelinesSource = readFileSync(new URL("../src/lib/guidelines.ts", import.meta.url), "utf8");
 
 const allowedVerdicts = new Set(["supported", "scope-guard", "safety-note"]);
 const errors = [];
@@ -60,8 +57,24 @@ function validateFreshness() {
     if (!source.title || typeof source.title !== "string") {
       fail(`sources.${sourceId}: missing title`);
     }
+    if (!source.publisher || typeof source.publisher !== "string") {
+      fail(`sources.${sourceId}: missing publisher`);
+    }
     if (!source.url || !source.url.startsWith("https://")) {
       fail(`sources.${sourceId}: url must be https`);
+    }
+    if (!source.version || typeof source.version !== "string") {
+      fail(`sources.${sourceId}: missing version`);
+    }
+    if (!Array.isArray(source.appliesTo) || source.appliesTo.length === 0) {
+      fail(`sources.${sourceId}: appliesTo must be a non-empty array`);
+    } else if (source.appliesTo.some((entry) => typeof entry !== "string" || !entry)) {
+      fail(`sources.${sourceId}: appliesTo entries must be non-empty strings`);
+    }
+    if (!Array.isArray(source.limitations) || source.limitations.length === 0) {
+      fail(`sources.${sourceId}: limitations must be a non-empty array`);
+    } else if (source.limitations.some((entry) => typeof entry !== "string" || !entry)) {
+      fail(`sources.${sourceId}: limitations entries must be non-empty strings`);
     }
     if (!source.checkedOn) {
       fail(`sources.${sourceId}: missing checkedOn`);
@@ -78,7 +91,9 @@ function validateFreshness() {
     }
   }
 
-  const reviewedIsoMatches = [...guidelinesSource.matchAll(/reviewedIso:\s*"(\d{4}-\d{2}-\d{2})"/g)];
+  const reviewedIsoMatches = [
+    ...guidelinesSource.matchAll(/reviewedIso:\s*"(\d{4}-\d{2}-\d{2})"/g),
+  ];
   if (reviewedIsoMatches.length === 0) {
     fail("src/lib/guidelines.ts: no reviewedIso values found");
   }

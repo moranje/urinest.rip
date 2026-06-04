@@ -4,38 +4,80 @@
   "sources": {
     "nhg-uwi": {
       "title": "NHG-Standaard Urineweginfecties",
+      "publisher": "Nederlands Huisartsen Genootschap",
       "url": "https://richtlijnen.nhg.org/standaarden/urineweginfecties",
-      "checkedOn": "2026-06-01"
+      "version": "Actuele online standaard, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["strip", "bacteriurie", "gezonde-vrouwen", "leukocyturie", "kweek"],
+      "limitations": [
+        "Gebruik binnen huisartsgeneeskundige context; lokale formulariumkeuzes blijven apart te verantwoorden."
+      ]
     },
     "nhg-lab": {
       "title": "NHG LESA Laboratoriumdiagnostiek: urineweginfecties",
+      "publisher": "Nederlands Huisartsen Genootschap",
       "url": "https://richtlijnen.nhg.org/landelijke-eerstelijns-samenwerkingsafspraken/laboratoriumdiagnostiek",
-      "checkedOn": "2026-06-01"
+      "version": "Actuele online LESA, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["strip", "sediment", "dipslide", "leukocyturie", "kweek"],
+      "limitations": [
+        "Diagnostische testinterpretatie moet samen met klachten, risicogroep en lokale labafspraken worden gebruikt."
+      ]
     },
     "nhg-pivmecillinam": {
       "title": "NHG kennislacune pivmecillinam bij gezonde niet-zwangere vrouwen met cystitis",
+      "publisher": "Nederlands Huisartsen Genootschap",
       "url": "https://richtlijnen.nhg.org/lacunes/pivmecillinam-bij-gezonde-niet-zwangere-vrouwen-met-cystitis",
-      "checkedOn": "2026-06-01"
+      "version": "Actuele online kennislacune, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["bacteriurie", "gezonde-vrouwen"],
+      "limitations": [
+        "Kennislacune ondersteunt terughoudendheid; het is geen zelfstandig doseer- of formulariumprotocol."
+      ]
     },
     "verenso-uwi": {
       "title": "Verenso richtlijn Urineweginfecties bij kwetsbare ouderen",
+      "publisher": "Verenso",
       "url": "https://www.verenso.nl/assets/Richtlijnen_kwaliteit/richtlijnen/database/Urineweginfecties/Overzicht-aanbevelingen-richtlijn-Urineweginfecties.pdf",
-      "checkedOn": "2026-06-01"
+      "version": "PDF-richtlijn/aanbevelingen, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["bacteriurie", "leukocyturie"],
+      "limitations": [
+        "Primair gericht op kwetsbare ouderen; vertaling naar algemene huisartsenpopulatie vraagt aparte bronverdediging."
+      ]
     },
     "nvu-hematurie": {
       "title": "NVU richtlijn Hematurie 2023",
+      "publisher": "Nederlandse Vereniging voor Urologie",
       "url": "https://richtlijnendatabase.nl/richtlijn/hematurie/startpagina_bij_de_richtlijn_hematurie_2023.html",
-      "checkedOn": "2026-06-01"
+      "version": "Richtlijn Hematurie 2023, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["strip", "hematurie"],
+      "limitations": [
+        "Urologische vervolgstappen moeten worden afgestemd op leeftijd, risicofactoren en lokale verwijsmogelijkheden."
+      ]
     },
     "nvkc-hematurie-lab": {
       "title": "NVKC/FMS Eenduidige en accurate laboratoriumdiagnostiek bij hematurie",
+      "publisher": "Nederlandse Vereniging voor Klinische Chemie en Laboratoriumgeneeskunde / Federatie Medisch Specialisten",
       "url": "https://richtlijnendatabase.nl/richtlijn/eenduidige_en_accurate_laboratoriumdiagnostiek_bij_hematurie/indicatie_en_patientengroep_bij_hematurie.html",
-      "checkedOn": "2026-06-01"
+      "version": "Richtlijnendatabase-module, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["strip", "hematurie"],
+      "limitations": [
+        "Laboratoriumdiagnostische aanbevelingen dekken niet automatisch volledige urologische triage of behandeling."
+      ]
     },
     "nhg-triagewijzer": {
       "title": "NHG-TriageWijzer: urgentiecategorieen en urinewegproblemen",
+      "publisher": "Nederlands Huisartsen Genootschap",
       "url": "https://triagewijzer.nhg.org/ingangsklachten/urinewegproblemen",
-      "checkedOn": "2026-06-01"
+      "version": "Actuele online triagewijzer, gecontroleerd 2026-06-01",
+      "checkedOn": "2026-06-01",
+      "appliesTo": ["bacteriurie"],
+      "limitations": [
+        "Triage-urgentie ondersteunt veilige routering; behandeladvies blijft afhankelijk van rol en klinische beoordeling."
+      ]
     }
   },
   "flows": {
