@@ -182,6 +182,7 @@ Drie grote thema's:
 - `@storybook/addon-a11y` actief in `.storybook/main.ts` en fail-on-error geconfigureerd in `.storybook/preview.ts`
 - Route-level axe-smoke in `src/__tests__/accessibility-route.test.ts` dekt landing, questionnaire, result en error route
 - Admin login route heeft eigen axe-test in `src/views/admin/AdminLogin.test.ts`
+- Forced-colors/high-contrast browser-smoke controleert via Chrome `Emulation.setEmulatedMedia` dat notices op de directe resultaatroute zichtbare borders houden en niet op accent-shadows vertrouwen
 - Markdown wordt via `src/lib/markdown-renderer.ts` met DOMPurify gesanitized voordat `v-html` rendert
 - Headerlinks zetten `aria-current="page"` via `AppHeader.vue` en `AppHeader.test.ts`
 - Info-popover sluit via Escape, close-knop, hover/focus leave en document click-outside in `useQuestionnairePageController.ts`
@@ -191,7 +192,7 @@ Drie grote thema's:
 **Remaining issues:**
 
 - Geen handmatige screenreader-matrix per route vastgelegd; automatische axe/lint/browser-smoke dekt regressies, maar niet alle SR-UX.
-- Geen aparte Windows High Contrast/manual-device smoke buiten forced-colors CSS en browser-smoke.
+- Geen aparte fysieke Windows/manual-device smoke buiten Chrome forced-colors browser-smoke.
 
 ### 4. Motion & Microinteracties — 4.5/5
 
@@ -322,7 +323,7 @@ Drie grote thema's:
 
 **Remaining issues:**
 
-- Platformvalidatie blijft beperkt tot statische checks en browser-smoke; aparte Windows High Contrast/manual device smoke ontbreekt nog
+- Platformvalidatie blijft beperkt tot statische checks en browser-smoke; aparte fysieke Windows/manual-device smoke ontbreekt nog
 - Geen speculation-rules of INP/LCP CI-meting gekoppeld aan route-overgangen
 - Theme toggle en `light-dark()` zijn aanwezig; DTCG-compatible web export en Figma/Style-Dictionary distributiemanifest zijn aanwezig en in `check:app` bewaakt
 - Mobile-vs-desktop tile-layout pas net gefixt (commit `5a33a2e fix(landing): square mobile tiles without row overlap`)
@@ -591,5 +592,6 @@ Sprong van **3.13 → 4.21** in 14 dagen — drie kritieke clinical-dimensies (3
 - [x] Moderne tokenpunten uit deze audit zijn gereconcilieerd: `@layer` staat in `src/styles/main.css`, `light-dark()` semantic tokens staan in `src/styles/tokens.css`, en `svh`/`dvh`/`lvh` viewport-units staan in `src/components/templates/PageShell.vue`.
 - [x] DTCG-compatible design-token export en distributie zijn aanwezig en bewaakt in `check:app` (`src/styles/beslismodel.tokens.json`, `docs/design-token-distribution.json`, `scripts/check-design-tokens.mjs`, `scripts/check-design-token-distribution.mjs`); `public/theme-tokens.js`, `themeStore.ts` en `vite.config.js` gebruiken dezelfde gegenereerde theme metadata.
 - [x] Forced-colors/high-contrast ondersteuning is aanwezig in `src/styles/main.css` en `src/components/molecules/Notice.vue`.
+- [x] Forced-colors/high-contrast runtimegedrag is geborgd in `scripts/check-browser-regression-smoke.mjs` met Chrome `Emulation.setEmulatedMedia` op de directe resultaatroute.
 - [x] Landing-grid regressie is geborgd met unit-, visual-contract-, CI-policy- en browser-smoke checks voor desktop 2 rijen x 3 kolommen.
 - [x] AdminLogin form-a11y is geborgd met `aria-invalid`, `aria-describedby`, alert-errors, `inputmode`, `enterkeyhint`, `autocomplete="username webauthn"` en componenttestdekking.
