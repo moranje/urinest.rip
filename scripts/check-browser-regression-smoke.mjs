@@ -486,6 +486,68 @@ async function assertDirectResultRoute(page, baseUrl) {
   }
 }
 
+async function assertForcedColorsResultRoute(page, baseUrl) {
+  const client = await page.createCDPSession();
+  await client.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "forced-colors", value: "active" }],
+  });
+  await page.goto(`${baseUrl}/info/uti.local.healthy.1`, { waitUntil: "networkidle0" });
+  await expectHeading(page, "Cystitis: Gezonde vrouw");
+
+  const forcedColors = await page.evaluate(() => {
+    const px = (value) => Number.parseFloat(value || "0");
+    const notice = document.querySelector(".contraindication-notice");
+    const warning = document.querySelector(".notice--warning");
+    const noticeStyle = notice ? getComputedStyle(notice) : null;
+    const warningStyle = warning ? getComputedStyle(warning) : null;
+
+    return {
+      forcedColorsActive: matchMedia("(forced-colors: active)").matches,
+      noticeBorderWidths: noticeStyle
+        ? [
+            px(noticeStyle.borderTopWidth),
+            px(noticeStyle.borderRightWidth),
+            px(noticeStyle.borderBottomWidth),
+            px(noticeStyle.borderLeftWidth),
+          ]
+        : [],
+      noticeBoxShadow: noticeStyle?.boxShadow ?? "",
+      warningBorderWidths: warningStyle
+        ? [
+            px(warningStyle.borderTopWidth),
+            px(warningStyle.borderRightWidth),
+            px(warningStyle.borderBottomWidth),
+            px(warningStyle.borderLeftWidth),
+          ]
+        : [],
+      warningBoxShadow: warningStyle?.boxShadow ?? "",
+    };
+  });
+
+  assert(forcedColors.forcedColorsActive, "Forced-colors media emulation did not activate");
+  assert(
+    forcedColors.noticeBorderWidths.length === 4 &&
+      forcedColors.noticeBorderWidths.every((width) => width >= 1),
+    `Forced-colors contraindication notice lacks visible border: ${forcedColors.noticeBorderWidths.join(", ")}`,
+  );
+  assert(
+    forcedColors.warningBorderWidths.length === 4 &&
+      forcedColors.warningBorderWidths.every((width) => width >= 1),
+    `Forced-colors warning notice lacks visible border: ${forcedColors.warningBorderWidths.join(", ")}`,
+  );
+  assert(
+    forcedColors.noticeBoxShadow === "none" && forcedColors.warningBoxShadow === "none",
+    `Forced-colors notices should not rely on accent box-shadows: ${JSON.stringify({
+      notice: forcedColors.noticeBoxShadow,
+      warning: forcedColors.warningBoxShadow,
+    })}`,
+  );
+  await client.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "forced-colors", value: "none" }],
+  });
+  await client.detach();
+}
+
 async function run() {
   assert(chromePath, "Chrome executable not found. Set CHROME_PATH for browser regression smoke.");
 
@@ -522,6 +584,7 @@ async function run() {
       await assertQuestionnaireNavigation(page, baseUrl);
       await assertInfoPopoverInteraction(page, baseUrl);
       await assertDirectResultRoute(page, baseUrl);
+      await assertForcedColorsResultRoute(page, baseUrl);
       assert(badResponses.length === 0, `Browser network errors:\n${badResponses.join("\n")}`);
       assert(errors.length === 0, `Browser console/page errors:\n${errors.join("\n")}`);
       console.log("Browser regression smoke passed");

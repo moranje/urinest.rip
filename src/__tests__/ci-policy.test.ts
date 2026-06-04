@@ -767,6 +767,15 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
     expect(browserRegressionSmokeScript).toContain("notice padding too tight");
+    expect(browserRegressionSmokeScript).toContain("assertForcedColorsResultRoute");
+    expect(browserRegressionSmokeScript).toContain("Emulation.setEmulatedMedia");
+    expect(browserRegressionSmokeScript).toContain('name: "forced-colors", value: "active"');
+    expect(browserRegressionSmokeScript).toContain(
+      "Forced-colors media emulation did not activate",
+    );
+    expect(browserRegressionSmokeScript).toContain(
+      "Forced-colors warning notice lacks visible border",
+    );
   });
 
   it("keeps Gitea app workflows on baseline actions while package publishing stays npm-native", () => {
