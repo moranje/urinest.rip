@@ -11,6 +11,11 @@ sync horen daar zonder per-commando akkoord uitgevoerd te kunnen worden. VS Code
 alleen zijn niet genoeg; de uitvoerende agent/runtime moet `/code` of de concrete sibling-repo's
 ook echt als schrijfbare filesystem roots krijgen.
 
+Gebruikersupdate 2026-06-04: de NAS-omgeving heeft naar verwachting een veel minder beperkte
+sandbox en in elk geval toegang tot de hele code-map. Gebruik die ruimere toegang actief: rondes
+moeten sibling repos rechtstreeks kunnen bewerken, package scripts kunnen synchroniseren en Gitea
+publish/smoke/migratie zonder lokale sandbox-workarounds uitvoeren.
+
 ## Waarom Deze Overdracht Bestaat
 
 Lokale runtime had `workspace-write` met alleen `urinest.rip` als writable root. VS Code liet wel
@@ -82,6 +87,9 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+55e3403 docs(packages): refresh release staging runbook
+94ced85 docs(framework): record next toolchain guard
+a18ed90 docs(framework): record toolchain gate
 a0e395b test(ci): enforce modern toolchain contract
 0ea08f2 docs(framework): refresh local gate evidence
 117a45a test(flows): update triage result snapshot
@@ -785,7 +793,7 @@ npm run check:browser-smoke
 
 Verified 2026-06-04:
 
-- `urinest.rip` log captured through `6aea325 docs(audits): reconcile open checklist status`.
+- `urinest.rip` log captured through `55e3403 docs(packages): refresh release staging runbook`.
 - `beslismodel-framework` is clean/synced on `master`, remote is
   `ssh://git@192.168.1.170:2223/martien/beslismodel-framework.git`, latest log starts at
   `e296808 fix(packages): harden gitea publish gates`.
@@ -944,6 +952,11 @@ Verified 2026-06-04:
 - `a0e395b test(ci): enforce modern toolchain contract` added `npm run check:modern-toolchain`
   to `check:app`; it verifies `oxfmt`, `oxlint`, `@typescript/native-preview`/`tsgo`, Vite 8
   and Rolldown package-lock presence.
+- `a18ed90 docs(framework): record toolchain gate`, `94ced85 docs(framework): record next
+  toolchain guard` and `55e3403 docs(packages): refresh release staging runbook` updated the
+  active framework/release docs after the toolchain guard. The release docs now treat
+  `0.1.0-next.1` as the prepared-but-unpublished NAS candidate and avoid stale direct
+  `0.1.0-next.0` publish examples.
 - `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 82 app
   test files/409 tests, guideline traceability/copy/role gates, bundle budget and production build.
 - `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
