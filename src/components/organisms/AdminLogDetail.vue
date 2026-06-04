@@ -75,7 +75,7 @@ async function handleResolve() {
     resolveVersion.value = "";
     emit("resolved");
   } catch {
-    // handleError covers this
+    // Store writes telemetry and dashboard-visible error state.
   } finally {
     resolving.value = false;
   }
@@ -88,7 +88,7 @@ async function handleSuppress() {
     toastStore.success("Error onderdrukt");
     emit("resolved");
   } catch {
-    // handleError covers this
+    // Store writes telemetry and dashboard-visible error state.
   } finally {
     resolving.value = false;
   }
@@ -101,7 +101,7 @@ async function handleUnresolve() {
     toastStore.success("Markering opgeheven");
     emit("resolved");
   } catch {
-    // handleError covers this
+    // Store writes telemetry and dashboard-visible error state.
   } finally {
     resolving.value = false;
   }

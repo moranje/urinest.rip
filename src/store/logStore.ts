@@ -16,6 +16,13 @@ import { appConfig } from "../config/app-config";
 
 const APP_SOURCE = appConfig.telemetrySource;
 type SupabaseClient = NonNullable<ReturnType<typeof getSupabase>>;
+type AdminLogMutation = "resolve" | "suppress" | "unresolve";
+
+const adminMutationErrorCopy: Record<AdminLogMutation, string> = {
+  resolve: "Markeren als opgelost mislukt",
+  suppress: "Onderdrukken van loggroep mislukt",
+  unresolve: "Markering opheffen mislukt",
+};
 
 interface RpcResult<T> {
   data: T | null;
@@ -211,53 +218,84 @@ export const useLogStore = defineStore("logs", () => {
     await useAuthStore().expireSession(context, cause);
   }
 
-  async function resolveGroup(fingerprint: string, version: string): Promise<void> {
+  async function runResolutionMutation(
+    action: AdminLogMutation,
+    fingerprint: string,
+    operation: (supabase: SupabaseClient) => Promise<RpcResult<unknown>>,
+  ): Promise<void> {
     const supabase = getSupabase();
-    if (!supabase) return;
+    const actionError = adminMutationErrorCopy[action];
 
-    const { error: err } = await supabase.from("log_resolutions").upsert(
-      {
-        fingerprint,
-        status: "resolved",
-        resolved_in_version: version,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "fingerprint" },
+    if (!supabase) {
+      const configError = new Error("Logbeheer is niet verbonden met Supabase.");
+      error.value = `${actionError}. ${configError.message}`;
+      handleError(configError, `logs:${action}-group`, { fingerprint });
+      throw configError;
+    }
+
+    try {
+      const { error: mutationError, sessionExpired } = await withAuthRetry(
+        supabase,
+        async () => await operation(supabase),
+        async (refreshError) =>
+          await expireAdminSession(`logs:${action}-group:refresh-session`, refreshError),
+      );
+
+      if (sessionExpired) {
+        throw new Error("Sessie verlopen. Log opnieuw in.");
+      }
+      if (mutationError) throw mutationError;
+
+      error.value = "";
+      await loadGroups();
+    } catch (mutationError) {
+      const userMessage = handleError(mutationError, `logs:${action}-group`, { fingerprint });
+      error.value = `${actionError}. ${userMessage}`;
+      throw mutationError;
+    }
+  }
+
+  async function resolveGroup(fingerprint: string, version: string): Promise<void> {
+    await runResolutionMutation(
+      "resolve",
+      fingerprint,
+      async (supabase) =>
+        await supabase.from("log_resolutions").upsert(
+          {
+            fingerprint,
+            status: "resolved",
+            resolved_in_version: version,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "fingerprint" },
+        ),
     );
-
-    if (err) throw err;
-    await loadGroups();
   }
 
   async function suppressGroup(fingerprint: string, note?: string): Promise<void> {
-    const supabase = getSupabase();
-    if (!supabase) return;
-
-    const { error: err } = await supabase.from("log_resolutions").upsert(
-      {
-        fingerprint,
-        status: "suppressed",
-        note: note ?? null,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "fingerprint" },
+    await runResolutionMutation(
+      "suppress",
+      fingerprint,
+      async (supabase) =>
+        await supabase.from("log_resolutions").upsert(
+          {
+            fingerprint,
+            status: "suppressed",
+            note: note ?? null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "fingerprint" },
+        ),
     );
-
-    if (err) throw err;
-    await loadGroups();
   }
 
   async function unresolveGroup(fingerprint: string): Promise<void> {
-    const supabase = getSupabase();
-    if (!supabase) return;
-
-    const { error: err } = await supabase
-      .from("log_resolutions")
-      .delete()
-      .eq("fingerprint", fingerprint);
-
-    if (err) throw err;
-    await loadGroups();
+    await runResolutionMutation(
+      "unresolve",
+      fingerprint,
+      async (supabase) =>
+        await supabase.from("log_resolutions").delete().eq("fingerprint", fingerprint),
+    );
   }
 
   return {

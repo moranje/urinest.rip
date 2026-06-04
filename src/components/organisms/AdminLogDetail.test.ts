@@ -185,6 +185,19 @@ describe("AdminLogDetail", () => {
     expect(wrapper.emitted("resolved")).toHaveLength(1);
   });
 
+  it("does not emit a resolved success when an admin mutation fails", async () => {
+    const { wrapper, resolveGroup, toastSuccess } = mountDetail();
+    resolveGroup.mockRejectedValueOnce(new Error("permission denied"));
+
+    await wrapper.get('[data-testid="log-detail-resolve-open"]').trigger("click");
+    await wrapper.get("#resolve-version-input").setValue("3.3.2");
+    await wrapper.get('[data-testid="log-detail-resolve-confirm"]').trigger("click");
+
+    expect(resolveGroup).toHaveBeenCalledWith("fp-1", "3.3.2");
+    expect(toastSuccess).not.toHaveBeenCalled();
+    expect(wrapper.emitted("resolved")).toBeUndefined();
+  });
+
   it("suppresses open groups and unmarks resolved groups", async () => {
     const open = mountDetail();
     await open.wrapper.get('[data-testid="log-detail-suppress"]').trigger("click");

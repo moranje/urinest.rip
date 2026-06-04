@@ -15,8 +15,14 @@ const supabase = vi.hoisted(() => ({
   rpc: vi.fn(),
 }));
 
+const handleErrorMock = vi.hoisted(() => vi.fn(() => "Geen toegang tot logbeheer."));
+
 vi.mock("../lib/supabase/client", () => ({
   getSupabase: () => supabase,
+}));
+
+vi.mock("../lib/errors", () => ({
+  handleError: handleErrorMock,
 }));
 
 const sampleGroup: LogGroup = {
@@ -54,6 +60,7 @@ describe("admin auth refresh handling", () => {
     supabase.auth.onAuthStateChange.mockReset();
     supabase.auth.refreshSession.mockReset();
     supabase.auth.signOut.mockReset();
+    handleErrorMock.mockClear();
     supabase.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
     supabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: { unsubscribe: vi.fn() } },
@@ -115,5 +122,22 @@ describe("admin auth refresh handling", () => {
 
     expect(supabase.rpc).toHaveBeenCalledTimes(rpcCallsAfterExpiry);
     vi.useRealTimers();
+  });
+
+  it("surfaces admin resolution mutation failures instead of swallowing them", async () => {
+    const mutationError = { code: "42501", message: "permission denied" };
+    const upsert = vi.fn().mockResolvedValue({ data: null, error: mutationError });
+    supabase.from.mockReturnValue({ upsert });
+
+    const logStore = useLogStore();
+
+    await expect(logStore.resolveGroup("abc", "3.3.2")).rejects.toBe(mutationError);
+
+    expect(supabase.auth.refreshSession).toHaveBeenCalledTimes(1);
+    expect(upsert).toHaveBeenCalledTimes(2);
+    expect(handleErrorMock).toHaveBeenCalledWith(mutationError, "logs:resolve-group", {
+      fingerprint: "abc",
+    });
+    expect(logStore.error).toBe("Markeren als opgelost mislukt. Geen toegang tot logbeheer.");
   });
 });
