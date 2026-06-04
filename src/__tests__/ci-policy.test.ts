@@ -786,6 +786,7 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
     expect(browserRegressionSmokeScript).toContain("assertThemeModes");
     expect(browserRegressionSmokeScript).toContain("Light mode theme-color mismatch");
+    expect(browserRegressionSmokeScript).toContain("System light data-theme mismatch");
     expect(themeStoreTest).toContain("reacts to OS theme changes only while preference is system");
     expect(themeStoreTest).toContain("reports storage write failure but still applies DOM theme");
     expect(themeInitTest).toContain("applies stored light before Vue can hydrate");

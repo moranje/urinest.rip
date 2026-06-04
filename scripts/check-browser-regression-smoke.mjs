@@ -253,6 +253,25 @@ async function assertThemeModes(page, baseUrl) {
       system.metas.some((meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme),
     `System mode theme-color mismatch: ${JSON.stringify(system.metas)}`,
   );
+
+  const systemLight = await loadTheme("system", "light");
+  assert(
+    systemLight.dataTheme === "light",
+    `System light data-theme mismatch: ${systemLight.dataTheme}`,
+  );
+  assert(
+    systemLight.background === tokens.lightBackground,
+    `System light background mismatch: ${systemLight.background}`,
+  );
+  assert(
+    systemLight.metas.some(
+      (meta) => meta.media.includes("light") && meta.content === tokens.lightTheme,
+    ) &&
+      systemLight.metas.some(
+        (meta) => meta.media.includes("dark") && meta.content === tokens.darkTheme,
+      ),
+    `System light theme-color mismatch: ${JSON.stringify(systemLight.metas)}`,
+  );
 }
 
 async function assertReducedMotionRouteTransitions(page, baseUrl) {
