@@ -7,7 +7,9 @@ Aanname NAS: volledige lees/schrijftoegang tot `/code`, inclusief sibling repos 
 
 Belangrijk: behandel de NAS-run als een volledige workspace-run, niet als de beperkte lokale
 Codex-sandbox. Cross-repo git-index updates, package writes, registry checks en baseline-action
-sync horen daar zonder per-commando akkoord uitgevoerd te kunnen worden.
+sync horen daar zonder per-commando akkoord uitgevoerd te kunnen worden. VS Code workspace-mappen
+alleen zijn niet genoeg; de uitvoerende agent/runtime moet `/code` of de concrete sibling-repo's
+ook echt als schrijfbare filesystem roots krijgen.
 
 ## Waarom Deze Overdracht Bestaat
 
@@ -19,7 +21,35 @@ meerdere folders zien, maar sandbox schreef alleen zonder prompt in:
 - tijdelijke toolfolders
 
 Sibling repos konden deels gelezen worden, maar git index updates, package writes en cross-repo
-sync vroegen vaak akkoord. NAS-run moet dit oplossen door volledige `/code` toegang te geven.
+sync vroegen vaak akkoord. NAS-run moet dit oplossen door volledige `/code` toegang te geven in de
+agent-sandbox zelf, niet alleen in de editor-workspace.
+
+## NAS Runtime Voorwaarde
+
+Start de NAS-run bij voorkeur met `/code` als workspace root of writable root. Als de runtime om
+expliciete roots vraagt, voeg minimaal deze paden schrijfbaar toe:
+
+- `/code/urinest.rip`
+- `/code/beslismodel-framework`
+- `/code/telemetry`
+- `/code/tokens`
+- `/code/xenia-ui`
+- `/code/create-oranje-app`
+- `/code/abacus`
+- `/code/patient-tracker`
+- `/code/werkoverleg`
+- `/code/labbie`
+
+Controleer dit voor de eerste commit met:
+
+```bash
+for repo in urinest.rip beslismodel-framework telemetry tokens xenia-ui create-oranje-app abacus patient-tracker werkoverleg labbie; do
+  git -C /code/$repo status --short
+done
+```
+
+Als dit alsnog om permissie vraagt of niet kan schrijven naar `.git/index`, is de NAS-omgeving nog
+niet ruim genoeg ingesteld en moet de agent/runtime-config worden aangepast voordat ronde 1 start.
 
 ## Bronnen Die NAS Samen Moet Lezen
 
@@ -427,9 +457,9 @@ Future smarter option:
 - Avoid exposing exact `Vraag X/Y` in app UI unless path length is provably fixed from current graph
   state.
 
-## Borders / Padding / Visual Polish Still Needs Local UI Pass
+## Borders / Padding / Visual Polish Contract
 
-User still reported unwanted borders and insufficient padding:
+User reported unwanted borders and insufficient padding:
 
 - Answer cards showing extra full-frame accent border.
 - Checkbox control unwanted border.
@@ -451,9 +481,13 @@ Current protections:
 - `ChoiceOption.test.ts` asserts answer cards have no full-frame accent border:
   - `.choice-option { border: 0 }`
   - selected/focus uses inset left accent, not full border.
+- `Checkbox.test.ts` asserts checkbox styling is scoped to the primitive and does not create a
+  second row/label frame.
+- `Notice.test.ts` asserts notice padding is owned by the component and stays large enough for
+  dense result content.
 - `LandingTemplate.test.ts` and route visual contracts protect landing grid.
 
-NAS/local task:
+Regression audit if a screenshot shows this again:
 
 1. Audit CSS for remaining direct border usage in clinical answer/notice/form controls:
 
@@ -470,11 +504,14 @@ NAS/local task:
    - `Notice` gets internal vertical/horizontal padding token.
    - `Checkbox` owns checkbox visual box, no extra full-frame border.
    - `ChoiceOption` owns answer layout and info action spacing.
-4. Add tests:
+4. Add or update tests:
    - `Checkbox` CSS does not use unwanted full-frame border around row/label.
    - `Notice` CSS contains sufficient padding, e.g. `padding: var(--spacing-md)` or larger.
    - `ChoiceOption` no full green frame.
 5. Browser screenshot check in dark and light themes.
+
+Status 2026-06-04: deze punten zijn lokaal als regressiecontract afgevinkt in Round 2. Behandel dit
+niet als open NAS-werk tenzij een verse screenshot of smoke-test opnieuw regressie toont.
 
 Commit:
 
