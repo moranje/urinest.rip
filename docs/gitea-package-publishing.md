@@ -54,12 +54,20 @@ Patterns found in sibling repos:
 
 - `NPM_REGISTRY_TOKEN`: Gitea Actions build/deploy token passed to baseline actions.
 - `GITEA_NPM_TOKEN`: Renovate/private registry token name.
+- `@oranje/tokens` and `@xenia/ui` publish after `npm view <package>@<version>` and skip when the
+  exact version already exists.
+- Some scoped publish flows pass `GITEA_NPM_TOKEN=${{ secrets.NPM_REGISTRY_TOKEN }}` because
+  project `.npmrc` expands `_authToken=${GITEA_NPM_TOKEN}`.
+- `@oranje/telemetry` uses the same publish-then-finalize release shape: npm publish first, then
+  tag/release creation.
 
 For framework package publishing, local scripts rely on npm's own auth lookup. They verify auth
 with `npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/` when supported. If
 Gitea returns `404` for npm's `/-/whoami` endpoint, the script falls back to Gitea's `/api/v1/user`
 using `NODE_AUTH_TOKEN`, `NPM_TOKEN`, `NPM_REGISTRY_TOKEN`, `GITEA_NPM_TOKEN`, or user-level npm
-auth. Do not create project-local npm auth files.
+auth. `check:package-publish-next -- --publish` follows the sibling package pattern: all versions
+already present means skip-and-continue, a partial existing set fails hard. Do not create
+project-local npm auth files.
 
 ## Baseline Actions
 
