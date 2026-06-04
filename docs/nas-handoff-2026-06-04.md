@@ -88,6 +88,11 @@ Repo: `/Users/martien/Sync/Projects/code/urinest.rip`
 Laatste commits:
 
 ```text
+05ffcd4 fix(packages): allow stable registry smoke
+298133c fix(packages): guard gitea latest publishing
+bf9a2c0 test(browser): cover answer info popovers
+d216e54 chore(lockfile): sync npm optional deps
+6e3fc33 chore(build): drop legacy compiler tarball
 1f3e330 docs(readme): align framework workflow
 9642b0e docs(agents): align workspace instructions
 ab8c765 docs(framework): update nas execution context
@@ -907,6 +912,19 @@ Verified 2026-06-04:
 - `d022544 chore(packages): bump next prerelease` bumped package source/internal pins to
   `0.1.0-next.1`, added `docs/package-release-notes-0.1.0-next.1.md`, and updated the extracted
   Gitea workflow default.
+- `d216e54 chore(lockfile): sync npm optional deps` keeps the lockfile installable with npm 11 /
+  Node 24 optional dependency resolution.
+- `298133c fix(packages): guard gitea latest publishing` makes stable `latest` publishing explicit:
+  prereleases stay on `next`, stable semver can use `latest`, generated Gitea workflow gets the
+  same dist-tag guard and release config/publish dry-run gates cover it.
+- `05ffcd4 fix(packages): allow stable registry smoke` lets `check-package-registry-smoke` accept
+  either stable semver or semver prerelease, so post-publish smoke works for both `next` and
+  `latest`.
+- `bf9a2c0 test(browser): cover answer info popovers` adds real browser coverage for answer info
+  popovers: click opens/closes dialog without selecting an answer or mutating URL.
+- `6e3fc33 chore(build): drop legacy compiler tarball` removes the obsolete tracked
+  `decision-engine-core-1.0.0.tgz`, ignores `*.tgz`, updates `CLAUDE.md` to current
+  `@beslismodel/*` guidance and adds CI-policy coverage so the tarball does not return.
 - Local verification after `0.1.0-next.1` prep:
 
   ```bash
@@ -918,6 +936,23 @@ Verified 2026-06-04:
   `npm run check:packages` passed including package extraction, package build, tarball validation,
   next publish dry-run, tarball/file-install consumer smokes, export checks, mutation pilot and
   Urinestrip type check. `npm run test:consumer:urinestrip:only` passed: 1 file, 7 tests.
+- Local verification after NAS-tail cherry-pick and legacy tarball cleanup:
+
+  ```bash
+  npm run check:app
+  npm run check:packages
+  npm run check:browser-smoke
+  node scripts/check-package-registry-smoke.mjs --check-version --current-version
+  ```
+
+  Results: `check:app` passed with 82 files / 412 tests, guideline gates, budget and Vite 8 build;
+  `check:packages` passed standalone extraction, framework gates, tarballs, publish dry-run,
+  file-install consumer smoke, package export checks, mutation pilot and Urinestrip consumer test;
+  `check:browser-smoke` passed; registry-smoke version check accepted current `0.1.0-next.1`.
+- NAS agent verification: live registry smoke against already published `0.1.0-next.0` passed via
+  `--network container:gitea` against `127.0.0.1:3000`; host port `127.0.0.1:3030` refused
+  connections. `0.1.0-next.1` is still not published, so live `check:package-registry-smoke:current`
+  can only pass after that publish/migration step.
 
 Commits:
 
@@ -970,6 +1005,11 @@ Verified 2026-06-04:
   workflow.
 - `src/__tests__/ci-policy.test.ts` now blocks stale `Vite 7`, `decision-engine-core` tarball,
   old `localhost:3000` and old `src/views/AboutPage.vue` guidance in agent/README docs.
+- `6e3fc33 chore(build): drop legacy compiler tarball` also updates `CLAUDE.md` and `.gitignore`;
+  `src/__tests__/ci-policy.test.ts` now asserts the obsolete tarball is no longer tracked.
+- NAS-tail commits `d216e54`, `bf9a2c0`, `298133c` and `05ffcd4` are cherry-picked locally from
+  `codex/framework-tail-20260604` and correspond to NAS originals `28c0754`, `f58a898`,
+  `30cbb94` and `3b41f9b`.
 - `npm run check:app` passed: flows, design tokens, format, oxlint/eslint, vue-tsc, tsgo, 82 app
   test files/409 tests, guideline traceability/copy/role gates, bundle budget and production build.
 - `npm run check:packages` passed: standalone extraction, framework package gates, tarballs,
