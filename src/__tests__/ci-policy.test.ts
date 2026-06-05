@@ -88,6 +88,8 @@ describe("CI policy", () => {
 
   it("keeps the app as an external @moranje/beslismodel consumer", () => {
     expect(packageJson.dependencies?.["@moranje/beslismodel"]).toBe("0.1.1");
+    expect(packageJson.devDependencies?.["@emnapi/core"]).toBe("^1.10.0");
+    expect(packageJson.devDependencies?.["@emnapi/runtime"]).toBe("^1.10.0");
     expect(Object.keys(packageJson.dependencies ?? {})).not.toEqual(
       expect.arrayContaining([legacyPackage("core"), legacyPackage("vue")]),
     );
@@ -104,6 +106,8 @@ describe("CI policy", () => {
     expect(packageLock.packages?.["node_modules/@moranje/beslismodel"]?.resolved).toContain(
       "npm.pkg.github.com",
     );
+    expect(packageLock.packages?.["node_modules/@emnapi/core"]?.version).toBe("1.10.0");
+    expect(packageLock.packages?.["node_modules/@emnapi/runtime"]?.version).toBe("1.10.0");
     expect(
       Object.keys(packageLock.packages ?? {}).some((key) => key.includes(`${legacyScope}/`)),
     ).toBe(false);
