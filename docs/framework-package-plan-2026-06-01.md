@@ -284,7 +284,7 @@ App blijft eigenaar van domeindata en branding.
 ## Testing Checklist
 
 - [x] AI authoring-guide regressietest bewaakt evidence-, role-, taal-, telemetry- en validatiecontracten.
-- [x] Current full suite groen: 65 files, 294 tests.
+- [x] Current full suite groen: pre-push verificatie op 2026-06-05 draaide 84 app-testbestanden met 432 tests plus 1 Urinestrip consumer-testbestand met 7 tests.
 - [x] Flow dead-end tests bestaan.
 - [x] Progress tests bestaan.
 - [x] Telemetry scrub/log-sink tests bestaan.
@@ -379,7 +379,7 @@ Exit criteria:
 - [x] Exports/files/declarations.
 - [x] Library build via Rolldown/Vite.
 - [x] Consumer fixture app.
-- [x] CI matrix.
+- [x] CI draait als single Node 24 lane; eerdere matrix-aanpak is bewust verwijderd omdat package-consumptie en browser/Lighthouse gates op de productie-runtime worden gevalideerd.
 - [x] Versioning strategy.
 
 ### Ronde 6 — Extractie Naar Gitea En Lokale NPM
@@ -441,7 +441,7 @@ Historische planning, afgerond op 2026-06-04: de prerelease-, stable-, registry-
 - [x] Package release-notes draft toegevoegd en geborgd met `check:package-release-notes`: package set, public export hashes, consumer-impact, verificatie, migratie en rollback.
 - [x] Gitea/npm publish-runbook toegevoegd op basis van `abacus`, `patient-tracker`, `werkoverleg` en `labbie`: SSH remote, registry URL, tokenbeleid, local proxy en prerelease publish/smoke.
 - [x] Baseline app-integratie toegevoegd voor Gitea Actions: `setup-npm-auth`, `setup-node`, `release-pr`, `upload-sourcemaps` en `release-finalize`; package publish blijft npm-native.
-- [x] GitHub Actions configureert de Gitea npm registry vóór `npm ci` met `NPM_REGISTRY_TOKEN`, `@beslismodel/@oranje/@xenia` scopes en een `npm view @beslismodel/core@0.1.0` preflight, zodat private registry installs niet afhangen van lokale `.npmrc`.
+- [x] Historisch superseded: GitHub Actions gebruikte tijdelijk de Gitea npm registry vóór `npm ci`; actuele GitHub CI gebruikt GitHub Packages auth (`NPM_REGISTRY_TOKEN`) voor `@moranje/beslismodel` en bevat geen Gitea npm preflight meer.
 - [x] Package release-notes in Gitea historisch getagd zodra de prerelease packages bestonden: `beslismodel-v0.1.0-next.0` is gepusht naar `beslismodel-framework` op commit `e296808`; stable `0.1.0` is daarna de actuele release.
 - [x] Rollback-plan gedocumenteerd: registry dependency versions pinnen; vorige werkende packageversie in `package-lock.json` en Gitea tag houden.
 - [x] Rollback-plan bewezen met echte registry-versie `0.1.0-next.0`, lockfile-pins en Gitea tag `beslismodel-v0.1.0-next.0`.
@@ -487,10 +487,18 @@ Historische planning, afgerond op 2026-06-04: de prerelease-, stable-, registry-
 ### Ronde 11 — Aggregate package consumer (2026-06-05)
 
 - [x] App-package source verwijderd uit `urinest.rip`: geen tracked `packages/` directory en geen `vitest.config.packages.ts`.
-- [x] App consumeert `@moranje/beslismodel@0.1.0` uit GitHub Packages met publieke subpath exports voor core, compiler, vue, testing en domeinpakketten.
+- [x] App consumeert `@moranje/beslismodel@0.1.1` uit GitHub Packages met publieke subpath exports voor core, compiler, vue, testing en domeinpakketten.
 - [x] `check:framework` is nu expliciet een consumer-gate: Urinestrip fixture typecheck en test, geen package-source build.
 - [x] CI-policy bewaakt dat legacy `@beslismodel/*`, package-source imports, package-only scripts en lokale framework source niet terugkeren in de app.
 - [x] `docs/package-release-strategy.md`, `README.md`, `AGENTS.md` en `CLAUDE.md` beschrijven de actuele aggregate-package architectuur.
+
+### Ronde 12 — GitHub CI/package-consumer afronding (2026-06-05)
+
+- [x] `ci(lighthouse): use local runner` vervangt `@lhci/cli` door `scripts/check-lighthouse.mjs`, houdt `lighthouserc.cjs` als assertionbron, schrijft dezelfde artifacts naar `docs/lighthouse` en laat `npm ci` schoon installeren zonder de oude LHCI transitives.
+- [x] `ci(actions): force node 24 runtime` zet `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` en policy-testdekking vast.
+- [x] `ci(actions): replace node 20 actions` verwijdert `browser-actions/setup-chrome`, `nwtgck/actions-netlify` en `softprops/action-gh-release`; Chrome-resolutie, Netlify deploy en GitHub release lopen nu via shell/CLI-stappen in de Node 24 workflow.
+- [x] GitHub CI/CD en CodeQL groen na release `v3.4.3`; verificatie: lint/typecheck/tests/audit/storybook/framework/build/browser-smoke/Lighthouse/guideline/bundle-budget, Netlify deploy en GitHub release.
+- [x] Framework-plan zelf bewaakt de actuele package-consumerarchitectuur: CI-policy test faalt wanneer het plan opnieuw `@moranje/beslismodel@0.1.0`, actuele Gitea npm-preflight of `CI matrix` als huidige status noemt.
 
 ## Commit Discipline
 
