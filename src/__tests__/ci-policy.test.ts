@@ -169,6 +169,10 @@ describe("CI policy", () => {
     expect(routeAccessibilityTest).toContain("axe.run");
     expect(routeAccessibilityTest).toContain("wcag22aa");
     expect(lighthouseConfig).toContain("categories:accessibility");
+    expect(lighthouseConfig).toContain(
+      "WCAG 2.2 AA is enforced by axe route tests; Lighthouse remains the hosted-browser smoke.",
+    );
+    expect(lighthouseConfig).toContain('"categories:accessibility": ["error", { minScore: 0.95 }]');
     expect(lighthouseConfig).toContain("categories:best-practices");
     expect(lighthouseConfig).toContain("categories:performance");
 

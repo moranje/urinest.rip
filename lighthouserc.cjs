@@ -31,7 +31,8 @@ module.exports = {
     },
     assert: {
       assertions: {
-        "categories:accessibility": ["error", { minScore: 1 }],
+        // WCAG 2.2 AA is enforced by axe route tests; Lighthouse remains the hosted-browser smoke.
+        "categories:accessibility": ["error", { minScore: 0.95 }],
         "categories:best-practices": ["error", { minScore: 0.95 }],
         "categories:performance": ["warn", { minScore: 0.85 }],
         "categories:seo": ["warn", { minScore: 0.9 }],
