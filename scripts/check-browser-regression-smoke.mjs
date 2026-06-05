@@ -458,6 +458,7 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
   await expectChoiceSelected(page, "Positief");
+
 }
 
 async function assertQuestionnaireDeepBackStack(page, baseUrl) {
@@ -527,6 +528,41 @@ async function assertQuestionnaireDeepBackStack(page, baseUrl) {
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
   await expectChoiceSelected(page, "Positief");
+
+  await page.goForward({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tissue",
+    "Is er sprake van weefselinvasie?",
+  );
+  await expectChoiceSelected(page, "Geen");
+
+  await page.goForward({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_risk",
+    "Behoort patiënt tot een risicogroep?",
+  );
+  await expectChoiceSelected(page, "Nee");
+
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_risk",
+    "Behoort patiënt tot een risicogroep?",
+  );
+  const reloadedText = await page.evaluate(() => document.body.textContent ?? "");
+  assert(
+    !reloadedText.includes("Vragenlijst laden"),
+    "Reloaded question route stayed stuck on loader",
+  );
+  assert(
+    !reloadedText.includes("Resultaat bepalen"),
+    "Reloaded question route jumped to pending result",
+  );
 }
 
 async function navigateToHealthyTreatmentQuestion(page, baseUrl) {

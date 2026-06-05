@@ -187,6 +187,8 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Theme mode control should not render");
     expect(browserRegressionSmokeScript).toContain("Progress text should stay visually empty");
     expect(browserRegressionSmokeScript).toContain("page.goBack");
+    expect(browserRegressionSmokeScript).toContain("page.goForward");
+    expect(browserRegressionSmokeScript).toContain("page.reload");
     expect(browserRegressionSmokeScript).toContain("Direct result route stayed stuck on loader");
     expect(browserRegressionSmokeScript).toContain("Answer option shell has unwanted border");
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
