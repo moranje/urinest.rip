@@ -190,6 +190,18 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
+  it("keeps plain text links visibly distinguishable without relying on color alone", () => {
+    const mainCss = read("src/styles/main.css");
+    const anchorCss = mainCss.match(/\na\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
+
+    expect(anchorCss).toContain("color: var(--md-sys-color-primary)");
+    expect(anchorCss).toContain("text-decoration-line: underline");
+    expect(anchorCss).toContain("text-decoration-thickness:");
+    expect(anchorCss).toContain("text-underline-offset:");
+    expect(anchorCss).toContain("text-decoration-skip-ink: auto");
+    expect(anchorCss).not.toContain("text-decoration: none");
+  });
+
   it("keeps runtime transitions explicit", () => {
     const files = [...walk("src/components"), ...walk("src/views"), ...walk("src/styles")].filter(
       (file) => !file.endsWith("src/styles/tokens.test.ts"),
