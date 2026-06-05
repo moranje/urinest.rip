@@ -138,56 +138,71 @@ async function resetClientStorage(page) {
 }
 
 async function assertLandingGrid(page, baseUrl) {
-  await page.setViewport({ width: 1714, height: 1200, deviceScaleFactor: 1 });
-  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.waitForSelector(".bm-landing-menu-grid__primary-item", { timeout: 10_000 });
+  const desktopViewports = [
+    { width: 1280, height: 960 },
+    { width: 1440, height: 1050 },
+    { width: 1714, height: 1200 },
+  ];
 
-  const grid = await page.evaluate(() => {
-    const primary = document.querySelector(".bm-landing-menu-grid__primary");
-    const items = [...document.querySelectorAll(".bm-landing-menu-grid__primary-item")];
-    const style = primary ? getComputedStyle(primary) : null;
-    const rects = items.map((item) => {
-      const rect = item.getBoundingClientRect();
+  for (const viewport of desktopViewports) {
+    await page.setViewport({ ...viewport, deviceScaleFactor: 1 });
+    await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+    await page.waitForSelector(".bm-landing-menu-grid__primary-item", { timeout: 10_000 });
+
+    const grid = await page.evaluate(() => {
+      const primary = document.querySelector(".bm-landing-menu-grid__primary");
+      const items = [...document.querySelectorAll(".bm-landing-menu-grid__primary-item")];
+      const style = primary ? getComputedStyle(primary) : null;
+      const rects = items.map((item) => {
+        const rect = item.getBoundingClientRect();
+        return {
+          height: Math.round(rect.height),
+          left: Math.round(rect.left),
+          top: Math.round(rect.top),
+          width: Math.round(rect.width),
+        };
+      });
+      const rows = [];
+      for (const rect of rects) {
+        const row = rows.find((candidate) => Math.abs(candidate.top - rect.top) <= 8);
+        if (row) row.items.push(rect);
+        else rows.push({ top: rect.top, items: [rect] });
+      }
+      rows.sort((a, b) => a.top - b.top);
+
       return {
-        height: Math.round(rect.height),
-        left: Math.round(rect.left),
-        top: Math.round(rect.top),
-        width: Math.round(rect.width),
+        columns: style?.gridTemplateColumns.split(" ").filter(Boolean).length ?? 0,
+        count: items.length,
+        rowCount: rows.length,
+        rowSizes: rows.map((row) => row.items.length),
+        tileHeights: rects.map((rect) => rect.height),
+        tileWidths: rects.map((rect) => rect.width),
       };
     });
-    const rows = [];
-    for (const rect of rects) {
-      const row = rows.find((candidate) => Math.abs(candidate.top - rect.top) <= 8);
-      if (row) row.items.push(rect);
-      else rows.push({ top: rect.top, items: [rect] });
-    }
-    rows.sort((a, b) => a.top - b.top);
+    const label = `${viewport.width}x${viewport.height}`;
 
-    return {
-      columns: style?.gridTemplateColumns.split(" ").filter(Boolean).length ?? 0,
-      count: items.length,
-      rowCount: rows.length,
-      rowSizes: rows.map((row) => row.items.length),
-      tileHeights: rects.map((rect) => rect.height),
-      tileWidths: rects.map((rect) => rect.width),
-    };
-  });
-
-  assert(grid.count === 5, `Expected 5 primary landing items, received ${grid.count}`);
-  assert(grid.columns === 3, `Expected 3 desktop landing columns, received ${grid.columns}`);
-  assert(grid.rowCount === 2, `Expected 2 desktop landing rows, received ${grid.rowCount}`);
-  assert(
-    grid.rowSizes[0] === 3 && grid.rowSizes[1] === 2,
-    `Expected landing rows 3+2, received ${grid.rowSizes.join("+")}`,
-  );
-  assert(
-    grid.tileWidths.every((width) => width >= 250 && width <= 340),
-    `Unexpected desktop landing tile widths: ${grid.tileWidths.join(", ")}`,
-  );
-  assert(
-    grid.tileHeights.every((height) => height >= 250 && height <= 340),
-    `Unexpected desktop landing tile heights: ${grid.tileHeights.join(", ")}`,
-  );
+    assert(grid.count === 5, `[${label}] Expected 5 primary landing items, received ${grid.count}`);
+    assert(
+      grid.columns === 3,
+      `[${label}] Expected 3 desktop landing columns, received ${grid.columns}`,
+    );
+    assert(
+      grid.rowCount === 2,
+      `[${label}] Expected 2 desktop landing rows, received ${grid.rowCount}`,
+    );
+    assert(
+      grid.rowSizes[0] === 3 && grid.rowSizes[1] === 2,
+      `[${label}] Expected landing rows 3+2, received ${grid.rowSizes.join("+")}`,
+    );
+    assert(
+      grid.tileWidths.every((width) => width >= 250 && width <= 340),
+      `[${label}] Unexpected desktop landing tile widths: ${grid.tileWidths.join(", ")}`,
+    );
+    assert(
+      grid.tileHeights.every((height) => height >= 250 && height <= 340),
+      `[${label}] Unexpected desktop landing tile heights: ${grid.tileHeights.join(", ")}`,
+    );
+  }
 }
 
 function hexToRgbString(hex) {

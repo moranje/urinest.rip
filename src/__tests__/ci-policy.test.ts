@@ -178,6 +178,10 @@ describe("CI policy", () => {
     expect(routeTransitionPolicyTest).toContain("keeps result navigation out");
     expect(viewTransitionTest).toContain("classifies skipped transitions as benign");
     expect(routeVisualContractTest).toContain("keeps landing route at desktop 2 rows by 3 columns");
+    expect(browserRegressionSmokeScript).toContain("desktopViewports");
+    expect(browserRegressionSmokeScript).toContain("width: 1280");
+    expect(browserRegressionSmokeScript).toContain("width: 1440");
+    expect(browserRegressionSmokeScript).toContain("width: 1714");
     expect(browserRegressionSmokeScript).toContain("Expected 2 desktop landing rows");
     expect(browserRegressionSmokeScript).toContain("Expected landing rows 3+2");
     expect(browserRegressionSmokeScript).toContain("Theme mode control should not render");
