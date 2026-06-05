@@ -1,6 +1,6 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import { createMarkdownRenderer } from "@beslismodel/core";
+import { createMarkdownRenderer } from "@moranje/beslismodel/core";
 
 export const markdownRenderer = createMarkdownRenderer({
   parse: (markdown) => marked.parse(markdown) as string,

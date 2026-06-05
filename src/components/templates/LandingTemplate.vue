@@ -49,7 +49,7 @@ import {
   LandingMenuGrid,
   type BeslismodelLandingMenuSource,
   type BeslismodelLandingMenuViewItem,
-} from "@beslismodel/vue";
+} from "@moranje/beslismodel/vue";
 import MenuItem from "../MenuItem.vue";
 import Card from "../primitives/Card.vue";
 

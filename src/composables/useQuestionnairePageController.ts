@@ -1,8 +1,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
-import { parseOutcome } from "@beslismodel/core";
-import { useQuestionnaireRunner } from "@beslismodel/vue";
+import { parseOutcome } from "@moranje/beslismodel/core";
+import { useQuestionnaireRunner } from "@moranje/beslismodel/vue";
 import { usePopover } from "./usePopover";
 import { renderAppMarkdown } from "../lib/app-compatibility";
 import { breadcrumbClick } from "../lib/breadcrumbs";
@@ -198,7 +198,6 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
           role: roleStore.role,
         });
         isLoading.value = true;
-        questionnaireStore.clearAnswers(id.value);
         await pushNavigation(`/questionnaire/${value}`, "router:questionnaire-redirect", {
           questionnaireId: id.value,
           targetQuestionnaireId: value,
@@ -533,7 +532,7 @@ export function useQuestionnairePageController(questionnaireId: MaybeRefOrGetter
     isNavigating.value = false;
     isSubmitting.value = false;
     resetNavigation();
-    await loadStateAndDetermineStart({ reset: true });
+    await loadStateAndDetermineStart();
   });
 
   watch(

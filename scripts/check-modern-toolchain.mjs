@@ -29,11 +29,11 @@ requireDevDependency("@typescript/native-preview", /^\^?7\./);
 requireDevDependency("typescript", /^\^?6\./);
 requireDevDependency("vite", /^\^?8\./);
 
-requireScript("format", "oxfmt --write src/ packages/ fixtures/");
-requireScript("format:check", "oxfmt --check src/ packages/ fixtures/");
-requireScript("lint", "oxlint src/ packages/ fixtures/ --deny-warnings");
-requireScript("lint:all", "oxlint src/ packages/ fixtures/ --deny-warnings");
-requireScript("lint:all", "eslint src/ packages/ fixtures/");
+requireScript("format", "oxfmt --write src/ fixtures/");
+requireScript("format:check", "oxfmt --check src/ fixtures/");
+requireScript("lint", "oxlint src/ fixtures/ --deny-warnings");
+requireScript("lint:all", "oxlint src/ fixtures/ --deny-warnings");
+requireScript("lint:all", "eslint src/ fixtures/");
 requireScript("check:tsgo", "tsgo --noEmit --project tsconfig.tsgo.json");
 requireScript("check:tsgo:app", "tsgo --noEmit --project tsconfig.app.tsgo.json");
 requireScript("check:app", "check:modern-toolchain");
@@ -41,19 +41,6 @@ requireScript("check:app", "format:check");
 requireScript("check:app", "lint:all");
 requireScript("check:app", "check:tsgo:app");
 requireScript("build", "vite build");
-
-for (const scriptName of [
-  "build:core",
-  "build:compiler",
-  "build:vue:only",
-  "build:testing",
-  "build:cvrm-prevent",
-  "build:dm-care",
-  "build:copd-care",
-]) {
-  requireScript(scriptName, "vite build --config packages/");
-  requireScript(scriptName, "tsc -p packages/");
-}
 
 if (!lockPackages["node_modules/rolldown"]) {
   violations.push("package-lock.json must include node_modules/rolldown from Vite 8");
@@ -71,4 +58,4 @@ if (violations.length > 0) {
   );
 }
 
-console.log("Modern toolchain contract passed: oxfmt, oxlint, tsgo, Vite 8 and Rolldown");
+console.log("Modern app toolchain contract passed: oxfmt, oxlint, tsgo, Vite 8 and Rolldown");

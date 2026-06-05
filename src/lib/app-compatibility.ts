@@ -3,12 +3,12 @@ import {
   determineOutcome,
   type ManifestCalculatorBinding,
   type NormalizedDecisionManifest,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import type {
   BeslismodelManifestInput,
   BeslismodelStorageAdapter,
   BeslismodelStoreErrorContext,
-} from "@beslismodel/vue";
+} from "@moranje/beslismodel/vue";
 import { appConfig } from "../config/app-config";
 import { useRoleStore } from "../store/roleStore";
 import type {

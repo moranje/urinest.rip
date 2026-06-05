@@ -10,7 +10,7 @@ import {
   cloneBreadcrumbs,
   type Breadcrumb,
   type BreadcrumbInput,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import { scrubText, scrubValue } from "./scrub";
 import { sanitizeRouteForTelemetry } from "./telemetry-privacy";
 

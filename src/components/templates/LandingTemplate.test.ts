@@ -3,9 +3,15 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import LandingTemplate from "./LandingTemplate.vue";
 import type { Component } from "vue";
-import type { BeslismodelLandingMenuSource } from "@beslismodel/vue";
+import type { BeslismodelLandingMenuSource } from "@moranje/beslismodel/vue";
 
 const items: BeslismodelLandingMenuSource[] = [
+  {
+    id: "healthy",
+    title: "Gezonde vrouwen",
+    icon: "healthy",
+    metadata: { landingOrder: 5, landingSection: "primary" },
+  },
   {
     id: "strip",
     title: "Urinestrip",
@@ -13,11 +19,23 @@ const items: BeslismodelLandingMenuSource[] = [
     metadata: { landingOrder: 10, landingSection: "primary" },
   },
   {
+    id: "dipslide",
+    title: "Dipslide",
+    icon: "dipslide",
+    metadata: { landingOrder: 20, landingSection: "primary" },
+  },
+  {
+    id: "sediment",
+    title: "Sediment",
+    icon: "sediment",
+    metadata: { landingOrder: 30, landingSection: "primary" },
+  },
+  {
     id: "kweek",
     title: "Urinekweek",
     name: "Kweek",
     icon: "culture",
-    metadata: { landingOrder: 20 },
+    metadata: { landingOrder: 40, landingSection: "primary" },
   },
   {
     id: "bacteriurie",
@@ -70,7 +88,7 @@ function mountTemplate(
   return mount(LandingTemplate, {
     props: {
       items,
-      iconKeys: ["strip", "culture"],
+      iconKeys: ["healthy", "strip", "dipslide", "sediment", "culture"],
       title: "Beslishulp urineonderzoek - kies een test",
       label: "Beslishulp urineonderzoek",
       secondaryHeading: "Urineweginfecties",
@@ -87,6 +105,15 @@ function mountTemplate(
   });
 }
 
+function findPrimaryItemByPath(wrapper: ReturnType<typeof mountTemplate>, path: string) {
+  const link = wrapper.get(`.menu-item-stub[href="${path}"]`);
+  const item = wrapper
+    .findAll(".bm-landing-menu-grid__primary-item")
+    .find((candidate) => candidate.element.contains(link.element));
+  if (!item) throw new Error(`Could not find primary landing item: ${path}`);
+  return item;
+}
+
 describe("LandingTemplate", () => {
   it("renders accessible title and manifest-driven primary tiles", () => {
     const wrapper = mountTemplate();
@@ -94,14 +121,20 @@ describe("LandingTemplate", () => {
     expect(wrapper.get(".sr-only").text()).toBe("Beslishulp urineonderzoek - kies een test");
     expect(wrapper.get("section").attributes("aria-label")).toBe("Beslishulp urineonderzoek");
     expect(wrapper.findAll(".menu-item-stub").map((item) => item.attributes("href"))).toEqual([
+      "/questionnaire/healthy",
       "/questionnaire/strip",
+      "/questionnaire/dipslide",
+      "/questionnaire/sediment",
       "/questionnaire/kweek",
     ]);
     expect(wrapper.findAll(".menu-item-stub").map((item) => item.attributes("data-name"))).toEqual([
+      "Gezonde vrouwen",
       "Urinestrip",
+      "Dipslide",
+      "Sediment",
       "Kweek",
     ]);
-    expect(wrapper.findAll(".icon-stub")).toHaveLength(2);
+    expect(wrapper.findAll(".icon-stub")).toHaveLength(5);
   });
 
   it("renders secondary tiles with route, label, and description", () => {
@@ -145,6 +178,7 @@ describe("LandingTemplate", () => {
     expect(source).toContain("--landing-tile-size: clamp(16rem, 18vw, 20rem)");
     expect(primaryGridCss).toContain("five primary flows render as 2 rows x 3 columns");
     expect(primaryGridCss).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
+    expect(items.filter((item) => item.metadata?.landingSection !== "secondary")).toHaveLength(5);
     expect(source).toContain("@container landing (max-width: 44rem)");
     expect(compactCss).toContain("grid-template-columns: repeat(2, minmax(0, 1fr))");
     expect(source).toContain("max-inline-size: var(--landing-tile-size)");
@@ -193,9 +227,10 @@ describe("LandingTemplate", () => {
   it("prefetches questionnaire routes through the package landing grid", async () => {
     const prefetchQuestionnaire = vi.fn();
     const wrapper = mountTemplate({ prefetchQuestionnaire });
+    const stripItem = findPrimaryItemByPath(wrapper, "/questionnaire/strip");
 
-    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("mouseenter");
-    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("focusin");
+    await stripItem.trigger("mouseenter");
+    await stripItem.trigger("focusin");
 
     expect(prefetchQuestionnaire).toHaveBeenCalledTimes(1);
     expect(prefetchQuestionnaire).toHaveBeenCalledWith("strip");
@@ -208,8 +243,9 @@ describe("LandingTemplate", () => {
         throw error;
       },
     });
+    const stripItem = findPrimaryItemByPath(wrapper, "/questionnaire/strip");
 
-    await wrapper.get(".bm-landing-menu-grid__primary-item").trigger("mouseenter");
+    await stripItem.trigger("mouseenter");
     await flushPromises();
 
     expect(wrapper.emitted("prefetchError")?.[0]).toEqual([error, "strip"]);

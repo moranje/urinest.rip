@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Breadcrumb } from "@beslismodel/core";
+import type { Breadcrumb } from "@moranje/beslismodel/core";
 import { ref, computed } from "vue";
 import type { LogGroup, LogEvent } from "../../store/logStore";
 import { useLogStore } from "../../store/logStore";

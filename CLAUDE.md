@@ -6,9 +6,9 @@ Primary agent instructions live in [AGENTS.md](AGENTS.md). Keep this file aligne
 
 - Vue 3 + Vite 8 app for Dutch urine-test decision support.
 - Flows live in `flows/`.
-- `@beslismodel/compiler` builds `public/main.json`.
-- App consumes published `@beslismodel/*` packages from Gitea.
-- Package source remains in `packages/` while `beslismodel-framework` publish/migration work is staged.
+- `@moranje/beslismodel/compiler` builds `public/main.json`.
+- App consumes `@moranje/beslismodel@0.1.1` from GitHub Packages.
+- Framework source lives in `moranje/beslismodel-framework`; this repo is a consumer.
 
 ## Required Gates
 
@@ -46,12 +46,12 @@ For any substantive `flows/` change:
 - Direct `/info/:resultKey` route must render without loader hang.
 - Progressbar does not show misleading numeric text.
 - Answer, checkbox and notice components must not regain extra full-frame borders.
-- Theme toggle uses central generated design token metadata.
+- Theme is system-only and initialized before first paint from generated design token metadata.
 
 ## Package Status
 
-- Consumed registry version: `@beslismodel/*@0.1.0`.
-- Published prerelease lane: `0.1.0-next.1` with dist-tag `next`.
+- Consumed registry version: `@moranje/beslismodel@0.1.1`.
+- Historical split-package prerelease lane: `0.1.0-next.1` with dist-tag `next`.
 - NAS handoff for publish/migration: [docs/nas-handoff-2026-06-04.md](docs/nas-handoff-2026-06-04.md).
 
 ## Commit Rules

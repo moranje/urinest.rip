@@ -5,7 +5,7 @@
  * Classifies errors, shows the right toast, and logs to sinks.
  */
 
-import { classifyBeslismodelError, getErrorClass } from "@beslismodel/core";
+import { classifyBeslismodelError, getErrorClass } from "@moranje/beslismodel/core";
 import { appConfig } from "../config/app-config";
 import { toastError, toastWarning } from "./toast";
 import { createLogger } from "./logger";

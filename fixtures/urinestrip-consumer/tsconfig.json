@@ -2,9 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@beslismodel/compiler": ["../../packages/compiler/dist/index.d.ts"],
-      "@beslismodel/core": ["../../packages/core/dist/index.d.ts"],
-      "@beslismodel/vue": ["../../packages/vue/dist/index.d.ts"],
       "@/*": ["../../src/*"]
     },
     "types": ["vitest/globals"]

@@ -4,7 +4,7 @@ import {
   type ManifestId,
   type RedirectTrail,
   type RedirectTrailAppendResult,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import { appConfig } from "../config/app-config";
 import { handleError } from "./errors";
 import { readStorage, removeStorage, writeStorage } from "./storage";

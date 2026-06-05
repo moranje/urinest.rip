@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { determineOutcome, parseOutcome, type TypedOutcome } from "@beslismodel/core";
-import { assertRoleContextMatrix, type RoleContextMatrixCase } from "@beslismodel/testing";
+import { determineOutcome, parseOutcome, type TypedOutcome } from "@moranje/beslismodel/core";
+import { assertRoleContextMatrix, type RoleContextMatrixCase } from "@moranje/beslismodel/testing";
 import mainData from "../../public/main.json";
 
 type Role = "behandelaar" | "triagist";

@@ -5,7 +5,7 @@ import {
   toAuditBreadcrumbData,
   type AuditTrailEvent,
   type AuditTrailEventInput,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import { addBreadcrumb } from "./breadcrumbs";
 import { scrubValue } from "./scrub";
 import { sanitizeFlowTrailEvent } from "./telemetry-privacy";

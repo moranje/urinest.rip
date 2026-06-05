@@ -1,15 +1,13 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { getFrameworkPackages } from "./package-extraction-map.mjs";
 
 const consumerRoots = ["src", "fixtures"];
 const sourceExtensions = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".vue"]);
-const packageNamePattern = `(?:${getFrameworkPackages()
-  .map((item) => item.name.replace("@beslismodel/", ""))
-  .join("|")})`;
+const packageNamePattern = "(?:core|compiler|copd-care|cvrm-prevent|dm-care|testing|vue)";
 const forbiddenPatterns = [
+  new RegExp(String.raw`(?:^|["'\`])@beslismodel\/${packageNamePattern}(?:\/|["'\`]|$)`),
   new RegExp(
-    String.raw`(?:^|["'\`])@beslismodel\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,
+    String.raw`(?:^|["'\`])@moranje\/beslismodel\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,
   ),
   new RegExp(
     String.raw`(?:^|["'\`])(?:\.\.?\/)+packages\/${packageNamePattern}\/(?:src|dist)(?:\/|["'\`]|$)`,
@@ -22,7 +20,6 @@ const hasSourceExtension = (path) => {
   return index >= 0 && sourceExtensions.has(path.slice(index));
 };
 
-// Config aliases still point to local package builds until registry extraction.
 const isConsumerSourceFile = (path) =>
   hasSourceExtension(path) && !path.endsWith(".config.ts") && !path.endsWith(".config.mts");
 
@@ -48,10 +45,10 @@ for (const file of files) {
 
 if (violations.length > 0) {
   throw new Error(
-    `Consumer package boundary violation. Use public @beslismodel/* exports only:\n${violations
+    `Consumer package boundary violation. Use public @moranje/beslismodel/* exports only:\n${violations
       .map((file) => `- ${file}`)
       .join("\n")}`,
   );
 }
 
-console.log("Consumer package imports use public @beslismodel/* exports");
+console.log("Consumer package imports use public @moranje/beslismodel/* exports");

@@ -5,7 +5,7 @@ import {
   toLegacyOutcome,
   validateConditions,
   type TypedOutcome,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import mainData from "../../public/main.json";
 
 type Option = { id: string; value: string; text: string };

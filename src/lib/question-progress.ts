@@ -1,2 +1,2 @@
-export type { QuestionProgress, QuestionProgressInput } from "@beslismodel/core";
-export { getQuestionProgress } from "@beslismodel/core";
+export type { QuestionProgress, QuestionProgressInput } from "@moranje/beslismodel/core";
+export { getQuestionProgress } from "@moranje/beslismodel/core";

@@ -7,39 +7,29 @@ on:
     branches: [master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: read
+
 jobs:
   ci:
-    name: CI (Node ${{ matrix.node-version }})
+    name: CI (Node 24)
     runs-on: ubuntu-latest
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22, 24]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
           cache: "npm"
-
-      - name: Configure Gitea npm auth
-        env:
-          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
-        run: |
-          if [ -z "$NPM_REGISTRY_TOKEN" ]; then
-            echo "::error::NPM_REGISTRY_TOKEN secret is required for @beslismodel registry installs"
-            exit 1
-          fi
-          npm config set @beslismodel:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set @oranje:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set @xenia:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set //git.oranje.wtf/api/packages/martien/npm/:_authToken "$NPM_REGISTRY_TOKEN"
-          npm view @beslismodel/core@0.1.0 version --registry=https://git.oranje.wtf/api/packages/martien/npm/
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@moranje"
 
       - name: Install dependencies
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
 
       - name: Build flow data
         run: npm run build:flows
@@ -122,36 +112,21 @@ jobs:
     env:
       HUSKY: "0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
-
-      - name: Configure Gitea npm auth
-        env:
-          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
-        run: |
-          if [ -z "$NPM_REGISTRY_TOKEN" ]; then
-            echo "::error::NPM_REGISTRY_TOKEN secret is required for @beslismodel registry installs"
-            exit 1
-          fi
-          npm config set @beslismodel:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set @oranje:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set @xenia:registry https://git.oranje.wtf/api/packages/martien/npm/
-          npm config set //git.oranje.wtf/api/packages/martien/npm/:_authToken "$NPM_REGISTRY_TOKEN"
-          npm view @beslismodel/core@0.1.0 version --registry=https://git.oranje.wtf/api/packages/martien/npm/
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@moranje"
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Package release config preflight
-        run: npm run check:package-release-config
         env:
-          BESLISMODEL_STRICT_NPMRC: "true"
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
 
       - name: Version bump & changelog
         id: release

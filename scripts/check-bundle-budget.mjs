@@ -1,6 +1,13 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { KB, appBundleBudgets } from "./package-extraction-map.mjs";
+
+const KB = 1024;
+const appBundleBudgets = {
+  jsTotal: 950 * KB,
+  largestJs: 550 * KB,
+  cssTotal: 160 * KB,
+  compressedTotal: 450 * KB,
+};
 
 const DIST_DIR = "dist";
 const ASSETS_DIR = join(DIST_DIR, "assets");

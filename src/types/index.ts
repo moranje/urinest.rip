@@ -2,7 +2,7 @@ import type {
   ManifestCalculatorBinding,
   ManifestCondition,
   ManifestQuestionOption,
-} from "@beslismodel/core";
+} from "@moranje/beslismodel/core";
 import type { CSSProperties } from "vue";
 
 // Toast system

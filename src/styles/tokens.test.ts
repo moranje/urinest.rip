@@ -16,9 +16,10 @@ function readJson<T>(path: string): T {
 }
 
 function readCompilerBundle(): string {
-  const distPath = resolve(repoRoot, "node_modules/@beslismodel/compiler/dist");
+  const distPath = resolve(repoRoot, "node_modules/@moranje/beslismodel/dist/compiler");
   const bundleName = readdirSync(distPath).find((entry) => /^compiler-.*\.js$/u.test(entry));
-  if (!bundleName) throw new Error("Could not locate installed @beslismodel/compiler bundle");
+  if (!bundleName)
+    throw new Error("Could not locate installed @moranje/beslismodel/compiler bundle");
   return readFileSync(resolve(distPath, bundleName), "utf8");
 }
 
@@ -284,15 +285,15 @@ describe("design tokens", () => {
   it("keeps the app build on the public compiler package without dropping landing taxonomy", () => {
     const viteConfig = read("vite.config.js");
     const buildFlowsScript = read("scripts/build-flows.mjs");
-    const compilerPackage = read("node_modules/@beslismodel/compiler/package.json");
-    const compilerTypes = read("node_modules/@beslismodel/compiler/dist/schema.d.ts");
+    const compilerPackage = read("node_modules/@moranje/beslismodel/package.json");
+    const compilerTypes = read("node_modules/@moranje/beslismodel/dist/compiler/schema.d.ts");
     const compilerBundle = readCompilerBundle();
 
-    expect(viteConfig).toContain('from "@beslismodel/compiler"');
+    expect(viteConfig).toContain('from "@moranje/beslismodel/compiler"');
     expect(viteConfig).not.toContain("./scripts/flow-compiler.mjs");
-    expect(buildFlowsScript).toContain('from "@beslismodel/compiler"');
+    expect(buildFlowsScript).toContain('from "@moranje/beslismodel/compiler"');
     expect(buildFlowsScript).not.toContain("./flow-compiler.mjs");
-    expect(compilerPackage).toContain('"name": "@beslismodel/compiler"');
+    expect(compilerPackage).toContain('"name": "@moranje/beslismodel"');
     expect(compilerPackage).toContain('"exports"');
     expect(compilerTypes).toContain("readonly icon");
     expect(compilerTypes).toContain("readonly metadata");

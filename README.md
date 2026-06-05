@@ -5,7 +5,7 @@ URINEST.RIP
 </h1>
 
 Clinical decision support for urine testing in Dutch primary care. The production app is also the
-first real consumer for reusable `@beslismodel/*` framework packages.
+first real consumer for the reusable `@moranje/beslismodel` framework package.
 
 ## Website
 
@@ -15,24 +15,24 @@ Latest production version: [www.urinest.rip](https://www.urinest.rip/)
 
 - Vue 3 + Vite 8 SPA for clinical urine test workflows.
 - YAML decision flows in `flows/`.
-- `@beslismodel/compiler` build step to generate `public/main.json`.
-- Reusable framework package sources in `packages/`.
+- `@moranje/beslismodel/compiler` build step to generate `public/main.json`.
+- Reusable framework package source lives in `moranje/beslismodel-framework`.
 - Urinestrip consumer fixture in `fixtures/urinestrip-consumer/`.
-- App, package, browser, guideline, telemetry and design regression gates.
+- App, consumer, browser, guideline, telemetry and design regression gates.
 
 Current package state:
 
-- stable registry version consumed by the app: `@beslismodel/*@0.1.0`;
-- prerelease lane published for rollback/comparison: `0.1.0-next.1` with dist-tag `next`;
+- stable GitHub Packages version consumed by the app: `@moranje/beslismodel@0.1.1`;
+- subpath exports replace the old split `@beslismodel/*` packages;
 - NAS handoff for publish/migration work: [docs/nas-handoff-2026-06-04.md](docs/nas-handoff-2026-06-04.md).
 
 ## Requirements
 
-- Node `>=20.19.0`
+- Node `>=24.0.0`
 - npm
 - optional local `.env` with Supabase settings for app log persistence/auth flows
 
-Project `.npmrc` may route scopes to Gitea, but must not contain auth tokens.
+Project `.npmrc` may route `@moranje` to GitHub Packages, but must not contain auth tokens.
 
 ## Setup
 
@@ -62,7 +62,7 @@ App gate:
 npm run check:app
 ```
 
-Framework/package gate:
+Framework consumer gate:
 
 ```bash
 npm run check:framework
@@ -100,23 +100,11 @@ Preview production build:
 npm run preview
 ```
 
-## Package Release
+## Framework Package
 
-Package publishing is guarded and npm-native:
-
-```bash
-npm run check:package-publish-next
-BESLISMODEL_PUBLISH_CONFIRM=<exact-version> npm run check:package-publish-next -- --publish
-```
-
-Registry smoke:
-
-```bash
-BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-version> npm run check:package-registry-smoke
-```
-
-Do not publish prereleases to `latest`. Stable publish needs an exact stable version and release
-notes.
+`urinest.rip` consumes `@moranje/beslismodel` from GitHub Packages. Framework source, package
+builds, package tests and package publishing live in
+[`moranje/beslismodel-framework`](https://github.com/moranje/beslismodel-framework).
 
 ## Clinical Content
 
@@ -152,8 +140,8 @@ Important regressions are covered by tests and browser smoke:
 - [AGENTS.md](AGENTS.md) — local agent rules and invariants.
 - [docs/framework-package-plan-2026-06-01.md](docs/framework-package-plan-2026-06-01.md) — package/framework plan.
 - [docs/ai-guideline-authoring.md](docs/ai-guideline-authoring.md) — AI-oriented guideline authoring contract.
-- [docs/package-release-strategy.md](docs/package-release-strategy.md) — package release strategy.
-- [docs/gitea-package-publishing.md](docs/gitea-package-publishing.md) — Gitea registry runbook.
+- [docs/package-release-strategy.md](docs/package-release-strategy.md) — current aggregate package strategy.
+- [docs/gitea-package-publishing.md](docs/gitea-package-publishing.md) — historical split-package/Gitea staging runbook.
 
 ## License
 

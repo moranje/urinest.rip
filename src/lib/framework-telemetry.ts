@@ -1,4 +1,7 @@
-import type { BeslismodelTelemetryAdapter, BeslismodelTelemetryEvent } from "@beslismodel/vue";
+import type {
+  BeslismodelTelemetryAdapter,
+  BeslismodelTelemetryEvent,
+} from "@moranje/beslismodel/vue";
 import { persistTelemetry, type PersistTelemetryInput } from "./log-sink";
 
 export interface SupabaseTelemetryAdapterOptions {

@@ -1,14 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/lib/**/*.ts", "src/store/**/*.ts", "src/types/index.ts", "env.d.ts"],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/*.vue",
-    "src/stories/**",
-    "node_modules",
-    "dist",
-    "packages/**/dist"
-  ],
+  "exclude": ["src/**/*.test.ts", "src/**/*.vue", "src/stories/**", "node_modules", "dist"],
   "compilerOptions": {
     "paths": {}
   }

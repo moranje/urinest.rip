@@ -3,21 +3,22 @@
 ## Project
 
 Vue 3 + Vite 8 SPA voor huisartsen. Klinische beslisbomen staan in `flows/` en worden via
-`@beslismodel/compiler` gecompileerd naar `public/main.json`.
+`@moranje/beslismodel/compiler` gecompileerd naar `public/main.json`.
 
 Het doel van deze repo is tweeledig:
 
 - productie-app `urinest.rip` stabiel houden;
-- herbruikbaar `@beslismodel/*` framework bouwen en testen, met Urinestrip als eerste consumer.
+- herbruikbaar `@moranje/beslismodel` framework consumeren, met Urinestrip als eerste test case.
 
 ## Tech Stack
 
 - Vue 3, Vue Router, Pinia
 - TypeScript 6, `vue-tsc`, `@typescript/native-preview` / `tsgo`
 - Vite 8 / Rolldown via Vite library builds
-- `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/vue`
-- domain packages: `@beslismodel/cvrm-prevent`, `@beslismodel/copd-care`, `@beslismodel/dm-care`
-- `@beslismodel/testing` voor snapshots, role/context matrices en consumer fixtures
+- `@moranje/beslismodel/core`, `@moranje/beslismodel/compiler`, `@moranje/beslismodel/vue`
+- domain exports: `@moranje/beslismodel/cvrm-prevent`, `@moranje/beslismodel/copd-care`,
+  `@moranje/beslismodel/dm-care`
+- `@moranje/beslismodel/testing` voor snapshots, role/context matrices en consumer fixtures
 - Supabase alleen app-side: auth + structured logging
 - PWA via `vite-plugin-pwa`
 - formatting/linting: `oxfmt`, `oxlint`, ESLint security/a11y rules
@@ -27,12 +28,11 @@ Het doel van deze repo is tweeledig:
 - `npm run dev` — lokale dev server
 - `npm run build` — productie build
 - `npm run check:app` — volledige app gate
-- `npm run check:framework` — framework/package gate
-- `npm run check:packages` — package builds, tarballs, publish dry-run, consumer smokes
+- `npm run check:framework` — externe framework-consumer gate
 - `npm run check:browser-smoke` — browser regressies: landing grid, routes, back, theme, popovers
 - `npm run check:guidelines` — traceability, rolmatrix, klinische copy
 - `npm run check:modern-toolchain` — borgt `oxfmt`, `oxlint`, `tsgo`, Vite 8 en Rolldown
-- `npm run test` — app + package Vitest suites
+- `npm run test` — app + consumer Vitest suites
 - `npm run format:check` — oxfmt check
 - `npm run lint:all` — oxlint + ESLint
 
@@ -43,30 +43,28 @@ npm run check:app
 npm run check:browser-smoke
 ```
 
-Gebruik bij package/framework werk:
+Gebruik bij package/framework werk in deze app:
 
 ```bash
-npm run check:packages
-npm run check:package-registry-smoke:current
+npm run check:framework
 ```
 
-## Framework Packages
+## Framework Package
 
-Alle `@beslismodel/*` packages gebruiken lockstep versies tot externe consumers anders bewijzen.
+De app installeert het framework als externe GitHub Package.
 
 Huidige registry-status:
 
-- gepubliceerd en door app gebruikt: `@beslismodel/*@0.1.0`
-- prerelease-lane gepubliceerd voor rollback/vergelijking: `0.1.0-next.1` met dist-tag `next`
+- gepubliceerd en door app gebruikt: `@moranje/beslismodel@0.1.1`
+- framework source/publish CI: `https://github.com/moranje/beslismodel-framework`
 
 Geen token in project `.npmrc` committen. Scope routing mag:
 
 ```text
-@beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/
+@moranje:registry=https://npm.pkg.github.com
 ```
 
-Package publish blijft npm-native. Baseline actions horen bij app CI/release, niet bij
-`@beslismodel/*` publish zelf.
+Package publish blijft in de framework-repo. Deze app bevat geen lokale `packages/` source.
 
 ## Richtlijn Review-Datums
 
@@ -95,7 +93,7 @@ YAML bestanden in `flows/`. Elke flow heeft:
 - `results`
 - `resultsLogic`
 
-Validatie gebeurt via `@beslismodel/compiler` tijdens `build:flows`, Vite plugin en package
+Validatie gebeurt via `@moranje/beslismodel/compiler` tijdens `build:flows`, Vite plugin en
 consumer smokes.
 
 ## Rollen
@@ -142,14 +140,17 @@ Beschermende tests/scripts:
 
 ## CI/CD
 
-GitHub Actions en Gitea workflows voeren app/framework gates uit. Gitea app workflows gebruiken
-baseline actions voor npm auth, node setup, sourcemaps en release finalize. Package publish wordt
-apart bewaakt door:
+GitHub Actions en Gitea workflows voeren app- en consumer gates uit. Gitea app workflows gebruiken
+baseline actions voor npm auth, node setup, sourcemaps en release finalize. Package publish,
+package release notes en package registry-smokes horen alleen in
+`moranje/beslismodel-framework`, niet in deze app repo.
 
-- `check:package-release-config`
-- `check:package-release-notes`
-- `check:package-publish-next`
-- `check:package-registry-smoke`
+Deze app bewaakt package-consumptie met:
+
+- `check:framework`
+- `check:consumer-imports`
+- de Urinestrip consumer fixture
+- browser-smoke regressies voor appgedrag
 
 ## Commits
 

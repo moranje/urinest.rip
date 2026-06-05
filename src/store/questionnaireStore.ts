@@ -1,4 +1,4 @@
-import { createBeslismodelStore } from "@beslismodel/vue";
+import { createBeslismodelStore } from "@moranje/beslismodel/vue";
 import {
   getQuestionnaireRoleContext,
   handleQuestionnaireStoreError,

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { nextTick } from "vue";
-import { createBeslismodelDataReadyGuard } from "@beslismodel/vue";
+import { createBeslismodelDataReadyGuard } from "@moranje/beslismodel/vue";
 import { useQuestionnaireStore } from "../store/questionnaireStore";
 import { breadcrumbNav } from "../lib/breadcrumbs";
 import { handleError } from "../lib/errors";

@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { createCalculatorRegistry, type CalculatorDefinition } from "@beslismodel/core";
-import { compileFlowFiles, type CompiledDecisionManifest } from "@beslismodel/compiler";
+import { createCalculatorRegistry, type CalculatorDefinition } from "@moranje/beslismodel/core";
+import { compileFlowFiles, type CompiledDecisionManifest } from "@moranje/beslismodel/compiler";
 import {
   createBeslismodelDataReadyGuard,
   useQuestionnaireRunner,
   useResultResolver,
-} from "@beslismodel/vue";
+} from "@moranje/beslismodel/vue";
 import { createUrinestripConsumerStore, type ConsumerAnswer } from "./consumer-store";
 
 let manifest: CompiledDecisionManifest;

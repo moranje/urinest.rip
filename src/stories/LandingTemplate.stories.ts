@@ -2,7 +2,7 @@ import { h, type Component } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { setup, type Meta, type StoryObj } from "@storybook/vue3-vite";
 import LandingTemplate from "../components/templates/LandingTemplate.vue";
-import type { BeslismodelLandingMenuSource } from "@beslismodel/vue";
+import type { BeslismodelLandingMenuSource } from "@moranje/beslismodel/vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
