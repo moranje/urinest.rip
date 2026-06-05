@@ -23,6 +23,8 @@ De gate faalt wanneer:
 - een flow, vraag, antwoordset, resultaatkaart of redirect niet in de matrix staat;
 - een flow in `optionDefenseRequiredForFlows` staat en een antwoordoptie geen `optionClaims`
   evidence-node met bronverwijzing heeft;
+- een flow in `questionDefenseRequiredForFlows` staat en een vraag geen `clinicalPurpose`,
+  `placementReason`, `omissionRisk`, `privacyClass` of `testCases` heeft;
 - een matrix-entry naar een onbekende bron verwijst;
 - een bronlink geen HTTPS gebruikt of naar een host buiten `allowedSourceHosts` verwijst;
 - een richtlijnreview ouder is dan `maxReviewAgeDays` in de matrix.
@@ -31,9 +33,11 @@ De gate faalt wanneer:
 publisher, versie, beperkingen en reviewdatum aan het bronregister worden toegevoegd voordat hun
 links in flow-resultaten zichtbaar mogen worden.
 
-`strip` is de eerste volledig uitgewerkte testcase voor antwoordoptieverdediging. De matrix
-controleert daar per optie claim, verdict en bron-ID. Nieuwe domeinen kunnen dezelfde gate
-aanzetten door hun flow-ID aan `optionDefenseRequiredForFlows` toe te voegen.
+`strip` is de eerste volledig uitgewerkte testcase voor vraag- en antwoordoptieverdediging. De
+matrix controleert daar per vraag klinisch doel, plaatsing, omission-risk, privacyklasse en
+testcases, en per optie claim, verdict en bron-ID. Nieuwe domeinen kunnen dezelfde gates aanzetten
+door hun flow-ID aan `questionDefenseRequiredForFlows` en `optionDefenseRequiredForFlows` toe te
+voegen.
 
 ## Review 2026-06-01
 

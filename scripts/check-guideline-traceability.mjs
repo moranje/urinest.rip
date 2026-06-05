@@ -7,6 +7,13 @@ const traceability = JSON.parse(
 const guidelinesSource = readFileSync(new URL("../src/lib/guidelines.ts", import.meta.url), "utf8");
 
 const allowedVerdicts = new Set(["supported", "scope-guard", "safety-note"]);
+const allowedPrivacyClasses = new Set([
+  "no-phi",
+  "indirect-clinical",
+  "possible-phi",
+  "no-free-text",
+  "forbidden",
+]);
 const errors = [];
 
 function fail(message) {
@@ -59,6 +66,22 @@ function validateEvidenceNode(node, path, sourceIds) {
   }
   for (const sourceId of node.sourceIds) {
     if (!sourceIds.has(sourceId)) fail(`${path}: unknown sourceId "${sourceId}"`);
+  }
+}
+
+function validateQuestionDefenseNode(node, path) {
+  for (const field of ["clinicalPurpose", "placementReason", "omissionRisk"]) {
+    if (!node[field] || typeof node[field] !== "string") {
+      fail(`${path}: missing ${field}`);
+    }
+  }
+  if (!allowedPrivacyClasses.has(node.privacyClass)) {
+    fail(`${path}: unsupported privacyClass "${node.privacyClass}"`);
+  }
+  if (!Array.isArray(node.testCases) || node.testCases.length === 0) {
+    fail(`${path}: testCases must be a non-empty array`);
+  } else if (node.testCases.some((testCase) => typeof testCase !== "string" || !testCase)) {
+    fail(`${path}: testCases entries must be non-empty strings`);
   }
 }
 
@@ -140,6 +163,9 @@ function validateFlow(flow, trace, sourceIds, flowIds) {
   const optionDefenseRequired = new Set(traceability.optionDefenseRequiredForFlows ?? []).has(
     flow.id,
   );
+  const questionDefenseRequired = new Set(traceability.questionDefenseRequiredForFlows ?? []).has(
+    flow.id,
+  );
 
   const actualQuestions = flow.questions.map((question) => question.id).sort();
   const tracedQuestions = Object.keys(trace.questions ?? {}).sort();
@@ -148,6 +174,9 @@ function validateFlow(flow, trace, sourceIds, flowIds) {
   for (const question of flow.questions) {
     const questionTrace = trace.questions[question.id];
     validateEvidenceNode(questionTrace, `${path}.questions.${question.id}`, sourceIds);
+    if (questionDefenseRequired) {
+      validateQuestionDefenseNode(questionTrace, `${path}.questions.${question.id}`);
+    }
     assertSameArray(
       `${path}.questions.${question.id}.optionValues`,
       question.options.map((option) => String(option.value)),
@@ -244,6 +273,9 @@ function validate() {
   const tracedFlowIds = new Set(Object.keys(traceability.flows ?? {}));
   for (const flowId of traceability.optionDefenseRequiredForFlows ?? []) {
     if (!flowIds.has(flowId)) fail(`optionDefenseRequiredForFlows: unknown flow ${flowId}`);
+  }
+  for (const flowId of traceability.questionDefenseRequiredForFlows ?? []) {
+    if (!flowIds.has(flowId)) fail(`questionDefenseRequiredForFlows: unknown flow ${flowId}`);
   }
 
   assertSameArray("flows", [...flowIds].sort(), [...tracedFlowIds].sort());

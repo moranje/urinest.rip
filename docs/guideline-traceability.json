@@ -11,6 +11,7 @@
     "www.thuisarts.nl",
     "www.verenso.nl"
   ],
+  "questionDefenseRequiredForFlows": ["strip"],
   "optionDefenseRequiredForFlows": ["strip"],
   "sources": {
     "nhg-uwi": {
@@ -101,6 +102,14 @@
           "claim": "Nitriet is de eerste test omdat een positieve nitriettest de diagnose UWI ondersteunt/bevestigt.",
           "verdict": "supported",
           "sourceIds": ["nhg-uwi", "nhg-lab"],
+          "clinicalPurpose": "Nitriet onderscheidt een bacteriurie-route vroeg van verdere stripinterpretatie.",
+          "placementReason": "Deze vraag staat eerst omdat een positieve nitriettest direct naar bacteriuriebeoordeling routeert.",
+          "omissionRisk": "Zonder nitrietvraag kan een waarschijnlijke bacteriurie te laat of via een minder specifieke route worden beoordeeld.",
+          "privacyClass": "indirect-clinical",
+          "testCases": [
+            "nitriet positief routeert naar bacteriurie",
+            "nitriet negatief toont leukocytentest"
+          ],
           "optionValues": ["positive", "negative"],
           "optionClaims": {
             "positive": {
@@ -119,6 +128,14 @@
           "claim": "Leukocyten worden alleen na negatieve nitriet beoordeeld; negatieve nitriet plus negatieve leukocyten maakt UWI onwaarschijnlijk.",
           "verdict": "supported",
           "sourceIds": ["nhg-uwi", "nhg-lab", "verenso-uwi"],
+          "clinicalPurpose": "Leukocyten beoordelen pyurie wanneer nitriet de UWI-route niet al heeft bevestigd.",
+          "placementReason": "Deze vraag volgt alleen na negatieve nitriet om onnodige vervolgvragen bij positieve nitriet te voorkomen.",
+          "omissionRisk": "Zonder leukocytenvraag kunnen nitriet-negatieve UWI-signalen of kwetsbare-oudere routes gemist worden.",
+          "privacyClass": "indirect-clinical",
+          "testCases": [
+            "nitriet negatief en leukocyten positief routeert naar leukocyturie",
+            "nitriet negatief en leukocyten negatief toont erytrocytentest"
+          ],
           "optionValues": ["positive_1", "positive_2", "positive_3", "negative"],
           "optionClaims": {
             "positive_1": {
@@ -147,6 +164,14 @@
           "claim": "Erytrocyten worden pas bij negatieve UWI-screening beoordeeld om hematurie niet te missen zonder de UWI-route te vervuilen.",
           "verdict": "supported",
           "sourceIds": ["nvu-hematurie", "nvkc-hematurie-lab"],
+          "clinicalPurpose": "Erytrocyten vangen hematurie op nadat de UWI-screening negatief is.",
+          "placementReason": "Deze vraag staat na nitriet en leukocyten omdat hematurieanalyse pas nodig is wanneer de UWI-route niet actief is.",
+          "omissionRisk": "Zonder erytrocytenvraag kan relevante hematurie ten onrechte als geen afwijking worden afgesloten.",
+          "privacyClass": "indirect-clinical",
+          "testCases": [
+            "negatieve UWI-screening met erytrocyten positief routeert naar hematurie",
+            "negatieve nitriet, leukocyten en erytrocyten toont geen conclusieve afwijking"
+          ],
           "optionValues": ["positive_1", "positive_2", "positive_3", "positive_4", "negative"],
           "optionClaims": {
             "positive_1": {
