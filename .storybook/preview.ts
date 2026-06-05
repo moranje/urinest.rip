@@ -55,30 +55,7 @@ const preview: Preview = {
       },
     },
   },
-  globalTypes: {
-    theme: {
-      name: "Theme",
-      description: "Light/dark theme toggle",
-      defaultValue: "light",
-      toolbar: {
-        icon: "circlehollow",
-        items: [
-          { value: "light", title: "Light" },
-          { value: "dark", title: "Dark" },
-        ],
-        dynamicTitle: true,
-      },
-    },
-  },
-  decorators: [
-    (story, context) => {
-      const theme = context.globals.theme === "dark" ? "dark" : "light";
-      if (typeof document !== "undefined") {
-        document.documentElement.setAttribute("data-theme", theme);
-      }
-      return { components: { story }, template: "<story />" };
-    },
-  ],
+  decorators: [(story) => ({ components: { story }, template: "<story />" })],
 };
 
 export default preview;

@@ -201,7 +201,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          "Bron-of-truth: `src/styles/tokens.css`. Wissel het Theme-toolbar voor licht/donker.",
+          "Bron-of-truth: `src/styles/tokens.css`. Thema volgt de systeeminstelling van de browser.",
       },
     },
   },
