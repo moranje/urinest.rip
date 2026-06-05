@@ -67,8 +67,6 @@ jobs:
     if: startsWith(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
     container: public.ecr.aws/docker/library/node:24-bookworm
-    env:
-      GITEA_NPM_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,13 +74,13 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_TOKEN }}
 
-      - name: Configure private npm auth
+      - name: Configure GitHub Packages npm auth
         uses: https://git.oranje.wtf/martien/baseline/actions/setup-npm-auth@v2.2.1
         with:
-          npm-token: ${{ secrets.NPM_REGISTRY_TOKEN }}
-          registry: https://git.oranje.wtf/api/packages/martien/npm/
-          scopes: "@oranje,@xenia,@beslismodel"
-          preflight-package: "@beslismodel%2fcore"
+          npm-token: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
+          registry: https://npm.pkg.github.com
+          scopes: "@moranje"
+          preflight-package: "@moranje%2fbeslismodel"
 
       - name: Setup Node + install dependencies
         uses: https://git.oranje.wtf/martien/baseline/actions/setup-node@v2.2.1
@@ -93,16 +91,8 @@ jobs:
       - name: App quality gates
         run: npm run check:app
 
-      - name: Framework package checks
+      - name: Framework consumer checks
         run: npm run check:framework
-
-      - name: Registry package install smoke
-        run: npm run check:package-registry-smoke:current
-
-      - name: Package release config preflight
-        run: npm run check:package-release-config
-        env:
-          BESLISMODEL_STRICT_NPMRC: "true"
 
       - name: Build
         run: npm run build
