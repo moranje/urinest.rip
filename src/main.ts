@@ -6,6 +6,7 @@ import { handleError } from "./lib/errors";
 import { initErrorContext } from "./lib/error-context";
 import { initLogSink } from "./lib/log-sink";
 import { isSkippedViewTransition } from "./lib/view-transition";
+import { initWebVitalsTelemetry } from "./lib/web-vitals";
 
 const app = createApp(App);
 app.use(createPinia());
@@ -30,9 +31,10 @@ window.addEventListener("error", (e) => {
   });
 });
 
-// Initialize error context, log sink, and auth
+// Initialize error context, log sink, web vitals, and auth
 initErrorContext();
 initLogSink();
+initWebVitalsTelemetry();
 
 import { useAuthStore } from "./store/authStore";
 useAuthStore().init();

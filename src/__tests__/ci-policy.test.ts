@@ -156,6 +156,7 @@ describe("CI policy", () => {
     expect(envExample).toContain("VITE_ENABLE_LOG_PERSISTENCE=false");
     expect(appConfigSource).toContain("VITE_TELEMETRY_SOURCE");
     expect(telemetryDocs).toContain("VITE_ENABLE_LOG_PERSISTENCE");
+    expect(telemetryDocs).toContain("web_vital.inp");
   });
 
   it("keeps Storybook, accessibility and browser regression gates active", () => {

@@ -15,6 +15,8 @@ pipeline heeft:
 - `log-sink.ts` buffert events, scrubt context, bewaart flow-trail en schrijft naar Supabase `app_logs`.
 - `flow-trail.ts` legt flow-start, vraagstappen, redirects en resultaten vast.
 - `scrub.ts` verwijdert BSN-achtige nummers, e-mailadressen, JWT's, tokens en geneste PHI-achtige waarden.
+- `web-vitals.ts` meet FCP, LCP, CLS en INP via `PerformanceObserver` en schrijft alleen
+  metricnaam, afgeronde waarde, rating en visibility-state naar dezelfde sink.
 - `main.ts` en `App.vue` vangen global errors, unhandled rejections en renderfouten af.
 
 ## Privacyregels
@@ -37,6 +39,8 @@ pipeline heeft:
 - De admin-log UI toont een banner wanneer die breaker actief is geweest.
 - Source maps worden in GitHub Actions geupload na productiebuild.
 - Richtlijn- en flowversies worden bij `loadInitialData()` als `flow.versions` telemetry-event vastgelegd.
+- Web-vitals worden als `web_vital.fcp`, `web_vital.lcp`, `web_vital.cls` en `web_vital.inp`
+  vastgelegd wanneer de browser de benodigde `PerformanceObserver` entrytypes ondersteunt.
 
 ## Tests
 
@@ -46,6 +50,7 @@ Verplicht groen:
 - `src/lib/__tests__/errors.test.ts`
 - `src/lib/__tests__/flow-trail.test.ts`
 - `src/lib/__tests__/log-sink.test.ts`
+- `src/lib/__tests__/web-vitals.test.ts`
 - `src/lib/__tests__/storage.test.ts`
 - `src/lib/__tests__/app-compatibility.test.ts`
 - `fixtures/urinestrip-consumer/src/urinestrip.consumer.test.ts`
