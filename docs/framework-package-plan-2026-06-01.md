@@ -35,8 +35,8 @@ hieronder en in `docs/nas-handoff-2026-06-04.md`.
 | Design tokens     |  4.6/5 |  4.8/5 | CSS runtime tokens + DTCG-compatible web export + CI-bewaakt design-tool distributiecontract; component-token export blijft beperkt |
 | Telemetry         |  4.7/5 |  4.8/5 | Framework-adapter, no-op package-adapter, scrubbed flow trail en consumer-owned `VITE_TELEMETRY_SOURCE`; overgebleven scoregap is externe backend observability |
 | Security/privacy  |  4.8/5 |  4.8/5 | Framework security/privacy contract, consumer release checklist, package boundary gate, RLS/RPC hardening en No-PHI telemetry/storage gates zijn aanwezig |
-| Testing           |  4.8/5 |  4.9/5 | App-, package-, consumer-, browser-, guideline-, route-a11y- en mutation-gates zijn actief; resterend gat is externe platformmatrix buiten Chrome |
-| Performance       |  4.7/5 |  4.8/5 | Bundle budgets, lokale Lighthouse-runner, lazy landing artwork, privacy-safe RUM en package budgets actief |
+| Testing           |  4.9/5 |  4.9/5 | App-, package-, consumer-, browser-smoke-, Playwright-platform-, guideline-, route-a11y- en mutation-gates zijn actief |
+| Performance       |  4.7/5 |  4.8/5 | Bundle budgets, lokale Lighthouse-runner, Playwright browsermatrix, lazy landing artwork, privacy-safe RUM en package budgets actief |
 
 ## Kritieke Bevindingen Uit Agent-Ronde
 
@@ -316,6 +316,7 @@ App blijft eigenaar van domeindata en branding.
 - [x] Route prefetch opt-in.
 - [x] Bundle budget package en app.
 - [x] Lokale Lighthouse-runner landing/questionnaire/result zonder kwetsbare `@lhci/cli`.
+- [x] Playwright browsermatrix voor Chromium, Firefox en WebKit op landing-grid, directe result-route en native questionnaire-history.
 - [x] No layout shift from SVG/menu tiles.
 - [x] Source maps buiten public deploy artifact houden.
 

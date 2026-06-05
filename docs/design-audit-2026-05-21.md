@@ -14,7 +14,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - Landing artwork is lazy-loaded; landing grid blijft via unit-, token-, route-contract- en browser-smoke op desktop 2 rijen x 3 kolommen.
 - Toasts lopen via `src/components/molecules/Toast.vue`; `ToastContainer.vue` orkestreert alleen store-state en transitions.
 - Landing/questionnaire/result layouts gebruiken container-query cleanup waar dit relevant is.
-- Bundle budget, lokale Lighthouse-runner, browser-regression smoke en standalone package budgets zijn onderdeel van de gate; privacy-safe RUM meet FCP/LCP/CLS/INP.
+- Bundle budget, lokale Lighthouse-runner, browser-regression smoke, Playwright browsermatrix en standalone package budgets zijn onderdeel van de gate; privacy-safe RUM meet FCP/LCP/CLS/INP.
 
 **Auditor:** Claude Opus 4.7 (1M context)
 **Datum:** 2026-05-21
@@ -43,6 +43,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 | **Storybook**         | v10 met `@storybook/vue3-vite`, `@storybook/addon-a11y`, stories voor primitives/molecules/organisms/templates + DesignTokens-showcase, CI-build step toegevoegd                                                                                                        |
 | **Lighthouse**        | Lokale Lighthouse-runner draait via `scripts/check-lighthouse.mjs` + `lighthouserc.cjs` op landing, questionnaire en directe result-route, schrijft artifacts naar `docs/lighthouse` en faalt hard op a11y/CLS; performance/SEO blijven waarschuwingen.                 |
 | **CWV**               | Lighthouse bewaakt CLS, FCP, LCP en TBT; privacy-safe RUM meet FCP/LCP/CLS/INP via telemetry.                                                                                                                                                                           |
+| **Platformmatrix**    | Playwright draait Chromium, Firefox en WebKit op landing-grid, directe result-route en native questionnaire-history.                                                                                                                                                     |
 | **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                                 |
 
 ---
@@ -127,7 +128,7 @@ Drie grote thema's:
 | 7           | Typografie & Hiërarchie           | **4.0**         | =          | Inter, fluid clamp(), text-wrap: balance op h1, h1 per route. Mist: letter-spacing-tokens, tabular-nums alleen 4 sites                                       |
 | 8           | Forms & Input UX                  | **3.4**         | ▲ +0.9     | AdminLogin heeft Input-primitive validation wiring, `aria-invalid`, `aria-describedby`, `inputmode`, `enterkeyhint` en password-manager hints                |
 | 9           | Performance UX                    | **4.0**         | =          | Vite 7, View Transitions zonder layout-shifts, PWA cached, `contain: layout style paint`. Mist: speculation-rules, INP-meting                                |
-| 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors en system-only bootstrap aanwezig; platformvalidatie blijft vervolgpunt    |
+| 10          | Responsive / Platform / Dark Mode | **3.5**         | ▲ +0.5     | Breakpoint-tokens, `@container`, `svh`/`dvh`/`lvh`, `light-dark()`, forced-colors, system-only bootstrap en Playwright-platformvalidatie aanwezig            |
 | **Overall** |                                   | **4.2/5 (84%)** | **▲ +1.1** | Significante sprongen op Dim 3/5/6 (klinische prioriteit). Doel ≥4.0 op die drie bereikt                                                                     |
 
 **Gewogen** (Dim 5+6 dubbel voor clinical): (4.4 + 4.2 + 4.5 + 4.5 + 4.5×2 + 4.6×2 + 4 + 3.4 + 4 + 3.5) ÷ 12 = **4.23 / 5.00** ✅

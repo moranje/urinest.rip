@@ -30,6 +30,7 @@ const landingTemplateTest = read("src/components/templates/LandingTemplate.test.
 const routeAccessibilityTest = read("src/__tests__/accessibility-route.test.ts");
 const routeTransitionPolicyTest = read("src/router/view-transition-policy.test.ts");
 const viewTransitionTest = read("src/lib/view-transition.test.ts");
+const playwrightConfig = read("playwright.config.ts");
 const tokenPolicyTest = read("src/styles/tokens.test.ts");
 const themeStoreTest = read("src/store/themeStore.test.ts");
 const themeInitTest = read("src/lib/__tests__/theme-init.test.ts");
@@ -55,7 +56,7 @@ describe("CI policy", () => {
     expect(workflow).toContain("actions/checkout@v6");
     expect(workflow).toContain("actions/setup-node@v6");
     expect(workflow).toContain("node-version: 24");
-    expect(workflow).not.toContain("matrix:");
+    expect(workflow).not.toContain("strategy:");
     expect(workflow).not.toContain("node-version: [20, 22, 24]");
     expect(packageJson.engines?.node).toBe(">=24.0.0");
     expect(workflow).toContain("packages: read");
@@ -72,6 +73,10 @@ describe("CI policy", () => {
       expect(currentWorkflow).toContain('scopes: "@moranje"');
       expect(currentWorkflow).toContain('preflight-package: "@moranje%2fbeslismodel"');
       expect(currentWorkflow).toContain("npm run check:framework");
+      expect(currentWorkflow).toContain(
+        "npx playwright install --with-deps chromium firefox webkit",
+      );
+      expect(currentWorkflow).toContain("npm run check:browser-matrix:only");
       expect(currentWorkflow).not.toContain("check:package-registry-smoke:current");
       expect(currentWorkflow).not.toContain("check:package-release-config");
       expect(currentWorkflow).not.toContain("@beslismodel%2fcore");
@@ -83,6 +88,8 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:framework");
     expect(workflow).toContain("npm run build-storybook");
     expect(workflow).toContain("npm run check:browser-smoke");
+    expect(workflow).toContain("npx playwright install --with-deps chromium firefox webkit");
+    expect(workflow).toContain("npm run check:browser-matrix:only");
     expect(workflow).toContain("npm run check:lighthouse:only");
     expect(workflow).toContain("npm run check:guidelines");
     expect(workflow).toContain("npm run budget");
@@ -94,6 +101,10 @@ describe("CI policy", () => {
     expect(workflow).not.toContain("nwtgck/actions-netlify");
     expect(workflow).toContain("gh release create");
     expect(workflow).not.toContain("softprops/action-gh-release");
+    expect(packageJson.scripts["check:browser-matrix:only"]).toBe(
+      "playwright test --config=playwright.config.ts",
+    );
+    expect(packageJson.devDependencies?.["@playwright/test"]).toBeDefined();
     expect(packageJson.scripts["check:lighthouse:only"]).toBe("node scripts/check-lighthouse.mjs");
     expect(packageJson.devDependencies?.["@lhci/cli"]).toBeUndefined();
     expect(packageJson.devDependencies?.lighthouse).toBeDefined();
@@ -226,6 +237,9 @@ describe("CI policy", () => {
     expect(browserRegressionSmokeScript).toContain("Result checkbox visual has unwanted border");
     expect(browserRegressionSmokeScript).toContain("notice padding too tight");
     expect(browserRegressionSmokeScript).toContain("Info popover escaped mobile viewport");
+    expect(playwrightConfig).toContain('name: "chromium"');
+    expect(playwrightConfig).toContain('name: "firefox"');
+    expect(playwrightConfig).toContain('name: "webkit"');
     expect(themeStoreTest).toContain("reacts to OS theme changes");
     expect(themeInitTest).toContain("uses OS preference");
   });

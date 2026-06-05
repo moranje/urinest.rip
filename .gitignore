@@ -23,3 +23,7 @@ storybook-static
 .lighthouseci/
 docs/lighthouse/*
 !docs/lighthouse/.gitkeep
+
+# Playwright local reports
+test-results/
+playwright-report/

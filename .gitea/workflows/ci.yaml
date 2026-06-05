@@ -63,6 +63,12 @@ jobs:
           CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: npm run check:browser-smoke
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Browser platform matrix
+        run: npm run check:browser-matrix:only
+
       - name: Security — npm audit
         run: npm audit --omit=dev --audit-level=high
 
