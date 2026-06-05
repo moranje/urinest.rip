@@ -173,6 +173,14 @@ jobs:
       - name: Upload source maps
         run: |
           echo "Uploading source maps to Supabase Storage..."
+          if [ -z "${SUPABASE_SERVICE_KEY:-}" ]; then
+            echo "::warning::SUPABASE_SERVICE_KEY is missing; skipping source map upload"
+            exit 0
+          fi
+          if [ -z "${SUPABASE_URL:-}" ]; then
+            echo "::warning::SUPABASE_URL is missing; skipping source map upload"
+            exit 0
+          fi
           RELEASE_VERSION="${{ steps.release.outputs.version }}"
           if [ -z "$RELEASE_VERSION" ]; then
             RELEASE_VERSION="${GITHUB_SHA}"

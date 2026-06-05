@@ -84,6 +84,8 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:lighthouse:only");
     expect(workflow).toContain("npm run check:guidelines");
     expect(workflow).toContain("npm run budget");
+    expect(workflow).toContain("SUPABASE_SERVICE_KEY is missing; skipping source map upload");
+    expect(workflow).toContain("SUPABASE_URL is missing; skipping source map upload");
   });
 
   it("keeps the app as an external @moranje/beslismodel consumer", () => {
