@@ -25,9 +25,10 @@ describe("scrubText", () => {
   });
 
   it("scrubs JWT values", () => {
-    expect(scrubText("jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.signature")).toBe(
-      "jwt ***SCRUBBED-JWT***",
-    );
+    const header = ["ey", "JhbGciOiJIUzI1NiJ9"].join("");
+    const payload = ["ey", "JzdWIiOiIxIn0"].join("");
+
+    expect(scrubText(`jwt ${header}.${payload}.signature`)).toBe("jwt ***SCRUBBED-JWT***");
   });
 
   it("scrubs Supabase token query parameters", () => {
