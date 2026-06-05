@@ -34,6 +34,7 @@ const themeStoreTest = read("src/store/themeStore.test.ts");
 const themeInitTest = read("src/lib/__tests__/theme-init.test.ts");
 const routeVisualContractTest = read("src/__tests__/route-visual-contract.test.ts");
 const browserRegressionSmokeScript = read("scripts/check-browser-regression-smoke.mjs");
+const lighthouseRunnerScript = read("scripts/check-lighthouse.mjs");
 const consumerImportScript = read("scripts/check-consumer-package-imports.mjs");
 const packageJson = readJson<{
   dependencies?: Record<string, string>;
@@ -84,6 +85,14 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:lighthouse:only");
     expect(workflow).toContain("npm run check:guidelines");
     expect(workflow).toContain("npm run budget");
+    expect(packageJson.scripts["check:lighthouse:only"]).toBe("node scripts/check-lighthouse.mjs");
+    expect(packageJson.devDependencies?.["@lhci/cli"]).toBeUndefined();
+    expect(packageJson.devDependencies?.lighthouse).toBeDefined();
+    expect(packageJson.devDependencies?.["chrome-launcher"]).toBeDefined();
+    expect(lighthouseRunnerScript).toContain("createServer");
+    expect(lighthouseRunnerScript).toContain("--strictPort");
+    expect(lighthouseRunnerScript).toContain("writeFileSync(join(outputDir, reportName(url");
+    expect(lighthouseRunnerScript).toContain("Lighthouse checks passed");
     expect(workflow).toContain("SUPABASE_SERVICE_KEY is missing; skipping source map upload");
     expect(workflow).toContain("SUPABASE_URL is missing; skipping source map upload");
   });

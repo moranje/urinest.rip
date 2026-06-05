@@ -14,7 +14,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - Landing artwork is lazy-loaded; landing grid blijft via unit-, token-, route-contract- en browser-smoke op desktop 2 rijen x 3 kolommen.
 - Toasts lopen via `src/components/molecules/Toast.vue`; `ToastContainer.vue` orkestreert alleen store-state en transitions.
 - Landing/questionnaire/result layouts gebruiken container-query cleanup waar dit relevant is.
-- Bundle budget, Lighthouse-CI, browser-regression smoke en standalone package budgets zijn onderdeel van de gate; resterende performance-observability buiten repo is RUM/INP-meting in productie.
+- Bundle budget, lokale Lighthouse-runner, browser-regression smoke en standalone package budgets zijn onderdeel van de gate; privacy-safe RUM meet FCP/LCP/CLS/INP.
 
 **Auditor:** Claude Opus 4.7 (1M context)
 **Datum:** 2026-05-21
@@ -41,8 +41,8 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 | **A11y tooling**      | `eslint-plugin-vuejs-accessibility` actief, `axe-core` + `vitest-axe` voor primitives, `src/__tests__/accessibility-route.test.ts` voor samengestelde routes, `@storybook/addon-a11y` in Storybook en build-storybook in CI                                  |
 | **Motion library**    | Vue `<Transition>` + `<TransitionGroup>`, View Transitions API (`startViewTransition` op router-guards), CSS transitions met motion-tokens. `prefers-reduced-motion` op 5 plekken                                                                                      |
 | **Storybook**         | v10 met `@storybook/vue3-vite`, `@storybook/addon-a11y`, stories voor primitives/molecules/organisms/templates + DesignTokens-showcase, CI-build step toegevoegd                                                                                                        |
-| **Lighthouse**        | Lighthouse-CI draait via `lighthouserc.cjs` op landing, questionnaire en directe result-route, schrijft artifacts naar `docs/lighthouse` en faalt hard op a11y/CLS; performance/SEO blijven waarschuwingen.                                                             |
-| **CWV**               | Lighthouse-CI bewaakt CLS, FCP, LCP en TBT; echte productie-INP blijft RUM/telemetry-observability buiten deze repo.                                                                                                                                                   |
+| **Lighthouse**        | Lokale Lighthouse-runner draait via `scripts/check-lighthouse.mjs` + `lighthouserc.cjs` op landing, questionnaire en directe result-route, schrijft artifacts naar `docs/lighthouse` en faalt hard op a11y/CLS; performance/SEO blijven waarschuwingen.                 |
+| **CWV**               | Lighthouse bewaakt CLS, FCP, LCP en TBT; privacy-safe RUM meet FCP/LCP/CLS/INP via telemetry.                                                                                                                                                                           |
 | **Contrast audit**    | Niet vers — `tokens.css` MD3-palette is WCAG AA-compliant by-design (Material 3 contrast-pairs); steekproef admin/LandingPage tijdens code-review = OK                                                                                                                 |
 
 ---
@@ -471,7 +471,7 @@ Installeer `@storybook/addon-a11y`, voeg toe aan `addons` in `.storybook/main.ts
 
 ### Lighthouse
 
-**Status 2026-06-04:** Superseded door repo-gate. `lighthouserc.cjs` draait Lighthouse-CI op `/`, `/questionnaire/strip` en `/info/other.noConclusiveAbnormality`, schrijft artifacts naar `docs/lighthouse` en faalt hard op accessibility en CLS. `npm run check:app`, `npm run check:framework` en `npm run check:browser-smoke` zijn groen in de 2026-06-04 verificatieronde.
+**Status 2026-06-05:** Superseded door repo-gate. `scripts/check-lighthouse.mjs` draait Lighthouse op `/`, `/questionnaire/strip` en `/info/other.noConclusiveAbnormality`, schrijft artifacts naar `docs/lighthouse` en faalt hard op accessibility en CLS zonder kwetsbare `@lhci/cli` dependency.
 
 **Indicatie uit vorige meting (2026-05-03 desktop):** Performance 98-100, A11y 100, Best Practices 100. Huidige gate bewaakt bovendien lazy landing artwork, bundle budget, package bundle budget, route-level a11y, forced-colors result UI, theme bootstrap, reduced-motion route transitions en mobiele info-popover viewport-fit.
 
