@@ -1,18 +1,20 @@
 # Framework Security En Privacy Contract
 
-Status: vastgesteld op 2026-06-02.
+Status: vastgesteld op 2026-06-02; package namen bijgewerkt voor aggregate consumer op 2026-06-05.
 
-Dit contract geldt voor `@beslismodel/core`, `@beslismodel/compiler`, `@beslismodel/vue`,
-`@beslismodel/testing` en consumer apps zoals Urinest.rip en huisarts.land.
+Dit contract geldt voor de publieke subpath exports `@moranje/beslismodel/core`,
+`@moranje/beslismodel/compiler`, `@moranje/beslismodel/vue`, `@moranje/beslismodel/testing` en
+consumer apps zoals Urinest.rip en huisarts.land. Framework source en package release blijven in
+`moranje/beslismodel-framework`; deze app bevat geen lokale `packages/` source.
 
 ## Boundaries
 
 | Laag                    | Mag wel                                                                        | Mag niet                                                                                       |
 | ----------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `@beslismodel/core`     | Pure beslislogica, runtime context, calculatorcontracten, audit trail modellen | Vue, DOM, fetch, storage, Supabase, appnamen, CVRM/PREVENT-specifieke API                      |
-| `@beslismodel/compiler` | Flowvalidatie, schema, manifestgeneratie, Vite/Rolldown plugin                 | Runtime storage, telemetry sink, app-adminbeleid                                               |
-| `@beslismodel/vue`      | Headless UI, Pinia store factory, route helpers, telemetry adapter interface   | Supabase client, admin dashboard, hard-coded app source, direct browser storage buiten adapter |
-| `@beslismodel/testing`  | Snapshot helpers, fixture runners, clinical safety checks                      | Productie-telemetry, Supabase, patientdata                                                     |
+| `@moranje/beslismodel/core`     | Pure beslislogica, runtime context, calculatorcontracten, audit trail modellen | Vue, DOM, fetch, storage, Supabase, appnamen, CVRM/PREVENT-specifieke API                      |
+| `@moranje/beslismodel/compiler` | Flowvalidatie, schema, manifestgeneratie, Vite/Rolldown plugin                 | Runtime storage, telemetry sink, app-adminbeleid                                               |
+| `@moranje/beslismodel/vue`      | Headless UI, Pinia store factory, route helpers, telemetry adapter interface   | Supabase client, admin dashboard, hard-coded app source, direct browser storage buiten adapter |
+| `@moranje/beslismodel/testing`  | Snapshot helpers, fixture runners, clinical safety checks                      | Productie-telemetry, Supabase, patientdata                                                     |
 | Consumer app            | Branding, flows, icons, Supabase adapter, admin routes, deployment headers     | Package-contracten breken of PHI naar package telemetry/storage sturen                         |
 
 Admin- en RLS-logica blijft app-only. Framework packages mogen geen admin route, Supabase import,
@@ -158,8 +160,8 @@ Eisen voor consumer apps:
 
 ## Consumer Release Checklist
 
-- [x] Framework packages bevatten geen Supabase/admin/storage hardcoding (`npm run check:framework-boundaries`).
-- [x] Telemetry adapter is no-op zonder consumer config (`packages/vue/src/telemetry.ts`, `npm run check:vue-package`).
+- [x] Framework packages bevatten geen Supabase/admin/storage hardcoding (package gates in `moranje/beslismodel-framework`; app consumer proof: `npm run check:framework`).
+- [x] Telemetry adapter is no-op zonder consumer config (package tests in `moranje/beslismodel-framework`; app verifies through the Urinestrip consumer fixture).
 - [x] No-PHI telemetry contract is getest (`telemetry-privacy`, `log-sink`, `error-matrix`).
 - [x] Telemetry context hasht/dropt raw clinical identifiers voordat Supabase persistence draait (`sanitizeTelemetryContext`, `log-sink`).
 - [x] Anon log-ingest RPC weigert raw clinical telemetry keys en token/PHI patronen server-side (`007_harden_log_access.sql`).
@@ -170,5 +172,5 @@ Eisen voor consumer apps:
 - [x] Admin routes zijn app-only, lazy en auth-gated (`router/index.ts`, package boundary checks).
 - [x] RLS/admin policies zijn getest met admin en niet-admin user (`supabase-migrations`).
 - [x] Malicious flow metadata tests zijn groen (`flow-compiler`, `compiler`).
-- [x] Calculatorformules zitten in domain packages met testvectors (`@beslismodel/cvrm-prevent`: SCORE2/SCORE2-OP/SCORE2-Diabetes uit labbie + U-Prevent vectors).
+- [x] Calculatorformules zitten in domain packages met testvectors (`@moranje/beslismodel/cvrm-prevent`: SCORE2/SCORE2-OP/SCORE2-Diabetes uit labbie + U-Prevent vectors).
 - [x] Traceability en reviewdatums zijn actueel (`npm run check:guidelines`).

@@ -1,201 +1,97 @@
 # Beslismodel Package Release Strategy
 
-Purpose: publish `@beslismodel/*` as standalone framework packages while keeping `urinest.rip` working as first consumer.
+Purpose: keep `urinest.rip` a clean consumer of the reusable beslismodel framework while package
+source, package CI and package publishing live outside this app repository.
 
-## Package Set
+## Current Package Shape
 
-Initial lockstep set:
+Active consumer package:
 
-- `@beslismodel/core`
-- `@beslismodel/compiler`
-- `@beslismodel/copd-care`
-- `@beslismodel/cvrm-prevent`
-- `@beslismodel/dm-care`
-- `@beslismodel/vue`
-- `@beslismodel/testing`
+- `@moranje/beslismodel@0.1.1`
 
-All seven packages use same version until external consumers prove independent release lanes are needed. Internal dependencies must pin same framework version, for example `@beslismodel/vue -> @beslismodel/core`.
+Registry:
 
-Package manifests must include:
+- GitHub Packages: `https://npm.pkg.github.com`
+- Scope routing: `@moranje:registry=https://npm.pkg.github.com`
+- Auth: user-level npm config or CI `GITHUB_PACKAGES_TOKEN`; never commit `_authToken`.
 
-- `engines.node >=20.19.0`
-- `files: ["dist"]`
-- description, license, repository, homepage, bugs and keywords
-- `prepack` build hook so stale `dist` cannot be packed
-- Gitea repository metadata only: homepage `https://git.oranje.wtf/martien/beslismodel-framework`,
-  bugs `https://git.oranje.wtf/martien/beslismodel-framework/issues` and repository
-  `git+https://git.oranje.wtf/martien/beslismodel-framework.git`.
+Public subpath exports replace the old split package set:
 
-## Semver
+- `@moranje/beslismodel/core`
+- `@moranje/beslismodel/compiler`
+- `@moranje/beslismodel/vue`
+- `@moranje/beslismodel/testing`
+- `@moranje/beslismodel/cvrm-prevent`
+- `@moranje/beslismodel/copd-care`
+- `@moranje/beslismodel/dm-care`
 
-- `patch`: bug fixes, test utilities, docs, non-breaking validation improvements.
-- `minor`: new public exports, new optional adapters, new schema fields with backward compatibility.
-- `major`: removed exports, changed runtime contracts, stricter schema that rejects previously valid flows, peer dependency range breaks.
+Historical note: the earlier local/Gitea split packages under `@beslismodel/*` were release-staging
+artifacts. The app now consumes the aggregate package only.
 
-Clinical flow data is not part of framework semver. Domain packages own clinical versioning, guideline review dates and source traceability.
+## Repository Boundaries
 
-## Registry
+`urinest.rip` owns:
 
-Target registry: local Gitea npm registry.
+- YAML flows and clinical Dutch copy.
+- App shell, Supabase logging/admin UI, PWA branding and Urinest taxonomy/icons.
+- Consumer fixture proving app usage through public package exports.
+- App/browser/guideline/telemetry/design gates.
 
-Required before publish:
+`moranje/beslismodel-framework` owns:
 
-- Gitea owner/scope selected.
-- User-level `.npmrc` contains token only; project `.npmrc` must never contain secrets.
-- Each package gets `publishConfig.registry` for Gitea once final registry URL is known.
-- First publish uses prerelease version and dist-tag `next`, not `latest`.
+- Framework source.
+- Package build and package tests.
+- Package release workflow.
+- Package versioning, tags and publication.
 
-Use the guarded publish script instead of direct package-by-package commands:
+No `packages/` source tree or package-only gate may return to this app repository.
 
-```bash
-npm run check:package-publish-next
-BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish
-```
+## App Consumer Gates
 
-Use `latest` only after registry smoke, `urinest.rip` smoke and rollback tag exist.
-
-## Extraction Staging
-
-Extraction has moved from planned work to active release staging:
-
-- `beslismodel-framework` exists as a sibling Gitea repo.
-- `0.1.0-next.1` is published to the Gitea npm registry with dist-tag `next`.
-- `0.1.0` is published to the Gitea npm registry with dist-tag `latest`.
-- `urinest.rip` consumes exact `@beslismodel/*@0.1.0` registry packages after registry smoke,
-  app gates, framework gates, browser regression smoke, Lighthouse and production audit passed.
-
-Framework code moves or removal from `urinest.rip` only after registry-installed app and package
-smokes prove the published packages work.
-
-Target shape:
-
-- Keep the separate package directory/repository `beslismodel-framework/` reproducible from this
-  repo until the NAS publish/migration round is complete.
-- Prove the copy with `npm run check:framework-extract`; this creates a clean framework target,
-  excludes app-only paths and runs the standalone package lint, type, build, package and consumer
-  smoke gates.
-- Generate package CI in the extracted target with Node `20`, `22` and `24`, package tests,
-  package smoke checks, package bundle budget, npm audit and secret scan before first push.
-- Keep the initial package boundaries identical: `core`, `compiler`, `copd-care`, `cvrm-prevent`, `dm-care`, `vue` and `testing`.
-- Keep `docs/package-extraction-map.json` and `check:package-extraction-map` green; it pins initial package roots, public export hashes, full source-tree hashes and app-only exclusions before the sibling move.
-- Copy only framework package source, package tests, package build scripts, release docs and package CI.
-- Leave app-owned material in `urinest.rip`: YAML flows, Supabase logging/admin UI, Urinest taxonomy/icons, PWA branding, clinical Dutch copy and app config.
-- Preserve public exports exactly on the first move; export changes happen in later minor/major releases.
-
-Local npm setup:
-
-- User-level `.npmrc` stores the Gitea auth token and is never committed.
-- Project `.npmrc` may define the scope registry but must not contain a token; package release preflight fails on project-level auth material.
-- Package manifests get `publishConfig.registry` only after the local Gitea registry URL is known.
-- Prereleases publish with `--tag next`; `latest` waits until registry smoke and app smoke pass.
-- After real publish or idempotent skip, `check:package-publish-next -- --publish` verifies every
-  package dist-tag (`next` or `latest`) resolves to the exact manifest version in Gitea npm.
-
-`urinest.rip` stays runnable during the move:
-
-- The app switches from workspace packages to exact registry versions in one atomic dependency commit.
-- The app lockfile must resolve every `@beslismodel/*` dependency to the canonical Gitea npm
-  registry URL for the exact package manifest version.
-- Vite and TypeScript aliases to `packages/*/src` are removed or narrowed to app-only code.
-- No import path may change to a private package source path; consumers use public `@beslismodel/*` exports only.
-- During the transition, source packages and registry packages may be selected only through package manager configuration, not divergent application imports.
-- The old package source is removed from the app repository only after the registry-installed app passes `check:packages`, tests, build, budget, PWA smoke, telemetry smoke, landing-grid regression and the Urinestrip end-to-end fixture.
-
-## CI Gates
-
-### Standalone package CI
-
-Package CI must pass on Node `20`, `22` and `24`.
-
-Required gates:
+Required before deploying or accepting package migration changes:
 
 - `npm ci`
-- `npm run format:check`
-- `npm run lint:all`
-- `npm run check`
-- `npm run check:tsgo`
-- `npm run test:packages`
-- `npm run check:packages`
-- `npm audit --omit=dev --audit-level=high`
-- secret scan and `.env` tracked-file guard
-
-### App consumer CI
-
-`urinest.rip` must also prove the published packages in the clinical app:
-
-- `npm ci`
-- `npm run build:flows`
-- `npm run format:check`
-- `npm run check:modern-toolchain`
-- `npm run lint:all`
-- `npm run check`
-- `npm run check:tsgo`
-- `npm run test`
-- `npm run check:packages`
-- `npm run build-storybook`
-- `npm run build`
-- `npm run budget`
-- `npm run check:guidelines`
-- `npm run check:package-registry-smoke:current`
+- `npm run check:app`
+- `npm run check:framework`
 - `npm run check:browser-smoke`
+- `npm run check:lighthouse`
 - `npm audit --omit=dev --audit-level=high`
-- secret scan and `.env` tracked-file guard
 
-Gitea PR-CI must run for package release docs and runbooks too; docs-only changes to
-`docs/package-release-*`, `docs/gitea-package-publishing.md` and extraction metadata are not ignored.
+`check:framework` in this app is intentionally a consumer gate:
 
-## Registry Smoke
+- `npm run check:consumer-imports`
+- `npm run check:consumer:urinestrip:only`
+- `npm run test:consumer:urinestrip:only`
 
-Before moving `urinest.rip` to registry dependencies, create clean temp consumer:
+It must not rebuild or test package source from this repository.
 
-- run local packed-consumer smoke first: pack all framework packages, extract them into a clean
-  temp consumer, import only public `@beslismodel/*` exports and run the real Urinestrip
-  runner/redirect/result checks plus CVRM SCORE2 calculator/outcome binding, DM HbA1c calculator smoke and COPD GOLD ABE classifier smoke;
-- run local file-tarball install smoke next: install the packed framework packages through
-  `file:` dependencies in a clean npm consumer, execute the installed `beslismodel` CLI and import
-  only public `@beslismodel/*` exports;
-- fresh `package.json`
-- install packages from Gitea registry
-- run `BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke`;
-- in CI/NAS verification where all package manifests already share the target version, run
-  `npm run check:package-registry-smoke:current`;
-- compile minimal manifest runner
-- import only public `@beslismodel/*` exports
-- run Urinestrip redirect/result fixture
+## Release Rules
 
-No package-source imports allowed in consumer.
+- Pin exact package versions in app `package.json` and `package-lock.json`.
+- Lockfile must resolve `node_modules/@moranje/beslismodel` from `npm.pkg.github.com`.
+- App imports must use public `@moranje/beslismodel/*` exports only.
+- Do not import from `packages/*`, package `src/`, package `dist/` internals or legacy
+  `@beslismodel/*` split packages.
+- Package source changes require a package release in `moranje/beslismodel-framework` before the app
+  version pin changes.
 
-## Urinest Migration
+## CI
 
-Migration order:
+GitHub CI runs on Node 24 and uses GitHub Packages auth:
 
-1. Publish prerelease packages to Gitea with `next`.
-   Pack dry-run first with `npm run check:package-publish-next`; real publish requires
-   `BESLISMODEL_PUBLISH_CONFIRM=<exact-prerelease> npm run check:package-publish-next -- --publish`.
-2. Smoke the exact prerelease:
-   `BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> npm run check:package-registry-smoke`.
-3. Install exact prerelease versions in `urinest.rip` with
-   `BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-prerelease> npm run migrate:registry-deps -- --write`.
-4. Remove app aliases that point to package source.
-5. Run `npm run check:packages`, `npm run test`, `npm run check`, `npm run budget`, `npm run build`.
-6. Smoke landing grid, questionnaire redirect/back, progress indicator, result page, PWA and telemetry.
-7. Promote packages to `latest` with stable semver only:
-   `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=<exact-stable> npm run check:package-publish-next -- --publish`.
-8. Remove old package source from app repo only after clean registry consumer proof.
+- `actions/setup-node` with `registry-url: "https://npm.pkg.github.com"` and `scope: "@moranje"`.
+- `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}` for package install.
+- App checks, framework consumer checks, browser smoke, Lighthouse, guideline gates and npm audit.
+
+Docs-only changes are still expected to run CI when they alter package strategy, framework handoff,
+agent instructions or release runbooks.
 
 ## Rollback
 
 Rollback must stay boring:
 
-- Keep previous package versions tagged in Gitea.
-- Pin exact registry versions in `package-lock.json`.
-- Keep previous working `package-lock.json` in git history.
-- Reinstall previous versions and rerun app gates before redeploy.
-- Document consumer-impact in release notes: exports, peer ranges, schema changes, migration steps, rollback version.
-- Keep `docs/package-release-notes-<version>.md` green with `npm run check:package-release-notes`; use that file as the content source for the Gitea release tag.
-
-## Gitea Operations
-
-Use `docs/gitea-package-publishing.md` as the concrete local Gitea/npm runbook. It captures the
-SSH remote, canonical registry URL, token handling and local proxy pattern found in the other
-Oranje projects.
+- Revert the app package pin to the previous known-good `@moranje/beslismodel` version.
+- Restore the matching `package-lock.json` from git history.
+- Run `npm ci`, `npm run check:app`, `npm run check:framework`, `npm run check:browser-smoke`.
+- Keep package release notes in the framework repository as the source of package-level rollback
+  details.

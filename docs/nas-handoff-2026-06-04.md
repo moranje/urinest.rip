@@ -1,5 +1,9 @@
 # NAS Handoff — Urinest.rip / Beslismodel Framework — 2026-06-04
 
+Status 2026-06-05: superseded for package installation details. `urinest.rip` now consumes the
+aggregate GitHub Package `@moranje/beslismodel`; local split-package/Gitea registry instructions in
+this handoff are historical context unless explicitly marked current elsewhere.
+
 Doel: deze overdracht naast `Preview framework...md` leggen en in de NAS-omgeving uitvoeren.
 Aanname NAS: volledige lees/schrijftoegang tot `/code`, inclusief sibling repos zoals
 `urinest.rip`, `beslismodel-framework`, `telemetry`, `tokens`, `xenia-ui`, `create-oranje-app`,
@@ -129,30 +133,18 @@ f0851d3 fix(telemetry): disable local preview persistence by default
 636bb1d fix(ui): stabilize answer info popovers
 ```
 
-Belangrijk: package-source in `packages/*` en de root app zijn nu beide gemigreerd naar exact
-gepinde registry dependencies `0.1.0`. De stable versie is gepubliceerd in Gitea met dist-tag
-`latest` en live registry-smoke is groen.
+Belangrijk: deze handoff beschreef de historische split-package staging. `urinest.rip`
+consumeert nu het aggregate package `@moranje/beslismodel@0.1.0` uit GitHub Packages.
+Eerdere `@beslismodel/*` Gitea-pins waren staging en zijn geen actuele app-installatie-instructie.
 
 ```json
-"@beslismodel/core": "0.1.0",
-"@beslismodel/vue": "0.1.0"
-```
-
-Dev dependencies:
-
-```json
-"@beslismodel/compiler": "0.1.0",
-"@beslismodel/copd-care": "0.1.0",
-"@beslismodel/cvrm-prevent": "0.1.0",
-"@beslismodel/dm-care": "0.1.0",
-"@beslismodel/testing": "0.1.0"
+"@moranje/beslismodel": "0.1.0"
 ```
 
 `.npmrc` has scope routing only:
 
 ```text
-@oranje:registry=https://git.oranje.wtf/api/packages/martien/npm/
-@beslismodel:registry=https://git.oranje.wtf/api/packages/martien/npm/
+@moranje:registry=https://npm.pkg.github.com
 ```
 
 No project-level auth token should be committed.
@@ -708,7 +700,7 @@ npm run check:package-registry-smoke:current
 
 cd /code/urinest.rip
 npm ci
-npm run check:packages
+npm run check:framework
 npm run check:app
 npm run check:browser-smoke
 npm audit --omit=dev --audit-level=high
@@ -727,12 +719,12 @@ cd /code/urinest.rip
 node -v
 npm ci
 npm run check:app
-npm run check:packages
+npm run check:framework
 npm run check:browser-smoke
 npm audit --omit=dev --audit-level=high
 ```
 
-### Framework full gate
+### Framework full gate (framework repo only)
 
 ```bash
 cd /code/beslismodel-framework
@@ -744,7 +736,7 @@ npm run check:package-registry-smoke:current
 npm audit --omit=dev --audit-level=high
 ```
 
-### Registry auth
+### Historical Gitea registry auth
 
 ```bash
 npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/
@@ -752,21 +744,24 @@ npm whoami --registry https://git.oranje.wtf/api/packages/martien/npm/
 
 If Gitea returns 404 for npm whoami, scripts already have fallback through `/api/v1/user`.
 
-### Package publish dry-run
+### Package publish dry-run (framework repo only)
 
 ```bash
+cd /code/beslismodel-framework
 npm run check:package-publish-next
 ```
 
-### Package publish
+### Package publish (framework repo only)
 
 ```bash
+cd /code/beslismodel-framework
 BESLISMODEL_PUBLISH_CONFIRM=<exact-version> npm run check:package-publish-next -- --publish
 ```
 
-### Registry smoke
+### Registry smoke (framework repo only)
 
 ```bash
+cd /code/beslismodel-framework
 BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-version> npm run check:package-registry-smoke
 npm run check:package-registry-smoke:current
 ```
@@ -776,9 +771,9 @@ npm run check:package-registry-smoke:current
 Only needed for new package version:
 
 ```bash
-BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-version> npm run migrate:registry-deps -- --write
-npm install
+npm install @moranje/beslismodel@<exact-version> --save-exact
 npm run check:app
+npm run check:framework
 npm run check:browser-smoke
 ```
 

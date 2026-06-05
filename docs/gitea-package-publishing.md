@@ -1,5 +1,9 @@
 # Gitea Package Publishing
 
+Status: historical split-package/Gitea staging runbook. Current `urinest.rip` app guidance is
+`@moranje/beslismodel` from GitHub Packages; package source/publish lives in
+`moranje/beslismodel-framework`. Do not use this document as current app-package install guidance.
+
 This document pins the local Gitea/npm pattern observed in `abacus`, `patient-tracker`,
 `werkoverleg` and `labbie`, adapted for `@beslismodel/*`.
 
@@ -29,7 +33,7 @@ remote state before publishing.
 
 ## Registry
 
-Canonical npm registry:
+Historical split-package npm registry:
 
 ```text
 https://git.oranje.wtf/api/packages/martien/npm/
@@ -155,7 +159,7 @@ BESLISMODEL_REGISTRY_SMOKE_VERSION=<exact-prerelease> \
 npm run check:package-registry-smoke
 ```
 
-Prepare `urinest.rip` as a registry consumer only after publish and smoke pass:
+Historical pre-aggregate migration command; do not run this in the current app repo:
 
 ```bash
 BESLISMODEL_REGISTRY_MIGRATION_VERSION=<exact-version> npm run migrate:registry-deps -- --write
@@ -164,10 +168,12 @@ npm run check:app
 npm run check:browser-smoke
 ```
 
-Current registry status: `0.1.0-next.1` is published with dist-tag `next`; `0.1.0` is published
-with dist-tag `latest`; `urinest.rip` consumes exact `@beslismodel/*@0.1.0` registry packages.
-Post-migration verification passed with `check:package-registry-smoke:current`, `check:packages`,
-`check:app`, `check:browser-smoke`, `check:lighthouse` and production `npm audit`.
+Historical split-package registry status: `0.1.0-next.1` was published with dist-tag `next`;
+`0.1.0` was published with dist-tag `latest`. This was superseded by
+`@moranje/beslismodel` from GitHub Packages in the aggregate package migration.
+Post-migration verification at that time passed with `check:package-registry-smoke:current`,
+`check:packages`, `check:app`, `check:browser-smoke`, `check:lighthouse` and production
+`npm audit`.
 
 `migrate:registry-deps -- --write` verifies every exact `@beslismodel/*` version against the Gitea
 npm registry before changing app config. Use `--skip-registry-check` only in isolated tests.

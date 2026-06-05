@@ -442,7 +442,7 @@ npm run check
 npm run check:tsgo
 npm run lint:all
 npm run format:check
-npm run check:packages
+npm run check:framework
 npm run build
 npm run test
 ```
@@ -560,9 +560,9 @@ De huidige repo heeft al:
 
 - strict flow-build via `npm run build:flows`;
 - guideline traceability via `npm run check:guidelines`;
-- result-source validatie in `packages/compiler/src/compiler.ts`;
+- result-source validatie in de compiler van `@moranje/beslismodel/compiler`;
 - Urinestrip path tests in `src/__tests__/flows.test.ts`;
-- package consumer checks via `npm run check:packages`.
+- package consumer checks via `npm run check:framework`.
 
 Nieuwe domeinen moeten deze gates blijven gebruiken en uitbreiden met role/context-, calculator-,
 a11y-, telemetry- en consumer-fixtures. Wanneer deze guide strenger is dan de huidige compiler, is

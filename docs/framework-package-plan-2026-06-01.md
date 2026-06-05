@@ -56,6 +56,10 @@ hieronder en in `docs/nas-handoff-2026-06-04.md`.
 
 ## Package Boundaries
 
+Deze sectie beschrijft de oorspronkelijke split-package grenzen. Actuele app-consumptie loopt via
+aggregate subpath exports onder `@moranje/beslismodel/*`; `@beslismodel/*` hieronder is historische
+package-boundary terminologie uit rondes 1-10.
+
 ### `@beslismodel/core`
 
 Pure TypeScript. Geen Vue, DOM, fetch, storage, Supabase.
@@ -479,6 +483,14 @@ Historische planning, afgerond op 2026-06-04: de prerelease-, stable-, registry-
 - [x] CI-policy verifieert dat de app-lockfile iedere `@beslismodel/*` dependency resolveert naar de canonical Gitea npm tarball voor exact dezelfde versie als het package manifest.
 - [x] `check-package-publish-next -- --publish` verifieert na publicatie of idempotente skip dat de gebruikte dist-tag (`next` of `latest`) voor elk package naar exact de manifestversie wijst; live Gitea-check met `BESLISMODEL_PUBLISH_TAG=latest BESLISMODEL_PUBLISH_CONFIRM=0.1.0` bevestigde dat alle zeven `@beslismodel/*@latest` tags naar `0.1.0` resolven.
 - [x] Gitea PR-CI negeert docs niet meer, zodat package release-notes, registry-runbooks en extractiemetadata door app/framework/package gates lopen.
+
+### Ronde 11 — Aggregate package consumer (2026-06-05)
+
+- [x] App-package source verwijderd uit `urinest.rip`: geen tracked `packages/` directory en geen `vitest.config.packages.ts`.
+- [x] App consumeert `@moranje/beslismodel@0.1.0` uit GitHub Packages met publieke subpath exports voor core, compiler, vue, testing en domeinpakketten.
+- [x] `check:framework` is nu expliciet een consumer-gate: Urinestrip fixture typecheck en test, geen package-source build.
+- [x] CI-policy bewaakt dat legacy `@beslismodel/*`, package-source imports, package-only scripts en lokale framework source niet terugkeren in de app.
+- [x] `docs/package-release-strategy.md`, `README.md`, `AGENTS.md` en `CLAUDE.md` beschrijven de actuele aggregate-package architectuur.
 
 ## Commit Discipline
 

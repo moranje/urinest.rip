@@ -48,4 +48,4 @@ Verplicht groen:
 - `src/lib/__tests__/log-sink.test.ts`
 - `src/lib/__tests__/storage.test.ts`
 - `src/lib/__tests__/app-compatibility.test.ts`
-- `packages/vue/src/store.test.ts`
+- `fixtures/urinestrip-consumer/src/urinestrip.consumer.test.ts`

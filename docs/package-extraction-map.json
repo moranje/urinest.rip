@@ -1,8 +1,9 @@
 {
+  "status": "historical split-package extraction map; current app consumes @moranje/beslismodel aggregate package from GitHub Packages",
   "targetSiblingFolder": "beslismodel-framework",
   "policy": {
     "mode": "extract-to-sibling-repository",
-    "registrySource": "local-gitea",
+    "registrySource": "historical-local-gitea",
     "publicExportParity": "sha256-of-current-src-index",
     "sourceTreeParity": "sha256-of-current-package-source-tree",
     "appOnlyCodeMustStayInUrinestRip": true
