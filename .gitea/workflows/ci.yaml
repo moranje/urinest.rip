@@ -26,7 +26,7 @@ jobs:
       - name: Configure GitHub Packages npm auth
         uses: https://git.oranje.wtf/martien/baseline/actions/setup-npm-auth@v2.2.1
         with:
-          npm-token: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
+          npm-token: ${{ secrets.NPM_REGISTRY_TOKEN }}
           registry: https://npm.pkg.github.com
           scopes: "@moranje"
           preflight-package: "@moranje%2fbeslismodel"

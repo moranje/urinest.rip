@@ -59,13 +59,13 @@ describe("CI policy", () => {
     expect(workflow).toContain("packages: read");
     expect(workflow).toContain('registry-url: "https://npm.pkg.github.com"');
     expect(workflow).toContain('scope: "@moranje"');
-    expect(workflow).toContain("NODE_AUTH_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}");
+    expect(workflow).toContain("NODE_AUTH_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}");
     expect(workflow).not.toContain("NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}");
-    expect(workflow).not.toContain("NPM_REGISTRY_TOKEN");
+    expect(workflow).not.toContain("GITHUB_PACKAGES_TOKEN");
     expect(workflow).not.toContain("git.oranje.wtf/api/packages");
     for (const currentWorkflow of [giteaCiWorkflow, giteaReleaseWorkflow]) {
       expect(currentWorkflow).toContain("Configure GitHub Packages npm auth");
-      expect(currentWorkflow).toContain("npm-token: ${{ secrets.GITHUB_PACKAGES_TOKEN }}");
+      expect(currentWorkflow).toContain("npm-token: ${{ secrets.NPM_REGISTRY_TOKEN }}");
       expect(currentWorkflow).toContain("registry: https://npm.pkg.github.com");
       expect(currentWorkflow).toContain('scopes: "@moranje"');
       expect(currentWorkflow).toContain('preflight-package: "@moranje%2fbeslismodel"');
