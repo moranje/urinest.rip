@@ -58,6 +58,11 @@ const requiredStoryContracts = [
     exports: ["RoleToggle", "LongLabels"],
   },
   {
+    file: "src/stories/Toast.stories.ts",
+    title: 'title: "Molecules/Toast"',
+    exports: ["Default", "AllLevels", "LongText"],
+  },
+  {
     file: "src/stories/QuestionPanel.stories.ts",
     title: 'title: "Organisms/QuestionPanel"',
     exports: ["SingleSelect", "MultiSelectLongCopy"],
@@ -99,6 +104,7 @@ describe("storybook coverage", () => {
         "ChoiceOption.stories.ts",
         "Notice.stories.ts",
         "SegmentedControl.stories.ts",
+        "Toast.stories.ts",
       ]),
     );
     expect(stories).toEqual(

@@ -12,15 +12,18 @@ function createToastPinia(): Pinia {
 }
 
 describe("ToastContainer", () => {
-  it("uses the IconButton primitive for dismiss controls", () => {
+  it("delegates toast visuals to the Toast molecule", () => {
     const source = readFileSync("src/components/ToastContainer.vue", "utf8");
 
-    expect(source).toContain("<Notice");
-    expect(source).toContain("<IconButton");
+    expect(source).toContain("<ToastMessage");
+    expect(source).toContain('./molecules/Toast.vue"');
+    expect(source).not.toContain("<Notice");
+    expect(source).not.toContain("<IconButton");
     expect(source).not.toContain("toast--success");
     expect(source).not.toContain("toast--error");
     expect(source).not.toContain("toast--warning");
     expect(source).not.toContain("toast--info");
+    expect(source).not.toContain("toast-content");
     expect(source).not.toContain('class="toast-close"');
     expect(source).not.toContain(".toast-close {");
     expect(source).not.toContain(".toast-close:hover");

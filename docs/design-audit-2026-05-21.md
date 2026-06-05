@@ -12,6 +12,7 @@ Alle nog relevante designpunten zijn verwerkt of expliciet superseded:
 - Result treatment reveal heeft `aria-live`; copy, update prompt, info-popover en retry states zijn toegankelijker gemaakt.
 - Answer cards, checkboxes, result notices en info-popovers hebben browser-smoke regressiecontracten voor ongewenste randen, voldoende padding, viewport-fit en stale-popover cleanup.
 - Landing artwork is lazy-loaded; landing grid blijft via unit-, token-, route-contract- en browser-smoke op desktop 2 rijen x 3 kolommen.
+- Toasts lopen via `src/components/molecules/Toast.vue`; `ToastContainer.vue` orkestreert alleen store-state en transitions.
 - Landing/questionnaire/result layouts gebruiken container-query cleanup waar dit relevant is.
 - Bundle budget, Lighthouse-CI, browser-regression smoke en standalone package budgets zijn onderdeel van de gate; resterende performance-observability buiten repo is RUM/INP-meting in productie.
 
@@ -165,7 +166,7 @@ Drie grote thema's:
 **Remaining issues:**
 
 - Question-options zijn uitgepakt naar `ChoiceOption.vue` en `ChoiceGroup.vue`; legacy wrapper `src/components/QuestionOption.vue` is verwijderd zodat er één atomic implementation blijft.
-- Toast-systeem nog niet als primitive (alleen `ToastContainer.vue` als organism)
+- Toast-systeem is uitgepakt naar `Toast.vue` molecule; `ToastContainer.vue` bevat geen eigen toast-visuals meer.
 - Geen `OptionList.vue` voor radiogroup-pattern; herhaalt zich in andere views potentieel
 - Geen `asChild`/polymorphic `as`-prop op Button (Link-variant kan niet gerenderd worden zonder copy-paste)
 
