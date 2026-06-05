@@ -1,6 +1,16 @@
 {
   "reviewedOn": "2026-06-01",
   "maxReviewAgeDays": 183,
+  "allowedSourceHosts": [
+    "richtlijnen.nhg.org",
+    "richtlijnendatabase.nl",
+    "triagewijzer.nhg.org",
+    "www.henw.org",
+    "www.nvkc.nl",
+    "www.nvu.nl",
+    "www.thuisarts.nl",
+    "www.verenso.nl"
+  ],
   "optionDefenseRequiredForFlows": ["strip"],
   "sources": {
     "nhg-uwi": {

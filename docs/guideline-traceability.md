@@ -24,8 +24,12 @@ De gate faalt wanneer:
 - een flow in `optionDefenseRequiredForFlows` staat en een antwoordoptie geen `optionClaims`
   evidence-node met bronverwijzing heeft;
 - een matrix-entry naar een onbekende bron verwijst;
-- een resultaatkaart geen HTTPS-bronlink heeft;
+- een bronlink geen HTTPS gebruikt of naar een host buiten `allowedSourceHosts` verwijst;
 - een richtlijnreview ouder is dan `maxReviewAgeDays` in de matrix.
+
+`allowedSourceHosts` is bewust een exact-host allowlist. Nieuwe richtlijnbronnen moeten eerst met
+publisher, versie, beperkingen en reviewdatum aan het bronregister worden toegevoegd voordat hun
+links in flow-resultaten zichtbaar mogen worden.
 
 `strip` is de eerste volledig uitgewerkte testcase voor antwoordoptieverdediging. De matrix
 controleert daar per optie claim, verdict en bron-ID. Nieuwe domeinen kunnen dezelfde gate

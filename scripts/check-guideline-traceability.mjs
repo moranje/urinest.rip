@@ -23,6 +23,25 @@ function assertSameArray(path, actual, expected) {
   }
 }
 
+function validateAllowedSourceUrl(url, path, allowedSourceHosts) {
+  if (!url || typeof url !== "string" || !url.startsWith("https://")) {
+    fail(`${path}: source url must be https`);
+    return;
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    fail(`${path}: invalid source url`);
+    return;
+  }
+
+  if (!allowedSourceHosts.has(parsed.hostname)) {
+    fail(`${path}: source host "${parsed.hostname}" is not in allowedSourceHosts`);
+  }
+}
+
 function validateEvidenceNode(node, path, sourceIds) {
   if (!node || typeof node !== "object") {
     fail(`${path}: missing evidence node`);
@@ -50,8 +69,18 @@ function daysBetween(dateA, dateB) {
 
 function validateFreshness() {
   const maxAgeDays = traceability.maxReviewAgeDays ?? 183;
+  const allowedSourceHosts = new Set(traceability.allowedSourceHosts ?? []);
   const now = new Date();
   const sourceEntries = Object.entries(traceability.sources ?? {});
+
+  if (allowedSourceHosts.size === 0) {
+    fail("allowedSourceHosts: no source hosts configured");
+  }
+  for (const host of allowedSourceHosts) {
+    if (typeof host !== "string" || !host || host.includes("/") || host.includes(":")) {
+      fail(`allowedSourceHosts: invalid host "${host}"`);
+    }
+  }
 
   for (const [sourceId, source] of sourceEntries) {
     if (!source.title || typeof source.title !== "string") {
@@ -60,9 +89,7 @@ function validateFreshness() {
     if (!source.publisher || typeof source.publisher !== "string") {
       fail(`sources.${sourceId}: missing publisher`);
     }
-    if (!source.url || !source.url.startsWith("https://")) {
-      fail(`sources.${sourceId}: url must be https`);
-    }
+    validateAllowedSourceUrl(source.url, `sources.${sourceId}.url`, allowedSourceHosts);
     if (!source.version || typeof source.version !== "string") {
       fail(`sources.${sourceId}: missing version`);
     }
@@ -108,6 +135,7 @@ function validateFreshness() {
 
 function validateFlow(flow, trace, sourceIds, flowIds) {
   const path = `flows.${flow.id}`;
+  const allowedSourceHosts = new Set(traceability.allowedSourceHosts ?? []);
   validateEvidenceNode(trace, path, sourceIds);
   const optionDefenseRequired = new Set(traceability.optionDefenseRequiredForFlows ?? []).has(
     flow.id,
@@ -182,9 +210,11 @@ function validateFlow(flow, trace, sourceIds, flowIds) {
       continue;
     }
     for (const [index, source] of result.sources.entries()) {
-      if (!source.url || !source.url.startsWith("https://")) {
-        fail(`${path}.results.${resultKey}.sources[${index}]: source url must be https`);
-      }
+      validateAllowedSourceUrl(
+        source.url,
+        `${path}.results.${resultKey}.sources[${index}].url`,
+        allowedSourceHosts,
+      );
     }
   }
 
