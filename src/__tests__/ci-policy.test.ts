@@ -86,6 +86,13 @@ describe("CI policy", () => {
     expect(workflow).toContain("npm run check:guidelines");
     expect(workflow).toContain("npm run budget");
     expect(workflow).toContain('FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"');
+    expect(workflow).toContain("command -v google-chrome");
+    expect(workflow).toContain("CHROME_PATH: ${{ steps.chrome.outputs.path }}");
+    expect(workflow).not.toContain("browser-actions/setup-chrome");
+    expect(workflow).toContain("npx --yes netlify-cli@26.1.0 deploy");
+    expect(workflow).not.toContain("nwtgck/actions-netlify");
+    expect(workflow).toContain("gh release create");
+    expect(workflow).not.toContain("softprops/action-gh-release");
     expect(packageJson.scripts["check:lighthouse:only"]).toBe("node scripts/check-lighthouse.mjs");
     expect(packageJson.devDependencies?.["@lhci/cli"]).toBeUndefined();
     expect(packageJson.devDependencies?.lighthouse).toBeDefined();

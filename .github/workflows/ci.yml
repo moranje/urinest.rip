@@ -87,18 +87,24 @@ jobs:
       - name: Production build
         run: npm run build
 
-      - name: Setup Chrome
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v1
+      - name: Resolve Chrome
+        id: chrome
+        run: |
+          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME_PATH" ]; then
+            echo "::error::Chrome executable not found"
+            exit 1
+          fi
+          echo "path=$CHROME_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Browser regression smoke
         env:
-          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
         run: npm run check:browser-smoke
 
       - name: Lighthouse CI
         env:
-          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
         run: npm run check:lighthouse:only
 
       - name: Clinical guideline traceability
@@ -219,13 +225,13 @@ jobs:
           fi
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3
-        with:
-          publish-dir: "./dist"
-          production-branch: master
-          production-deploy: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy ${{ steps.release.outputs.version || github.sha }}"
+        run: |
+          npx --yes netlify-cli@26.1.0 deploy \
+            --dir=dist \
+            --prod \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --message "Deploy ${{ steps.release.outputs.version || github.sha }}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -239,8 +245,12 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.release.outputs.released == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.release.outputs.version }}
-          name: ${{ steps.release.outputs.version }}
-          body_path: /tmp/changelog.md
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release edit "$VERSION" --title "$VERSION" --notes-file /tmp/changelog.md
+          else
+            gh release create "$VERSION" --title "$VERSION" --notes-file /tmp/changelog.md
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
