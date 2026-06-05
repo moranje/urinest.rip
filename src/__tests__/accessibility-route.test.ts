@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
 import { createPinia, setActivePinia } from "pinia";
@@ -311,6 +312,9 @@ describe("route accessibility smoke", () => {
 
       expect(router.currentRoute.value.fullPath).toBe("/questionnaire/strip?q=q_strip_nitrite");
       expect(wrapper.get("h1").text()).toBe("Nitriet test");
+      expect(
+        wrapper.findAll('[role="radio"]').map((option) => option.attributes("aria-checked")),
+      ).toEqual(["true", "false"]);
       wrapper.unmount();
     },
     AXE_TEST_TIMEOUT_MS,
@@ -328,10 +332,18 @@ describe("route accessibility smoke", () => {
       expect(wrapper.find(".question-toolbar__back").exists()).toBe(false);
       expect(wrapper.find(".back-button").exists()).toBe(false);
       expect(wrapper.find('[aria-label*="Terug"]').exists()).toBe(false);
+      expect(wrapper.find('[aria-label*="Vorige"]').exists()).toBe(false);
       expect(wrapper.text()).not.toContain("Terug");
+      expect(wrapper.text()).not.toContain("Vorige");
       expect(wrapper.get(".question-toolbar__restart").attributes("aria-label")).toBe(
         "Opnieuw beginnen",
       );
+      const controllerSource = readFileSync(
+        "src/composables/useQuestionnairePageController.ts",
+        "utf8",
+      );
+      expect(controllerSource).not.toContain("router.back");
+      expect(controllerSource).not.toContain("history.back");
 
       router.back();
       await settleRouteUi();

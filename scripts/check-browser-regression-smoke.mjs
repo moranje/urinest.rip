@@ -130,6 +130,13 @@ async function expectHeading(page, text) {
   );
 }
 
+async function resetClientStorage(page) {
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+}
+
 async function assertLandingGrid(page, baseUrl) {
   await page.setViewport({ width: 1714, height: 1200, deviceScaleFactor: 1 });
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
@@ -306,6 +313,15 @@ async function clickChoice(page, label) {
   assert(clicked, `Choice not found: ${label}`);
 }
 
+async function expectChoiceSelected(page, label) {
+  const selected = await page.evaluate((text) => {
+    const options = [...document.querySelectorAll('[role="radio"], [role="checkbox"]')];
+    const option = options.find((candidate) => candidate.textContent?.includes(text));
+    return option?.getAttribute("aria-checked") === "true";
+  }, label);
+  assert(selected, `Choice not restored as selected after history navigation: ${label}`);
+}
+
 async function expectQuestionPath(page, pathname, queryFragment, heading) {
   await page.waitForFunction(
     (expectedPathname, expectedQueryFragment, expectedHeading) =>
@@ -359,6 +375,50 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
     `Answer option button has unwanted border widths: ${answerUi.buttonBorderWidths.join(", ")}`,
   );
 
+  const forcedColorsClient = await page.createCDPSession();
+  await forcedColorsClient.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "forced-colors", value: "active" }],
+  });
+  const forcedColorAnswerUi = await page.evaluate(() => {
+    const px = (value) => Number.parseFloat(value || "0");
+    const option = document.querySelector(".choice-option");
+    const button = document.querySelector(".choice-option__button");
+    const optionStyle = option ? getComputedStyle(option) : null;
+    const buttonStyle = button ? getComputedStyle(button) : null;
+    return {
+      buttonBorderWidths: buttonStyle
+        ? [
+            px(buttonStyle.borderTopWidth),
+            px(buttonStyle.borderRightWidth),
+            px(buttonStyle.borderBottomWidth),
+            px(buttonStyle.borderLeftWidth),
+          ]
+        : [],
+      optionBorderWidths: optionStyle
+        ? [
+            px(optionStyle.borderTopWidth),
+            px(optionStyle.borderRightWidth),
+            px(optionStyle.borderBottomWidth),
+            px(optionStyle.borderLeftWidth),
+          ]
+        : [],
+    };
+  });
+  await forcedColorsClient.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "forced-colors", value: "none" }],
+  });
+  await forcedColorsClient.detach();
+  assert(
+    forcedColorAnswerUi.optionBorderWidths.length === 4 &&
+      forcedColorAnswerUi.optionBorderWidths.every((width) => width === 0),
+    `Forced-colors answer option shell has unwanted border widths: ${forcedColorAnswerUi.optionBorderWidths.join(", ")}`,
+  );
+  assert(
+    forcedColorAnswerUi.buttonBorderWidths.length === 4 &&
+      forcedColorAnswerUi.buttonBorderWidths.every((width) => width === 0),
+    `Forced-colors answer option button has unwanted border widths: ${forcedColorAnswerUi.buttonBorderWidths.join(", ")}`,
+  );
+
   const progress = await page.evaluate(() => ({
     ariaLabel: document.querySelector('[role="progressbar"]')?.getAttribute("aria-label") ?? "",
     text: document.querySelector('[role="progressbar"]')?.textContent?.trim() ?? "",
@@ -382,9 +442,11 @@ async function assertQuestionnaireNavigation(page, baseUrl) {
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
+  await expectChoiceSelected(page, "Positief");
 }
 
 async function assertQuestionnaireDeepBackStack(page, baseUrl) {
+  await resetClientStorage(page);
   await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
   await expectHeading(page, "Nitriet test");
 
@@ -427,6 +489,7 @@ async function assertQuestionnaireDeepBackStack(page, baseUrl) {
     "q=q_bac_catheter",
     "Heeft patiënt een urine katheter?",
   );
+  await expectChoiceSelected(page, "Nee");
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(
@@ -435,6 +498,7 @@ async function assertQuestionnaireDeepBackStack(page, baseUrl) {
     "q=q_bac_risk",
     "Behoort patiënt tot een risicogroep?",
   );
+  await expectChoiceSelected(page, "Nee");
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(
@@ -443,17 +507,50 @@ async function assertQuestionnaireDeepBackStack(page, baseUrl) {
     "q=q_bac_tissue",
     "Is er sprake van weefselinvasie?",
   );
+  await expectChoiceSelected(page, "Geen");
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await expectQuestionPath(page, "/questionnaire/strip", "q=q_strip_nitrite", "Nitriet test");
+  await expectChoiceSelected(page, "Positief");
+}
+
+async function navigateToHealthyTreatmentQuestion(page, baseUrl) {
+  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
+  await expectHeading(page, "Nitriet test");
+  await clickChoice(page, "Positief");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tissue",
+    "Is er sprake van weefselinvasie?",
+  );
+  await clickChoice(page, "Geen");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_risk",
+    "Behoort patiënt tot een risicogroep?",
+  );
+  await clickChoice(page, "Nee");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_catheter",
+    "Heeft patiënt een urine katheter?",
+  );
+  await clickChoice(page, "Nee");
+  await expectQuestionPath(
+    page,
+    "/questionnaire/bacteriurie",
+    "q=q_bac_tx_local_healthy",
+    "Welke behandeling kan patiënt krijgen?",
+  );
 }
 
 async function assertInfoPopoverViewportFit(page, baseUrl) {
+  await resetClientStorage(page);
   await page.setViewport({ width: 390, height: 420, deviceScaleFactor: 1 });
-  await page.goto(`${baseUrl}/questionnaire/bacteriurie?q=q_bac_tx_local_healthy`, {
-    waitUntil: "domcontentloaded",
-  });
-  await expectHeading(page, "Welke behandeling kan patiënt krijgen?");
+  await navigateToHealthyTreatmentQuestion(page, baseUrl);
 
   const opened = await page.evaluate(() => {
     const buttons = [...document.querySelectorAll('[data-testid="choice-option-info"]')];
@@ -500,26 +597,8 @@ async function assertInfoPopoverViewportFit(page, baseUrl) {
 }
 
 async function assertInfoPopoverInteraction(page, baseUrl) {
-  await page.goto(`${baseUrl}/questionnaire/strip`, { waitUntil: "domcontentloaded" });
-  await expectHeading(page, "Nitriet test");
-  await clickChoice(page, "Positief");
-  await page.waitForFunction(
-    () =>
-      location.pathname === "/questionnaire/bacteriurie" &&
-      document.querySelector("h1")?.textContent?.includes("Is er sprake van weefselinvasie?"),
-    { timeout: 10_000 },
-  );
-  await clickChoice(page, "Geen");
-  await expectHeading(page, "Behoort patiënt tot een risicogroep?");
-  await clickChoice(page, "Nee");
-  await expectHeading(page, "Heeft patiënt een urine katheter?");
-  await clickChoice(page, "Nee");
-  await page.waitForFunction(
-    () =>
-      location.search.includes("q=q_bac_tx_local_healthy") &&
-      document.querySelector("h1")?.textContent?.includes("Welke behandeling kan patiënt krijgen?"),
-    { timeout: 10_000 },
-  );
+  await resetClientStorage(page);
+  await navigateToHealthyTreatmentQuestion(page, baseUrl);
 
   const beforeUrl = page.url();
   const selectedBefore = await page.evaluate(() =>
@@ -683,12 +762,22 @@ async function assertDirectResultRoute(page, baseUrl) {
     const px = (value) => Number.parseFloat(value || "0");
     const notice = document.querySelector(".contraindication-notice");
     const warning = document.querySelector(".notice--warning");
+    const checkboxField = document.querySelector(".checkbox-field");
     const checkboxBox = document.querySelector(".checkbox-field__box");
     const noticeStyle = notice ? getComputedStyle(notice) : null;
     const warningStyle = warning ? getComputedStyle(warning) : null;
+    const checkboxFieldStyle = checkboxField ? getComputedStyle(checkboxField) : null;
     const checkboxBoxStyle = checkboxBox ? getComputedStyle(checkboxBox) : null;
 
     return {
+      checkboxFieldBorderWidths: checkboxFieldStyle
+        ? [
+            px(checkboxFieldStyle.borderTopWidth),
+            px(checkboxFieldStyle.borderRightWidth),
+            px(checkboxFieldStyle.borderBottomWidth),
+            px(checkboxFieldStyle.borderLeftWidth),
+          ]
+        : [],
       checkboxBorderWidths: checkboxBoxStyle
         ? [
             px(checkboxBoxStyle.borderTopWidth),
@@ -733,6 +822,11 @@ async function assertDirectResultRoute(page, baseUrl) {
     };
   });
 
+  assert(
+    resultUi.checkboxFieldBorderWidths.length === 4 &&
+      resultUi.checkboxFieldBorderWidths.every((width) => width === 0),
+    `Result checkbox field has unwanted border widths: ${resultUi.checkboxFieldBorderWidths.join(", ")}`,
+  );
   assert(
     resultUi.checkboxBorderWidths.length === 4 &&
       resultUi.checkboxBorderWidths.every((width) => width === 0),
@@ -879,6 +973,6 @@ async function run() {
 }
 
 run().catch((error) => {
-  console.error(error instanceof Error ? error.message : error);
+  console.error(error instanceof Error ? (error.stack ?? error.message) : error);
   process.exit(1);
 });

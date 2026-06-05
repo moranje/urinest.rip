@@ -115,6 +115,7 @@ describe("ChoiceOption", () => {
 
   it("keeps answer card states free of full-frame accent borders", () => {
     const source = readFileSync("src/components/molecules/ChoiceOption.vue", "utf8");
+    const globalCss = readFileSync("src/styles/main.css", "utf8");
     const cardCss = source.match(/\.choice-option\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
     const focusCss = source.match(/\.choice-option:focus-within\s*\{(?<body>[\s\S]*?)\n\}/)?.groups
       ?.body;
@@ -127,5 +128,7 @@ describe("ChoiceOption", () => {
     expect(focusCss).not.toContain("outline: 2px solid");
     expect(selectedCss).not.toContain("border-color: var(--md-sys-color-primary)");
     expect(selectedCss).not.toContain("border:");
+    expect(globalCss).not.toContain(".option-item,\n");
+    expect(globalCss).not.toContain(".option-selected");
   });
 });

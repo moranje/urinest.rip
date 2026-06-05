@@ -173,6 +173,7 @@ describe("QuestionPanel", () => {
 
     expect(source).toContain("<Card");
     expect(source).toContain('variant="elevated"');
+    expect(panelCss).not.toContain("border:");
     expect(panelCss).not.toContain("border-radius:");
     expect(panelCss).not.toContain("box-shadow:");
     expect(panelCss).not.toContain("background:");

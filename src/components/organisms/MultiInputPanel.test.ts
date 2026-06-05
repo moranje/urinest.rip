@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import MultiInputPanel from "./MultiInputPanel.vue";
@@ -66,6 +67,18 @@ describe("MultiInputPanel", () => {
     expect(progress.attributes("aria-label")).toBe("Indicatieve voortgang door vragenlijst");
     expect(progress.text().trim()).toBe("");
     expect(wrapper.find(".progress-bar-text").exists()).toBe(false);
+  });
+
+  it("delegates multi-input panel shell styling to Card", () => {
+    const source = readFileSync("src/components/organisms/MultiInputPanel.vue", "utf8");
+    const panelCss = source.match(/\.multi-input-panel\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body;
+
+    expect(source).toContain("<Card");
+    expect(source).toContain('variant="elevated"');
+    expect(panelCss).not.toContain("border:");
+    expect(panelCss).not.toContain("border-radius:");
+    expect(panelCss).not.toContain("box-shadow:");
+    expect(panelCss).not.toContain("background:");
   });
 
   it("emits answer updates with question ids and blocks incomplete submit", async () => {

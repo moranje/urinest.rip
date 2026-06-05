@@ -141,8 +141,6 @@ p {
   }
 
   .urgency-badge,
-  .option-item,
-  .option-selected,
   .btn,
   .toast {
     forced-color-adjust: none;

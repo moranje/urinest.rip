@@ -192,6 +192,7 @@ describe("form primitives", () => {
 
   it("renders checkbox visuals without native accent borders", () => {
     const source = readFileSync("src/components/primitives/Checkbox.vue", "utf8");
+    const fieldCss = source.match(/\.checkbox-field\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
     const controlCss =
       source.match(/\.checkbox-field__control\s*\{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
     const boxCss =
@@ -208,6 +209,8 @@ describe("form primitives", () => {
     expect(source).toContain('class="checkbox-field__box"');
     expect(source).toContain("<Icon");
     expect(source).not.toContain(".checkbox-field__box::after");
+    expect(fieldCss).not.toContain("border:");
+    expect(fieldCss).not.toContain("outline:");
     expect(controlCss).toContain("appearance: none");
     expect(controlCss).toContain("opacity: 0");
     expect(controlCss).toContain("border: 0");
